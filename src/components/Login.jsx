@@ -5,7 +5,7 @@ import { useNavigate  } from 'react-router-dom'
 import { useDispatch, useSelector } from 'react-redux'
 import { signin } from "../actions/auth";
 
-function LoginForm({ path }) {
+function LoginForm({ path, setUser }) {
   const navigate  = useNavigate()
   const dispatch = useDispatch()
 
@@ -22,6 +22,7 @@ function LoginForm({ path }) {
       document.title = "Login"
       if(!user) return
 
+      setUser(user)
       navigate(`${path}/`)
   }, [user])
 
@@ -33,7 +34,7 @@ function LoginForm({ path }) {
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 font-poppins">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-8 px-12 shadow rounded-lg py-20">
+        <div className="bg-white py-8 md:px-12 px-6 shadow rounded-lg py-20">
           <div>
             <img
               className="mx-auto h-12 w-auto"

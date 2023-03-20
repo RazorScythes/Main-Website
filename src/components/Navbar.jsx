@@ -3,7 +3,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { nav_links, user_navLinks } from "../constants";
-import { faUser, faGear, faRightFromBracket, faDashboard, faMailReply } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faGear, faRightFromBracket, faDashboard, faFolder , faEnvelope} from "@fortawesome/free-solid-svg-icons";
 import { logout } from "../actions/auth";
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -68,8 +68,14 @@ const Navbar = ({ path }) => {
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                       >
-                        <FontAwesomeIcon icon={faMailReply} className="mr-2" />
-                        <a href={`${path}/${user.result.username}`}>Message</a>
+                        <FontAwesomeIcon icon={faUser} className="mr-2" />
+                        <a href={`${path}/${user.result.username}/portfolio`}>My Portfolio</a>
+                      </li>
+                      <li
+                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
+                      >
+                        <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
+                        <a href={`${path}/${user.result.username}`}>Inbox</a>
                       </li>
                     <li
                       className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
@@ -142,8 +148,14 @@ const Navbar = ({ path }) => {
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                       >
-                        <FontAwesomeIcon icon={faMailReply} className="mr-2" />
-                        <a href={`${path}/${user.result.username}`}>Message</a>
+                        <FontAwesomeIcon icon={faFolder} className="mr-2" />
+                        <a href={`${path}/${user.result.username}/portfolio`}>My Portfolio</a>
+                      </li>
+                      <li
+                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
+                      >
+                        <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
+                        <a href={`${path}/${user.result.username}`}>Inbox</a>
                       </li>
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}

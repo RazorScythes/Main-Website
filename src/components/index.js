@@ -18,11 +18,13 @@ import Footer from './Footer'
 import Home from './Pages/Home'
 import Games from './Pages/Games'
 import NotFound from './Pages/NotFound'
+import Portfolio from './Pages/Portfolio'
 
 export {
     Home,
     Games,
     NotFound,
+    Portfolio,
     Navbar,
     Hero,
     Login,
