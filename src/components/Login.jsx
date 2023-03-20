@@ -22,7 +22,7 @@ function LoginForm({ path }) {
       document.title = "Login"
       if(!user) return
       console.log(user, path)
-      navigate(`${path}`)
+      navigate(`/`)
   }, [user])
 
   const handleSubmit = (e) => {
