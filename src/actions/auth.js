@@ -13,6 +13,7 @@ export const signin = createAsyncThunk('user/getUser', async (form, thunkAPI) =>
         return response
     }
     catch (err) {
+        console.log(err.response.data.message)
         return thunkAPI.rejectWithValue(err.response.data.message);
     }
 })
