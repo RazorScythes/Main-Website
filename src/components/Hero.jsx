@@ -16,16 +16,16 @@ const Hero = () => {
                         <div className="lg:flex md:flex items-center">
                         <div className="lg:w-1/2 md:w-1/2 w-full sm:px-4">
                             <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl font-bold leading-tight text-white mb-8">
-                            Welcome to My Website
+                            Welcome to my Personal and Gaming Website!
                             </h1>
                             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl font-bold leading-tight text-white mb-8">
-                            A Place to Discover Amazing Things
+                            Discover a World of Excitement and Entertainment.
                             </h2>
                             <p className="text-white text-lg sm:text-xl md:text-lg leading-relaxed mb-4">
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod ultrices justo, vel venenatis arcu eleifend in. Nullam vehicula, augue eget bibendum rhoncus, ipsum sapien faucibus orci, sed dictum neque lacus sed nibh.
+                            Explore the latest games, consoles, and technologies, along with personal stories, insights, and experiences on this website. From reviews and walkthroughs to blog posts and videos, I offer a diverse range of content that is sure to keep you entertained and engaged.
                             </p>
                             <button className="bg-gray-100 hover:bg-transparent hover:text-gray-100 text-gray-800 font-semibold my-8 py-2 px-8 border border-gray-100 rounded transition-colors duration-300 ease-in-out" onClick={() => loginWithRedirect()}>
-                                Get Started
+                                Explore Now!
                             </button>
                         </div>
                         <div className="lg:w-1/3 md:w-1/3 md:block hidden ml-32">

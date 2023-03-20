@@ -21,18 +21,18 @@ const Feature = () => {
         <section className={`container ${styles.flexCenter} flex-row items-center mx-auto flex-wrap sm:mb-10 mb-6 py-12`}>
             <Content
                 image={Logo}
-                title="Feature 1"
-                description="Lorem ipsum "
+                title="Gaming Reviews"
+                description="Honest & In-Depth."
             />
             <Content
                 image={Logo}
-                title="Feature 1"
-                description="Lorem ipsum "
+                title="Personal Blog"
+                description="Insights & Stories."
             />
             <Content
                 image={City}
-                title="Feature 1"
-                description="Lorem ipsum "
+                title="Video Content"
+                description="Fun & Engaging."
             />
         </section>
   );
