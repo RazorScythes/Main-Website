@@ -26,6 +26,7 @@ export const authSlice = createSlice({
       }),
       builder.addCase(signin.fulfilled, (state, action) => {
         localStorage.setItem('profile', JSON.stringify({ ...action.payload?.data }));
+        console.log(action.payload)
         state.data = action.payload.data
         state.error = ''
         state.isLoading = false
