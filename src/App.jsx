@@ -14,7 +14,7 @@ const App = () => {
       <BrowserRouter>
         <Routes>
 
-          <Route path={`${URI_PATH_HOME}`} element={<><Navbar path={URI_PATH_HOME} /> <Outlet/></>}>
+          <Route path='/' element={<><Navbar path={URI_PATH_HOME} /> <Outlet/></>}>
               <Route index element={<Home path={URI_PATH_HOME}/>} />
               <Route path="games" element={<Games />} />
           </Route>  

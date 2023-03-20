@@ -21,8 +21,8 @@ function LoginForm({ path }) {
   useEffect(() => {
       document.title = "Login"
       if(!user) return
-      console.log(user, path)
-      navigate(`/`)
+
+      navigate(`${path}/`)
   }, [user])
 
   const handleSubmit = (e) => {
