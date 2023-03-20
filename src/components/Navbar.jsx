@@ -3,7 +3,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { nav_links, user_navLinks } from "../constants";
-import { faUser, faGear, faRightFromBracket } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faGear, faRightFromBracket, faDashboard, faMailReply } from "@fortawesome/free-solid-svg-icons";
 import { logout } from "../actions/auth";
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -53,12 +53,24 @@ const Navbar = ({ path }) => {
                 } p-6 bg-gray-800 absolute top-20 right-0 mx-4 my-2 min-w-[140px] rounded-xl sidebar text-sm font-poppins`}
               >
                 <ul className="list-none flex justify-end items-start flex-1 flex-col">
-                    <li
-                      className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
-                    >
-                      <FontAwesomeIcon icon={faUser} className="mr-2" />
-                      <a href={`${path}/${user.result.username}`}>Account</a>
-                    </li>
+                      <li
+                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
+                      >
+                        <FontAwesomeIcon icon={faDashboard} className="mr-2" />
+                        <a href={`${path}/${user.result.username}`}>Dashboard</a>
+                      </li>
+                      <li
+                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
+                      >
+                        <FontAwesomeIcon icon={faUser} className="mr-2" />
+                        <a href={`${path}/${user.result.username}`}>Account</a>
+                      </li>
+                      <li
+                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
+                      >
+                        <FontAwesomeIcon icon={faMailReply} className="mr-2" />
+                        <a href={`${path}/${user.result.username}`}>Message</a>
+                      </li>
                     <li
                       className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                     >
@@ -118,8 +130,20 @@ const Navbar = ({ path }) => {
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                       >
+                        <FontAwesomeIcon icon={faDashboard} className="mr-2" />
+                        <a href={`${path}/${user.result.username}`}>Dashboard</a>
+                      </li>
+                      <li
+                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
+                      >
                         <FontAwesomeIcon icon={faUser} className="mr-2" />
                         <a href={`${path}/${user.result.username}`}>Account</a>
+                      </li>
+                      <li
+                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
+                      >
+                        <FontAwesomeIcon icon={faMailReply} className="mr-2" />
+                        <a href={`${path}/${user.result.username}`}>Message</a>
                       </li>
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
