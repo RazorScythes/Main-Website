@@ -13,7 +13,6 @@ export const signin = createAsyncThunk('user/getUser', async (form, thunkAPI) =>
         return response
     }
     catch (err) {
-        console.log(err.response.data.message)
         return thunkAPI.rejectWithValue(err.response.data.message);
     }
 })
@@ -27,7 +26,6 @@ export const authSlice = createSlice({
       }),
       builder.addCase(signin.fulfilled, (state, action) => {
         localStorage.setItem('profile', JSON.stringify({ ...action.payload?.data }));
-        console.log(action.payload)
         state.data = action.payload.data
         state.error = ''
         state.isLoading = false
