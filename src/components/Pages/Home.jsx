@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react'
+import React, { useEffect } from 'react'
 import styles from "../../style";
 
 import { Hero, Feature, GameList, News, Service, Socials, Users, Footer } from '../index'
@@ -18,7 +18,10 @@ const service_single_image = [
 
 const Home = ({ path }) => {
     // const count = useSelector((state) => state.counter)
-
+    
+    useEffect(() => {
+        document.title = "Home"
+    }, [])
     return (
         <div>
             <Hero />
