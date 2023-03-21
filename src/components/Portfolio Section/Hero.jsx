@@ -11,7 +11,7 @@ const Hero = () => {
             style={{ backgroundColor: "#111221" }}
         >   
             <div className={`${styles.marginX} ${styles.flexCenter}`}>
-                <div className={`${styles.boxWidth}`}>
+                <div className={`${styles.boxWidthEx}`}>
                     <div className="absolute inset-0 "></div>
                     <div className="container mx-auto file:lg:px-8 relative px-0">
                         <div className="lg:flex md:flex items-center justify-evenly">

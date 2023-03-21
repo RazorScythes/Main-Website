@@ -13,7 +13,7 @@ const generateColor = () =>{
 const SkillBox = ({ color = "from-[#FFFF00]"}) => {
     let gradient = color ? `from-[#${color}]` : `from-cyan-500`
     return (
-        <div className={`lg:h-32 lg:w-40 w-2/5 h-32 mx-2 mb-4 rounded-lg bg-gradient-to-b ${color} via-gray-800 to-gray-900 p-1`}>
+        <div className={`lg:h-40 lg:w-48 ss:w-2/5 h-32 w-full mr-4  mb-4 rounded-lg bg-gradient-to-b ${color} via-gray-800 to-gray-900 p-1`}>
             <div className="flex h-full w-full rounded-lg flex-col items-center justify-center bg-gray-800 back">
                 <h2 className="text-4xl font-semibold text-white mb-1">100%</h2>
                 <p className="text-cyan-500 text-base tracking-tighter">React JS</p>
@@ -52,12 +52,7 @@ const test = [
         percent: "69%",
         skills: "ReactJS",
         hex: "from-[#00FFFF]"
-    },
-    {
-        percent: "69%",
-        skills: "ReactJS",
-        hex: "from-[#00FFFF]"
-    },
+    }
 ]
 const Skills = () => {
 
@@ -68,12 +63,12 @@ const Skills = () => {
             style={{ backgroundColor: "#111827" }}
         >   
             <div className={`${styles.marginX} ${styles.flexCenter}`}>
-                <div className={`${styles.boxWidth}`}>
+                <div className={`${styles.boxWidthEx}`}>
                     <div className="absolute inset-0 "></div>
-                    <div className="container mx-auto file:lg:px-8 relative px-0">
-                        <div className="lg:flex md:flex items-center justify-evenly">
+                    <div className="mx-auto file:lg:px-8 relative px-0">
+                        <div className="lg:flex md:flex items-center justify-center">
                             <div className="lg:w-1/2 md:w-1/2 w-full sm:px-4">
-                                <div className="text-center lg:w-[31.25rem] p-8 bg-[#111221] rounded-lg relative md:mb-0 mb-12">
+                                <div className="text-center mx-auto lg:w-[31.25rem] p-8 bg-[#111221] rounded-lg relative md:mb-0 mb-12">
                                     <img 
                                         src={heroImage} 
                                         alt="Hero Image" 
@@ -119,7 +114,7 @@ const Skills = () => {
                                     {
                                         test.map((item, i) => {
                                             return (
-                                                <SkillBox color={`${item.hex}`}/>
+                                                <SkillBox key={i} color={`${item.hex}`}/>
                                             )
                                         })
                                     }
