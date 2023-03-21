@@ -99,7 +99,7 @@ const Services = () => {
                                             <button 
                                                 key={i} 
                                                 style={{backgroundColor: active === i ? "transparent" : "#1F2937"}}
-                                                className="py-4 px-12 mb-2 rounded-full text-xl mx-4 transition-all ease-in-out delay-50 border-2 border-solid border-[#1F2937]" 
+                                                className="py-2 px-12 mb-2 rounded-full text-lg mx-4 transition-all ease-in-out delay-50 border-2 border-solid border-[#1F2937]" 
                                                 onClick={() => setActive(i)}>
                                                     {item.title}
                                             </button>
@@ -107,15 +107,15 @@ const Services = () => {
                                     })
                                 }
                             </div>
-                            <div className="w-full flex md:flex-row flex-col justify-center text-center">
+                            <div className="w-full flex lg:flex-nowrap sm:flex-row flex-wrap flex-col justify-center text-center">
                                 {
                                     data[active].data.map((item, i) => {
                                         return (
-                                            <div key={i} className="md:w-1/3 md:h-1/3 w-full md:mx-2 rounded-md bg-gray-800 border-2 border-solid border-[#1F2937] shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] p-8 mb-8">
+                                            <div key={i} className="md:w-1/3 md:h-1/3 sm:w-[47%] w-full sm:mx-2 rounded-md bg-gray-800 border-2 border-solid border-[#1F2937] shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] p-8 mb-8">
                                                 <FontAwesomeIcon icon={item.icon} className="mr-1 w-10 h-10 p-6 bg-gray-900 text-[#00FFFF] rounded-full mb-4" />
-                                                <h3 className="md:text-2xl text-3xl font-semibold mb-6">{item.title}</h3>
-                                                <p className="mb-6 md:text-base text-xl">{item.description}</p>
-                                                <a href={`${item.link}`} className="uppercase md:text-base text-xl font-poppins font-semibold transition-all ease-in-out delay-50 hover:text-[#00FFFF]"><FontAwesomeIcon icon={faArrowRight} className="mr-4"/>Learn More</a>
+                                                <h3 className="md:text-xl text-2xl font-semibold mb-6">{item.title}</h3>
+                                                <p className="mb-6 md:text-base text-lg">{item.description}</p>
+                                                <a href={`${item.link}`} className="uppercase md:text-base text-lg font-poppins font-semibold transition-all ease-in-out delay-50 hover:text-[#00FFFF]"><FontAwesomeIcon icon={faArrowRight} className="mr-4"/>Learn More</a>
                                             </div>
                                         )
                                     })
