@@ -17,7 +17,7 @@ const Hero = () => {
                         <div className="lg:flex md:flex items-center justify-evenly">
                             <div className="lg:w-3/5 md:w-3/5 w-full sm:px-4">
                                 <h1 style={{lineHeight: "1.2em"}} className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl font-bold tracking-tighter text-white mb-4 capitalize">
-                                    <span style={{color: "#CD3242"}}>Hello I'm, <br/>James Arvie Maderas</span>
+                                    <span style={{color: "#CD3242"}}>Hello I'm, s</span> <br/>James Arvie Madera
                                 </h1>
                                 <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-semibold text-white mb-8 tracking-tighter">
                                     Web Developer
