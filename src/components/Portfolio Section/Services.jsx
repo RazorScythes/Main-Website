@@ -90,7 +90,7 @@ const Services = () => {
                         <div className="w-full md:flex flex-col items-center justify-center text-white">
                             <div className="md:w-1/2 w-full text-center md:m-8">
                                 <h2 className='md:text-5xl text-4xl font-bold mb-8'>Popular Services</h2>
-                                <p className='md:text-lg text-xl text-[#E1DEF7] md:pb-4 pb-8'>Must explain to you how all this mistaken idea of denouncing pleasure born and give you a complete account the system</p>
+                                <p className='text-lg text-[#E1DEF7] md:pb-4 pb-8'>Must explain to you how all this mistaken idea of denouncing pleasure born and give you a complete account the system</p>
                             </div>
                             <div className="flex flex-row flex-wrap justify-center mb-12">
                                 {
