@@ -95,7 +95,8 @@ const Footer = ({ path }) => {
                                 rows="4"
                                 placeholder="Message"
                                 className="border border-gray-400 py-2 px-4 w-full text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-700"
-                                ></textarea>
+                                >
+                            </textarea>
                             </div>
                             <button 
                                 type="submit"

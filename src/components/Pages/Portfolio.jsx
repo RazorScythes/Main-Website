@@ -1,6 +1,6 @@
 import React from 'react'
 import { useParams } from 'react-router-dom'
-import { Hero, Skills, Services, Experience, Projects } from '../Portfolio Section/index'
+import { Hero, Skills, Services, Experience, Projects, Contact } from '../Portfolio Section/index'
 const Portfolio = () => {
     let { username } = useParams();
 
@@ -11,6 +11,7 @@ const Portfolio = () => {
             <Services />
             <Experience />
             <Projects />
+            <Contact />
         </div>
     )
 }

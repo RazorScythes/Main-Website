@@ -5,7 +5,7 @@ const Card = ({ image, title, link }) => {
 
   return (
     <div
-      className="relative w-full sm:w-[45%] md:w-[45%] lg:w-[22%] bg-cover bg-center h-44 m-2 my-4 rounded-md transition duration-500 ease-in-out transform hover:scale-105"
+      className="relative w-full bg-cover bg-center h-44 m-2 my-4 rounded-md transition duration-500 ease-in-out transform hover:scale-105"
       style={{ backgroundImage: `url(${image})` }}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Navbar, Home, Games, Login, NotFound, Portfolio } from './components/index'
+import { Navbar, Home, Games, Login, NotFound, Portfolio, Footer } from './components/index'
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { useSelector } from 'react-redux'
 import styles from "./style";
@@ -29,7 +29,7 @@ const App = () => {
 
           <Route path='/:username' element={<><Navbar path={URI_PATH_HOME} /> <Outlet/></>}>
               <Route index element={<Home path={URI_PATH_HOME}/>} />
-              <Route path="portfolio" element={<Portfolio />} />
+              <Route path="portfolio" element={<><Portfolio /> <Footer /></>} />
           </Route>  
 
           <Route path={`${URI_PATH_HOME}/login`} element={<Login path={URI_PATH_HOME} setUser={setUser} />} />

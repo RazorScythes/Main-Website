@@ -5,14 +5,14 @@ import { faCircleCheck, faCalendar, faSitemap, faArrowRight, faGamepad, faChevro
 import styles from "../../style";
 import Carousel from "react-multi-carousel";
 import Avatar from '../../assets/avatar.png'
-import { photshop_svg } from "../../assets";
+import { portfolio1 } from "../../assets";
 
 const CustomRight = ({ onClick }) => {
     return (
       <FontAwesomeIcon
         icon={faChevronRight}
         onClick={onClick}
-        className="absolute bottom-0 left-12 right-0 mx-auto max-w-4 cursor-pointer text-primary-400 text-lg"
+        className="absolute bottom-0 left-24 right-0 mx-auto w-4 border border-solid border-white p-4 rounded-full hover:text-white hover:border-[#CD3242] hover:bg-[#CD3242] transition-all cursor-pointer text-primary-400 text-lg"
       />
     )
 };
@@ -22,7 +22,7 @@ const CustomLeft = ({ onClick }) => {
       <FontAwesomeIcon
         icon={faChevronLeft}
         onClick={onClick}
-        className="absolute bottom-0 left-0 right-12 mx-auto max-w-4 cursor-pointer text-primary-400 text-lg"
+        className="absolute bottom-0 left-0 right-24 mx-auto w-4 border border-solid border-white p-4 rounded-full hover:text-white hover:border-[#CD3242] hover:bg-[#CD3242] transition-all cursor-pointer text-primary-400 text-lg"
       />
     )
 };
@@ -54,12 +54,12 @@ const Projects = () => {
                 <div className={`${styles.boxWidthEx}`}>
                     <div className="absolute inset-0 "></div>
                     <div className="container mx-auto file:lg:px-8 relative px-0">
-                        <div className="w-full sm:flex flex-row justify-start text-white">
+                        <div className="w-full sm:flex flex-row justify-start sm:text-left text-center text-white">
                             <div className="sm:w-1/2 w-full">
                                 <h2 className='md:text-5xl text-4xl font-bold mb-8'>Recent Work</h2>
                                 <p className='text-lg text-[#E1DEF7] md:pb-4 pb-8'>Must explain to you how all this mistaken idea of denouncing pleasure born and give you a complete account the system</p>
                             </div>
-                            <div className="sm:w-1/2 w-full flex items-center justify-end">
+                            <div className="sm:w-1/2 w-full flex items-center sm:justify-end justify-center">
                                 <div className="p-2 border border-dashed border-gray-700 rounded-full">
                                     <div className="p-6 bg-gray-800 rounded-full">
                                         <FontAwesomeIcon icon={faGamepad} className="w-16 h-16 text-[#00FFFF]"/>
@@ -68,9 +68,9 @@ const Projects = () => {
                             </div>
                         </div>
                         
-                        <div className="text-white">
+                        <div className="text-white font-poppins">
                         <Carousel 
-                                responsive={responsive} className="mt-24 relative"
+                                responsive={responsive} className="mt-24 relative pb-16"
                                 customLeftArrow={<CustomLeft />}
                                 customRightArrow={<CustomRight />}
                                 slidesToSlide={1}
@@ -78,41 +78,38 @@ const Projects = () => {
                                 autoPlay={true}
                                 infinite={true}
                             >
-                                <div className='w-11/12 mx-4 mx-auto border-2 border-solid border-gray-700 flex flex-col justify-center p-8 mb-12 bg-[#1F2937] rounded-md'>
-                                  <img
-                                      src={Avatar}
-                                      alt="User"
-                                      className='rounded-full border-2 border-solid border-white p-1 w-24 mx-auto mb-8 transition duration-500 ease-in-out transform hover:scale-105'
-                                  />
-                                  <p className='pb-1'>RazorScythe</p>
-                                  <p className='font-semibold text-[#CD3242] pb-6'>Gamer</p>
-                                  <button className="bg-[#0275d8] hover:bg-transparent hover:text-white text-white font-normal ml-2 text-sm py-2 px-4 border hover:border-white border-[#0275d8] rounded transition-colors duration-300 ease-in-out">
-                                      View Profile
-                                  </button>
+                                <div className='w-11/12 mx-4 flex flex-col justify-center mb-12 rounded-md'>
+                                    <div className="overflow-hidden">
+                                        <img
+                                            src={portfolio1}
+                                            alt="User"
+                                            className='w-full h-[400px] object-cover mb-8 transition duration-500 ease-in-out transform hover:scale-105'
+                                        />
+                                    </div>
+                                    <h2 className='pb-2 text-2xl font-semibold hover:text-[#CD3242] hover:cursor-pointer transition-all'>RazorScythe</h2>
+                                    <p className='pb-6 text-[#d8d8d8] text-sm'>Web Design</p>
                                 </div>
-                                <div className='w-11/12 mx-4 border-2 border-solid border-gray-700 flex flex-col justify-center p-8 mb-12 bg-[#1F2937] rounded-md'>
-                                  <img
-                                      src={Avatar}
-                                      alt="User"
-                                      className='rounded-full border-2 border-solid border-white p-1 w-24 mx-auto mb-8 transition duration-500 ease-in-out transform hover:scale-105'
-                                  />
-                                  <p className='pb-1'>RazorScythe</p>
-                                  <p className='font-semibold text-[#CD3242] pb-6'>Gamer</p>
-                                  <button className="bg-[#0275d8] hover:bg-transparent hover:text-white text-white font-normal ml-2 text-sm py-2 px-4 border hover:border-white border-[#0275d8] rounded transition-colors duration-300 ease-in-out">
-                                      View Profile
-                                  </button>
+                                <div className='w-11/12 mx-4 flex flex-col justify-center mb-12 rounded-md'>
+                                    <div className="overflow-hidden">
+                                        <img
+                                            src={portfolio1}
+                                            alt="User"
+                                            className='w-full h-[400px] object-cover mb-8 transition duration-500 ease-in-out transform hover:scale-105'
+                                        />
+                                    </div>
+                                    <h2 className='pb-2 text-2xl font-semibold hover:text-[#CD3242] hover:cursor-pointer transition-all'>RazorScythe</h2>
+                                    <p className='pb-6 text-[#d8d8d8] text-sm'>Web Design</p>
                                 </div>
-                                <div className='w-11/12 mx-4 mx-auto border-2 border-solid border-gray-700 flex flex-col justify-center p-8 mb-12 bg-[#1F2937] rounded-md'>
-                                  <img
-                                      src={Avatar}
-                                      alt="User"
-                                      className='rounded-full border-2 border-solid border-white p-1 w-24 mx-auto mb-8 transition duration-500 ease-in-out transform hover:scale-105'
-                                  />
-                                  <p className='pb-1'>RazorScythe</p>
-                                  <p className='font-semibold text-[#CD3242] pb-6'>Gamer</p>
-                                  <button className="bg-[#0275d8] hover:bg-transparent hover:text-white text-white font-normal ml-2 text-sm py-2 px-4 border hover:border-white border-[#0275d8] rounded transition-colors duration-300 ease-in-out">
-                                      View Profile
-                                  </button>
+                                <div className='w-11/12 mx-4 flex flex-col justify-center mb-12 rounded-md'>
+                                    <div className="overflow-hidden">
+                                        <img
+                                            src={portfolio1}
+                                            alt="User"
+                                            className='w-full h-[400px] object-cover mb-8 transition duration-500 ease-in-out transform hover:scale-105'
+                                        />
+                                    </div>
+                                    <h2 className='pb-2 text-2xl font-semibold hover:text-[#CD3242] hover:cursor-pointer transition-all'>RazorScythe</h2>
+                                    <p className='pb-6 text-[#d8d8d8] text-sm'>Web Design</p>
                                 </div>
                             </Carousel>
                         </div>

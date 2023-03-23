@@ -11,12 +11,11 @@ const generateColor = () =>{
 };
 
 const SkillBox = ({ color = "from-[#FFFF00]"}) => {
-    let gradient = color ? `from-[#${color}]` : `from-cyan-500`
     return (
-        <div className={`lg:h-40 lg:w-48 ss:w-2/5 h-32 w-full mr-4  mb-4 rounded-lg bg-gradient-to-b ${color} via-gray-800 to-gray-900 p-1`}>
+        <div className={`h-32 w-full mr-4  mb-4 rounded-lg bg-gradient-to-b ${color} via-gray-800 to-gray-900 p-1`}>
             <div className="flex h-full w-full rounded-lg flex-col items-center justify-center bg-gray-800 back">
                 <h2 className="text-4xl font-semibold text-white mb-1">100%</h2>
-                <p className="text-cyan-500 text-base tracking-tighter">React JS</p>
+                <p className="text-cyan-500 text-base tracking-tighter font-semibold">React JS</p>
             </div>
         </div>
     )
@@ -110,7 +109,7 @@ const Skills = () => {
                                 <p className="text-white text-lg md:text-lg leading-relaxed mb-12">
                                 Explore the latest games, consoles, and technologies, along with personal stories, insights, and experiences on this website. From reviews and walkthroughs to blog posts and videos, I offer a diverse range of content that is sure to keep you entertained and engaged.
                                 </p>
-                                <div class="flex flex-row md:justify-start justify-evenly flex-wrap font-poppins">
+                                <div class="grid md:grid-cols-3 sm:grid-cols-3 grid-cols-2 gap-5 place-content-start">
                                     {
                                         test.map((item, i) => {
                                             return (

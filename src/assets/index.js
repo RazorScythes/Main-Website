@@ -10,6 +10,7 @@ import watching_video from './watching_video.png'
 import image_not_found from './404_image.png'
 import banner_bg from './banner_bg.jpg'
 import photshop_svg from './photoshop.svg'
+import portfolio1 from './portfolio1.jpg'
 export {
     toram_online,
     genshin_impact,
@@ -22,5 +23,6 @@ export {
     watching_video,
     image_not_found,
     banner_bg,
-    photshop_svg
+    photshop_svg,
+    portfolio1
 }
