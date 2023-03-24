@@ -56,7 +56,7 @@ const Experience = () => {
                                 {
                                     data.map((item, i) => {
                                         return (
-                                            <div className="relative my-2">
+                                            <div className="relative my-2" key={i} >
                                                 <div style={{ backgroundImage: `url(${herobg})` }} className="absolute inset-0 opacity-80 rounded-md bg-cover bg-center"></div>
                                                 <div className="absolute inset-0 bg-black opacity-75 rounded-md"></div>
                                                 <div 
@@ -71,7 +71,7 @@ const Experience = () => {
                                                         />
                                                     </div>
                                                     <div className="sm:w-2/3 sm:text-left text-center sm:mb-0 mb-8">
-                                                        <h2 class="lg:text-2xl sm:text-lg text-2xl font-bold">{item.position}</h2>
+                                                        <h2 className="lg:text-2xl sm:text-lg text-2xl font-bold">{item.position}</h2>
                                                         <p className="text-[#CD3242] font-semibold">{item.company}</p>
                                                     </div>
                                                     <a 

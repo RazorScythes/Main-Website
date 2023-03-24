@@ -1,9 +1,90 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import heroImage from '../../assets/hero-image.jpg';
-
 import styles from "../../style";
 
 const Hero = () => {
+    
+    const profession = [
+        'Web Developer',
+        'Web Designer',
+        'Digital Artist',
+        'Software Developer'
+    ]
+    const [index, setIndex] = useState(0)
+
+    // useEffect(() => {
+    //     const timer = window.setInterval(() => {
+    //         if(index === profession.length - 1) setIndex(0)
+    //         else setIndex(index + 1)
+    //     }, 4000);
+    //     return () => { // Return callback to run on unmount.
+    //         window.clearInterval(timer);
+    //     };
+    // }, [index])
+
+    function TypingText({ texts, index, setIndex }) {
+        const [currentText, setCurrentText] = useState("");
+        const [isDeleting, setIsDeleting] = useState(false);
+        const [typingSpeed, setTypingSpeed] = useState(200); // adjust typing speed here
+        const [deletingSpeed, setDeletingSpeed] = useState(50); // adjust deleting speed here
+        const [delay, setDelay] = useState(3000); // adjust delay between typing and deleting here
+      
+        useEffect(() => {
+          let timer = null;
+          let currentIndex = 0;
+          function typeNextLetter() {
+            if (currentIndex >= texts[index].length) {
+              // When the typing is done, start deleting
+              setIsDeleting(true);
+              setTimeout(() => {
+                setIsDeleting(false);
+              }, delay);
+              return;
+            }
+
+            if(currentIndex === 1)
+                setCurrentText((prevText) => prevText + (texts[index].charAt(1)+texts[index].charAt(2)));
+            else 
+                setCurrentText((prevText) => prevText + texts[index].charAt(currentIndex));
+
+            currentIndex++;
+            timer = setTimeout(typeNextLetter, typingSpeed);
+          }
+
+          function deleteNextLetter() {
+            setCurrentText((prevText) => prevText.slice(0, -1));
+            timer = setTimeout(deleteNextLetter, deletingSpeed);    
+          }
+      
+          if (isDeleting) {
+            timer = setTimeout(deleteNextLetter, deletingSpeed);
+          } else {
+            timer = setTimeout(typeNextLetter, typingSpeed);
+          }
+      
+          return () => {
+            clearTimeout(timer);
+          };
+        }, [texts, index, isDeleting, typingSpeed, deletingSpeed, delay]);
+        
+        useEffect(() => {
+            if (isDeleting && currentText === "") {
+                // When the deleting is done, move on to the next text
+                setIndex(index === texts.length - 1 ? 0 : index + 1);
+                setIsDeleting(false)
+
+                return
+            }
+        }, [currentText])
+
+        return (
+          <h2 className="flex text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-semibold text-white mb-8 tracking-tighter">
+             {currentText} <p className="opacity-0">.</p>
+          </h2>
+        );
+    }
+
+    const texts = ["Hello, world!", "How are you?", "I'm doing well, thanks."];
     return (
         <div
             className="relative bg-cover bg-center py-14"
@@ -19,9 +100,7 @@ const Hero = () => {
                                 <h1 style={{lineHeight: "1.2em"}} className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter text-white mb-4 capitalize">
                                     <span style={{color: "#CD3242"}}>Hello I'm</span>, <br/><span className="text-5xl md:text-6xl">James Arvie Maderas</span>
                                 </h1>
-                                <h2 className="text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-semibold text-white mb-8 tracking-tighter">
-                                    Web Developer
-                                </h2>
+                                <TypingText texts={profession} index={index} setIndex={setIndex} />
                                 <p className="text-white text-lg sm:text-xl md:text-lg leading-relaxed mb-4">
                                     Explore the latest games, consoles, and technologies, along with personal stories, insights, and experiences on this website. From reviews and walkthroughs to blog posts and videos, I offer a diverse range of content that is sure to keep you entertained and engaged.
                                 </p>

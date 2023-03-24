@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import heroImage from '../../assets/hero-image.jpg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
-import styles from "../../style";
+import CountUp from 'react-countup';
 import { photshop_svg } from "../../assets";
 import randomColor from "randomcolor";
-
+import styles from "../../style";
 const generateColor = () =>{
     return(Math.random().toString(16).substr(-6));
 };
@@ -14,7 +14,7 @@ const SkillBox = ({ color = "from-[#FFFF00]"}) => {
     return (
         <div className={`h-32 w-full mr-4  mb-4 rounded-lg bg-gradient-to-b ${color} via-gray-800 to-gray-900 p-1`}>
             <div className="flex h-full w-full rounded-lg flex-col items-center justify-center bg-gray-800 back">
-                <h2 className="text-4xl font-semibold text-white mb-1">100%</h2>
+                <h2 className="text-4xl font-semibold text-white mb-1"><CountUp end={100} duation={5}/>%</h2>
                 <p className="text-cyan-500 text-base tracking-tighter font-semibold">React JS</p>
             </div>
         </div>
@@ -109,7 +109,7 @@ const Skills = () => {
                                 <p className="text-white text-lg md:text-lg leading-relaxed mb-12">
                                 Explore the latest games, consoles, and technologies, along with personal stories, insights, and experiences on this website. From reviews and walkthroughs to blog posts and videos, I offer a diverse range of content that is sure to keep you entertained and engaged.
                                 </p>
-                                <div class="grid md:grid-cols-3 sm:grid-cols-3 grid-cols-2 gap-5 place-content-start">
+                                <div className="grid md:grid-cols-3 sm:grid-cols-3 grid-cols-2 gap-5 place-content-start">
                                     {
                                         test.map((item, i) => {
                                             return (
