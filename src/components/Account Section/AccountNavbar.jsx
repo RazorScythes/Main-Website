@@ -145,7 +145,7 @@ const AccountNavbar = ({ path }) => {
             {
               account_links.map((link, i) => {
                   return (
-                    <Link key={i} to={`${path}/${link.path}`} className="block mt-4 lg:inline-block lg:mt-0 text-blue-200 hover:text-white mr-4" onClick={() => setIsActive(!isActive)}>
+                    <Link key={i} to={`/account/${link.path}`} className="block mt-4 lg:inline-block lg:mt-0 text-blue-200 hover:text-white mr-4" onClick={() => setIsActive(!isActive)}>
                       {link.name}
                     </Link>
                   )
