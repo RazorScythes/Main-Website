@@ -13,7 +13,7 @@ const Header = ({ heading, description, button_text, button_link, api_call}) => 
         <div className="relative bg-white">   
             <div className={`${styles.marginX} ${styles.flexCenter}`}>
                 <div className={`${styles.boxWidthEx}`}>
-                    <div className="container mx-auto relative px-0 py-12">
+                    <div className="container mx-auto relative px-0 pt-12 md:pb-12 pb-8">
                         <div className="lg:flex md:flex items-center justify-center">
                             <div className="lg:w-1/2 md:w-1/2 w-full sm:px-4">
                                 <h2 className='text-4xl font-bold text-gray-800 mb-2'>{ heading || 'Welcome' }</h2>
@@ -28,7 +28,7 @@ const Header = ({ heading, description, button_text, button_link, api_call}) => 
                                         </button>
                                     </Link>
                                     :
-                                    <button onClick={handleClick} className="bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 font-semibold my-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
+                                    <button onClick={handleClick} className="bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 font-semibold mt-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
                                         { button_text || 'Explore Now!' }
                                     </button>
                                 }
