@@ -97,7 +97,7 @@ const AccountNavbar = ({ path }) => {
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                       >
                         <FontAwesomeIcon icon={faUser} className="mr-2" />
-                        <a href={`${path}/${user.result.username}`}>Account</a>
+                        <a href={`${path}/account`}>Account</a>
                       </li>
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
@@ -184,7 +184,7 @@ const AccountNavbar = ({ path }) => {
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                       >
                         <FontAwesomeIcon icon={faUser} className="mr-2" />
-                        <a href={`${path}/${user.result.username}`}>Account</a>
+                        <a href={`${path}/account`}>Account</a>
                       </li>
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
