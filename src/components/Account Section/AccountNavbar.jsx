@@ -1,24 +1,34 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { nav_links, user_navLinks } from "../constants";
-import { faUser, faGear, faRightFromBracket, faDashboard, faFolder , faEnvelope} from "@fortawesome/free-solid-svg-icons";
-import { logout } from "../actions/auth";
+import { useState, useEffect } from "react";
+import { account_links } from "../../constants";
+import { faUser, faGear, faRightFromBracket, faDashboard, faFolder , faEnvelope, faChevronDown, faChevronUp} from "@fortawesome/free-solid-svg-icons";
+import { logout } from "../../actions/auth";
 import { useDispatch, useSelector } from 'react-redux'
 
-import Logo from '../assets/logo.png'
-import Avatar from '../assets/avatar.png'
+import Logo from '../../assets/logo.png'
+import Avatar from '../../assets/avatar.png'
 
-const Navbar = ({ path }) => {
+const AccountNavbar = ({ path }) => {
   const dispatch = useDispatch()
   const navigate  = useNavigate()
 
-  const [isActive, setIsActive] = useState(false);
+  const [isActive, setIsActive] = useState(false)
+  const [active, setActive] = useState(null)
   const [toggle, setToggle] = useState(false)
 
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
   
+  useEffect(() => {
+    account_links.some(function(link, i) {
+        if (link.path == location.pathname.split('/').at(-1)) {
+            setActive(i)
+            return true;
+        }
+    });
+  }, [])
+
   const sign_out = () => {
     dispatch(logout())
     navigate(`${path}/login`)
@@ -26,11 +36,35 @@ const Navbar = ({ path }) => {
   }
 
   return (
-    <nav className="relative flex items-center justify-between flex-wrap bg-gray-800 p-6 z-10">
-      <Link to={`${path}`}>
+    <nav className="relative flex flex-row items-center justify-between flex-wrap bg-white lg:px-6 lg:p-0 p-6 lg:pt-2 z-10 shadow-lg">
+      <div className="hidden lg:block text-sm text-gray-800 my-2">
+          <div className="flex flex-row items-center justify-between flex-wrap">
+            {
+              account_links.map((link, i) => {
+                  return (
+                    <>
+                      <Link key={i} to={`/account/${link.path}`} style={{borderBottom: (i === active) || (link.path === location.pathname.split('/').at(-1)) ? "4px solid #1F2937" : "4px solid transparent", fontWeight: (i === active) || (link.path === location.pathname.split('/').at(-1)) ? 700 : 500}} className="block lg:inline-block lg:mt-0 border-b-4 border-solid hover:border-gray-800 border-transparent hover:text-gray-900 mx-4 pb-2" 
+                        onClick={() => {
+                          setIsActive(!isActive)
+                          setActive(i)
+                        }
+                      }>
+                          {link.name}
+                      </Link>
+                      {
+                        i !== account_links.length - 1 &&
+                          <div className="border-l w-[1px] h-full border-solid border-gray-400"><p className="opacity-0">.</p></div>
+                      }
+                    </>
+                  )
+              })
+            }
+          </div>
+      </div>
+      <Link to={`/`} className="block lg:hidden">
         <div className="flex items-center flex-shrink-0 text-white mr-6">
             <img className="h-8 w-8 rounded-full mr-2" src={Logo} alt="Profile" />
-            <span className="font-semibold text-xl tracking-tight">RazorScythe</span>
+            <span className="font-semibold text-xl tracking-tight text-gray-800">RazorScythe</span>
         </div>
       </Link>
       <div className="block lg:hidden flex">
@@ -100,37 +134,44 @@ const Navbar = ({ path }) => {
           </a>
         }
       </div>
-      <div className={`font-poppins w-full block flex-grow lg:flex lg:items-center m-auto lg:w-auto ${isActive ? "block" : "hidden"}`}>
-        <div className="text-sm lg:flex-grow text-center">
-          {
-            nav_links.map((link, i) => {
-                return (
-                  <Link key={i} to={`${path}/${link.path}`} className="block mt-4 lg:inline-block lg:mt-0 text-blue-200 hover:text-white mr-4" onClick={() => setIsActive(!isActive)}>
-                    <FontAwesomeIcon icon={link.icon} className="mr-2" />
-                    {link.name}
-                  </Link>
-                )
-            })
-          }
-        </div>
-        <div className="relative lg:mt-0 mt-4 font-poppins">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-            <FontAwesomeIcon icon={faSearch} className="text-gray-500" />
-          </span>
-          <input className="block w-full bg-gray-200 text-sm text-gray-700 rounded-full py-2 px-4 pl-10 leading-tight focus:outline-none focus:bg-white focus:text-gray-900" type="text" placeholder="Search" />
+      <Link to={`/`} className="hidden lg:block">
+          <div className="w-40 absolute left-0 right-0 mx-auto top-0 bottom-0 flex items-center justify-center text-white">
+                <img className="h-8 w-8 rounded-full mr-2" src={Logo} alt="Profile" />
+                <span className="font-bold text-xl tracking-tight text-gray-800">RazorScythe</span>
+          </div>
+      </Link>
+      <div className={`font-poppins w-full block lg:flex lg:items-center justify-end lg:w-auto ${isActive ? "block" : "hidden"} `}>
+        <div className="text-sm lg:flex-grow block lg:hidden">
+            {
+              account_links.map((link, i) => {
+                  return (
+                    <Link key={i} to={`${path}/${link.path}`} className="block mt-4 lg:inline-block lg:mt-0 text-blue-200 hover:text-white mr-4" onClick={() => setIsActive(!isActive)}>
+                      {link.name}
+                    </Link>
+                  )
+              })
+            }
         </div>
         <div className="hidden lg:block flex">
           {
             user?.result? 
             <>
-                <img className="h-10 w-10 rounded-full ml-4 cursor-pointer object-cover" src={Avatar} alt="Profile" onClick={() => {
+                {/* <img className="h-10 w-10 rounded-full ml-4 cursor-pointer object-cover" src={Avatar} alt="Profile" onClick={() => {
                   setToggle(!toggle)
                   setIsActive(false)
-                }} />
+                }} /> */}
+                <div className="flex flex-row items-center cursor-pointer" 
+                  onClick={() => {
+                  setToggle(!toggle)
+                  setIsActive(false)
+                }}>
+                  <h2 className="text-sm font-semibold capitalize pb-2">{user.result.username}</h2>
+                  <FontAwesomeIcon icon={toggle ? faChevronUp : faChevronDown} className="ml-2 w-3 h-3 pb-2" />
+                </div>
                 <div
                   className={`${
                     !toggle ? "hidden" : "flex"
-                  } p-6 bg-gray-800 absolute top-[90px] right-0 mx-2 my-2 min-w-[140px] rounded-xl sidebar text-sm font-poppins`}
+                  } p-6 bg-gray-800 absolute top-[50px] right-0 mx-2 my-2 min-w-[140px] rounded-xl sidebar text-sm font-poppins`}
                 >
                   <ul className="list-none flex justify-end items-start flex-1 flex-col">
                       <li
@@ -184,4 +225,4 @@ const Navbar = ({ path }) => {
     </nav>
 )}
 
-export default Navbar;
+export default AccountNavbar;
