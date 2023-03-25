@@ -1,21 +1,29 @@
 import React,{ useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch, useSelector } from 'react-redux'
 import { Header } from './index'
+import { uploadHero, getPortfolio } from "../../actions/portfolio";
 import styles from '../../style'
 
 const AccountPortfolio = () => {
+    const portfolio = useSelector((state) => state.portfolio.data.hero)
+    const dispatch = useDispatch()
+    
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
 
-    const [active, setActive] = useState(1)
     const [hero, setHero] = useState({
+        id: user.result?._id,
+        image: '',
         full_name: '',
         description: '',
         profession: [],
-        animation: false
+        animation: ''
     })
 
     const [input, setInput] = useState({
         hero: {
+            image: '',
             full_name: '',
             description: '',
             profession: '',
@@ -23,19 +31,20 @@ const AccountPortfolio = () => {
         }
     })
 
-    const [test, setTest ] = useState([])
+    useEffect(() => {
+        dispatch(getPortfolio({id: user.result?._id}))
+    }, [])
 
-    // useEffect(() => {
-    //     let x = {
-    //         name: "james",
-    //         age: 22
-    //     }
-    //     setTest(test.concat(x))
-    // }, [])
+    useEffect(() => {
+        setHero({
+            ...hero,
+            full_name: portfolio ? portfolio.full_name : '',
+            description: portfolio ? portfolio.description : '',
+            profession: portfolio ? portfolio.profession : [],
+            animation: portfolio ? portfolio.animation : ''
+        })
+    }, [portfolio])
 
-    // useEffect(() => {
-    //     console.log(test)
-    // }, [test])
     const addProfession = () => {
         let duplicate = false
 
@@ -51,9 +60,28 @@ const AccountPortfolio = () => {
     }
 
     const deleteProfession = (e) => {
-        let arr = hero.profession
+        let arr = [...hero.profession]
         arr.splice(e.currentTarget.id, 1)
         setHero({ ...hero, profession: [...arr] })
+    }
+
+    const convertImage = async (e) => {
+        setInput({...input, hero: { ...hero, image: e.target.value }})
+        if(e.target.files[0] && e.target.files[0]['type'].split('/')[0] === 'image'){
+            let convert = await toBase64(e.target.files[0])
+            setHero({ ...hero, image:convert })
+        }
+    }
+
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+
+    const handleSubmit = () => {
+        dispatch(uploadHero(hero))
     }
 
     return (
@@ -71,13 +99,16 @@ const AccountPortfolio = () => {
                             <h2 className='text-3xl font-bold text-gray-800 mb-8'>{ 'Hero Section' }</h2>
                             <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                                 <div className='flex flex-col'>
-                                    <label class="block mb-2 font-medium" for="file_input">Upload file</label>
+                                    <label className="block mb-2 font-medium" htmlFor="file_input">Upload file</label>
                                     <input 
                                         className="block w-full text-gray-800 border border-gray-300 cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
                                         id="file_input" 
                                         type="file"
+                                        accept="image/*" 
+                                        onChange={convertImage}
+                                        value={input.hero.image}
                                     />
-                                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">SVG, PNG, JPG or GIF (MAX. 800x400px).</p>
+                                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">PNG, JPG</p>
                                 </div>
                             </div>
                             <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1  gap-5 place-content-start mb-4'>
@@ -86,6 +117,8 @@ const AccountPortfolio = () => {
                                     <input 
                                         type="text" 
                                         className='p-2 border border-solid border-[#c0c0c0]'
+                                        onChange={(e) => setHero({...hero, full_name: e.target.value})}
+                                        value={hero.full_name}
                                     />
                                 </div>
                             </div>
@@ -111,7 +144,7 @@ const AccountPortfolio = () => {
                                         hero.profession.length > 0 &&
                                             hero.profession.map((item, i) => {
                                                 return (
-                                                    <div className='w-full flex flex-row p-2 py-3 bg-gray-800 mb-1'>
+                                                    <div key={i} className='w-full flex flex-row p-2 py-3 bg-gray-800 mb-1'>
                                                         <div className='w-1/2 flex flex-row items-center'>
                                                             <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold'>{item}</p>
                                                         </div>
@@ -126,7 +159,7 @@ const AccountPortfolio = () => {
                             </div>
                             <div className='grid md:grid-cols-2 sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
                                 <div className='flex flex-col'>
-                                    <label className='font-semibold'> Message: </label>
+                                    <label className='font-semibold'> Portfolio description: </label>
                                     <div className='flex flex-row'>
                                         <textarea
                                             name="message"
@@ -135,24 +168,27 @@ const AccountPortfolio = () => {
                                             rows="8"
                                             placeholder="Message"
                                             className="w-full p-2 border border-solid border-[#c0c0c0]"
+                                            onChange={(e) => setHero({...hero, description: e.target.value})}
+                                            value={ hero.description }
                                         >
                                         </textarea>
                                     </div>
                                 </div>
                             </div>
                             <div className='grid md:grid-cols-2 sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
-                                <div class="flex items-center mb-4">
+                                <div className="flex items-center mb-4">
                                     <input 
                                         id="default-checkbox" 
                                         type="checkbox" 
-                                        value="" 
+                                        checked={hero.animation}
+                                        onChange={() => setHero({...hero, animation: !hero.animation})}
                                         className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                     />
-                                    <label for="default-checkbox" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Typing Animation</label>
+                                    <label htmlFor="default-checkbox" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Typing Animation</label>
                                 </div>
                             </div>
                             <div className='grid md:grid-cols-2 sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
-                                <button onClick={addProfession} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
+                                <button onClick={handleSubmit} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
                                     Save
                                 </button>
                             </div>

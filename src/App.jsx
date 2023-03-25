@@ -15,7 +15,7 @@ const App = () => {
   const [user, setUser] = useState(userData? userData : null)
 
   useEffect(() => {
-    console.log(user)
+    // console.log(user)
   }, [user])
   
   return (

@@ -17,5 +17,12 @@ const headers = {
 /*
     Sign in
 */
-export const SignIn                 = (formData) => User_API.post('/auth/signin', formData)
-export const getAccountRole         = () => Admin_API.get('/accounts/')
+export const SignIn                                     = (formData) => User_API.post('/auth/signin', formData)
+export const getAccountRole                             = () => Admin_API.get('/accounts/')
+
+
+/*
+    Portfolio
+*/
+export const getPortfolio                               = (formData) => User_API.post('/portfolio/getPortfolio', formData)
+export const uploadPortfolioHero                        = (formData) => User_API.post('/portfolio/hero', formData)
