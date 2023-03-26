@@ -34,7 +34,7 @@ const Hero = () => {
                 image: hero && hero.image && hero.image !== '' ? hero.image : 'https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg?w=2000',
                 full_name: hero && hero.full_name && hero.full_name !== '' ? hero.full_name : 'Insert full name',
                 description: hero && hero.description && hero.description !== '' ? hero.description : 'Insert description',
-                profession: hero && hero.profession.length === 1 ? [...hero.profession, ...hero.profession] : hero.length > 0 ? hero.profession : ['Insert profession', 'Insert profession'],
+                profession: hero && hero.profession.length === 1 ? [...hero.profession, ...hero.profession] : hero.professionlength > 0 ? hero.profession : ['Insert profession', 'Insert profession'],
                 animation: hero && hero.animation ? hero.animation : true,
             })
         }
