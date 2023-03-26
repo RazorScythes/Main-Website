@@ -3,7 +3,7 @@ import styles from "../../style";
 
 import { Hero, Feature, GameList, News, Service, Socials, Users, Footer } from '../index'
 import { toram_online, genshin_impact, minecraft, tower_of_fantasy, watching_video } from '../../assets';
-
+import Alert from '../Alert';
 // Static Services Component 
 const service_multiple_image = [
     { src: toram_online, alt: 'Image 1' },
@@ -24,6 +24,7 @@ const Home = ({ path }) => {
     }, [])
     return (
         <div>
+            <Alert />
             <Hero />
 
             <div className={`${styles.paddingX} ${styles.flexCenter}`}>

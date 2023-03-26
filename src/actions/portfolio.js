@@ -4,6 +4,8 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 const initialState = {
     error: '',
     isLoading: false,
+    alert: '',
+    variant: '',
     data: {}
 }
 
@@ -32,7 +34,8 @@ export const portfolioSlice = createSlice({
     initialState,
     extraReducers: (builder) => {
       builder.addCase(getPortfolio.fulfilled, (state, action) => {
-        state.data = action.payload.data
+        console.log(action.payload.data.result)
+        state.data = action.payload.data.result
         state.error = ''
         state.isLoading = false
       }),
@@ -40,7 +43,9 @@ export const portfolioSlice = createSlice({
         state.error = action.payload
       }),
       builder.addCase(uploadHero.fulfilled, (state, action) => {
-        state.data = action.payload.data
+        state.data = action.payload.data.result
+        state.alert = action.payload.data.alert
+        state.variant = action.payload.data.variant
         state.error = ''
         state.isLoading = false
       }),
@@ -49,8 +54,13 @@ export const portfolioSlice = createSlice({
       })
     },
     reducers: {
-      
+      clearAlert: (state) => {
+        state.alert = '',
+        state.variant = ''
+      }
     },
 })
+
+export const { clearAlert } = portfolioSlice.actions
 
 export default portfolioSlice.reducer

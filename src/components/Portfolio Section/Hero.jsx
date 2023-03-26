@@ -1,16 +1,53 @@
 import React, { useEffect, useState } from "react";
 import heroImage from '../../assets/hero-image.jpg';
+import { useDispatch, useSelector } from 'react-redux'
+import { getPortfolio } from "../../actions/portfolio";
 import styles from "../../style";
 
 const Hero = () => {
-    
-    const profession = [
-        'Web Developer',
-        'Web Designer',
-        'Digital Artist',
-        'Software Developer'
-    ]
+
+    const dispatch = useDispatch()
+
+    const hero = useSelector((state) => state.portfolio.data.hero)
+
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
+
+    const [heroData, setHeroData] = useState({
+        image: '',
+        full_name: '',
+        description: '',
+        profession: [],
+        animation: false
+    })
+
+    // const profession = [
+    //     'Web Developer',
+    //     'Web Designer',
+    //     'Digital Artist',
+    //     'Software Developer'
+    // ]
+
+    useEffect(() => {
+        if(hero){
+            setHeroData({
+                ...heroData,
+                image: hero && hero.image && hero.image !== '' ? hero.image : 'https://img.freepik.com/free-vector/page-found-concept-illustration_114360-1869.jpg?w=2000',
+                full_name: hero && hero.full_name && hero.full_name !== '' ? hero.full_name : 'Insert full name',
+                description: hero && hero.description && hero.description !== '' ? hero.description : 'Insert description',
+                profession: hero && hero.profession.length === 1 ? [...hero.profession, ...hero.profession] : hero.length > 0 ? hero.profession : ['Insert profession', 'Insert profession'],
+                animation: hero && hero.animation ? hero.animation : true,
+            })
+        }
+    }, [hero])
+
+    useEffect(() => {
+        console.table(heroData)
+    }, [heroData])
     const [index, setIndex] = useState(0)
+
+    useEffect(() => {
+        dispatch(getPortfolio({id: user.result?._id}))
+    }, [])
 
     // useEffect(() => {
     //     const timer = window.setInterval(() => {
@@ -32,15 +69,16 @@ const Hero = () => {
         useEffect(() => {
           let timer = null;
           let currentIndex = 0;
-          function typeNextLetter() {
-            if (currentIndex >= texts[index].length) {
-              // When the typing is done, start deleting
-              setIsDeleting(true);
-              setTimeout(() => {
-                setIsDeleting(false);
-              }, delay);
-              return;
-            }
+        function typeNextLetter() {
+            //if(texts.length > 0)
+                if (currentIndex >= texts[index].length) {
+                // When the typing is done, start deleting
+                setIsDeleting(true);
+                setTimeout(() => {
+                    setIsDeleting(false);
+                }, delay);
+                return;
+                }
 
             if(currentIndex === 1)
                 setCurrentText((prevText) => prevText + (texts[index].charAt(1)+texts[index].charAt(2)));
@@ -49,7 +87,7 @@ const Hero = () => {
 
             currentIndex++;
             timer = setTimeout(typeNextLetter, typingSpeed);
-          }
+        }
 
           function deleteNextLetter() {
             setCurrentText((prevText) => prevText.slice(0, -1));
@@ -98,18 +136,18 @@ const Hero = () => {
                         <div className="lg:flex md:flex items-center justify-evenly">
                             <div className="lg:w-3/5 md:w-3/5 w-full sm:px-4">
                                 <h1 style={{lineHeight: "1.2em"}} className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter text-white mb-4 capitalize">
-                                    <span style={{color: "#CD3242"}}>Hello I'm</span>, <br/><span className="text-5xl md:text-6xl">James Arvie Maderas</span>
+                                    <span style={{color: "#CD3242"}}>Hello I'm</span>, <br/><span className="text-5xl md:text-6xl">{ heroData.full_name }</span>
                                 </h1>
-                                <TypingText texts={profession} index={index} setIndex={setIndex} />
+                                <TypingText texts={ heroData.profession } index={index} setIndex={setIndex} />
                                 <p className="text-white text-lg sm:text-xl md:text-lg leading-relaxed mb-4">
-                                    Explore the latest games, consoles, and technologies, along with personal stories, insights, and experiences on this website. From reviews and walkthroughs to blog posts and videos, I offer a diverse range of content that is sure to keep you entertained and engaged.
+                                    { heroData.description }
                                 </p>
                                 <button className="bg-gray-100 hover:bg-transparent hover:text-gray-100 text-gray-800 font-semibold my-8 py-2 px-8 border border-gray-100 rounded transition-colors duration-300 ease-in-out" onClick={() => loginWithRedirect()}>
                                     Hire Me!
                                 </button>
                             </div>
                             <div className="lg:w-1/3 md:w-1/3 md:block hidden ml-0">
-                                <img src={heroImage} alt="Hero Image" className="rounded-lg shadow-lg lg:w-[400px]"/>
+                                <img src={heroData.image} alt="Hero Image" className="rounded-lg shadow-lg lg:w-[400px]"/>
                             </div>
                         </div>
                     </div>
