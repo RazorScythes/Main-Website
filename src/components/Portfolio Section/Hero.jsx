@@ -1,16 +1,9 @@
 import React, { useEffect, useState } from "react";
-import heroImage from '../../assets/hero-image.jpg';
-import { useDispatch, useSelector } from 'react-redux'
-import { getPortfolio } from "../../actions/portfolio";
+import { LazyLoadImage } from 'react-lazy-load-image-component';
+import 'react-lazy-load-image-component/src/effects/blur.css';
 import styles from "../../style";
 
-const Hero = () => {
-
-    const dispatch = useDispatch()
-
-    const hero = useSelector((state) => state.portfolio.data.hero)
-
-    const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
+const Hero = ({ hero }) => {
 
     const [heroData, setHeroData] = useState({
         image: '',
@@ -19,13 +12,6 @@ const Hero = () => {
         profession: [],
         animation: false
     })
-
-    // const profession = [
-    //     'Web Developer',
-    //     'Web Designer',
-    //     'Digital Artist',
-    //     'Software Developer'
-    // ]
 
     useEffect(() => {
         if(hero){
@@ -40,24 +26,7 @@ const Hero = () => {
         }
     }, [hero])
 
-    useEffect(() => {
-        console.table(heroData)
-    }, [heroData])
     const [index, setIndex] = useState(0)
-
-    useEffect(() => {
-        dispatch(getPortfolio({id: user.result?._id}))
-    }, [])
-
-    // useEffect(() => {
-    //     const timer = window.setInterval(() => {
-    //         if(index === profession.length - 1) setIndex(0)
-    //         else setIndex(index + 1)
-    //     }, 4000);
-    //     return () => { // Return callback to run on unmount.
-    //         window.clearInterval(timer);
-    //     };
-    // }, [index])
 
     function TypingText({ texts, index, setIndex }) {
         const [currentText, setCurrentText] = useState("");
@@ -122,11 +91,9 @@ const Hero = () => {
         );
     }
 
-    const texts = ["Hello, world!", "How are you?", "I'm doing well, thanks."];
     return (
         <div
             className="relative bg-cover bg-center py-14"
-        //   style={{ backgroundImage: `url(${heroBackgroundImage})` }}
             style={{ backgroundColor: "#111221" }}
         >   
             <div className={`${styles.marginX} ${styles.flexCenter}`}>
@@ -147,7 +114,14 @@ const Hero = () => {
                                 </button>
                             </div>
                             <div className="lg:w-1/3 md:w-1/3 md:block hidden ml-0">
-                                <img src={heroData.image} alt="Hero Image" className="rounded-lg shadow-lg lg:w-[400px]"/>
+                                <div className="rounded-lg shadow-lg lg:w-[400px]">
+                                    <LazyLoadImage
+                                        effect="blur"
+                                        alt="Hero Image"    
+                                        placeholderSrc={heroData.image}                  
+                                        src={heroData.image}
+                                    />
+                                </div>
                             </div>
                         </div>
                     </div>

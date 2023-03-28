@@ -18,6 +18,7 @@ const Hero = ({ user, portfolio }) => {
         variant: ''
     })
 
+    const [image, setImage] = useState('')
     const [hero, setHero] = useState({
         id: user.result?._id,
         image: '',
@@ -83,6 +84,16 @@ const Hero = ({ user, portfolio }) => {
 
     const convertImage = async (e) => {
         setInput({...input, hero: { ...hero, image: e.target.value }})
+        
+        if(e.target.files[0] && e.target.files[0]['type'].split('/')[0] === 'image'){
+            let convert = await toBase64(e.target.files[0])
+            setHero({ ...hero, image:convert })
+        }
+        return
+        setImage(e.target.files[0])
+        setInput({...input, hero: { ...hero, image: e.target.value }})
+        return
+        
         if(e.target.files[0] && e.target.files[0]['type'].split('/')[0] === 'image'){
             let convert = await toBase64(e.target.files[0])
             setHero({ ...hero, image:convert })
@@ -97,6 +108,16 @@ const Hero = ({ user, portfolio }) => {
     });
 
     const handleSubmit = () => {
+        let formData = new FormData()
+
+        if(image)
+            formData.append("image", image)
+
+        Object.entries(hero).map((keyName) => {
+            formData.append(keyName[0], keyName[1])
+        })
+        
+        // dispatch(uploadHero(formData))
         dispatch(uploadHero(hero))
     }
 

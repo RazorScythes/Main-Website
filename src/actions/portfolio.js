@@ -15,7 +15,13 @@ export const uploadHero = createAsyncThunk('portfolio/uploadHero', async (form, 
         return response
     }
     catch (err) {
-        return thunkAPI.rejectWithValue(err.response.data.message);
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
     }
 })
 
@@ -25,7 +31,13 @@ export const getPortfolio = createAsyncThunk('portfolio/getPortfolio', async (fo
         return response
     }
     catch (err) {
-        return thunkAPI.rejectWithValue(err.response.data.message);
+        if(err.response.data)
+        return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
     }
 })
 
@@ -34,13 +46,13 @@ export const portfolioSlice = createSlice({
     initialState,
     extraReducers: (builder) => {
       builder.addCase(getPortfolio.fulfilled, (state, action) => {
-        console.log(action.payload.data.result)
         state.data = action.payload.data.result
         state.error = ''
         state.isLoading = false
       }),
       builder.addCase(getPortfolio.rejected, (state, action) => {
-        state.error = action.payload
+        state.alert = action.payload.message
+        state.variant = action.payload.variant
       }),
       builder.addCase(uploadHero.fulfilled, (state, action) => {
         state.data = action.payload.data.result
@@ -50,7 +62,8 @@ export const portfolioSlice = createSlice({
         state.isLoading = false
       }),
       builder.addCase(uploadHero.rejected, (state, action) => {
-        state.error = action.payload
+        state.alert = action.payload.message
+        state.variant = action.payload.variant
       })
     },
     reducers: {
