@@ -1,16 +1,23 @@
 import React,{ useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faChevronRight, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { uploadHero, getPortfolio } from "../../../actions/portfolio";
 import { clearAlert } from '../../../actions/portfolio';
+import { portfolio_selector } from '../../../constants';
+
 import Alert from '../../Alert';
-const Hero = ({ user, portfolio }) => {
+const Hero = ({ user, portfolio, index, setIndex }) => {
 
     const dispatch = useDispatch()
 
     const alert = useSelector((state) => state.portfolio.alert)
     const variant = useSelector((state) => state.portfolio.variant)
+
+    const [toggle, setToggle] = useState(false)
+    const [active, setActive] = useState(0)
+    
+    const [submitted, setSubmitted] = useState(false)
 
     const [showAlert, setShowAlert] = useState(false)
     const [alertInfo, setAlertInfo] = useState({
@@ -108,17 +115,12 @@ const Hero = ({ user, portfolio }) => {
     });
 
     const handleSubmit = () => {
-        let formData = new FormData()
-
-        if(image)
-            formData.append("image", image)
-
-        Object.entries(hero).map((keyName) => {
-            formData.append(keyName[0], keyName[1])
-        })
-        
-        // dispatch(uploadHero(formData))
-        dispatch(uploadHero(hero))
+        if(!submitted){
+            dispatch(uploadHero(hero))
+            setSubmitted(true)
+        }
+        setHero({...hero, image: ''})
+        setInput({...input, hero: {...input.hero, image: ''}})
     }
 
     return (
@@ -127,7 +129,39 @@ const Hero = ({ user, portfolio }) => {
                 alertInfo.alert && alertInfo.variant && showAlert &&
                     <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
             }
-            <h2 className='text-3xl font-bold text-gray-800 mb-8'>{ 'Hero Section' }</h2>
+            <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
+                <div className='relative'>
+                    <div className='flex flex-row items-center relative'>
+                        <h2 className='text-3xl font-bold text-gray-800 mb-12'>{ portfolio_selector[index] }</h2>
+                        <FontAwesomeIcon onClick={() => setToggle(!toggle)} icon={faChevronDown} className="absolute mt-1 right-0 top-0 bg-gray-800 text-white border border-solid border-gray-800 p-[7px] hover:bg-transparent hover:text-gray-800 transition-all cursor-pointer rounded-sm ml-4 w-4 h-4"/>
+                    </div>
+                    <div
+                        className={`${
+                        !toggle ? "hidden" : "flex"
+                        } p-6 bg-gray-800 absolute top-8 right-0  mx-0 my-2 min-w-[140px] rounded-xl sidebar text-sm font-poppins`}
+                    >
+                        <ul className="list-none flex justify-end items-start flex-1 flex-col">
+                            {
+                                portfolio_selector.map((selector, i) => {
+                                    return(
+                                        <li
+                                            onClick={() => {
+                                                setActive(i)
+                                                setIndex(i)
+                                            }}
+                                            key={i}
+                                            className={`cursor-pointer ${active === i ? 'text-[#FFFF00]' : 'text-white'} hover:text-blue-200 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-4'}`}
+                                        >
+                                            <FontAwesomeIcon icon={faChevronRight} className="mr-2" />
+                                            <a href={`#`}>{selector}</a>
+                                        </li>
+                                    )   
+                                })
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
             <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                 <div className='flex flex-col'>
                     <label className="block mb-2 font-medium" htmlFor="file_input">Upload file</label>

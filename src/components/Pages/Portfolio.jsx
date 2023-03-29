@@ -13,6 +13,7 @@ const Portfolio = () => {
 
     const portfolio = useSelector((state) => state.portfolio.data)
     const hero = useSelector((state) => state.portfolio.data.hero)
+    const skills = useSelector((state) => state.portfolio.data.skills)
 
     useEffect(() => {
         dispatch(getPortfolio({id: user.result?._id}))
@@ -24,7 +25,7 @@ const Portfolio = () => {
                 Object.keys(portfolio).length !== 0 ? 
                     <>
                         <Hero hero={hero}/>
-                        <Skills />
+                        <Skills skills={skills}/>
                         <Services />
                         <Experience />
                         <Projects />
