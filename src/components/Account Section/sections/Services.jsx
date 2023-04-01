@@ -8,7 +8,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useDropzone } from 'react-dropzone'
 import IconPicker from '../../IconPicker';
 import Alert from '../../Alert';
-
 const Services = ({ user, portfolio, index, setIndex }) => {
 
     const dispatch = useDispatch()
@@ -87,11 +86,46 @@ const Services = ({ user, portfolio, index, setIndex }) => {
                 Promise.all(acceptedFiles.map(file => {
                     return (new Promise((resolve,reject) => {
                         const reader = new FileReader();
-                        reader.addEventListener('load', (ev) => {
-                            resolve(ev.target.result);
-                        });
-                        reader.addEventListener('error', reject);
                         reader.readAsDataURL(file);
+                        reader.onload = (event) => {
+                            const image = new Image();
+                            image.src = event.target.result;
+                            image.onload = () => {
+                              const canvas = document.createElement("canvas");
+                              let width = image.width;
+                              let height = image.height;
+                
+                              const MAX_SIZE = 400;
+                              const MAX_HEIGHT = 600;
+                              const MAX_WIDTH = 400;
+                
+                              if (width > height) {
+                                if (width > MAX_SIZE) {
+                                  height *= MAX_SIZE / width;
+                                  width = MAX_SIZE;
+                                }
+                              } else {
+                                if (height > MAX_HEIGHT) {
+                                  width *= MAX_HEIGHT / height;
+                                  height = MAX_HEIGHT;
+                                }
+                              }
+                
+                              if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                              }
+                
+                              canvas.width = width;
+                              canvas.height = height;
+                
+                              const ctx = canvas.getContext("2d");
+                              ctx.drawImage(image, 0, 0, width, height);
+                
+                              const base64String = canvas.toDataURL(file.type, 0.7);
+                              resolve(base64String);
+                            };
+                        };
                     }));
                 }))
                 .then(images => {
@@ -116,15 +150,57 @@ const Services = ({ user, portfolio, index, setIndex }) => {
         
         if(e.target.files[0] && e.target.files[0]['type'].split('/')[0] === 'image'){
             let convert = await toBase64(e.target.files[0])
+            console.log(convert)
             setAddInput({ ...addInput, featured_image: convert })
         }
     }
 
     const toBase64 = file => new Promise((resolve, reject) => {
+        // const reader = new FileReader();
+        // reader.readAsDataURL(file);
+        // reader.onload = () => resolve(reader.result);
+        // reader.onerror = error => reject(error);
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = error => reject(error);
+        reader.onload = (event) => {
+            const image = new Image();
+            image.src = event.target.result;
+            image.onload = () => {
+                const canvas = document.createElement("canvas");
+                let width = image.width;
+                let height = image.height;
+
+                const MAX_SIZE = 400;
+                const MAX_HEIGHT = 600;
+                const MAX_WIDTH = 400;
+
+                if (width > height) {
+                if (width > MAX_SIZE) {
+                    height *= MAX_SIZE / width;
+                    width = MAX_SIZE;
+                }
+                } else {
+                if (height > MAX_HEIGHT) {
+                    width *= MAX_HEIGHT / height;
+                    height = MAX_HEIGHT;
+                }
+                }
+
+                if (width > MAX_WIDTH) {
+                height *= MAX_WIDTH / width;
+                width = MAX_WIDTH;
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext("2d");
+                ctx.drawImage(image, 0, 0, width, height);
+
+                const base64String = canvas.toDataURL(file.type, 0.7);
+                resolve(base64String);
+            };
+        };
     });
 
     const addService = () => {
@@ -233,6 +309,7 @@ const Services = ({ user, portfolio, index, setIndex }) => {
 
     return (
         <div className="container mx-auto relative px-0 sm:px-4 py-16">
+            
             {
                 alertInfo.alert && alertInfo.variant && showAlert &&
                     <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />

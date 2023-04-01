@@ -1,11 +1,10 @@
 import React, { useState } from "react";
-import heroImage from '../../assets/hero-image.jpg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faCalendar, faSitemap, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import styles from "../../style";
-import { photshop_svg } from "../../assets";
 
 const Services = () => {
+    
     const [active, setActive] = useState(0)
 
     const data = [
