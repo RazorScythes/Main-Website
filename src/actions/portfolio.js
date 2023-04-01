@@ -47,7 +47,7 @@ export const uploadServices = createAsyncThunk('portfolio/uploadServices', async
       return response
   }
   catch (err) {
-      console.log(err.response)
+      console.log(err)
       if(err.response.data)
         return thunkAPI.rejectWithValue(err.response.data);
 
