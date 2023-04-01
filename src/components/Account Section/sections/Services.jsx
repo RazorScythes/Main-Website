@@ -45,8 +45,8 @@ const Services = ({ user, portfolio, index, setIndex }) => {
     const [focus, setFocus] = useState(0)
 
     useEffect(() => {
-        if(addInput.gallery.length > 9){
-            setAddInput({...addInput, gallery: addInput.gallery.slice(0,9)})
+        if(addInput.gallery.length > 6){
+            setAddInput({...addInput, gallery: addInput.gallery.slice(0,6)})
         }
     }, [addInput.gallery])
 
@@ -150,16 +150,11 @@ const Services = ({ user, portfolio, index, setIndex }) => {
         
         if(e.target.files[0] && e.target.files[0]['type'].split('/')[0] === 'image'){
             let convert = await toBase64(e.target.files[0])
-            console.log(convert)
             setAddInput({ ...addInput, featured_image: convert })
         }
     }
 
     const toBase64 = file => new Promise((resolve, reject) => {
-        // const reader = new FileReader();
-        // reader.readAsDataURL(file);
-        // reader.onload = () => resolve(reader.result);
-        // reader.onerror = error => reject(error);
         const reader = new FileReader();
         reader.readAsDataURL(file);
         reader.onload = (event) => {
@@ -282,7 +277,7 @@ const Services = ({ user, portfolio, index, setIndex }) => {
         updatedServices[focus] = {...updatedServices[focus], type_of_service: updatedTypeOfService};
         setServices(updatedServices);
 
-        setAlertInfo({alert: 'Services created! Make sure to save it', variant: 'success'})
+        setAlertInfo({alert: 'Services created! Make sure to save it first before adding another.', variant: 'success'})
 
         setAddInput({
             featured_image: '',
@@ -480,7 +475,7 @@ const Services = ({ user, portfolio, index, setIndex }) => {
                                                                 :
                                                                     <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload app icon</span> or drag and drop</p>
                                                             }
-                                                            <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 9 images 800x600px)</p>
+                                                            <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 6 images 400x600px)</p>
                                                         </div>
                                                         <input accept="image/*" {...getInputProps()}/>
                                                     </label>
@@ -501,7 +496,7 @@ const Services = ({ user, portfolio, index, setIndex }) => {
                                             </div>
                                             <p className='text-gray-500 text-sm italic'>#You cannot edit this once you submitted this form</p>
                                             <div className='grid grid-cols-1 gap-5 place-content-start my-2'>
-                                                <button onClick={createService} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
+                                                <button disabled={true} onClick={createService} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent disable:bg-gray-400 hover:text-gray-800 rounded-sm transition-all text-white p-2'>
                                                     Add
                                                 </button>
                                             </div>
