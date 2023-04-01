@@ -1,6 +1,6 @@
 import React,{ useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faChevronRight, faChevronDown, faChevronUp, faClose } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faChevronRight, faChevronDown, faClose } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { uploadSkills, getPortfolio } from "../../../actions/portfolio";
 import { clearAlert } from '../../../actions/portfolio';
@@ -287,7 +287,7 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
                                                 setIndex(i)
                                             }}
                                             key={i}
-                                            className={`cursor-pointer ${active === i ? 'text-[#FFFF00]' : 'text-white'} hover:text-blue-200 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-4'}`}
+                                            className={`cursor-pointer ${index === i ? 'text-[#FFFF00]' : 'text-white'} hover:text-blue-200 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-4'}`}
                                         >
                                             <FontAwesomeIcon icon={faChevronRight} className="mr-2" />
                                             <a href={`#`}>{selector}</a>
@@ -369,7 +369,7 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
                             <label className='font-semibold'> Percentage: </label>
                             <div className='flex flex-row'>
                                 <input 
-                                    type="text" 
+                                    type="number" 
                                     className='w-full p-2 border border-solid border-[#c0c0c0]'
                                     value={input.skill.percentage}
                                     onChange={(e) => setInput({...input, skill:{ ...input.skill, percentage: e.target.value }})}
@@ -398,7 +398,7 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
                                     </div>
                                 )
                             })
-                        }
+                    }
                 </div>
             </div>
             <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>

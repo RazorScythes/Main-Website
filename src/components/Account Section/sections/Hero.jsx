@@ -150,7 +150,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                                                 setIndex(i)
                                             }}
                                             key={i}
-                                            className={`cursor-pointer ${active === i ? 'text-[#FFFF00]' : 'text-white'} hover:text-blue-200 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-4'}`}
+                                            className={`cursor-pointer ${index === i ? 'text-[#FFFF00]' : 'text-white'} hover:text-blue-200 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-4'}`}
                                         >
                                             <FontAwesomeIcon icon={faChevronRight} className="mr-2" />
                                             <a href={`#`}>{selector}</a>

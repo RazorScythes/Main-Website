@@ -7,11 +7,14 @@ import { uploadHero, getPortfolio } from "../../actions/portfolio";
 
 import Hero from './sections/Hero';
 import Skills from './sections/Skills';
+import Services from './sections/Services';
+
 import styles from '../../style'
 
 const AccountPortfolio = () => {
     const hero = useSelector((state) => state.portfolio.data.hero)
     const skills = useSelector((state) => state.portfolio.data.skills)
+    const services = useSelector((state) => state.portfolio.data.services)
 
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
     const [index, setIndex] = useState(0)
@@ -40,6 +43,15 @@ const AccountPortfolio = () => {
                                 <Skills 
                                     user={user}
                                     portfolio={skills}
+                                    index={index}
+                                    setIndex={setIndex}
+                                />
+                        }
+                        {
+                            index === 2 &&
+                                <Services
+                                    user={user}
+                                    portfolio={services}
                                     index={index}
                                     setIndex={setIndex}
                                 />

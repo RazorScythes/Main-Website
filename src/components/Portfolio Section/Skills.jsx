@@ -91,7 +91,7 @@ const Skills = ({ skills }) => {
                                         <div className="flex flex-col relative text-left">
                                             <div className="w-20 mb-4 absolute ss:top-[5%] top-[10%] left-[-0.1em]"><FontAwesomeIcon icon={faCircleCheck} className="text-lg ss:w-12 ss:h-12 w-8 h-8 text-[#59C378]"/></div>
                                             <div className="ss:ml-14 ml-10">
-                                                <h3 className="lg:text-2xl ss:text-lg text-base font-semibold text-[#202020] uppercase">{skillsData.project_completed}</h3>
+                                                <h3 className="lg:text-2xl ss:text-lg text-base font-semibold text-[#202020] uppercase">{skillsData.project_completed} {skillsData.project_completed <= 99 ? <span className="capitalize">Total</span>: "+"}</h3>
                                                 <p className="lg:text-sm ss:text-sm text-xs font-semibold leading-relaxed text-[#CD3242] capitalize">Complete Project</p>
                                             </div>
                                         </div>
