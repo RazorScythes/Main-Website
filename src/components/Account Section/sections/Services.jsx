@@ -24,6 +24,7 @@ const Services = ({ user, portfolio, index, setIndex }) => {
     const [toggle, setToggle] = useState(false)
     const [active, setActive] = useState(0)
     const [subActive, setSubActive] = useState(0)
+    const [disable, setDisable] = useState(false)
 
     const [submitted, setSubmitted] = useState(false)
 
@@ -73,6 +74,7 @@ const Services = ({ user, portfolio, index, setIndex }) => {
 
     useEffect(() => {
         setSubmitted(false)
+        setDisable(false)
         setServices(portfolio ? portfolio : [])
     }, [portfolio])
 
@@ -288,6 +290,7 @@ const Services = ({ user, portfolio, index, setIndex }) => {
         })
 
         setInput({ ...input, featured_image: '' })
+        setDisable(true)
     }
 
     const handleSubmit = () => {
@@ -496,7 +499,7 @@ const Services = ({ user, portfolio, index, setIndex }) => {
                                             </div>
                                             <p className='text-gray-500 text-sm italic'>#You cannot edit this once you submitted this form</p>
                                             <div className='grid grid-cols-1 gap-5 place-content-start my-2'>
-                                                <button disabled={true} onClick={createService} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent disable:bg-gray-400 hover:text-gray-800 rounded-sm transition-all text-white p-2'>
+                                                <button disabled={disable} onClick={createService} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent disabled:bg-gray-400 hover:text-gray-800 rounded-sm transition-all text-white p-2'>
                                                     Add
                                                 </button>
                                             </div>
