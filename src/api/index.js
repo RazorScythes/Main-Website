@@ -27,4 +27,4 @@ export const getAccountRole                             = () => Admin_API.get('/
 export const getPortfolio                               = (formData) => User_API.post('/portfolio/getPortfolio', formData)
 export const uploadPortfolioHero                        = (formData) => User_API.post('/portfolio/hero', formData)
 export const uploadPortfolioSkills                      = (formData) => User_API.post('/portfolio/skills', formData)
-export const uploadPortfolioServices                    = (formData) => User_API.post('/portfolio/services', formData)
+export const uploadPortfolioServices                    = (formData) => User_API.post('/portfolio/services', formData, {headers})
