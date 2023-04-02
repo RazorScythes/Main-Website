@@ -40,15 +40,17 @@ const IconPicker = ({ setIcon }) => {
     });
 
     return (
-        <div className='flex flex-row'>
-            <select
-                className="capitalize appearance-none bg-gray-100 border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                value={selectedIcon}
-                onChange={handleChange}
-            >
-                {fasIconList}
-            </select>
-            <FontAwesomeIcon icon={['fas', selectedIcon]} className="ml-3 px-4 py-3 bg-gray-900 text-white rounded-md" />
+        <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+            <div className='flex flex-row'>
+                <select
+                    className="sm:w-full w-2/3 capitalize appearance-none bg-gray-100 border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                    value={selectedIcon}
+                    onChange={handleChange}
+                >
+                    {fasIconList}
+                </select>
+                <FontAwesomeIcon icon={['fas', selectedIcon]} className="ml-3 px-4 py-3 bg-gray-900 text-white rounded-md" />
+            </div>
         </div>
     );
 };

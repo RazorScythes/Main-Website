@@ -8,6 +8,9 @@ import { uploadHero, getPortfolio } from "../../actions/portfolio";
 import Hero from './sections/Hero';
 import Skills from './sections/Skills';
 import Services from './sections/Services';
+import Experience from './sections/Experience';
+import Projects from './sections/Projects';
+import Contact from './sections/Contact';
 
 import styles from '../../style'
 
@@ -15,6 +18,7 @@ const AccountPortfolio = () => {
     const hero = useSelector((state) => state.portfolio.data.hero)
     const skills = useSelector((state) => state.portfolio.data.skills)
     const services = useSelector((state) => state.portfolio.data.services)
+    const experience = useSelector((state) => state.portfolio.data.experience)
 
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
     const [index, setIndex] = useState(0)
@@ -50,6 +54,33 @@ const AccountPortfolio = () => {
                         {
                             index === 2 &&
                                 <Services
+                                    user={user}
+                                    portfolio={services}
+                                    index={index}
+                                    setIndex={setIndex}
+                                />
+                        }
+                        {
+                            index === 3 &&
+                                <Experience
+                                    user={user}
+                                    portfolio={experience}
+                                    index={index}
+                                    setIndex={setIndex}
+                                />
+                        }
+                        {
+                            index === 4 &&
+                                <Projects
+                                    user={user}
+                                    portfolio={experience}
+                                    index={index}
+                                    setIndex={setIndex}
+                                />
+                        }
+                        {
+                            index === 5 &&
+                                <Contact
                                     user={user}
                                     portfolio={services}
                                     index={index}

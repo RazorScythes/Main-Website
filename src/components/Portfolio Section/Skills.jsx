@@ -22,7 +22,7 @@ const SkillBox = ({ skill_name, percentage, color = "#FFFF00"}) => {
 }
 
 const Skills = ({ skills }) => {
-    console.log(skills)
+
     const [skillsData, setSkillsData] = useState({
         image: '',
         heading: '',

@@ -28,3 +28,5 @@ export const getPortfolio                               = (formData) => User_API
 export const uploadPortfolioHero                        = (formData) => User_API.post('/portfolio/hero', formData)
 export const uploadPortfolioSkills                      = (formData) => User_API.post('/portfolio/skills', formData)
 export const uploadPortfolioServices                    = (formData) => User_API.post('/portfolio/services', formData)
+export const addPortfolioExperience                     = (formData) => User_API.post('/portfolio/addExperience', formData)
+export const updatePortfolioExperience                  = (formData) => User_API.post('/portfolio/updateExperience', formData)

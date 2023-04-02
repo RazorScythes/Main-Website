@@ -58,6 +58,40 @@ export const uploadServices = createAsyncThunk('portfolio/uploadServices', async
   }
 })
 
+export const addExperience = createAsyncThunk('portfolio/addExperience', async (form, thunkAPI) => {
+  try {
+      const response = await api.addPortfolioExperience(form)
+      return response
+  }
+  catch (err) {
+      console.log(err)
+      if(err.response.data)
+        return thunkAPI.rejectWithValue(err.response.data);
+
+      return({ 
+          variant: 'danger',
+          message: "409: there was a problem with the server."
+      })
+  }
+})
+
+export const updateExperience = createAsyncThunk('portfolio/updateExperience', async (form, thunkAPI) => {
+  try {
+      const response = await api.updatePortfolioExperience(form)
+      return response
+  }
+  catch (err) {
+      console.log(err)
+      if(err.response.data)
+        return thunkAPI.rejectWithValue(err.response.data);
+
+      return({ 
+          variant: 'danger',
+          message: "409: there was a problem with the server."
+      })
+  }
+})
+
 export const getPortfolio = createAsyncThunk('portfolio/getPortfolio', async (form, thunkAPI) => {
     try {
         const response = await api.getPortfolio(form)
@@ -117,6 +151,29 @@ export const portfolioSlice = createSlice({
         state.isLoading = false
       }),
       builder.addCase(uploadServices.rejected, (state, action) => {
+        state.alert = action.payload.message
+        state.variant = action.payload.variant
+      }),
+      builder.addCase(addExperience.fulfilled, (state, action) => {
+        state.data = action.payload.data.result
+        state.alert = action.payload.data.alert
+        state.variant = action.payload.data.variant
+        state.error = ''
+        state.isLoading = false
+      }),
+      builder.addCase(addExperience.rejected, (state, action) => {
+        state.alert = action.payload.message
+        state.variant = action.payload.variant
+      })
+      ,
+      builder.addCase(updateExperience.fulfilled, (state, action) => {
+        state.data = action.payload.data.result
+        state.alert = action.payload.data.alert
+        state.variant = action.payload.data.variant
+        state.error = ''
+        state.isLoading = false
+      }),
+      builder.addCase(updateExperience.rejected, (state, action) => {
         state.alert = action.payload.message
         state.variant = action.payload.variant
       })
