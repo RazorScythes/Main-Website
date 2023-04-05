@@ -11,6 +11,9 @@ import image_not_found from './404_image.png'
 import banner_bg from './banner_bg.jpg'
 import photshop_svg from './photoshop.svg'
 import portfolio1 from './portfolio1.jpg'
+import Page_not_found from './page_not_found.png'
+import Error_forbiden from './Error-403-Prohibido.png'
+
 export {
     toram_online,
     genshin_impact,
@@ -24,5 +27,7 @@ export {
     image_not_found,
     banner_bg,
     photshop_svg,
-    portfolio1
+    portfolio1,
+    Page_not_found,
+    Error_forbiden
 }

@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { Navbar, Home, Games, Login, NotFound, Portfolio, Footer } from './components/index'
-import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { AccountNavbar, Overview, AccountPortfolio } from './components/Account Section/index'
-import { useSelector } from 'react-redux'
-import styles from "./style";
 
 const URI_PATH_HOME = import.meta.env.VITE_URI_PATH_HOME
 
 const App = () => {
 
-  // const auth = useSelector((state) => state.auth)
-
   const userData = JSON.parse(localStorage.getItem('profile'))
   const [user, setUser] = useState(userData? userData : null)
 
   useEffect(() => {
-    // console.log(user)
+    if(window.location.pathname.includes('/account') && !user){
+      window.location.href = "/"
+    }
   }, [user])
-  
+
   return (
     <div className="w-full overflow-hidden bg-gray-900">
       <BrowserRouter>
@@ -34,8 +32,8 @@ const App = () => {
           </Route>  
 
           <Route path='/account' element={<><AccountNavbar path={URI_PATH_HOME} /> <Outlet/></>}>
-              <Route index element={<><Overview /></>} />
-              <Route path="portfolio" element={<><AccountPortfolio /></>} />
+            <Route index element={<><Overview /></>} />
+            <Route path="portfolio" element={<><AccountPortfolio user={user}/></>} />
           </Route>  
 
           <Route path={`${URI_PATH_HOME}/login`} element={<Login path={URI_PATH_HOME} setUser={setUser} />} />

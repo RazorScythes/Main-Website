@@ -200,7 +200,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     </div>
                 </div>
             </div>
-            <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
+            <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                 <div className='flex flex-col'>
                     <label className="block mb-2 font-medium" htmlFor="file_input">Upload file</label>
                     <input 
@@ -214,7 +214,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">PNG, JPG</p>
                 </div>
             </div>
-            <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1  gap-5 place-content-start mb-4'>
+            <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start mb-4'>
                 <div className='flex flex-col'>
                     <label className='font-semibold'> Full Name: </label>
                     <input 
@@ -225,7 +225,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     />
                 </div>
             </div>
-            <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
+            <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
                 <div className='flex flex-col'>
                     <label className='font-semibold'> Professions: </label>
                     <div className='flex flex-row'>
@@ -241,7 +241,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     </div>
                 </div>
             </div>
-            <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5 place-content-start text-white mb-2'>
+            <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start text-white mb-2'>
                 <div className='flex flex-row flex-wrap'>
                     {
                         hero.profession.length > 0 &&
@@ -260,7 +260,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                         }
                 </div>
             </div>
-            <div className='grid md:grid-cols-2 sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
+            <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
                 <div className='flex flex-col'>
                     <label className='font-semibold'> Portfolio description: </label>
                     <div className='flex flex-row'>
@@ -278,7 +278,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     </div>
                 </div>
             </div>
-            <div className='grid md:grid-cols-2 sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
+            <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
                 <div className="flex items-center mb-4">
                     <input 
                         id="default-checkbox" 
@@ -290,7 +290,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <label htmlFor="default-checkbox" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Typing Animation</label>
                 </div>
             </div>
-            <div className='grid md:grid-cols-2 sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
+            <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
                 <button onClick={handleSubmit} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
                     {
                         !submitted ?

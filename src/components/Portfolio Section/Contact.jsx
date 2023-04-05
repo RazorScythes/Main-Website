@@ -1,15 +1,19 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styles from "../../style";
 
-const Contact = () => {
+const Contact = ({ contact }) => {
 
     const [form, setForm] = useState({
         name: '',
         email: '',
         phone: '',
-        subject: '',
+        subject: [],
         message: ''
     })
+
+    useEffect(() => {
+        setForm({...form, email: contact ? contact.email : '', subject: contact ? contact.subject : []})
+    }, [contact])
 
     return (
         <div
@@ -46,9 +50,14 @@ const Contact = () => {
                                     <label >Subject:</label>
                                     <select onChange={(e) => setForm({ ...form, subject: e.target.value })} value={form.subject} placeholder='email' type="email" className='w-full py-2 pl-2 mt-2 outline-0 transition-all focus:border-[#FFFF00] bg-transparent border-2 border-solid border-gray-400 text-gray-400 rounded-sm focus:ring-gray-700'>
                                         <option value="No Subject" disabled hidden >Select a Subject</option>
-                                        <option value="saab" className='text-gray-900'>Saab</option>
-                                        <option value="opel" className='text-gray-900'>Opel</option>
-                                        <option value="audi" className='text-gray-900'>Audi</option>
+                                        {
+                                            form.subject.length > 0 &&
+                                                form.subject.map((item, i) => {
+                                                    return (
+                                                        <option key={i} value={item}className='text-gray-900'>{item}</option>
+                                                    )
+                                                })
+                                        }
                                     </select>
                                 </div>
                                 <div className="w-full sm:px-4 mt-4">

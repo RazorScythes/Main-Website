@@ -21,6 +21,10 @@ const AccountNavbar = ({ path }) => {
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
   
   useEffect(() => {
+    if(!user) navigate(`/`)
+  }, [])
+
+  useEffect(() => {
     account_links.some(function(link, i) {
         if (link.path == location.pathname.split('/').at(-1)) {
             setActive(i)

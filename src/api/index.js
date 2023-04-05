@@ -24,9 +24,17 @@ export const getAccountRole                             = () => Admin_API.get('/
 /*
     Portfolio
 */
+export const publishPortfolio                           = (formData) => User_API.post('/portfolio/publishPortfolio', formData)
+export const unpublishPortfolio                         = (formData) => User_API.post('/portfolio/unpublishPortfolio', formData)
 export const getPortfolio                               = (formData) => User_API.post('/portfolio/getPortfolio', formData)
+export const getPortfolioByUsername                     = (formData) => User_API.post('/portfolio/getPortfolioByUsername', formData)
 export const uploadPortfolioHero                        = (formData) => User_API.post('/portfolio/hero', formData)
 export const uploadPortfolioSkills                      = (formData) => User_API.post('/portfolio/skills', formData)
 export const uploadPortfolioServices                    = (formData) => User_API.post('/portfolio/services', formData)
 export const addPortfolioExperience                     = (formData) => User_API.post('/portfolio/addExperience', formData)
 export const updatePortfolioExperience                  = (formData) => User_API.post('/portfolio/updateExperience', formData)
+export const addPortfolioProject                        = (formData) => User_API.post('/portfolio/addProject', formData)
+export const updatePortfolioProject                     = (formData) => User_API.post('/portfolio/updateProject', formData)
+export const deletePortfolioProject                     = (formData) => User_API.post('/portfolio/deleteProject', formData)
+export const uploadPortfolioContacts                    = (formData) => User_API.post('/portfolio/uploadContacts', formData)
+export const sendTestEmail                              = (formData) => User_API.post('/portfolio/testEmail', formData)

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import herobg from '../../assets/hero-bg.jpg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faCalendar, faSitemap, faArrowRight, faGamepad, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
@@ -42,8 +42,14 @@ const responsive = {
     }
 };
 
-const Projects = () => {
-    
+const Projects = ({ projects }) => {
+
+    const [projectsData, setProjectsData] = useState([])
+
+    useEffect(() => {
+        setProjectsData(projects ? projects : [])
+    }, [projects])
+
     return (
         <div
             className="relative bg-cover bg-center py-14 mt-20"
@@ -77,40 +83,27 @@ const Projects = () => {
                                 swipeable
                                 autoPlay={true}
                                 infinite={true}
-                            >
-                                <div className='w-11/12 mx-4 flex flex-col justify-center mb-12 rounded-md'>
-                                    <div className="overflow-hidden">
-                                        <img
-                                            src={portfolio1}
-                                            alt="User"
-                                            className='w-full h-[400px] object-cover mb-8 transition duration-500 ease-in-out transform hover:scale-105'
-                                        />
-                                    </div>
-                                    <h2 className='pb-2 text-2xl font-semibold hover:text-[#CD3242] hover:cursor-pointer transition-all'>RazorScythe</h2>
-                                    <p className='pb-6 text-[#d8d8d8] text-sm'>Web Design</p>
-                                </div>
-                                <div className='w-11/12 mx-4 flex flex-col justify-center mb-12 rounded-md'>
-                                    <div className="overflow-hidden">
-                                        <img
-                                            src={portfolio1}
-                                            alt="User"
-                                            className='w-full h-[400px] object-cover mb-8 transition duration-500 ease-in-out transform hover:scale-105'
-                                        />
-                                    </div>
-                                    <h2 className='pb-2 text-2xl font-semibold hover:text-[#CD3242] hover:cursor-pointer transition-all'>RazorScythe</h2>
-                                    <p className='pb-6 text-[#d8d8d8] text-sm'>Web Design</p>
-                                </div>
-                                <div className='w-11/12 mx-4 flex flex-col justify-center mb-12 rounded-md'>
-                                    <div className="overflow-hidden">
-                                        <img
-                                            src={portfolio1}
-                                            alt="User"
-                                            className='w-full h-[400px] object-cover mb-8 transition duration-500 ease-in-out transform hover:scale-105'
-                                        />
-                                    </div>
-                                    <h2 className='pb-2 text-2xl font-semibold hover:text-[#CD3242] hover:cursor-pointer transition-all'>RazorScythe</h2>
-                                    <p className='pb-6 text-[#d8d8d8] text-sm'>Web Design</p>
-                                </div>
+                            >   
+                                {
+                                    projectsData.length > 0 &&
+                                        projectsData.map((item, i) => {
+                                            return (
+                                                <div key={i} className='w-11/12 mx-4 flex flex-col justify-center mb-12 rounded-md'>
+                                                    <div className="overflow-hidden relative">
+                                                        <div className="bg-black opacity-80 transition-all hover:opacity-100">
+                                                            <img
+                                                                src={item.image}
+                                                                alt="User"
+                                                                className='relative w-full h-[400px] object-cover mb-8 transition duration-500 ease-in-out transform hover:scale-105 border border-1 border-gray-700 rounded-sm'
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <h2 className='pb-2 text-2xl font-semibold hover:text-[#CD3242] hover:cursor-pointer transition-all'>{item.project_name}</h2>
+                                                    <p className='pb-6 text-[#d8d8d8] text-sm'>{item.category}</p>
+                                                </div>
+                                            )
+                                        })
+                                }
                             </Carousel>
                         </div>
                     </div>

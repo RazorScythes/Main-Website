@@ -2,7 +2,7 @@ import React from 'react'
 import styles from '../../style'
 import { Header } from './index'
 const Overview = () => {
-    console.log(`location ${location.pathname.split('/').at(-1)}`)
+
     return (
         <div className="relative bg-white">   
             <Header 
