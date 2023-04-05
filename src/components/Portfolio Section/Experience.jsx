@@ -53,7 +53,7 @@ const Experience = ({ experience }) => {
                                                         <div className="sm:w-1/3 text-center">
                                                             <img
                                                                 src={item.company_logo}
-                                                                className="lg:w-16 lg:h-16 sm:w-12 sm:h-12 w-16 h-16 sm:my-4 my-4 rounded-lg bg-cover bg-center border border-solid border-white"
+                                                                className="lg:w-16 lg:h-16 sm:w-12 sm:h-12 w-16 h-16 sm:my-4 my-4 rounded-lg bg-cover bg-center border border-solid border-white object-cover"
                                                             />
                                                         </div>
                                                         <div className="sm:w-2/3 sm:text-left text-center sm:mb-0 mb-8">

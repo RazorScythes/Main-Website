@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import herobg from '../../assets/hero-bg.jpg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleCheck, faCalendar, faSitemap, faArrowRight, faGamepad, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faCircleCheck, faCalendar, faSitemap, faArrowRight, faGamepad, faChevronLeft, faChevronRight, faBriefcase } from "@fortawesome/free-solid-svg-icons";
 import styles from "../../style";
 import Carousel from "react-multi-carousel";
+import { useParams } from 'react-router-dom'
 import Avatar from '../../assets/avatar.png'
 import { portfolio1 } from "../../assets";
 
@@ -44,6 +45,8 @@ const responsive = {
 
 const Projects = ({ projects }) => {
 
+    let { username } = useParams();
+
     const [projectsData, setProjectsData] = useState([])
 
     useEffect(() => {
@@ -68,7 +71,7 @@ const Projects = ({ projects }) => {
                             <div className="sm:w-1/2 w-full flex items-center sm:justify-end justify-center">
                                 <div className="p-2 border border-dashed border-gray-700 rounded-full">
                                     <div className="p-6 bg-gray-800 rounded-full">
-                                        <FontAwesomeIcon icon={faGamepad} className="w-16 h-16 text-[#00FFFF]"/>
+                                        <FontAwesomeIcon icon={faBriefcase} className="w-16 h-16 text-[#00FFFF]"/>
                                     </div>
                                 </div>
                             </div>
@@ -98,7 +101,7 @@ const Projects = ({ projects }) => {
                                                             />
                                                         </div>
                                                     </div>
-                                                    <h2 className='pb-2 text-2xl font-semibold hover:text-[#CD3242] hover:cursor-pointer transition-all'>{item.project_name}</h2>
+                                                    <a href={`/${username}/project/${item.project_name.split(" ").join("_")}`}><h2 className='pb-2 text-2xl font-semibold hover:text-[#CD3242] hover:cursor-pointer transition-all'>{item.project_name}</h2></a>
                                                     <p className='pb-6 text-[#d8d8d8] text-sm'>{item.category}</p>
                                                 </div>
                                             )

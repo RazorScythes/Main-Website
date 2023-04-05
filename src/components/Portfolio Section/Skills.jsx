@@ -15,7 +15,7 @@ const SkillBox = ({ skill_name, percentage, color = "#FFFF00"}) => {
         <div style={{ backgroundImage: `linear-gradient(to bottom, ${color}, #1F2937)`}} className={`h-32 w-full mr-4  mb-4 rounded-lg  p-1`}>
             <div className="flex h-full w-full rounded-lg flex-col items-center justify-center bg-gray-800 back">
                 <h2 className="text-4xl font-semibold text-white mb-1"><CountUp end={percentage} duation={5}/>%</h2>
-                <p style={{color: color}} className="text-base tracking-tighter font-semibold">{skill_name}</p>
+                <p style={{color: color}} className="text-base tracking-tighter font-semibold text-center">{skill_name}</p>
             </div>
         </div>
     )

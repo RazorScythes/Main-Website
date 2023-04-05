@@ -24,6 +24,7 @@ export const getAccountRole                             = () => Admin_API.get('/
 /*
     Portfolio
 */
+export const getProject                                 = (formData) => User_API.post('/portfolio/getProject', formData)
 export const publishPortfolio                           = (formData) => User_API.post('/portfolio/publishPortfolio', formData)
 export const unpublishPortfolio                         = (formData) => User_API.post('/portfolio/unpublishPortfolio', formData)
 export const getPortfolio                               = (formData) => User_API.post('/portfolio/getPortfolio', formData)
@@ -38,3 +39,4 @@ export const updatePortfolioProject                     = (formData) => User_API
 export const deletePortfolioProject                     = (formData) => User_API.post('/portfolio/deleteProject', formData)
 export const uploadPortfolioContacts                    = (formData) => User_API.post('/portfolio/uploadContacts', formData)
 export const sendTestEmail                              = (formData) => User_API.post('/portfolio/testEmail', formData)
+export const sendEmail                                  = (formData) => User_API.post('/portfolio/sendEmail', formData)

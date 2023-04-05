@@ -103,6 +103,11 @@ const Services = ({ user, portfolio, index, setIndex }) => {
             duties: '',
             link: ''
         })
+        setAddInput({
+            ...addInput,
+            image_overlay: '',
+            company_logo: ''
+        })
     }, [portfolio])
 
     const convertImage = async (e) => {

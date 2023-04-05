@@ -303,13 +303,13 @@ const Projects = ({ user, portfolio, index, setIndex }) => {
     const addAditionalText = () => {
         let duplicate = false
 
-        if(input.text_heading.length === 0) return;
+        if(input.text_description.length === 0) return;
 
-        project.text.forEach(item => { if(input.text_heading === item.text_heading) duplicate = true })
+        if(input.text_heading.length > 0) project.text.forEach(item => { if(input.text_heading === item.text_heading) duplicate = true })
 
         if(duplicate) { duplicate = false; return;}
 
-        setProject({ ...project, text: project.list.concat({text_heading: input.text_heading, text_imageURL: input.text_imageURL, text_description: input.text_description})})
+        setProject({ ...project, text: project.text.concat({text_heading: input.text_heading, text_imageURL: input.text_imageURL, text_description: input.text_description})})
 
         setInput({ ...input, text_heading: '', text_imageURL: '', text_description: ''})
     }
@@ -606,10 +606,10 @@ const Projects = ({ user, portfolio, index, setIndex }) => {
                                                         <div key={i} className='w-full flex flex-row p-2 py-3 bg-gray-800 mb-1 relative'>
                                                             <div className='w-full flex flex-col'>
                                                                 <div className='w-full flex flex-row items-center capitalize'>
-                                                                    <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold'>{item.text_heading}</p>
+                                                                    <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold'>{item.text_heading ? item.text_heading : 'No Heading'}</p>
                                                                 </div>
                                                                 <div className='w-full flex flex-row items-center mb-2'>
-                                                                    <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3 opacity-0"/> <p className=''>Image URL: {item.text_imageURL ? item.text_imageURL : "n/a" }</p>
+                                                                    <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3 opacity-0"/> <p className='break-all'>Image URL: {item.text_imageURL ? item.text_imageURL : "n/a" }</p>
                                                                 </div>
                                                                 
                                                                 <div className='w-full flex flex-row items-center'>

@@ -3,8 +3,8 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import styles from "../../style";
 
-const Hero = ({ hero }) => {
-
+const Hero = ({ hero, resultRef }) => {
+    console.log(resultRef)
     const [heroData, setHeroData] = useState({
         image: '',
         full_name: '',
@@ -109,13 +109,14 @@ const Hero = ({ hero }) => {
                                 <p className="text-white text-lg sm:text-xl md:text-lg leading-relaxed mb-4">
                                     { heroData.description }
                                 </p>
-                                <button className="bg-gray-100 hover:bg-transparent hover:text-gray-100 text-gray-800 font-semibold my-8 py-2 px-8 border border-gray-100 rounded transition-colors duration-300 ease-in-out" onClick={() => loginWithRedirect()}>
+                                <button onClick={() => resultRef.current.scrollIntoView({ behavior: 'smooth' })} className="bg-gray-100 hover:bg-transparent hover:text-gray-100 text-gray-800 font-semibold my-8 py-2 px-8 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
                                     Hire Me!
                                 </button>
                             </div>
                             <div className="lg:w-1/3 md:w-1/3 md:block hidden ml-0">
                                 <div className="rounded-lg shadow-lg lg:w-[400px]">
                                     <LazyLoadImage
+                                        className="rounded-md"
                                         effect="blur"
                                         alt="Hero Image"    
                                         placeholderSrc={heroData.image}                  

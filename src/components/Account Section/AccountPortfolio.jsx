@@ -14,7 +14,6 @@ import Projects from './sections/Projects';
 import Contact from './sections/Contact';
 
 import styles from '../../style'
-import { portfolio_selector } from '../../constants';
 
 const AccountPortfolio = ({ user }) => {
 
@@ -36,7 +35,6 @@ const AccountPortfolio = ({ user }) => {
     }, [])
 
     useEffect(() => {
-        console.log(portfolio.published)
         setSubmitted(false)
     }, [portfolio])
 

@@ -4,9 +4,12 @@ import { Hero, Skills, Services, Experience, Projects, Contact } from '../Portfo
 import { useDispatch, useSelector } from 'react-redux'
 import { getPortfolioByUsername } from "../../actions/portfolio";
 import { Page_not_found, Error_forbiden } from '../../assets';
+import { useRef } from "react";
 import Loading from './Loading'
 import styles from "../../style";
 const Portfolio = () => {
+    const resultRef = useRef(null);
+
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
 
     let { username } = useParams();
@@ -74,12 +77,12 @@ const Portfolio = () => {
                 :
                 Object.keys(portfolio).length !== 0 ? 
                     <>
-                        <Hero hero={hero}/>
+                        <Hero hero={hero} resultRef={resultRef}/>
                         <Skills skills={skills}/>
                         {services.length > 0 && <Services services={services}/>}
                         {experience.length > 0 && <Experience experience={experience}/>}
                         {projects.length > 0 && <Projects projects={projects}/>}
-                        <Contact contact={contact}/>
+                        <Contact contact={contact} ref={resultRef}/>
                     </>
                 :
                     <Loading text="Loading portfolio" />

@@ -9,6 +9,8 @@ const initialState = {
     data: {},
     notFound: false,
     published: false,
+    project: {},
+    mailStatus: ''
 }
 
 export const uploadHero = createAsyncThunk('portfolio/uploadHero', async (form, thunkAPI) => {
@@ -155,6 +157,22 @@ export const sendTestEmail = createAsyncThunk('portfolio/sendTestEmail', async (
   }
 })
 
+export const sendEmail = createAsyncThunk('portfolio/sendEmail', async (form, thunkAPI) => {
+  try {
+      const response = await api.sendEmail(form)
+      return response
+  }
+  catch (err) {
+      if(err.response.data)
+        return thunkAPI.rejectWithValue(err.response.data);
+
+      return({ 
+          variant: 'danger',
+          message: "409: there was a problem with the server."
+      })
+  }
+})
+
 export const uploadContacts = createAsyncThunk('portfolio/uploadContacts', async (form, thunkAPI) => {
   try {
       const response = await api.uploadPortfolioContacts(form)
@@ -235,6 +253,22 @@ export const getPortfolioByUsername = createAsyncThunk('portfolio/getPortfolioBy
   }
 })
 
+export const getProject = createAsyncThunk('portfolio/getProject', async (form, thunkAPI) => {
+  try {
+      const response = await api.getProject(form)
+      return response
+  }
+  catch (err) {
+      if(err.response.data)
+      return thunkAPI.rejectWithValue(err.response.data);
+
+      return({ 
+          variant: 'danger',
+          message: "409: there was a problem with the server."
+      })
+  }
+})
+
 export const portfolioSlice = createSlice({
     name: 'portfolio',
     initialState,
@@ -258,6 +292,18 @@ export const portfolioSlice = createSlice({
         state.alert = action.payload.message
         state.variant = action.payload.variant
       }),
+      builder.addCase(getProject.fulfilled, (state, action) => {
+        if(!action.payload.data.published) state.published = true
+        else state.published = !action.payload.data.published
+        state.project = action.payload.data.result
+        state.error = ''
+        state.isLoading = false
+      }),
+      builder.addCase(getProject.rejected, (state, action) => {
+        state.notFound = true
+        state.alert = action.payload.message
+        state.variant = action.payload.variant
+      }),
       builder.addCase(getPortfolioByUsername.fulfilled, (state, action) => {
         if(!action.payload.data.published) state.published = true
         state.data = action.payload.data.result
@@ -265,7 +311,6 @@ export const portfolioSlice = createSlice({
         state.isLoading = false
       }),
       builder.addCase(getPortfolioByUsername.rejected, (state, action) => {
-        console.log(action.payload)
         state.alert = action.payload.message
         state.variant = action.payload.variant
         state.notFound = true
@@ -366,6 +411,12 @@ export const portfolioSlice = createSlice({
         state.alert = action.payload.message
         state.variant = action.payload.variant
       }),
+      builder.addCase(sendEmail.fulfilled, (state, action) => {
+        state.mailStatus = action.payload.data.mailStatus
+      }),
+      builder.addCase(sendEmail.rejected, (state, action) => {
+        state.mailStatus = action.payload.mailStatus
+      }),
       builder.addCase(deleteProject.fulfilled, (state, action) => {
         state.data = action.payload.data.result
         state.alert = action.payload.data.alert
@@ -382,10 +433,13 @@ export const portfolioSlice = createSlice({
       clearAlert: (state) => {
         state.alert = '',
         state.variant = ''
+      },
+      clearMailStatus: (state) => {
+        state.mailStatus = ''
       }
     },
 })
 
-export const { clearAlert } = portfolioSlice.actions
+export const { clearAlert, clearMailStatus} = portfolioSlice.actions
 
 export default portfolioSlice.reducer

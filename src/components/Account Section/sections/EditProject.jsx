@@ -54,6 +54,10 @@ const EditProject = ({ data, setEditData, setEditRemoveImage, setEditCancel }) =
         }
     }
 
+    function checkWebsiteUrl(url) {
+        return url.startsWith("https://") && url.includes(".") ? true : false
+    }
+    
     const TextWithEllipsis = ({ text, limit = 55 }) => {
         if(!text) return <span>...</span>
         if (text.length > limit) {
@@ -65,13 +69,13 @@ const EditProject = ({ data, setEditData, setEditRemoveImage, setEditCancel }) =
     const addAditionalText = () => {
         let duplicate = false
 
-        if(input.text_heading.length === 0) return;
+        if(input.text_description.length === 0) return;
 
-        project.text.forEach(item => { if(input.text_heading === item.text_heading) duplicate = true })
+        if(input.text_heading.length > 0) project.text.forEach(item => { if(input.text_heading === item.text_heading) duplicate = true })
 
         if(duplicate) { duplicate = false; return;}
 
-        setProject({ ...project, text: project.list.concat({text_heading: input.text_heading, text_imageURL: input.text_imageURL, text_description: input.text_description})})
+        setProject({ ...project, text: project.text.concat({text_heading: input.text_heading, text_imageURL: input.text_imageURL, text_description: input.text_description})})
 
         setInput({ ...input, text_heading: '', text_imageURL: '', text_description: ''})
     }
@@ -360,10 +364,10 @@ const EditProject = ({ data, setEditData, setEditRemoveImage, setEditCancel }) =
                                     <div key={i} className='w-full flex flex-row p-2 py-3 bg-gray-800 mb-1 relative'>
                                         <div className='w-full flex flex-col'>
                                             <div className='w-full flex flex-row items-center capitalize'>
-                                                <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold'>{item.text_heading}</p>
+                                                <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold'>{item.text_heading ? item.text_heading : 'No Heading'}</p>
                                             </div>
                                             <div className='w-full flex flex-row items-center mb-2'>
-                                                <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3 opacity-0"/> <p className=''>Image URL: {item.text_imageURL ? item.text_imageURL : "n/a" }</p>
+                                                <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3 opacity-0"/> <p className='break-all'>Image URL: {item.text_imageURL ? item.text_imageURL : "n/a" }</p>
                                             </div>
                                             
                                             <div className='w-full flex flex-row items-center'>
@@ -519,7 +523,7 @@ const EditProject = ({ data, setEditData, setEditRemoveImage, setEditCancel }) =
                                 return (
                                     <div key={i} className='w-full flex flex-row p-2 py-3 bg-gray-800 mb-1'>
                                         <div className='w-1/2 flex flex-row items-center'>
-                                            <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold'>{item}</p>
+                                            <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold break-all'>{item}</p>
                                         </div>
                                         <div className='w-1/2 text-right'>
                                             <FontAwesomeIcon id={i} onClick={deleteImageURL} icon={faTrash} className="mr-2 hover:cursor-pointer" />
