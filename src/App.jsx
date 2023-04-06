@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Navbar, Home, Games, Login, NotFound, Portfolio, Footer } from './components/index'
+import { Navbar, Home, Games, Login, NotFound, Portfolio, Footer, Forum, Store, Archive } from './components/index'
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { AccountNavbar, Overview, AccountPortfolio } from './components/Account Section/index'
 import { ProjectSingle } from './components/Portfolio Section/index';
@@ -24,14 +24,25 @@ const App = () => {
 
           <Route path='/' element={<><Navbar path={URI_PATH_HOME} /> <Outlet/></>}>
               <Route index element={<Home path={URI_PATH_HOME}/>} />
-              <Route path="games" element={<Games />} />
-          </Route>  
+              <Route path="games" element={<><Games /> <Footer /></>} />
+              <Route path="forum" element={<><Forum /> <Footer /></>} />
+              <Route path="store" element={<><Store /> <Footer /></>} />
+              <Route path="archive" element={<><Archive /> <Footer /></>} />
 
-          <Route path='/:username' element={<><Navbar path={URI_PATH_HOME} /> <Outlet/></>}>
+              <Route path="/:username/portfolio" element={<><Portfolio /> <Footer /></>} />
+              <Route path="/:username/project/:project_name" element={<><ProjectSingle /> <Footer /></>} />
+
+              <Route path="project/:project_name" element={<><ProjectSingle /> <Footer /></>} />
+
+              <Route path={`*`} element={<> <NotFound/> <Footer /></>} />
+          </Route>
+
+          {/* <Route path='/:username' element={<><Navbar path={URI_PATH_HOME} /> <Outlet/></>}>
               <Route index element={<Home path={URI_PATH_HOME}/>} />
               <Route path="portfolio" element={<><Portfolio /> <Footer /></>} />
               <Route path="project/:project_name" element={<><ProjectSingle /> <Footer /></>} />
-          </Route>  
+              <Route path={`*`} element={<> <NotFound/> <Footer /></>} />
+          </Route>   */}
 
           <Route path='/account' element={<><AccountNavbar path={URI_PATH_HOME} /> <Outlet/></>}>
             <Route index element={<><Overview /></>} />

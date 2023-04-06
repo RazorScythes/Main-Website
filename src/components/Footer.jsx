@@ -1,14 +1,45 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { sendContactUs, clearMailStatus } from "../actions/portfolio";
 import { FaFacebook, FaTwitter, FaInstagram } from "react-icons/fa";
-import { AiOutlineMail } from "react-icons/ai";
+import { useDispatch, useSelector } from 'react-redux'
+import { AiOutlineArrowUp } from "react-icons/ai";
 import { TextWithLines } from '../components/index'
 import { Link } from "react-router-dom";
 import { nav_links } from "../constants";
 const Footer = ({ path }) => {
 
+    const dispatch = useDispatch()
+
+    const mailStatus = useSelector((state) => state.portfolio.mailStatus)
+
+    const [form, setForm] = useState({
+        name: '',
+        email: '',
+        message: ''
+    })
+
+    const [submitted, setSubmitted] = useState(false)
+
+    useEffect(() => {
+        if(mailStatus) {
+            alert(mailStatus)
+            dispatch(clearMailStatus())
+            setForm({
+                ...form,
+                name: '',
+                email: '',
+                message: ''
+            })
+            setSubmitted(false)
+        }
+    }, [mailStatus])
+
     const handleSubmit = (e) => {
         e.preventDefault()
+
+        if(!submitted)
+            dispatch(sendContactUs(form))
     }
 
     return (
@@ -65,10 +96,13 @@ const Footer = ({ path }) => {
                                 Name
                             </label>
                             <input
+                                required
                                 type="text"
                                 id="name"
                                 name="name"
                                 placeholder="Name"
+                                value={form.name}
+                                onChange={(e) => setForm({...form, name: e.target.value})}
                                 className="border border-gray-400 py-2 px-4 w-full text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-700"
                                 />
                             </div>
@@ -77,10 +111,13 @@ const Footer = ({ path }) => {
                                 Email
                             </label>
                             <input
+                                required
                                 type="email"
                                 id="email"
                                 name="email"
                                 placeholder="Email"
+                                value={form.email}
+                                onChange={(e) => setForm({...form, email: e.target.value})}
                                 className="border border-gray-400 py-2 px-4 w-full text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-700"
                                 />
                             </div>
@@ -89,11 +126,14 @@ const Footer = ({ path }) => {
                                 Message
                             </label>
                             <textarea
+                                required
                                 name="message"
                                 id="message"
                                 cols="30"
                                 rows="4"
                                 placeholder="Message"
+                                value={form.message}
+                                onChange={(e) => setForm({...form, message: e.target.value})}
                                 className="border border-gray-400 py-2 px-4 w-full text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-gray-700"
                                 >
                             </textarea>
@@ -112,7 +152,7 @@ const Footer = ({ path }) => {
                             © 2023 RazorScythe Website. All rights reserved.
                         </p>
                         <a href="#" className="text-yellow-500 hover:text-yellow-600 transition duration-300">
-                            <AiOutlineMail size={24} />
+                            <AiOutlineArrowUp size={24} />
                         </a>
                     </div>
                 </div>

@@ -19,10 +19,15 @@ import Home from './Pages/Home'
 import Games from './Pages/Games'
 import NotFound from './Pages/NotFound'
 import Portfolio from './Pages/Portfolio'
-
+import Forum from './Pages/Forum'
+import Store from './Pages/Store'
+import Archive from './Pages/Archive'
 export {
     Home,
     Games,
+    Forum,
+    Store,
+    Archive,
     NotFound,
     Portfolio,
     Navbar,

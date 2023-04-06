@@ -28,6 +28,7 @@ const Projects = ({ user, portfolio, index, setIndex }) => {
     const [project, setProject] = useState({
         id: user.result?._id,
         image: '',
+        show_image: true,
         project_name: '',
         project_description: '',
         date_started: '',
@@ -160,6 +161,7 @@ const Projects = ({ user, portfolio, index, setIndex }) => {
         setProject({
             ...project,
             image: '',
+            show_image: true,
             project_name: '',
             project_description: '',
             date_started: '',
@@ -474,7 +476,7 @@ const Projects = ({ user, portfolio, index, setIndex }) => {
                                         </div>
                                     </div>
                                 </div>
-                                <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
                                     <div className='flex flex-col'>
                                         <label className="block mb-2 font-medium" htmlFor="file_input">Featured Image</label>
                                         <input 
@@ -485,6 +487,16 @@ const Projects = ({ user, portfolio, index, setIndex }) => {
                                             value={addInput.featured_image}
                                             onChange={convertImage}
                                         />
+                                    </div>
+                                    <div className="flex flex-row items-center mt-8">
+                                        <input 
+                                            id="default-checkbox" 
+                                            type="checkbox" 
+                                            checked={project.show_image}
+                                            onChange={() => setProject({...project, show_image: !project.show_image})}
+                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                        />
+                                        <label htmlFor="default-checkbox" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Show Image</label>
                                     </div>
                                 </div>
                                 <div className='grid grid-cols-1 gap-5 place-content-start mb-4'>

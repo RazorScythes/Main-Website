@@ -173,6 +173,22 @@ export const sendEmail = createAsyncThunk('portfolio/sendEmail', async (form, th
   }
 })
 
+export const sendContactUs = createAsyncThunk('portfolio/sendContactUs', async (form, thunkAPI) => {
+  try {
+      const response = await api.sendContactUs(form)
+      return response
+  }
+  catch (err) {
+      if(err.response.data)
+        return thunkAPI.rejectWithValue(err.response.data);
+
+      return({ 
+          variant: 'danger',
+          message: "409: there was a problem with the server."
+      })
+  }
+})
+
 export const uploadContacts = createAsyncThunk('portfolio/uploadContacts', async (form, thunkAPI) => {
   try {
       const response = await api.uploadPortfolioContacts(form)
@@ -415,6 +431,12 @@ export const portfolioSlice = createSlice({
         state.mailStatus = action.payload.data.mailStatus
       }),
       builder.addCase(sendEmail.rejected, (state, action) => {
+        state.mailStatus = action.payload.mailStatus
+      }),
+      builder.addCase(sendContactUs.fulfilled, (state, action) => {
+        state.mailStatus = action.payload.data.mailStatus
+      }),
+      builder.addCase(sendContactUs.rejected, (state, action) => {
         state.mailStatus = action.payload.mailStatus
       }),
       builder.addCase(deleteProject.fulfilled, (state, action) => {

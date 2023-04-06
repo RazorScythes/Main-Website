@@ -40,3 +40,4 @@ export const deletePortfolioProject                     = (formData) => User_API
 export const uploadPortfolioContacts                    = (formData) => User_API.post('/portfolio/uploadContacts', formData)
 export const sendTestEmail                              = (formData) => User_API.post('/portfolio/testEmail', formData)
 export const sendEmail                                  = (formData) => User_API.post('/portfolio/sendEmail', formData)
+export const sendContactUs                              = (formData) => User_API.post('/portfolio/sendContactUs', formData)

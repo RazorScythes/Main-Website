@@ -51,7 +51,6 @@ const Contact = forwardRef(({ contact }, ref) => {
       }
 
     const handleSubmit = () => {
-        console.log("OK", !form.name, !isEmail(form.email), !form.message)
         if(!form.name || !isEmail(form.email) || !form.message) return
 
         if(!submitted)
@@ -121,7 +120,7 @@ const Contact = forwardRef(({ contact }, ref) => {
                                 <button 
                                     onClick={handleSubmit}
                                     type="submit"
-                                    className="float-right mr-4 mt-2 bg-[#C23242] hover:bg-transparent hover:text-gray-100 text-white font-normal py-3 px-8 border hover:border-white border-[#C23242] transition-colors duration-300 ease-in-out">
+                                    className="sm:w-auto w-full sm:float-right sm:mr-4 mt-2 bg-[#C23242] hover:bg-transparent hover:text-gray-100 text-white font-normal py-3 px-8 border hover:border-white border-[#C23242] transition-colors duration-300 ease-in-out">
                                     Send Message
                                 </button>
                             </div>

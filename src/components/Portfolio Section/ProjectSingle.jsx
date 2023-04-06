@@ -173,14 +173,18 @@ const ProjectSingle = () => {
                             </div>
                           </div>
                       </div>
-                      <div className='grid grid-cols-1 gap-5 place-content-start text-white md:px-8 px-2 mb-16'>
-                          <div className='w-full sm:h-[600px] h-auto flex items-center justify-center overflow-y-scroll no-scroll relative'>
-                            <img 
-                              src={portfolio.image}
-                              className="w-full object-cover sm:absolute sm:top-0 sm:left-0"
-                            />
+                      {
+                        portfolio.show_image &&
+                          <div className='grid grid-cols-1 gap-5 place-content-start text-white md:px-8 px-2 mb-16'>
+                              <div className='w-full sm:h-[600px] h-auto flex items-center justify-center overflow-y-scroll no-scroll relative'>
+                                <img 
+                                  src={portfolio.image}
+                                  className="w-full object-cover sm:absolute sm:top-0 sm:left-0"
+                                />
+                              </div>
                           </div>
-                      </div>
+                      }
+                      
                       {
                         portfolio.text.length > 0 &&
                         portfolio.text.map((item, i) => {

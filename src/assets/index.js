@@ -13,6 +13,9 @@ import photshop_svg from './photoshop.svg'
 import portfolio1 from './portfolio1.jpg'
 import Page_not_found from './page_not_found.png'
 import Error_forbiden from './Error-403-Prohibido.png'
+import blogs from './blogs.png'
+import application from './application.png'
+import game from './game.png'
 
 export {
     toram_online,
@@ -29,5 +32,8 @@ export {
     photshop_svg,
     portfolio1,
     Page_not_found,
-    Error_forbiden
+    Error_forbiden,
+    blogs,
+    application,
+    game
 }
