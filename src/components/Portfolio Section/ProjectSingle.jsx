@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from 'react-router-dom'
 import { Page_not_found, Error_forbiden } from '../../assets';
-import { getProject } from "../../actions/portfolio";
+import { getProject, clearProjectSingle } from "../../actions/portfolio";
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
@@ -65,8 +65,11 @@ const ProjectSingle = () => {
   const portfolio = useSelector((state) => state.portfolio.project)
   const notFound = useSelector((state) => state.portfolio.notFound)
   const published = useSelector((state) => state.portfolio.published)
-  console.log("PORTFOLIO", portfolio)
+
   useEffect(() => {
+    window.scrollTo(0, 0)
+    dispatch(clearProjectSingle())
+
     dispatch(getProject({
       username: username,
       project_name: project_name
@@ -143,12 +146,12 @@ const ProjectSingle = () => {
                   <div className="container mx-auto file:lg:px-8 relative px-0">
                       <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start text-white md:px-8 px-2 mb-8'>
                           <div className='w-full flex flex-col'>
-                            <h1 className='font-semibold text-5xl mb-8'>{portfolio.project_name}</h1>
-                            <p className='text-lg whitespace-pre-wrap'>{portfolio.project_description}</p>
+                            <h1 className='font-semibold md:text-5xl sm:text-4xl text-3xl mb-8 break-keep'>{portfolio.project_name}</h1>
+                            <p className='sm:text-lg text-base whitespace-pre-wrap'>{portfolio.project_description}</p>
                           </div>
                           <div className='md:w-96 w-full flex flex-col mx-auto justify-center'>
                             <div className='bg-gray-800 rounded-md border-2 border-solid border-[#1F2937] shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] p-8'>
-                              <p className='font-semibold text-3xl mb-8'>Project Information:</p>
+                              <p className='font-semibold sm:text-3xl text-2xl mb-8'>Project Information:</p>
                               <div className='grid grid-cols-2 gap-5 place-content-start text-white'>
                                 <p className='font-semibold mb-4'>Created By:</p><span className='font-normal'> {username}</span>
                               </div>
@@ -171,10 +174,10 @@ const ProjectSingle = () => {
                           </div>
                       </div>
                       <div className='grid grid-cols-1 gap-5 place-content-start text-white md:px-8 px-2 mb-16'>
-                          <div className='w-full md:h-[600px] h-[500px] flex items-center justify-center overflow-y-scroll no-scroll relative'>
+                          <div className='w-full sm:h-[600px] h-auto flex items-center justify-center overflow-y-scroll no-scroll relative'>
                             <img 
                               src={portfolio.image}
-                              className="w-full object-cover absolute top-0 left-0"
+                              className="w-full object-cover sm:absolute sm:top-0 sm:left-0"
                             />
                           </div>
                       </div>
@@ -187,13 +190,13 @@ const ProjectSingle = () => {
                                     item.text_imageURL ?
                                     <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start text-white md:px-8 px-2 mb-8'>
                                       <div className='w-full flex flex-col justify-center md:mb-0 mb-4'>
-                                        <h1 className='font-semibold text-5xl mb-8'>{item.text_heading}</h1>
-                                        <p className='text-lg whitespace-pre-wrap'>{item.text_description}</p>
+                                        <h1 className='font-semibold md:text-5xl sm:text-4xl text-3xl mb-8 break-keep'>{item.text_heading}</h1>
+                                        <p className='sm:text-lg text-base whitespace-pre-wrap'>{item.text_description}</p>
                                       </div>
                                       <div className='flex items-center justify-center'>
                                         <img
                                           src={item.text_imageURL}
-                                          className="rounded-md md:w-auto w-full md:h-auto h-[500px] object-cover"
+                                          className="rounded-md md:w-auto w-full h-auto object-cover"
                                         />
                                       </div>
                                     </div>
@@ -201,7 +204,7 @@ const ProjectSingle = () => {
                                     <div className='grid grid-cols-1 gap-5 place-content-start text-white md:px-8 px-2 mb-8'>
                                         <div className='w-full flex flex-col'>
                                           <h1 className='font-semibold text-5xl mb-8'>{item.text_heading}</h1>
-                                          <p className='text-lg whitespace-pre-wrap'>{item.text_description}</p>
+                                          <p className='sm:text-lg text-base whitespace-pre-wrap'>{item.text_description}</p>
                                         </div>
                                     </div>
                                   }
@@ -218,14 +221,14 @@ const ProjectSingle = () => {
                             portfolio.list.map((item, i) => {
                               return (
                                 <div key={i} className='md:w-96 w-full flex flex-col mx-auto justify-center bg-gray-800 rounded-md border-2 border-solid border-[#1F2937] shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] p-8'>
-                                    <p className='font-semibold text-3xl mb-4 text-center'>{item.list_name}</p>
+                                    <p className='font-semibold sm:text-3xl text-2xl mb-4 text-center'>{item.list_name}</p>
                                     <p className='mb-8 text-center'>{item.list_description}</p>
                                     {
                                       item.list_item.length > 0 &&
                                         item.list_item.map((data, id) => {
                                           return (
                                             <div key={id} className='flex flex-row relative mb-2'>
-                                              <FontAwesomeIcon icon={['fas', item.list_icon]} className="mr-4 mt-1 text-[#0FF]" /> <p className='text-left break-all'>{data}</p>
+                                              <FontAwesomeIcon icon={['fas', item.list_icon]} className="mr-4 mt-1 text-[#0FF]" /> <p className='text-left break-keep'>{data}</p>
                                             </div>
                                           )
                                         })
@@ -250,12 +253,15 @@ const ProjectSingle = () => {
                             {
                               portfolio.gallery.map((item, i) => {
                                 return (
-                                  <img
-                                      key={i}
-                                      src={item}
-                                      alt="gallery image"
-                                      className='w-[80%] transition duration-500 ease-in-out transform hover:scale-105 mx-auto'
-                                  />
+                                  <div className='grid grid-cols-1 gap-5 place-content-start text-white md:px-8 px-2 mb-16'>
+                                      <div className='w-full sm:h-[700px] h-[350px]  flex items-center justify-center overflow-y-scroll no-scroll relative'>
+                                        <img 
+                                          src={item}
+                                          alt="gallery image"
+                                          className="w-full object-cover sm:absolute sm:top-0 sm:left-0 mx-auto"
+                                        />
+                                      </div>
+                                  </div>
                                 )
                               })
                             }

@@ -436,10 +436,15 @@ export const portfolioSlice = createSlice({
       },
       clearMailStatus: (state) => {
         state.mailStatus = ''
+      },
+      clearProjectSingle: (state) => {
+        state.notFound = false
+        state.published = false
+        state.project = {}
       }
     },
 })
 
-export const { clearAlert, clearMailStatus} = portfolioSlice.actions
+export const { clearAlert, clearMailStatus, clearProjectSingle } = portfolioSlice.actions
 
 export default portfolioSlice.reducer

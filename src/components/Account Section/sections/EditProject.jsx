@@ -170,46 +170,53 @@ const EditProject = ({ data, setEditData, setEditRemoveImage, setEditCancel }) =
     const toBase64 = file => new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
-        reader.onload = (event) => {
-            const image = new Image();
-            image.src = event.target.result;
-            image.onload = () => {
-                const canvas = document.createElement("canvas");
-                let width = image.width;
-                let height = image.height;
-
-                const MAX_SIZE = 1000;
-                const MAX_HEIGHT = 1350;
-                const MAX_WIDTH = 1000;
-
-                if (width > height) {
-                if (width > MAX_SIZE) {
-                    height *= MAX_SIZE / width;
-                    width = MAX_SIZE;
-                }
-                } else {
-                if (height > MAX_HEIGHT) {
-                    width *= MAX_HEIGHT / height;
-                    height = MAX_HEIGHT;
-                }
-                }
-
-                if (width > MAX_WIDTH) {
-                height *= MAX_WIDTH / width;
-                width = MAX_WIDTH;
-                }
-
-                canvas.width = width;
-                canvas.height = height;
-
-                const ctx = canvas.getContext("2d");
-                ctx.drawImage(image, 0, 0, width, height);
-
-                const base64String = canvas.toDataURL(file.type, 0.7);
-                resolve(base64String);
-            };
-        };
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
     });
+    
+    // const toBase64 = file => new Promise((resolve, reject) => {
+    //     const reader = new FileReader();
+    //     reader.readAsDataURL(file);
+    //     reader.onload = (event) => {
+    //         const image = new Image();
+    //         image.src = event.target.result;
+    //         image.onload = () => {
+    //             const canvas = document.createElement("canvas");
+    //             let width = image.width;
+    //             let height = image.height;
+
+    //             const MAX_SIZE = 1000;
+    //             const MAX_HEIGHT = 1350;
+    //             const MAX_WIDTH = 1000;
+
+    //             if (width > height) {
+    //             if (width > MAX_SIZE) {
+    //                 height *= MAX_SIZE / width;
+    //                 width = MAX_SIZE;
+    //             }
+    //             } else {
+    //             if (height > MAX_HEIGHT) {
+    //                 width *= MAX_HEIGHT / height;
+    //                 height = MAX_HEIGHT;
+    //             }
+    //             }
+
+    //             if (width > MAX_WIDTH) {
+    //             height *= MAX_WIDTH / width;
+    //             width = MAX_WIDTH;
+    //             }
+
+    //             canvas.width = width;
+    //             canvas.height = height;
+
+    //             const ctx = canvas.getContext("2d");
+    //             ctx.drawImage(image, 0, 0, width, height);
+
+    //             const base64String = canvas.toDataURL(file.type, 0.7);
+    //             resolve(base64String);
+    //         };
+    //     };
+    // });
 
     const handleSubmit = () => {
         if(!submitted) {

@@ -72,7 +72,7 @@ const Contact = forwardRef(({ contact }, ref) => {
                         <div className="w-full md:flex flex-col items-center justify-center text-white">
                             <div className="md:w-1/2 w-full mx-auto text-center md:m-8" ref={ref}>
                                 <h2 className='md:text-5xl text-4xl font-bold mb-8'>Send Me A Message</h2>
-                                <p className='text-lg text-[#E1DEF7] md:pb-4 pb-8'>Must explain to you how all this mistaken idea of denouncing pleasure born and give you a complete account the system</p>
+                                <p className='text-lg text-[#E1DEF7] md:pb-4 pb-8'>You can contact me by filling up this form below.</p>
                             </div>
                             <div className='md:w-[800px] w-full rounded-sm p-8 py-16 border border-solid border-gray-700 bg-gray-800'>
                                 <h2 className='text-3xl font-semibold text-center mb-12'>Get in Touch</h2>

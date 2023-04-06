@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck, faCalendar, faSitemap, faArrowRight, faGamepad, faChevronLeft, faChevronRight, faBriefcase } from "@fortawesome/free-solid-svg-icons";
 import styles from "../../style";
 import Carousel from "react-multi-carousel";
-import { useParams } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import Avatar from '../../assets/avatar.png'
 import { portfolio1 } from "../../assets";
 
@@ -66,7 +66,7 @@ const Projects = ({ projects }) => {
                         <div className="w-full sm:flex flex-row justify-start sm:text-left text-center text-white">
                             <div className="sm:w-1/2 w-full">
                                 <h2 className='md:text-5xl text-4xl font-bold mb-8'>Recent Work</h2>
-                                <p className='text-lg text-[#E1DEF7] md:pb-4 pb-8'>Must explain to you how all this mistaken idea of denouncing pleasure born and give you a complete account the system</p>
+                                <p className='text-lg text-[#E1DEF7] md:pb-4 pb-8'>My work has been improving over time, and I consider the ability to track and maintain progress as an essential addition to my skillset.</p>
                             </div>
                             <div className="sm:w-1/2 w-full flex items-center sm:justify-end justify-center">
                                 <div className="p-2 border border-dashed border-gray-700 rounded-full">
@@ -101,7 +101,7 @@ const Projects = ({ projects }) => {
                                                             />
                                                         </div>
                                                     </div>
-                                                    <a href={`/${username}/project/${item.project_name.split(" ").join("_")}`}><h2 className='pb-2 text-2xl font-semibold hover:text-[#CD3242] hover:cursor-pointer transition-all'>{item.project_name}</h2></a>
+                                                    <Link to={`/${username}/project/${item.project_name.split(/[\/\s]+/).join("_")}`}><h2 className='pb-2 text-2xl font-semibold hover:text-[#CD3242] hover:cursor-pointer transition-all'>{item.project_name}</h2></Link>
                                                     <p className='pb-6 text-[#d8d8d8] text-sm'>{item.category}</p>
                                                 </div>
                                             )

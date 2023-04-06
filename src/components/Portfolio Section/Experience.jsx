@@ -30,7 +30,7 @@ const Experience = ({ experience }) => {
                         <div className="w-full md:flex flex-col items-center justify-center text-white">
                             <div className="md:w-1/2 w-full text-center md:m-8">
                                 <h2 className='md:text-5xl text-4xl font-bold mb-8'>My Work Experience</h2>
-                                <p className='text-lg text-[#E1DEF7] md:pb-4 pb-8'>Must explain to you how all this mistaken idea of denouncing pleasure born and give you a complete account the system</p>
+                                <p className='text-lg text-[#E1DEF7] md:pb-4 pb-8'>My professional career has provided me with valuable knowledge and skills from working with various companies.  I am eager to continue building on these experiences as I pursue new opportunities.</p>
                             </div>
                             <div className="w-full flex flex-col justify-center mb-12">
                                 {
