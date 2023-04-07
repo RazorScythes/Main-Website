@@ -32,7 +32,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
         full_name: '',
         description: '',
         profession: [],
-        animation: ''
+        animation: false
     })
 
     const [input, setInput] = useState({
@@ -55,7 +55,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
             full_name: portfolio ? portfolio.full_name : '',
             description: portfolio ? portfolio.description : '',
             profession: portfolio ? portfolio.profession : [],
-            animation: portfolio ? portfolio.animation : ''
+            animation: portfolio ? portfolio.animation : false
         })
         setSubmitted(false)
     }, [portfolio])

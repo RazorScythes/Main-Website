@@ -10,8 +10,10 @@ else {
     Admin_API = axios.create({ baseURL: `https://main-api-eight.vercel.app/`})
     User_API = axios.create({ baseURL: `https://main-api-eight.vercel.app/`})
 }
-const headers = {
-    'content-type': 'multipart/form-data'
+const header = {
+    withCredentials: true,
+	headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
+	credentials: 'include',
 }
 
 /*

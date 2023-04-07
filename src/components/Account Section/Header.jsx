@@ -2,7 +2,7 @@ import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import styles from '../../style'
-const Header = ({ heading, description, button_text, button_secondary_text, button_link, api_call, setSubmitted, submitted }) => {
+const Header = ({ heading, description, button_text, button_secondary_text, button_link, api_call, setSubmitted, submitted, counter_text, counter }) => {
 
 
     const dispatch = useDispatch()
@@ -25,6 +25,7 @@ const Header = ({ heading, description, button_text, button_secondary_text, butt
                             <div className="lg:w-1/2 md:w-1/2 w-full sm:px-4">
                                 <h2 className='text-4xl font-bold text-gray-800 mb-2'>{ heading || 'Welcome' }</h2>
                                 <p className='text-lg text-gray-600 font-semibold'>{ description || 'Select a website to manage, or create a new one from scratch.' }</p>
+                                <p className='text-base text-gray-600 font-semibold'>{ counter_text || 'Count ' }: {counter || 0}</p>
                             </div>
                             <div className="lg:w-1/2 md:w-1/2 w-full sm:px-4 flex items-center md:justify-end justify-start">
                                 {

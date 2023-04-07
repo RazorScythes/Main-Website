@@ -20,12 +20,12 @@ const AccountPortfolio = ({ user }) => {
     const navigate  = useNavigate()
 
     const portfolio = useSelector((state) => state.portfolio.data)
-    const hero = useSelector((state) => state.portfolio.data.hero)
-    const skills = useSelector((state) => state.portfolio.data.skills)
-    const services = useSelector((state) => state.portfolio.data.services)
-    const experience = useSelector((state) => state.portfolio.data.experience)
-    const projects = useSelector((state) => state.portfolio.data.projects)
-    const contact = useSelector((state) => state.portfolio.data.contact)
+    const hero = useSelector((state) => state.portfolio.data?.hero)
+    const skills = useSelector((state) => state.portfolio.data?.skills)
+    const services = useSelector((state) => state.portfolio.data?.services)
+    const experience = useSelector((state) => state.portfolio.data?.experience)
+    const projects = useSelector((state) => state.portfolio.data?.projects)
+    const contact = useSelector((state) => state.portfolio.data?.contact)
 
     const [index, setIndex] = useState(0)
     const [submitted, setSubmitted] = useState(false)
@@ -48,6 +48,8 @@ const AccountPortfolio = ({ user }) => {
                 api_call={portfolio && portfolio.published ? unpublishPortfolio({id: user.result?._id}) : publishPortfolio({id: user.result?._id})}
                 setSubmitted={setSubmitted}
                 submitted={submitted}
+                counter_text="User visited"
+                counter={portfolio && portfolio.visited ? portfolio.visited : 0}
             />
             <div className="relative bg-[#F0F4F7]">   
                 <div className={`${styles.marginX} ${styles.flexCenter}`}>

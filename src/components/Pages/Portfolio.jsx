@@ -17,12 +17,12 @@ const Portfolio = () => {
     const dispatch = useDispatch()
 
     const portfolio = useSelector((state) => state.portfolio.data)
-    const hero = useSelector((state) => state.portfolio.data.hero)
-    const skills = useSelector((state) => state.portfolio.data.skills)
-    const services = useSelector((state) => state.portfolio.data.services)
-    const experience = useSelector((state) => state.portfolio.data.experience)
-    const projects = useSelector((state) => state.portfolio.data.projects)
-    const contact = useSelector((state) => state.portfolio.data.contact)
+    const hero = useSelector((state) => state.portfolio.data?.hero)
+    const skills = useSelector((state) => state.portfolio.data?.skills)
+    const services = useSelector((state) => state.portfolio.data?.services)
+    const experience = useSelector((state) => state.portfolio.data?.experience)
+    const projects = useSelector((state) => state.portfolio.data?.projects)
+    const contact = useSelector((state) => state.portfolio.data?.contact)
     const notFound = useSelector((state) => state.portfolio.notFound)
     const published = useSelector((state) => state.portfolio.published)
 

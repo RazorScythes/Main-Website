@@ -434,7 +434,6 @@ export const portfolioSlice = createSlice({
         state.mailStatus = action.payload.mailStatus
       }),
       builder.addCase(sendContactUs.fulfilled, (state, action) => {
-        console.log(action.payload.data.mailStatus)
         state.mailStatus = action.payload.data.mailStatus
       }),
       builder.addCase(sendContactUs.rejected, (state, action) => {

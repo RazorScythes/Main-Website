@@ -19,12 +19,10 @@ const Footer = ({ path }) => {
         message: ''
     })
 
-    const [hasAlerted, setHasAlerted] = useState(false);
     const [submitted, setSubmitted] = useState(false)
 
     useEffect(() => {
-        if(mailStatus && !hasAlerted) {
-            console.log("RECIEVED")
+        if(mailStatus) {
             window.alert(mailStatus)
             dispatch(clearMailStatus())
             setForm({
@@ -34,17 +32,14 @@ const Footer = ({ path }) => {
                 message: ''
             })
             setSubmitted(false)
-            setHasAlerted(true);
         }
     }, [mailStatus])
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        console.log("DISPATCHED")
         if(!submitted) {
             dispatch(sendContactUs(form))
             setSubmitted(true)
-            setHasAlerted(false);
         }
     }
 
