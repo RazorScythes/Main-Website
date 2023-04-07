@@ -24,7 +24,7 @@ const Footer = ({ path }) => {
     useEffect(() => {
         if(mailStatus) {
             console.log("RECIEVED")
-            alert(mailStatus)
+            window.alert(mailStatus)
             dispatch(clearMailStatus())
             setForm({
                 ...form,

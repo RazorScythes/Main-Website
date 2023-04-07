@@ -32,7 +32,7 @@ const Contact = forwardRef(({ contact }, ref) => {
 
     useEffect(() => {
         if(mailStatus) {
-            alert(mailStatus)
+            window.alert(mailStatus)
             dispatch(clearMailStatus())
             setForm({
                 ...form,
