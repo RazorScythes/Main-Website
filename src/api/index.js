@@ -10,11 +10,18 @@ else {
     Admin_API = axios.create({ baseURL: `https://main-api-eight.vercel.app/`})
     User_API = axios.create({ baseURL: `https://main-api-eight.vercel.app/`})
 }
-const header = {
+
+const headers = {
+    Accept: "application/json",
+    "Content-Type": "application/json",
+};
+
+const options = {
+    headers,
     withCredentials: true,
-	headers: {'Access-Control-Allow-Origin': '*', 'Content-Type': 'application/json'},
-	credentials: 'include',
-}
+    credentials: 'include',
+};
+
 
 /*
     Sign in
@@ -30,7 +37,7 @@ export const getProject                                 = (formData) => User_API
 export const publishPortfolio                           = (formData) => User_API.post('/portfolio/publishPortfolio', formData)
 export const unpublishPortfolio                         = (formData) => User_API.post('/portfolio/unpublishPortfolio', formData)
 export const getPortfolio                               = (formData) => User_API.post('/portfolio/getPortfolio', formData)
-export const getPortfolioByUsername                     = (formData) => User_API.post('/portfolio/getPortfolioByUsername', formData)
+export const getPortfolioByUsername                     = (formData) => User_API.post('/portfolio/getPortfolioByUsername', formData, options)
 export const uploadPortfolioHero                        = (formData) => User_API.post('/portfolio/hero', formData)
 export const uploadPortfolioSkills                      = (formData) => User_API.post('/portfolio/skills', formData)
 export const uploadPortfolioServices                    = (formData) => User_API.post('/portfolio/services', formData)
