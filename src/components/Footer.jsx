@@ -23,6 +23,7 @@ const Footer = ({ path }) => {
 
     useEffect(() => {
         if(mailStatus) {
+            console.log("RECIEVED")
             alert(mailStatus)
             dispatch(clearMailStatus())
             setForm({
@@ -37,7 +38,7 @@ const Footer = ({ path }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-
+        console.log("DISPATCHED")
         if(!submitted)
             dispatch(sendContactUs(form))
     }
