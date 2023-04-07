@@ -4,7 +4,7 @@ import 'react-lazy-load-image-component/src/effects/blur.css';
 import styles from "../../style";
 
 const Hero = ({ hero, resultRef }) => {
-    console.log(resultRef)
+    
     const [heroData, setHeroData] = useState({
         image: '',
         full_name: '',
