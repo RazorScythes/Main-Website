@@ -37,7 +37,7 @@ export const getProject                                 = (formData) => User_API
 export const publishPortfolio                           = (formData) => User_API.post('/portfolio/publishPortfolio', formData)
 export const unpublishPortfolio                         = (formData) => User_API.post('/portfolio/unpublishPortfolio', formData)
 export const getPortfolio                               = (formData) => User_API.post('/portfolio/getPortfolio', formData)
-export const getPortfolioByUsername                     = (formData) => User_API.post('/portfolio/getPortfolioByUsername', formData, options)
+export const getPortfolioByUsername                     = (formData) => User_API.post('/portfolio/getPortfolioByUsername', formData)
 export const uploadPortfolioHero                        = (formData) => User_API.post('/portfolio/hero', formData)
 export const uploadPortfolioSkills                      = (formData) => User_API.post('/portfolio/skills', formData)
 export const uploadPortfolioServices                    = (formData) => User_API.post('/portfolio/services', formData)
