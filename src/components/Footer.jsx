@@ -9,9 +9,6 @@ import { Link } from "react-router-dom";
 import { nav_links } from "../constants";
 const Footer = ({ path }) => {
 
-    useEffect(() => {
-        window.alert("OK")
-    }, [])
     const dispatch = useDispatch()
 
     const mailStatus = useSelector((state) => state.portfolio.mailStatus)
@@ -22,10 +19,11 @@ const Footer = ({ path }) => {
         message: ''
     })
 
+    const [hasAlerted, setHasAlerted] = useState(false);
     const [submitted, setSubmitted] = useState(false)
 
     useEffect(() => {
-        if(mailStatus) {
+        if(mailStatus && !hasAlerted) {
             console.log("RECIEVED")
             window.alert(mailStatus)
             dispatch(clearMailStatus())
@@ -36,6 +34,7 @@ const Footer = ({ path }) => {
                 message: ''
             })
             setSubmitted(false)
+            setHasAlerted(true);
         }
     }, [mailStatus])
 
@@ -45,6 +44,7 @@ const Footer = ({ path }) => {
         if(!submitted) {
             dispatch(sendContactUs(form))
             setSubmitted(true)
+            setHasAlerted(false);
         }
     }
 
