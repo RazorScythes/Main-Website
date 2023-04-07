@@ -9,6 +9,9 @@ import { Link } from "react-router-dom";
 import { nav_links } from "../constants";
 const Footer = ({ path }) => {
 
+    useEffect(() => {
+        window.alert("OK")
+    }, [])
     const dispatch = useDispatch()
 
     const mailStatus = useSelector((state) => state.portfolio.mailStatus)
