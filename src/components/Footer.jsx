@@ -39,8 +39,10 @@ const Footer = ({ path }) => {
     const handleSubmit = (e) => {
         e.preventDefault()
         console.log("DISPATCHED")
-        if(!submitted)
+        if(!submitted) {
             dispatch(sendContactUs(form))
+            setSubmitted(true)
+        }
     }
 
     return (
