@@ -5,6 +5,9 @@ import { Hero, Feature, GameList, News, Service, Socials, Users, Footer } from '
 import { toram_online, genshin_impact, minecraft, tower_of_fantasy, watching_video } from '../../assets';
 import Alert from '../Alert';
 import Loading from './Loading';
+
+import Cookies from 'universal-cookie';
+
 // Static Services Component 
 const service_multiple_image = [
     { src: toram_online, alt: 'Image 1' },
@@ -19,9 +22,11 @@ const service_single_image = [
 
 const Home = ({ path }) => {
     // const count = useSelector((state) => state.counter)
-    
+    const cookies = new Cookies();
+
     useEffect(() => {
         document.title = "Home"
+        cookies.set('myCat', 'Pacman', { path: '/' });
     }, [])
     return (
         <div>

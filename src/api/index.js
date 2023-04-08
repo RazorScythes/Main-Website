@@ -1,4 +1,7 @@
 import axios from 'axios'
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies();
 
 let Admin_API, User_API
 
@@ -11,9 +14,19 @@ else {
     User_API = axios.create({ baseURL: `https://main-api-eight.vercel.app/`})
 }
 
+User_API.interceptors.request.use((req) => {
+    if(cookies.get('uid')){
+        req.headers.uid = `${cookies.get('uid')}`;
+    }
+    return req;
+});
+
 const options = {
+    headers: {
+        Authorization: `Bearer ${cookies.get('myCat')}`
+    },
     withCredentials: true,
-    credentials: 'include',
+    // credentials: 'include',
 };
 
 

@@ -49,7 +49,7 @@ const AccountPortfolio = ({ user }) => {
                 setSubmitted={setSubmitted}
                 submitted={submitted}
                 counter_text="User visited"
-                counter={portfolio && portfolio.visited ? portfolio.visited : 0}
+                counter={portfolio && portfolio.visited ? portfolio.visited.length : 0}
             />
             <div className="relative bg-[#F0F4F7]">   
                 <div className={`${styles.marginX} ${styles.flexCenter}`}>
