@@ -3,7 +3,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { account_links } from "../../constants";
-import { faUser, faGear, faRightFromBracket, faDashboard, faFolder , faEnvelope, faChevronDown, faChevronUp} from "@fortawesome/free-solid-svg-icons";
+import { faUser, faGear, faRightFromBracket, faFolder , faEnvelope, faChevronDown, faChevronUp} from "@fortawesome/free-solid-svg-icons";
 import { logout } from "../../actions/auth";
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -19,7 +19,8 @@ const AccountNavbar = ({ path }) => {
   const [toggle, setToggle] = useState(false)
 
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
-  
+  const [avatar, setAvatar] = useState(localStorage.getItem('avatar')?.replaceAll('"', ""))
+
   useEffect(() => {
     if(!user) navigate(`/`)
   }, [])
@@ -63,6 +64,20 @@ const AccountNavbar = ({ path }) => {
                   )
               })
             }
+            {
+              user?.result.role === 'Admin' &&
+                <>
+                  <div className="border-l w-[1px] h-full border-solid border-gray-400"><p className="opacity-0">.</p></div>
+                  <Link to={`/account/manage`} style={{borderBottom: (account_links.length === active) || ('manage' === location.pathname.split('/').at(-1)) ? "4px solid #1F2937" : "4px solid transparent", fontWeight: (account_links.length === active) || ('manage' === location.pathname.split('/').at(-1)) ? 700 : 500}} className="block lg:inline-block lg:mt-0 border-b-4 border-solid hover:border-gray-800 border-transparent hover:text-gray-900 mx-4 pb-2" 
+                    onClick={() => {
+                      setIsActive(!isActive)
+                      setActive(account_links.length)
+                    }
+                  }>
+                      Manage
+                  </Link>
+                </>
+            }
           </div>
       </div>
       <Link to={`/`} className="block lg:hidden">
@@ -81,7 +96,7 @@ const AccountNavbar = ({ path }) => {
         {
           user?.result?
           <>
-              <img className="h-8 w-8 rounded-full ml-4 cursor-pointer object-cover" src={Avatar} alt="Profile" onClick={() => {
+              <img className="h-8 w-8 rounded-full ml-4 cursor-pointer object-cover" src={avatar ? avatar : Avatar} alt="Profile" onClick={() => {
                 setToggle(!toggle)
                 setIsActive(false)
               }} />
@@ -94,19 +109,13 @@ const AccountNavbar = ({ path }) => {
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                       >
-                        <FontAwesomeIcon icon={faDashboard} className="mr-2" />
-                        <a href={`${path}/${user.result.username}`}>Dashboard</a>
-                      </li>
-                      <li
-                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
-                      >
                         <FontAwesomeIcon icon={faUser} className="mr-2" />
                         <a href={`${path}/account`}>Account</a>
                       </li>
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                       >
-                        <FontAwesomeIcon icon={faUser} className="mr-2" />
+                        <FontAwesomeIcon icon={faFolder} className="mr-2" />
                         <a href={`${path}/${user.result.username}/portfolio`}>My Portfolio</a>
                       </li>
                       <li
@@ -119,7 +128,7 @@ const AccountNavbar = ({ path }) => {
                       className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                     >
                       <FontAwesomeIcon icon={faGear} className="mr-2" />
-                      <a href={`${path}/${user.result.username}`}>Settings</a>
+                      <a href={`${path}/account/settings`}>Settings</a>
                     </li>
                     <li
                       className={`cursor-pointer text-white hover:text-blue-200 mb-0`}
@@ -149,21 +158,23 @@ const AccountNavbar = ({ path }) => {
             {
               account_links.map((link, i) => {
                   return (
-                    <Link key={i} to={`/account/${link.path}`} className="block mt-4 lg:inline-block lg:mt-0 text-blue-200 hover:text-white mr-4" onClick={() => setIsActive(!isActive)}>
+                    <Link key={i} to={`/account/${link.path}`} className="block mt-4 lg:inline-block lg:mt-0 text-gray-800 font-semibold hover:text-gray-500 mr-4" onClick={() => setIsActive(!isActive)}>
                       {link.name}
                     </Link>
                   )
               })
+            }
+            {
+              user?.result.role === 'Admin' &&
+              <Link to={`/account/manage`} className="block mt-4 lg:inline-block lg:mt-0 text-gray-800 font-semibold hover:text-gray-500 mr-4" onClick={() => setIsActive(!isActive)}>
+                Manage
+              </Link>
             }
         </div>
         <div className="hidden lg:block flex">
           {
             user?.result? 
             <>
-                {/* <img className="h-10 w-10 rounded-full ml-4 cursor-pointer object-cover" src={Avatar} alt="Profile" onClick={() => {
-                  setToggle(!toggle)
-                  setIsActive(false)
-                }} /> */}
                 <div className="flex flex-row items-center cursor-pointer" 
                   onClick={() => {
                   setToggle(!toggle)
@@ -178,12 +189,6 @@ const AccountNavbar = ({ path }) => {
                   } p-6 bg-gray-800 absolute top-[50px] right-0 mx-2 my-2 min-w-[140px] rounded-xl sidebar text-sm font-poppins`}
                 >
                   <ul className="list-none flex justify-end items-start flex-1 flex-col">
-                      <li
-                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
-                      >
-                        <FontAwesomeIcon icon={faDashboard} className="mr-2" />
-                        <a href={`${path}/${user.result.username}`}>Dashboard</a>
-                      </li>
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                       >
@@ -206,7 +211,7 @@ const AccountNavbar = ({ path }) => {
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                       >
                         <FontAwesomeIcon icon={faGear} className="mr-2" />
-                        <a href={`${path}/${user.result.username}`}>Settings</a>
+                        <a href={`${path}/account/settings`}>Settings</a>
                       </li>
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-0`}

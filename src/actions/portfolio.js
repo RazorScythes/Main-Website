@@ -1,8 +1,5 @@
 import * as api from '../api'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import Cookies from 'universal-cookie';
-
-const cookies = new Cookies();
 
 const initialState = {
     error: '',

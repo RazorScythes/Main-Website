@@ -65,7 +65,7 @@ const ProjectSingle = () => {
   const portfolio = useSelector((state) => state.portfolio.project)
   const notFound = useSelector((state) => state.portfolio.notFound)
   const published = useSelector((state) => state.portfolio.published)
-
+  console.log(portfolio)
   useEffect(() => {
     window.scrollTo(0, 0)
     dispatch(clearProjectSingle())
@@ -84,11 +84,6 @@ const ProjectSingle = () => {
     const result = (date2.getFullYear() - date1.getFullYear()) * 12 + (date2.getMonth() - date1.getMonth())
 
     return result + ' months'
-  }
-
-  const addSpaces = (text1, numSpaces) => {
-    const spaces = Array(numSpaces).fill('\u00A0').join('');
-    return text1 + spaces
   }
 
   return (
@@ -152,8 +147,8 @@ const ProjectSingle = () => {
                           <div className='md:w-96 w-full flex flex-col mx-auto justify-center'>
                             <div className='bg-gray-800 rounded-md border-2 border-solid border-[#1F2937] shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] p-8'>
                               <p className='font-semibold sm:text-3xl text-2xl mb-8'>Project Information:</p>
-                              <div className='grid grid-cols-2 gap-5 place-content-start text-white'>
-                                <p className='font-semibold mb-4'>Created By:</p><span className='font-normal'> {username}</span>
+                              <div className='grid grid-cols-2 gap-5 place-content-start text-white mb-2'>
+                                <p className='font-semibold mb-4'>Created By:</p><span className='font-normal'> {portfolio.full_name ? portfolio.full_name : username}</span>
                               </div>
                               <div className='grid grid-cols-2 gap-5 place-content-start text-white'>
                                 <p className='font-semibold mb-4'>Started:</p><span className='font-normal'> {portfolio.date_started}</span>

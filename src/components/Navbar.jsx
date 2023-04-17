@@ -3,7 +3,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { nav_links, user_navLinks } from "../constants";
-import { faUser, faGear, faRightFromBracket, faDashboard, faFolder , faEnvelope} from "@fortawesome/free-solid-svg-icons";
+import { faUser, faGear, faRightFromBracket, faFolder , faEnvelope} from "@fortawesome/free-solid-svg-icons";
 import { logout } from "../actions/auth";
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -18,7 +18,8 @@ const Navbar = ({ path }) => {
   const [toggle, setToggle] = useState(false)
 
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
-  
+  const [avatar, setAvatar] = useState(localStorage.getItem('avatar')?.replaceAll('"', ""))
+
   const sign_out = () => {
     dispatch(logout())
     navigate(`${path}/login`)
@@ -43,7 +44,7 @@ const Navbar = ({ path }) => {
         {
           user?.result?
           <>
-              <img className="h-8 w-8 rounded-full ml-4 cursor-pointer object-cover" src={Avatar} alt="Profile" onClick={() => {
+              <img className="h-8 w-8 rounded-full ml-4 cursor-pointer object-cover" src={avatar ? avatar : Avatar} alt="Profile" onClick={() => {
                 setToggle(!toggle)
                 setIsActive(false)
               }} />
@@ -56,19 +57,13 @@ const Navbar = ({ path }) => {
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                       >
-                        <FontAwesomeIcon icon={faDashboard} className="mr-2" />
-                        <a href={`${path}/${user.result.username}`}>Dashboard</a>
-                      </li>
-                      <li
-                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
-                      >
                         <FontAwesomeIcon icon={faUser} className="mr-2" />
                         <a href={`${path}/account`}>Account</a>
                       </li>
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                       >
-                        <FontAwesomeIcon icon={faUser} className="mr-2" />
+                        <FontAwesomeIcon icon={faFolder} className="mr-2" />
                         <a href={`${path}/${user.result.username}/portfolio`}>My Portfolio</a>
                       </li>
                       <li
@@ -81,7 +76,7 @@ const Navbar = ({ path }) => {
                       className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                     >
                       <FontAwesomeIcon icon={faGear} className="mr-2" />
-                      <a href={`${path}/${user.result.username}`}>Settings</a>
+                      <a href={`${path}/account/settings`}>Settings</a>
                     </li>
                     <li
                       className={`cursor-pointer text-white hover:text-blue-200 mb-0`}
@@ -123,7 +118,7 @@ const Navbar = ({ path }) => {
           {
             user?.result? 
             <>
-                <img className="h-10 w-10 rounded-full ml-4 cursor-pointer object-cover" src={Avatar} alt="Profile" onClick={() => {
+                <img className="h-10 w-10 rounded-full ml-4 cursor-pointer object-cover" src={avatar ? avatar : Avatar} alt="Profile" onClick={() => {
                   setToggle(!toggle)
                   setIsActive(false)
                 }} />
@@ -133,12 +128,6 @@ const Navbar = ({ path }) => {
                   } p-6 bg-gray-800 absolute top-[90px] right-0 mx-2 my-2 min-w-[140px] rounded-xl sidebar text-sm font-poppins`}
                 >
                   <ul className="list-none flex justify-end items-start flex-1 flex-col">
-                      <li
-                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
-                      >
-                        <FontAwesomeIcon icon={faDashboard} className="mr-2" />
-                        <a href={`${path}/${user.result.username}`}>Dashboard</a>
-                      </li>
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                       >
@@ -161,7 +150,7 @@ const Navbar = ({ path }) => {
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                       >
                         <FontAwesomeIcon icon={faGear} className="mr-2" />
-                        <a href={`${path}/${user.result.username}`}>Settings</a>
+                        <a href={`${path}/account/settings`}>Settings</a>
                       </li>
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-0`}

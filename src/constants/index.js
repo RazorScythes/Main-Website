@@ -20,7 +20,7 @@ export const account_links = [
   {
     path: "settings",
     name: "Settings"
-  },
+  }
 ]
 
 export const portfolio_selector = [
