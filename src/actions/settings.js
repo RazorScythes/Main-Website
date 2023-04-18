@@ -6,7 +6,8 @@ const initialState = {
     isLoading: false,
     alert: '',
     variant: '',
-    data: {}
+    data: {},
+    avatar: ''
 }
 
 export const getProfile = createAsyncThunk('settings/getProfile', async (form, thunkAPI) => {
@@ -41,6 +42,22 @@ export const updateProfile = createAsyncThunk('settings/updateProfile', async (f
     }
 })
 
+export const updatePassword = createAsyncThunk('settings/updatePassword', async (form, thunkAPI) => {
+    try {
+        const response = await api.updatePassword(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const settingsSlice = createSlice({
     name: 'settings',
     initialState,
@@ -62,6 +79,18 @@ export const settingsSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(updateProfile.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(updatePassword.fulfilled, (state, action) => {
+            state.data = action.payload.data.result
+            state.alert = action.payload.data.alert
+            state.variant = action.payload.data.variant
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(updatePassword.rejected, (state, action) => {
+            console.log(action.payload)
             state.alert = action.payload.message
             state.variant = action.payload.variant
         })

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Navbar, Home, Games, Login, NotFound, Portfolio, Footer, Forum, Store, Archive } from './components/index'
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
-import { AccountNavbar, Overview, AccountPortfolio, AccountStore, Uploads, Settings, Manage } from './components/Account Section/index'
+import { AccountNavbar, Overview, AccountPortfolio, AccountStore, Uploads, Settings, Manage, Logs } from './components/Account Section/index'
 import { useDispatch, useSelector } from 'react-redux'
 import { ProjectSingle } from './components/Portfolio Section/index';
 import { getProfile } from './actions/settings';
@@ -59,6 +59,7 @@ const App = () => {
             <Route path="portfolio" element={<><AccountPortfolio user={user}/></>} />
             <Route path="uploads" element={<><Uploads user={user}/></>} />
             <Route path="store" element={<><AccountStore user={user}/></>} />
+            <Route path="logs" element={<><Logs user={user}/></>} />
             <Route path="settings" element={<><Settings user={user} settings={settings}/></>} />
             <Route path="settings/:options" element={<><Settings user={user} settings={settings}/></>} />
             <Route path="manage" element={<><Manage user={user}/></>} />

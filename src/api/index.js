@@ -62,3 +62,9 @@ export const sendContactUs                              = (formData) => User_API
 */
 export const getProfile                                 = (formData) => User_API.post('/settings/getProfile', formData)
 export const updateProfile                              = (formData) => User_API.post('/settings/updateProfile', formData)
+export const updatePassword                             = (formData) => User_API.post('/settings/updatePassword', formData)
+
+/*
+    Logs
+*/
+export const getLogs                                    = (formData) => User_API.post('/logs/getLogs', formData)

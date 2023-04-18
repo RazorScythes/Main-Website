@@ -6,6 +6,7 @@ import Uploads from "./Uploads"
 import Settings from "./Settings"
 import AccountStore from "./AccountStore"
 import Manage from "./Manage"
+import Logs from "./Logs"
 
 export {
     AccountNavbar,
@@ -15,5 +16,6 @@ export {
     Uploads,
     Settings,
     AccountStore,
-    Manage
+    Manage,
+    Logs
 }

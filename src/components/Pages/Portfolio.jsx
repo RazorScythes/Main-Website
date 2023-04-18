@@ -35,7 +35,10 @@ const Portfolio = () => {
             const newDeviceId = uuidv4();
             cookies.set('uid', newDeviceId, { path: '/' });
         }
-        dispatch(getPortfolioByUsername({username: username}))
+        dispatch(getPortfolioByUsername({
+            user_visit: user ? user.result?.username : '',
+            username: username
+        }))
     }, [])
 
     return (

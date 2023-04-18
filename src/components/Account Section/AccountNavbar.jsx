@@ -3,7 +3,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { account_links } from "../../constants";
-import { faUser, faGear, faRightFromBracket, faFolder , faEnvelope, faChevronDown, faChevronUp} from "@fortawesome/free-solid-svg-icons";
+import { faUser, faGear, faRightFromBracket, faFolder , faEnvelope, faChevronDown, faChevronUp, faNoteSticky} from "@fortawesome/free-solid-svg-icons";
 import { logout } from "../../actions/auth";
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -48,14 +48,19 @@ const AccountNavbar = ({ path }) => {
               account_links.map((link, i) => {
                   return (
                     <>
-                      <Link key={i} to={`/account/${link.path}`} style={{borderBottom: (i === active) || (link.path === location.pathname.split('/').at(-1)) ? "4px solid #1F2937" : "4px solid transparent", fontWeight: (i === active) || (link.path === location.pathname.split('/').at(-1)) ? 700 : 500}} className="block lg:inline-block lg:mt-0 border-b-4 border-solid hover:border-gray-800 border-transparent hover:text-gray-900 mx-4 pb-2" 
-                        onClick={() => {
-                          setIsActive(!isActive)
-                          setActive(i)
-                        }
-                      }>
-                          {link.name}
-                      </Link>
+                      {
+                        link.path !== 'logs' && (
+                          <Link key={i} to={`/account/${link.path}`} style={{borderBottom: (i === active) || (link.path === location.pathname.split('/').at(-1)) ? "4px solid #1F2937" : "4px solid transparent", fontWeight: (i === active) || (link.path === location.pathname.split('/').at(-1)) ? 700 : 500}} className="block lg:inline-block lg:mt-0 border-b-4 border-solid hover:border-gray-800 border-transparent hover:text-gray-900 mx-4 pb-2" 
+                            onClick={() => {
+                              setIsActive(!isActive)
+                              setActive(i)
+                            }
+                          }>
+                              {link.name}
+                          </Link>
+                        )
+                      }
+                      
                       {
                         i !== account_links.length - 1 &&
                           <div className="border-l w-[1px] h-full border-solid border-gray-400"><p className="opacity-0">.</p></div>
@@ -124,18 +129,24 @@ const AccountNavbar = ({ path }) => {
                         <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
                         <a href={`${path}/${user.result.username}`}>Inbox</a>
                       </li>
-                    <li
-                      className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
-                    >
-                      <FontAwesomeIcon icon={faGear} className="mr-2" />
-                      <a href={`${path}/account/settings`}>Settings</a>
-                    </li>
-                    <li
-                      className={`cursor-pointer text-white hover:text-blue-200 mb-0`}
-                    >
-                      <FontAwesomeIcon icon={faRightFromBracket} className="mr-2" />
-                      <button onClick={() => sign_out()}>Logout</button>
-                    </li>
+                      <li
+                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
+                      >
+                        <FontAwesomeIcon icon={faNoteSticky} className="mr-2" />
+                        <a href={`${path}/account/logs`}>Logs</a>
+                      </li>
+                      <li
+                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
+                      >
+                        <FontAwesomeIcon icon={faGear} className="mr-2" />
+                        <a href={`${path}/account/settings`}>Settings</a>
+                      </li>
+                      <li
+                        className={`cursor-pointer text-white hover:text-blue-200 mb-0`}
+                      >
+                        <FontAwesomeIcon icon={faRightFromBracket} className="mr-2" />
+                        <button onClick={() => sign_out()}>Logout</button>
+                      </li>
                 </ul>
               </div>
           </>
@@ -206,6 +217,12 @@ const AccountNavbar = ({ path }) => {
                       >
                         <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
                         <a href={`${path}/${user.result.username}`}>Inbox</a>
+                      </li>
+                      <li
+                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
+                      >
+                        <FontAwesomeIcon icon={faNoteSticky} className="mr-2" />
+                        <a href={`${path}/account/logs`}>Logs</a>
                       </li>
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}

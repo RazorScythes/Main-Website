@@ -18,6 +18,10 @@ export const account_links = [
     name: "Store"
   },
   {
+    path: "logs",
+    name: "Logs"
+  },
+  {
     path: "settings",
     name: "Settings"
   }
