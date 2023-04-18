@@ -64,21 +64,6 @@ const Logs = () => {
                                                 })
                                             )
                                         }
-                                        {/* <tr>
-                                            <td className="border px-4 py-2">
-                                                <div className='flex flex-row items-center'>
-                                                <img className="h-6 w-6 rounded-full mr-2 cursor-pointer object-cover border border-solid border-gray-600" src={Avatar} alt="Profile" />
-                                                    <p>John Doe</p>
-                                                </div>
-                                            </td>
-                                            <td className="border px-4 py-2">April 10, 2023</td>
-                                            <td className="border px-4 py-2 w-1/2">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</td>
-                                        </tr>
-                                        <tr>
-                                            <td className="border px-4 py-2">Jane Smith</td>
-                                            <td className="border px-4 py-2">April 12, 2023</td>
-                                            <td className="border px-4 py-2 w-1/2">Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</td>
-                                        </tr> */}
                                     </tbody>
                                 </table>
                             </div>
