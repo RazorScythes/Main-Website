@@ -160,18 +160,18 @@ const GamesSingle = () => {
                                 {
                                     active === 2 && (
                                         <div>
-                                            <h2 className='text-xl font-semibold mb-8 text-center'>Select where you want to download the program.</h2>
-                                            <h2 className='text-xl font-semibold mb-8 text-center'>Password: 12345</h2>
-                                            <div className="grid grid-cols-2 gap-4 mb-4">
+                                            <h2 className='xs:text-xl text-lg font-semibold md:mb-8 mb-6 text-center'>Select where you want to download the program.</h2>
+                                            <h2 className='xs:text-xl text-lg font-semibold md:mb-8 mb-6 text-center'>Password: 12345</h2>
+                                            <div className="grid sm:grid-cols-2 grid-cols-1 gap-4 mb-4">
                                                 <div className='flex flex-col justify-center'>
-                                                    <h2 className='text-lg text-center'>Google Drive</h2>
+                                                    <h2 className='xs:text-lg text-base text-center'>Google Drive</h2>
                                                     <button className="w-72 mx-auto bg-gray-100 hover:bg-transparent hover:text-gray-100 text-gray-800 font-semibold my-2 py-2 px-8 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
                                                         <FontAwesomeIcon icon={faDownload} className="mr-2"/>
                                                         Download
                                                     </button>
                                                 </div>
                                                 <div className='flex flex-col justify-center'>
-                                                    <h2 className='text-lg text-center'>Mirror</h2>
+                                                    <h2 className='xs:text-lg text-base text-center'>Mirror</h2>
                                                     <button className="w-72 mx-auto bg-gray-100 hover:bg-transparent hover:text-gray-100 text-gray-800 font-semibold my-2 py-2 px-8 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
                                                         <FontAwesomeIcon icon={faDownload} className="mr-2"/>
                                                         Download
