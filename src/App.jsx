@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Navbar, Home, Games, Login, NotFound, Portfolio, Footer, Forum, Store, Archive } from './components/index'
+import { Navbar, Home, Games, Login, NotFound, Portfolio, Footer, Forum, Store, Archive, GamesSingle } from './components/index'
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { AccountNavbar, Overview, AccountPortfolio, AccountStore, Uploads, Settings, Manage, Logs } from './components/Account Section/index'
 import { useDispatch, useSelector } from 'react-redux'
@@ -35,6 +35,7 @@ const App = () => {
           <Route path='/' element={<><Navbar path={URI_PATH_HOME} /> <Outlet/></>}>
               <Route index element={<Home path={URI_PATH_HOME}/>} />
               <Route path="games" element={<><Games /> <Footer /></>} />
+              <Route path="games/:games" element={<><GamesSingle /> <Footer /></>} />
               <Route path="forum" element={<><Forum /> <Footer /></>} />
               <Route path="store" element={<><Store /> <Footer /></>} />
               <Route path="archive" element={<><Archive /> <Footer /></>} />

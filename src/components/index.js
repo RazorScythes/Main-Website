@@ -17,6 +17,7 @@ import Footer from './Footer'
 //PAGES
 import Home from './Pages/Home'
 import Games from './Pages/Games'
+import GamesSingle from './Pages/GamesSingle'
 import NotFound from './Pages/NotFound'
 import Portfolio from './Pages/Portfolio'
 import Forum from './Pages/Forum'
@@ -25,6 +26,7 @@ import Archive from './Pages/Archive'
 export {
     Home,
     Games,
+    GamesSingle,
     Forum,
     Store,
     Archive,
