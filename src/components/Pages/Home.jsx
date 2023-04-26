@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from "../../style";
 
 import { Hero, Feature, GameList, News, Service, Socials, Users, Footer } from '../index'
@@ -7,7 +7,6 @@ import Alert from '../Alert';
 import Loading from './Loading';
 
 import Cookies from 'universal-cookie';
-
 // Static Services Component 
 const service_multiple_image = [
     { src: toram_online, alt: 'Image 1' },
@@ -28,9 +27,9 @@ const Home = ({ path }) => {
         document.title = "Home"
         cookies.set('myCat', 'Pacman', { path: '/' });
     }, [])
+
     return (
         <div>
-            {/* <img className="w-32 h-32" src="https://drive.google.com/uc?export=view&id=1LBc5HlTC4ZdCro24L3iq2OoOc4PC5dof" alt="Image from Google Drive"/> */}
             <Alert />
             <Hero />
 

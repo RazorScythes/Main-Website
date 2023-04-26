@@ -23,9 +23,13 @@ import Portfolio from './Pages/Portfolio'
 import Forum from './Pages/Forum'
 import Store from './Pages/Store'
 import Archive from './Pages/Archive'
+import Videos from './Pages/Videos'
+import VideosSingle from './Pages/VideosSingle'
 export {
     Home,
     Games,
+    Videos,
+    VideosSingle,
     GamesSingle,
     Forum,
     Store,

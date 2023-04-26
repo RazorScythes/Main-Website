@@ -33,7 +33,7 @@ const Portfolio = () => {
     useEffect(() => {
         if(!cookies.get("uid")) {
             const newDeviceId = uuidv4();
-            cookies.set('uid', newDeviceId, { path: '/' });
+            cookies.set('uid', newDeviceId, { path: '/', expires: new Date(Date.now()+34560000) });
         }
         dispatch(getPortfolioByUsername({
             user_visit: user ? user.result?.username : '',
