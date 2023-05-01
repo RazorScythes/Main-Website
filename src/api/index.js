@@ -72,5 +72,10 @@ export const getLogs                                    = (formData) => User_API
 /*
     Video
 */
-
+export const addOneLikes                                = (formData) => User_API.post('/video/addOneLikes', formData)
+export const addOneDislikes                             = (formData) => User_API.post('/video/addOneDislikes', formData)
+export const addOneViews                                = (formData) => User_API.post('/video/addOneViews', formData)
 export const getVideoByID                               = (formData) => User_API.post('/video/getVideoByID', formData)
+export const getComments                                = (formData) => User_API.post('/video/getComments', formData)
+export const uploadComment                              = (formData) => User_API.post('/video/uploadComment', formData)
+export const removeComment                              = (formData) => User_API.post('/video/removeComment', formData)

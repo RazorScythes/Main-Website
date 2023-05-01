@@ -5,16 +5,27 @@ import { AccountNavbar, Overview, AccountPortfolio, AccountStore, Uploads, Setti
 import { useDispatch, useSelector } from 'react-redux'
 import { ProjectSingle } from './components/Portfolio Section/index';
 import { getProfile } from './actions/settings';
+import { v4 as uuidv4 } from 'uuid';
+import Cookies from 'universal-cookie';
 
 const URI_PATH_HOME = import.meta.env.VITE_URI_PATH_HOME
 
 const App = () => {
+  const cookies = new Cookies();
+
   const dispatch = useDispatch()
 
   const settings = useSelector((state) => state.settings.data)
   const userData = JSON.parse(localStorage.getItem('profile'))
   const [user, setUser] = useState(userData? userData : null)
   
+  useEffect(() => {
+    if(!cookies.get("uid")) {
+      const newDeviceId = uuidv4();
+      cookies.set('uid', newDeviceId, { path: '/', maxAge: new Date(Date.now()+34560000) });
+    }
+  }, [])
+
   useEffect(() => {
       if(user) dispatch(getProfile({id: user.result?._id}))
 
@@ -39,7 +50,7 @@ const App = () => {
               <Route path="forum" element={<><Forum /> <Footer /></>} />
               <Route path="store" element={<><Store /> <Footer /></>} />
               <Route path="videos" element={<><Videos /> <Footer /></>} />
-              <Route path="videos/:id" element={<><VideosSingle /> <Footer /></>} />
+              <Route path="videos/:id" element={<><VideosSingle user={user} /> <Footer /></>} />
               <Route path="archive" element={<><Archive /> <Footer /></>} />
 
               <Route path="/:username/portfolio" element={<><Portfolio /> <Footer /></>} />

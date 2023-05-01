@@ -4,15 +4,12 @@ import { Hero, Skills, Services, Experience, Projects, Contact } from '../Portfo
 import { useDispatch, useSelector } from 'react-redux'
 import { getPortfolioByUsername } from "../../actions/portfolio";
 import { Page_not_found, Error_forbiden } from '../../assets';
-import { v4 as uuidv4 } from 'uuid';
 import { useRef } from "react";
-import Cookies from 'universal-cookie';
 import Loading from './Loading'
 import styles from "../../style";
 
 const Portfolio = () => {
     const resultRef = useRef(null);
-    const cookies = new Cookies();
 
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
 
@@ -31,10 +28,6 @@ const Portfolio = () => {
     const published = useSelector((state) => state.portfolio.published)
 
     useEffect(() => {
-        if(!cookies.get("uid")) {
-            const newDeviceId = uuidv4();
-            cookies.set('uid', newDeviceId, { path: '/', expires: new Date(Date.now()+34560000) });
-        }
         dispatch(getPortfolioByUsername({
             user_visit: user ? user.result?.username : '',
             username: username
