@@ -77,7 +77,7 @@ const VideosSingle = ({ user }) => {
                 if(item === cookies.get('uid')) setIsAnimatingTU(true)
             })
         }
-        else if(dislikes.length > 0) {
+        if(dislikes.length > 0) {
             dislikes.forEach((item) => {
                 if(item === cookies.get('uid')) setIsAnimatingTD(true)
             })
