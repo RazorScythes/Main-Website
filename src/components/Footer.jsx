@@ -7,6 +7,8 @@ import { AiOutlineArrowUp } from "react-icons/ai";
 import { TextWithLines } from '../components/index'
 import { Link } from "react-router-dom";
 import { nav_links } from "../constants";
+import SideAlert from "./SideAlert";
+
 const Footer = ({ path }) => {
 
     const dispatch = useDispatch()
@@ -20,10 +22,12 @@ const Footer = ({ path }) => {
     })
 
     const [submitted, setSubmitted] = useState(false)
+    const [active, setActive] = useState(false)
 
     useEffect(() => {
         if(mailStatus) {
-            window.alert(mailStatus)
+            //window.alert(mailStatus)
+            setActive(true)
             dispatch(clearMailStatus())
             setForm({
                 ...form,
@@ -45,6 +49,13 @@ const Footer = ({ path }) => {
 
     return (
             <footer className="bg-gray-800 text-white px-8 font-poppins">
+                <SideAlert
+                    variants='success'
+                    heading='Success'
+                    paragraph='Your email sent succesfully'
+                    active={active}
+                    setActive={setActive}
+                />
                 <div className="container mx-auto py-12 flex flex-wrap justify-between">
                     <div className="w-full sm:w-1/2 md:w-1/3 lg:w-1/3 mb-8">
                         <h3 className="text-lg font-medium mb-8"><TextWithLines text="About us"/></h3>

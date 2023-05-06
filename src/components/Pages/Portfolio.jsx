@@ -35,7 +35,7 @@ const Portfolio = () => {
     }, [])
 
     return (
-        <div>
+        <div className='relative'>
             {
                 notFound ?
                 <div

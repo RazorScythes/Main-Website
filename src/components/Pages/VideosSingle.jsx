@@ -236,9 +236,12 @@ const VideosSingle = ({ user }) => {
                                         </div>
                                     </div>
                                     <div className='flex items-center sm:justify-end sm:mt-0 mt-2'>
-                                        <button className="mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
-                                            <FontAwesomeIcon icon={faAdd} className="text-white mr-2"/> Watch Later
-                                        </button>
+                                        {
+                                            user &&
+                                                <button className="mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                    <FontAwesomeIcon icon={faAdd} className="text-white mr-2"/> Watch Later
+                                                </button>
+                                        }
                                         <button className="bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
                                             <FontAwesomeIcon icon={faDownload} className="text-white mr-2"/> Download
                                         </button>
@@ -358,12 +361,12 @@ const VideosSingle = ({ user }) => {
                                 <div className='mb-8 md:p-8 sm:pt-4 pt-0 text-white'>
                                     <h2 className='text-2xl font-semibold mb-6'>Related Videos</h2>
                                     <div className='md:flex md:flex-col sm:grid xs:grid-cols-2 sm:gap-4 grid-cols-1'>
+                                        {/* <div className='mb-4'><VideoThumbnail height={170} index={0} setActive={setActive} active={active} embedLink={getVideoId('https://drive.google.com/file/d/1fGNqeCMLV6oz4Kzk6KaFOygjXrYO-J_R/preview')}/></div>
                                         <div className='mb-4'><VideoThumbnail height={170} index={0} setActive={setActive} active={active} embedLink={getVideoId('https://drive.google.com/file/d/1fGNqeCMLV6oz4Kzk6KaFOygjXrYO-J_R/preview')}/></div>
                                         <div className='mb-4'><VideoThumbnail height={170} index={0} setActive={setActive} active={active} embedLink={getVideoId('https://drive.google.com/file/d/1fGNqeCMLV6oz4Kzk6KaFOygjXrYO-J_R/preview')}/></div>
                                         <div className='mb-4'><VideoThumbnail height={170} index={0} setActive={setActive} active={active} embedLink={getVideoId('https://drive.google.com/file/d/1fGNqeCMLV6oz4Kzk6KaFOygjXrYO-J_R/preview')}/></div>
                                         <div className='mb-4'><VideoThumbnail height={170} index={0} setActive={setActive} active={active} embedLink={getVideoId('https://drive.google.com/file/d/1fGNqeCMLV6oz4Kzk6KaFOygjXrYO-J_R/preview')}/></div>
-                                        <div className='mb-4'><VideoThumbnail height={170} index={0} setActive={setActive} active={active} embedLink={getVideoId('https://drive.google.com/file/d/1fGNqeCMLV6oz4Kzk6KaFOygjXrYO-J_R/preview')}/></div>
-                                        <div className='mb-4'><VideoThumbnail height={170} index={0} setActive={setActive} active={active} embedLink={getVideoId('https://drive.google.com/file/d/1fGNqeCMLV6oz4Kzk6KaFOygjXrYO-J_R/preview')}/></div>
+                                        <div className='mb-4'><VideoThumbnail height={170} index={0} setActive={setActive} active={active} embedLink={getVideoId('https://drive.google.com/file/d/1fGNqeCMLV6oz4Kzk6KaFOygjXrYO-J_R/preview')}/></div> */}
                                     </div>
                                 </div>                                    
                             </div>

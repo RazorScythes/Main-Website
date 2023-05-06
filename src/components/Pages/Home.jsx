@@ -5,7 +5,7 @@ import { Hero, Feature, GameList, News, Service, Socials, Users, Footer } from '
 import { toram_online, genshin_impact, minecraft, tower_of_fantasy, watching_video } from '../../assets';
 import Alert from '../Alert';
 import Loading from './Loading';
-
+import SideAlert from '../SideAlert';
 import Cookies from 'universal-cookie';
 // Static Services Component 
 const service_multiple_image = [
@@ -29,7 +29,8 @@ const Home = ({ path }) => {
     }, [])
 
     return (
-        <div>
+        <div className='relative'>
+            <SideAlert/>
             <Alert />
             <Hero />
 

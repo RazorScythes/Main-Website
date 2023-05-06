@@ -3,6 +3,7 @@ import { sendEmail, clearMailStatus } from "../../actions/portfolio";
 import { forwardRef } from "react";
 import { useDispatch, useSelector } from 'react-redux'
 import { useParams } from 'react-router-dom'
+import SideAlert from '../SideAlert';
 import styles from "../../style";
 
 const Contact = forwardRef(({ contact }, ref) => {
@@ -16,6 +17,8 @@ const Contact = forwardRef(({ contact }, ref) => {
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
 
     const [submitted, setSubmitted] = useState(false)
+
+    const [active, setActive] = useState(false)
 
     const [form, setForm] = useState({
         name: '',
@@ -32,7 +35,8 @@ const Contact = forwardRef(({ contact }, ref) => {
 
     useEffect(() => {
         if(mailStatus) {
-            window.alert(mailStatus)
+            //window.alert(mailStatus)
+            setActive(true)
             dispatch(clearMailStatus())
             setForm({
                 ...form,
@@ -66,6 +70,13 @@ const Contact = forwardRef(({ contact }, ref) => {
         >   
             <div className={`${styles.marginX} ${styles.flexCenter}`}>
                 <div className={`${styles.boxWidthEx}`}>
+                    <SideAlert
+                        variants='success'
+                        heading='Success'
+                        paragraph='Your email sent succesfully'
+                        active={active}
+                        setActive={setActive}
+                    />
                     <div className="absolute inset-0 "></div>
                     <div className="container mx-auto file:lg:px-8 relative px-0">
                         <div className="w-full md:flex flex-col items-center justify-center text-white">
@@ -78,20 +89,20 @@ const Contact = forwardRef(({ contact }, ref) => {
                                 <div className="w-full md:flex flex-row items-center justify-center text-white">
                                     <div className="lg:w-1/2 md:w-1/2 w-full sm:px-4 mt-4">
                                         <label >Full Name:</label>
-                                        <input placeholder='name' onChange={(e) => setForm({...form, name: e.target.value})} value={form.name} type="text" className='w-full py-2 pl-2 mt-2 outline-0 transition-all focus:border-[#FFFF00] bg-transparent border-2 border-solid border-gray-400 text-gray-100 rounded-sm focus:ring-gray-700'/>
+                                        <input placeholder='name' onChange={(e) => setForm({...form, name: e.target.value})} value={form.name} type="text" className='w-full py-2 pl-2 mt-2 outline-0 transition-all focus:border-gray-600 bg-transparent border-2 border-solid border-gray-400 text-gray-100 rounded-sm focus:ring-gray-700'/>
                                     </div>
                                     <div className="lg:w-1/2 md:w-1/2 w-full sm:px-4 mt-4">
                                         <label >Email Address:</label>
-                                        <input placeholder='email' onChange={(e) => setForm({...form, sender_email: e.target.value})} value={form.sender_email}  type="email" className='w-full py-2 pl-2 mt-2 outline-0 transition-all focus:border-[#FFFF00] bg-transparent border-2 border-solid border-gray-400 text-gray-100 rounded-sm focus:ring-gray-700'/>
+                                        <input placeholder='email' onChange={(e) => setForm({...form, sender_email: e.target.value})} value={form.sender_email}  type="email" className='w-full py-2 pl-2 mt-2 outline-0 transition-all focus:border-gray-600 bg-transparent border-2 border-solid border-gray-400 text-gray-100 rounded-sm focus:ring-gray-700'/>
                                     </div>
                                 </div>
                                 <div className="w-full sm:px-4 mt-4">
                                     <label >Phone:</label>
-                                    <input placeholder='phone' onChange={(e) => setForm({...form, phone: e.target.value})} value={form.phone}  type="phone" className='w-full py-2 pl-2 mt-2 outline-0 transition-all focus:border-[#FFFF00] bg-transparent border-2 border-solid border-gray-400 text-gray-100 rounded-sm focus:ring-gray-700'/>
+                                    <input placeholder='phone' onChange={(e) => setForm({...form, phone: e.target.value})} value={form.phone}  type="phone" className='w-full py-2 pl-2 mt-2 outline-0 transition-all focus:border-gray-600 bg-transparent border-2 border-solid border-gray-400 text-gray-100 rounded-sm focus:ring-gray-700'/>
                                 </div>
                                 <div className="w-full sm:px-4 mt-4">
                                     <label >Subject:</label>
-                                    <select onChange={(e) => setForm({ ...form, subject: e.target.value })} value={form.subject || "No Subject"} placeholder='email' type="email" className='w-full py-2 pl-2 mt-2 outline-0 transition-all focus:border-[#FFFF00] bg-transparent border-2 border-solid border-gray-400 text-gray-400 rounded-sm focus:ring-gray-700'>
+                                    <select onChange={(e) => setForm({ ...form, subject: e.target.value })} value={form.subject || "No Subject"} placeholder='email' type="email" className='w-full py-2 pl-2 mt-2 outline-0 transition-all focus:border-gray-600 bg-transparent border-2 border-solid border-gray-400 text-gray-400 rounded-sm focus:ring-gray-700'>
                                         <option value="No Subject" disabled hidden >Select a Subject</option>
                                         {
                                             form.subject.length > 0 &&
@@ -113,7 +124,7 @@ const Contact = forwardRef(({ contact }, ref) => {
                                         cols="30"
                                         rows="4"
                                         placeholder="Message"
-                                        className="w-full py-2 pl-2 mt-2 outline-0 transition-all focus:border-[#FFFF00] bg-transparent border-2 border-solid border-gray-400 text-gray-100 rounded-sm focus:ring-gray-700"
+                                        className="w-full py-2 pl-2 mt-2 outline-0 transition-all focus:border-gray-600 bg-transparent border-2 border-solid border-gray-400 text-gray-100 rounded-sm focus:ring-gray-700"
                                     >
                                     </textarea>
                                 </div>
