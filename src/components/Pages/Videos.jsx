@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getVideos } from "../../actions/video";
+import { Link } from 'react-router-dom';
+import { useSearchParams } from "react-router-dom";
 import Loading from './Loading';
 import styles from "../../style";
 import VideoThumbnail from '../VideoThumbnail';
@@ -27,11 +29,15 @@ const getVideoId = (url) => {
 };
 
 const Videos = ({ user }) => {
+    const [searchParams, setSearchParams] = useSearchParams();
     const [active, setActive] = useState(0)
     const dispatch = useDispatch()
 
     const video = useSelector((state) => state.video.videos)
     const message = useSelector((state) => state.video.message)
+
+    const paramIndex = searchParams.get('type') === null || searchParams.get('type') === ''
+    const checkParams = (val) => {return searchParams.get('type') === val}
 
     useEffect(() => {
       
@@ -48,7 +54,13 @@ const Videos = ({ user }) => {
             className="relative bg-cover bg-center py-8"
             style={{ backgroundColor: "#111827" }}
         >   
-            <div className={`${styles.flexCenter}`}>
+            <div className='flex flex-row flex-wrap items-start justify-start mb-4 sm:px-16 px-6'>
+                <Link to={`/videos`}><p style={{backgroundColor: paramIndex && 'rgb(243, 244, 246)', color: paramIndex && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>All</p></Link>
+                <Link to={`/videos?type=latest`}><p style={{backgroundColor: checkParams('latest') && 'rgb(243, 244, 246)', color: checkParams('latest') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Latest</p></Link>
+                <Link to={`/videos?type=most_viewed`}><p style={{backgroundColor: checkParams('most_viewed') && 'rgb(243, 244, 246)', color: checkParams('most_viewed') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Most Viewed</p></Link>
+                <Link to={`/videos?type=popular`}><p style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Popular</p></Link>
+            </div>
+            <div className={`${styles.flexCenter}`}> 
                 {
                   message.length > 0 ?
                     <div className='h-96 flex flex-col items-center justify-center'> 

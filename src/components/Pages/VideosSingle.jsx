@@ -181,8 +181,8 @@ const VideosSingle = ({ user }) => {
                     <div className="container mx-auto file:lg:px-8 relative px-0">
                         <div className="grid md:grid-cols-3 grid-cols-1 gap-4">
                             <div className="w-full md:col-span-2 text-white">
-                                <p className='mb-2 font-semibold text-3xl'>{ data && data.video ? data.video.title : '' }</p>
-                                <div className='flex items-center mb-4 '>
+                                <p className='mb-4 font-semibold xs:text-3xl text-2xl'>{ data && data.video ? data.video.title : '' }</p>
+                                <div className='flex items-center mb-4'>
                                     {
                                         data && data.video && (
                                             <>
@@ -192,10 +192,9 @@ const VideosSingle = ({ user }) => {
                                         )
                                     }
                                 </div>
-                                <div className='relative z-50'>
+                                <div className='relative'>
                                     <iframe 
                                         ref={iframeRef} 
-                                        //src="https://drive.google.com/file/d/12MAcfN7IJJnw808QyuahZ8jowCo1D8hD/preview" 
                                         src={data && data.video && data.video.link}
                                         className='w-full lg:h-[550px] md:h-[470px] sm:h-[450px] xs:h-[400px] h-[225px]'
                                         allow="autoplay"
@@ -203,6 +202,11 @@ const VideosSingle = ({ user }) => {
                                         sandbox="allow-scripts allow-same-origin"
                                     >
                                     </iframe>
+                                    <img
+                                        className='absolute xs:top-1 xs:right-1 top-2 right-2 rounded-full xs:w-14 xs:h-14 w-12 h-12 border border-solid border-gray-500 opacity-0'
+                                        src={ data ? data.avatar : avatar }
+                                        alt="user profile"
+                                    />
                                     {/* <video 
                                         src="https://gdurl.com/FEfT"
                                         //src="https://rr5---sn-hoa7rn7z.c.drive.google.com/videoplayback?expire=1682878776&ei=-HhOZLjiH4_quwLxpZuwDA&ip=120.29.78.136&cp=QVRNVElfV1dVR1hPOkYxcVNWRFFpYnFBNldmWUFNY2NVYUk3QjhnX0VKS3F0WmhtNXE0U3FEdEg&id=0f78930136d2f5d2&itag=18&source=webdrive&requiressl=yes&mh=2B&mm=32&mn=sn-hoa7rn7z&ms=su&mv=m&mvi=5&pl=22&ttl=transient&susc=dr&driveid=12MAcfN7IJJnw808QyuahZ8jowCo1D8hD&app=explorer&mime=video/mp4&vprv=1&prv=1&dur=585.746&lmt=1682842237185129&mt=1682863990&subapp=DRIVE_WEB_FILE_VIEWER&txp=0011224&sparams=expire,ei,ip,cp,id,itag,source,requiressl,ttl,susc,driveid,app,mime,vprv,prv,dur,lmt&sig=AOq0QJ8wRgIhAMSOdLtwcPgUEq9TcZdrz8r2SnV0KtykIgN4n9J8_YgZAiEAhLbF2X_NfR0wW1OtS8xKSXLFhPVVYJ19D738wLYYJDk=&lsparams=mh,mm,mn,ms,mv,mvi,pl&lsig=AG3C_xAwRQIhANUndZYlVXlRwaceYMop7KuczODrzzSX0YxqeGa7el7jAiAvJ-fN-pQmIpTl1jzkcuJwVbKe4RLoZXwGpVg0ugOlCw==&cpn=TUNNpAe6t9-IMI3Q&c=WEB_EMBEDDED_PLAYER&cver=1.20230425.01.00"
@@ -213,38 +217,42 @@ const VideosSingle = ({ user }) => {
                                     /> */}
                                 </div>
                                 <div className='grid sm:grid-cols-2 grid-cols-1 mt-2'>
-                                    <div className='flex items-center mt-2 text-gray-400'>
+                                    <div className='flex xs:items-center items-start xs:flex-row flex-col mt-2 text-gray-400'>
                                         <Link to="" className='flex items-center'>
                                             <img
-                                                className='rounded-full xs:w-8 xs:h-8 w-8 h-8'
+                                                className='rounded-full xs:w-8 xs:h-8 w-8 h-8 border border-solid border-gray-500'
                                                 src={ data ? data.avatar : avatar }
                                                 alt="user profile"
                                             />
                                             <p className='ml-2 break-all text-white'>{ data ? data.username : "Anonymous" }</p>
                                         </Link>
-                                        <div className='flex items-center ml-8'>
-                                            <FontAwesomeIcon icon={faEye} className="text-white mr-2"/>
-                                            <p>{ data && data.video ? data.video.views.length : 0 }</p>
-                                        </div>
-                                        <div className='flex items-center ml-8'>
-                                            <FontAwesomeIcon onClick={addLikes} style={{color: isAnimatingTU ? '#CD3242' : '#FFF'}} icon={faThumbsUp} className="mr-2 cursor-pointer"/>
-                                            <p>{ likes && likes.length }</p>
-                                        </div>
-                                        <div className='flex items-center ml-4'>
-                                            <FontAwesomeIcon onClick={addDislikes} style={{color: isAnimatingTD ? '#CD3242' : '#FFF'}} icon={faThumbsDown} className="text-white mr-2 hover:text-[#CD3242] cursor-pointer"/>
-                                            <p>{ dislikes && dislikes.length }</p>
+                                        <div className='flex xs:mt-0 mt-2'>
+                                            <div className='flex items-center xs:ml-8 ml-0'>
+                                                <FontAwesomeIcon icon={faEye} className="text-white mr-2"/>
+                                                <p>{ data && data.video ? data.video.views.length : 0 } <span className='xs:hidden inline-block'>view{data && data.video && data.video.views.length > 0 && 's'}</span></p>
+                                            </div>
+                                            <div className='flex items-center ml-8'>
+                                                <FontAwesomeIcon onClick={addLikes} style={{color: isAnimatingTU ? '#CD3242' : '#FFF'}} icon={faThumbsUp} className="mr-2 cursor-pointer"/>
+                                                <p>{ likes && likes.length }</p>
+                                            </div>
+                                            <div className='flex items-center ml-4'>
+                                                <FontAwesomeIcon onClick={addDislikes} style={{color: isAnimatingTD ? '#CD3242' : '#FFF'}} icon={faThumbsDown} className="text-white mr-2 hover:text-[#CD3242] cursor-pointer"/>
+                                                <p>{ dislikes && dislikes.length }</p>
+                                            </div>
                                         </div>
                                     </div>
                                     <div className='flex items-center sm:justify-end sm:mt-0 mt-2'>
-                                        {
-                                            user &&
-                                                <button className="mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
-                                                    <FontAwesomeIcon icon={faAdd} className="text-white mr-2"/> Watch Later
-                                                </button>
-                                        }
-                                        <button className="bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
-                                            <FontAwesomeIcon icon={faDownload} className="text-white mr-2"/> Download
-                                        </button>
+                                        <div className='sm:w-auto w-full grid grid-cols-2 gap-5 mt-2'>
+                                            {
+                                                user &&
+                                                    <button className="w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                        <FontAwesomeIcon icon={faAdd} className="text-white mr-2"/> Watch Later
+                                                    </button>
+                                            }
+                                            <button className="sm:w-auto w-full bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                <FontAwesomeIcon icon={faDownload} className="text-white mr-2"/> Download
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 
@@ -256,7 +264,7 @@ const VideosSingle = ({ user }) => {
                                                 {
                                                         data.video.tags.map((item, i) => {
                                                             return (
-                                                                <Link key={i} to={`/video/tag/${item}}`}><p className='mt-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-white border border-gray-100 px-4 py-1 mr-2 xs:text-sm text-xs transition-all capitalize'>{item}</p></Link>
+                                                                <Link key={i} to={`/video/tag/${item}`}><p className='mt-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-white border border-gray-100 px-4 py-1 mr-2 xs:text-sm text-sm transition-all capitalize'>{item}</p></Link>
                                                             )
                                                         })
                                                 }
@@ -386,7 +394,7 @@ const VideosSingle = ({ user }) => {
                                                 className="w-full py-2 pl-2 mt-2 outline-0 transition-all focus:border-gray-600 bg-transparent border-2 border-solid border-gray-400 text-gray-100 rounded-sm focus:ring-gray-700"
                                             >
                                             </textarea>
-                                            <button className="float-right bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                            <button onClick={submitComment} className="float-right bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
                                                 {
                                                     !submitted ?
                                                     (
@@ -441,12 +449,15 @@ const VideosSingle = ({ user }) => {
                                                                 </p>
                                                             </div>
                                                             <div className='flex items-center justify-end text-gray-400'>
-                                                            <FontAwesomeIcon icon={faClock} className="text-white"/>
+                                                                <FontAwesomeIcon icon={faClock} className="text-white"/>
                                                                 <p className='ml-2 break-all text-sm'>{moment(item.date).fromNow()}</p>
                                                             </div>
-                                                            <FontAwesomeIcon icon={faClock} className="text-white"/>
                                                         </div>
                                                         <p className='mt-4 text-gray-300 whitespace-pre-wrap'>{item.comments}</p>
+                                                        {
+                                                            user?.result?.username === item.username && 
+                                                                <p onClick={() => deleteComment(video.video._id, item.id)} id={item.id} className='flex justify-end items-center text-gray-300 hover:text-gray-400 text-sm cursor-pointer'><FontAwesomeIcon icon={faTrash} className="mr-2"/> Delete</p>
+                                                        }
                                                     </div>
                                                 )
                                             })

@@ -302,8 +302,19 @@ const Options = () => {
                 </Link>
             </div>
             <div className='mb-6'>
-                <Link to="/account/settings/update_profile"><p className='text-[#CD3242] font-semibold mb-2 hover:underline'>Update Profile</p></Link>
-                <p className='text-gray-500 text-sm italic mb-2'>Updating your profile can be important for ensuring that other users can easily identify and connect with you, as well as for providing a more personalized experience on the website or application. By providing accurate and up-to-date information, you can receive tailored recommendations and content based on your interests and preferences.</p>
+                <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
+                    <div className="flex items-center mb-1">
+                        <input 
+                            id="default-checkbox" 
+                            type="checkbox" 
+                            checked={true}
+                            // onChange={() => setHero({...hero, animation: !hero.animation})}
+                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        />
+                        <label htmlFor="default-checkbox" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Safe Content</label>
+                    </div>
+                </div>
+                <p className='text-gray-500 text-sm italic mb-2'>You may be access to more fringe results content if not checked. (Need account verification to disable)</p>
             </div>
         </div>
     )

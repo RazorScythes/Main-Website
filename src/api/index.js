@@ -65,6 +65,12 @@ export const updateProfile                              = (formData) => User_API
 export const updatePassword                             = (formData) => User_API.post('/settings/updatePassword', formData)
 
 /*
+    Uploads
+*/
+export const getUserVideo                               = (formData) => User_API.post('/uploads/getUserVideo', formData)
+export const uploadVideo                                = (formData) => User_API.post('/uploads/uploadVideo', formData)
+
+/*
     Logs
 */
 export const getLogs                                    = (formData) => User_API.post('/logs/getLogs', formData)

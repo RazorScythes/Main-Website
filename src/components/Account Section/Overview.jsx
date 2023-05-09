@@ -11,6 +11,13 @@ const Overview = () => {
                 button_text="Explore Now!"
                 button_link={`#`}
             />
+            <div className="relative bg-[#F0F4F7]">   
+                <div className={`${styles.marginX} ${styles.flexCenter}`}>
+                    <div className={`${styles.boxWidthEx}`}>
+                        
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }

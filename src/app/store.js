@@ -4,6 +4,7 @@ import portfolioReducer from '../actions/portfolio'
 import settingsSlice from '../actions/settings'
 import logsSlice from '../actions/logs'
 import videoSlice from '../actions/video'
+import uploadsSlice from '../actions/uploads'
 
 export const store = configureStore({
     reducer: {
@@ -11,7 +12,8 @@ export const store = configureStore({
         portfolio: portfolioReducer,
         settings: settingsSlice,
         logs: logsSlice,
-        video: videoSlice
+        video: videoSlice,
+        uploads: uploadsSlice
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({

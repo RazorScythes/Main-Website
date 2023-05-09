@@ -51,7 +51,7 @@ const Navbar = ({ path }) => {
               <div
                 className={`${
                   !toggle ? "hidden" : "flex"
-                } p-6 bg-gray-800 absolute top-20 right-0 mx-4 my-2 min-w-[140px] rounded-xl sidebar text-sm font-poppins`}
+                } p-6 bg-gray-800 absolute z-60 top-20 right-0 mx-4 my-2 min-w-[140px] rounded-xl sidebar text-sm font-poppins`}
               >
                 <ul className="list-none flex justify-end items-start flex-1 flex-col">
                       <li
