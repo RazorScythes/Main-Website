@@ -93,7 +93,11 @@ const Videos = ({ user }) => {
                       }
                     </div>
                   :
-                  <Loading text="Loading videos" />
+                  <div className='h-96 flex items-center justify-center'>
+                      <div className='flex md:flex-row flex-col items-center justify-center'>
+                        
+                      </div>
+                  </div>
                 }
                 
                 {/* <div className='grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-5 place-content-start sm:px-16 py-8'>

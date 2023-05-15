@@ -69,6 +69,8 @@ export const updatePassword                             = (formData) => User_API
 */
 export const getUserVideo                               = (formData) => User_API.post('/uploads/getUserVideo', formData)
 export const uploadVideo                                = (formData) => User_API.post('/uploads/uploadVideo', formData)
+export const editVideo                                  = (formData) => User_API.post('/uploads/editVideo', formData)
+export const removeVideo                                = (formData) => User_API.post('/uploads/removeVideo', formData)
 
 /*
     Logs
@@ -84,5 +86,6 @@ export const addOneDislikes                             = (formData) => User_API
 export const addOneViews                                = (formData) => User_API.post('/video/addOneViews', formData)
 export const getVideoByID                               = (formData) => User_API.post('/video/getVideoByID', formData)
 export const getComments                                = (formData) => User_API.post('/video/getComments', formData)
+export const getRelatedVideos                           = (formData) => User_API.post('/video/getRelatedVideos', formData)
 export const uploadComment                              = (formData) => User_API.post('/video/uploadComment', formData)
 export const removeComment                              = (formData) => User_API.post('/video/removeComment', formData)

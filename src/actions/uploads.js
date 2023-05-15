@@ -41,6 +41,38 @@ export const uploadVideo = createAsyncThunk('uploads/uploadVideo', async (form, 
     }
 })
 
+export const editVideo = createAsyncThunk('uploads/editVideo', async (form, thunkAPI) => {
+    try {
+        const response = await api.editVideo(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const removeVideo = createAsyncThunk('uploads/removeVideo', async (form, thunkAPI) => {
+    try {
+        const response = await api.removeVideo(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const uploadsSlice = createSlice({
     name: 'uploads',
     initialState,
@@ -62,6 +94,29 @@ export const uploadsSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(uploadVideo.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(editVideo.fulfilled, (state, action) => {
+            state.video = action.payload.data.result
+            state.alert = action.payload.data.message
+            state.variant = action.payload.data.variant
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(editVideo.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        })
+        ,
+        builder.addCase(removeVideo.fulfilled, (state, action) => {
+            state.video = action.payload.data.result
+            state.alert = action.payload.data.message
+            state.variant = action.payload.data.variant
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(removeVideo.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         })

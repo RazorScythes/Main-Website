@@ -4,7 +4,7 @@ import { faEye, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
 import moment from 'moment'
 
-const TextWithEllipsis = ({ text, limit = 40 }) => {
+const TextWithEllipsis = ({ text, limit = 30 }) => {
   if (text.length > limit) {
     return <span>{text.slice(0, limit)}...</span>;
   }

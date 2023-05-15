@@ -4,11 +4,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 const initialState = {
     error: '',
     isLoading: false,
+    notFound: false,
     alert: '',
     variant: '',
     data: {},
     videos: [],
     comments: [],
+    relatedVideos: [],
     avatar: '',
     message: ''
 }
@@ -48,6 +50,22 @@ export const getVideos = createAsyncThunk('video/getVideos', async (form, thunkA
 export const getComments = createAsyncThunk('video/getComments', async (form, thunkAPI) => {
     try {
         const response = await api.getComments(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const getRelatedVideos = createAsyncThunk('video/getRelatedVideos', async (form, thunkAPI) => {
+    try {
+        const response = await api.getRelatedVideos(form)
         return response
     }
     catch (err) {
@@ -155,13 +173,20 @@ export const videoSlice = createSlice({
             state.message = action.payload.message
         }),
         builder.addCase(getVideoByID.fulfilled, (state, action) => {
+            state.notFound = false
             state.data = action.payload.data.result
             state.error = ''
             state.isLoading = false
         }),
+        builder.addCase(getVideoByID.pending, (state, action) => {
+            state.notFound = false
+            state.isLoading = true
+        }),
         builder.addCase(getVideoByID.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
+            state.notFound = action.payload.notFound
+            state.isLoading = false
         }),
         builder.addCase(getComments.fulfilled, (state, action) => {
             state.comments = action.payload.data.comments
@@ -169,6 +194,16 @@ export const videoSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(getComments.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(getRelatedVideos.fulfilled, (state, action) => {
+            console.log(action.payload.data.relatedVideos)
+            state.relatedVideos = action.payload.data.relatedVideos
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getRelatedVideos.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         }),
