@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Header } from './index'
 import { Link, useSearchParams } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faClose, faEdit, faTrash, faVideoCamera } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faClose, faEdit, faTrash, faVideoCamera, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserVideo, uploadVideo, clearAlert, editVideo, removeVideo } from "../../actions/uploads";
 import VideoModal from '../VideoModal';
@@ -15,6 +15,14 @@ const Uploads = ({ user }) => {
     const alert = useSelector((state) => state.uploads.alert)
     const variant = useSelector((state) => state.uploads.variant)
     const video = useSelector((state) => state.uploads.video)
+
+    const itemsPerPage = 10; // Number of items per page
+
+    const [currentPage, setCurrentPage] = useState(1);
+
+    // Calculate the start and end indices for the current page
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [openModal, setOpenModal] = useState(false)
@@ -55,11 +63,11 @@ const Uploads = ({ user }) => {
         if(video && video.length > 0){
             setData(video)
         }
-        setTags([])
+        setTags(['Loli','Creampie'])
         setForm({
-            title: '',
+            title: 'Custom Udon #',
             link: '',
-            owner: '',
+            owner: 'Custom Udon',
             tags: [],
             strict: true,
             privacy: false
@@ -79,6 +87,10 @@ const Uploads = ({ user }) => {
             dispatch(clearAlert())
         }
     }, [alert, variant])
+
+    const goToPage = (page) => {
+        setCurrentPage(page);
+    };
 
     const addTags = () => {
         let duplicate = false
@@ -386,7 +398,7 @@ const Uploads = ({ user }) => {
                                         </div>
 
                                         <div className="overflow-x-auto mt-8">
-                                            <table className="min-w-full divide-y divide-gray-200">
+                                            <table className="min-w-full divide-y divide-gray-200 transition-all">
                                                 <thead className='bg-gray-800 text-white'>
                                                     <tr>
                                                         <th className="px-6 py-3 sm:w-1/5 w-1/2 text-left text-xs leading-4 font-medium uppercase tracking-wider">
@@ -415,7 +427,7 @@ const Uploads = ({ user }) => {
                                                 <tbody className="bg-white divide-y divide-gray-200">
                                                     {
                                                         data && data.length > 0 &&
-                                                            data.map((item, index) => {
+                                                            data.slice(startIndex, endIndex).map((item, index) => {
                                                                 return (
                                                                     <tr key={index}>
                                                                         <td className="sm:w-1/5 w-1/2 px-6 py-4 whitespace-no-wrap break-keep">
@@ -465,7 +477,16 @@ const Uploads = ({ user }) => {
                                                 {/* Add more rows as needed */}
                                                 </tbody>
                                             </table>
-                                            <p className='flex justify-end text-sm text-gray-500 py-2'>Showing Record {video && video.length > 0 ? video.length : 0}/{video && video.length > 0 ? video.length : 0}</p>
+                                            <div className='md:flex justify-end mt-4 hidden'>
+                                                <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(endIndex >= data?.length) ? data?.length : endIndex }/{data?.length}</p>
+                                                <button disabled={currentPage === 1} onClick={() => goToPage(currentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                                <button disabled={endIndex >= data?.length} onClick={() => goToPage(currentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
+                                            </div>
+                                        </div>
+                                        <div className='md:hidden justify-end mt-4 flex'>
+                                            <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(endIndex >= data?.length) ? data?.length : endIndex }/{data?.length}</p>
+                                            <button disabled={currentPage === 1} onClick={() => goToPage(currentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                            <button disabled={endIndex >= data?.length} onClick={() => goToPage(currentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
                                         </div>
                                     </div>
                                 )
