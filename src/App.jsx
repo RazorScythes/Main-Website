@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Navbar, Home, Games, Login, NotFound, Portfolio, Footer, Forum, Store, Archive, GamesSingle, Videos, VideosSingle } from './components/index'
+import { Navbar, Home, Games, Login, NotFound, Portfolio, Footer, Forum, Store, Archive, GamesSingle, Videos, VideosSingle, Verify } from './components/index'
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { AccountNavbar, Overview, AccountPortfolio, AccountStore, Uploads, Settings, Manage, Logs } from './components/Account Section/index'
 import { useDispatch, useSelector } from 'react-redux'
@@ -57,10 +57,10 @@ const App = () => {
               <Route path="/:username/project/:project_name" element={<><ProjectSingle/> <Footer /></>} />
 
               <Route path="project/:project_name" element={<><ProjectSingle /> <Footer /></>} />
-
+        
               <Route path={`*`} element={<> <NotFound/> <Footer /></>} />
           </Route>
-
+          <Route path="account_verify" element={<><Verify /></>} />
           {/* <Route path='/:username' element={<><Navbar path={URI_PATH_HOME} /> <Outlet/></>}>
               <Route index element={<Home path={URI_PATH_HOME}/>} />
               <Route path="portfolio" element={<><Portfolio /> <Footer /></>} />

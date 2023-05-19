@@ -60,9 +60,12 @@ export const sendContactUs                              = (formData) => User_API
 /*
     Settings
 */
+export const verifyEmail                                = (formData) => User_API.post('/settings/verifyEmail', formData)
+export const sendVerificationEmail                      = (formData) => User_API.post('/settings/sendVerificationEmail', formData)
 export const getProfile                                 = (formData) => User_API.post('/settings/getProfile', formData)
 export const updateProfile                              = (formData) => User_API.post('/settings/updateProfile', formData)
 export const updatePassword                             = (formData) => User_API.post('/settings/updatePassword', formData)
+export const updateOptions                              = (formData) => User_API.post('/settings/updateOptions', formData)
 
 /*
     Uploads

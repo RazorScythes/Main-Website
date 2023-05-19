@@ -25,7 +25,9 @@ import Store from './Pages/Store'
 import Archive from './Pages/Archive'
 import Videos from './Pages/Videos'
 import VideosSingle from './Pages/VideosSingle'
+import Verify from './Pages/Verify'
 export {
+    Verify,
     Home,
     Games,
     Videos,
