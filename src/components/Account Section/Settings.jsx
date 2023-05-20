@@ -26,14 +26,16 @@ const Index = ({ user, settings, submitted, setSubmitted }) => {
         <div>
             {
                 (settings?.verified) ?
-                    <div className='flex flex-row items-center justify-between my-8 '>
-                        <h2 className='text-2xl text-gray-800 font-semibold'>You are now verified!</h2>
+                    <div className='flex justify-center bg-gray-800 text-white w-36 p-2 rounded-md mb-12'>
+                        <p className=''>Status: <span className='text-green-600'>Verified</span></p>
                     </div>
                     :
                     <div className='flex flex-row items-center justify-between'>
-                        <h2 className='text-2xl text-gray-800 font-semibold'>You are not verified</h2>
-                        <button onClick={() => sendEmail()} className=" bg-gray-100 hover:bg-gray-800  hover:text-gray-100 text-gray-800 font-semibold my-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
-                            Verify Now!
+                        <div className='flex justify-center bg-gray-800 text-white w-48 p-2 rounded-md'>
+                            <p className=''>Status: <span className='text-[#CD3242]'>Not Verified</span></p>
+                        </div>
+                        <button onClick={() => sendEmail()} className=" bg-gray-800 hover:bg-gray-900  hover:text-gray-100 text-gray-100 font-semibold my-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
+                            Verify
                         </button>
                     </div>
             }
@@ -125,7 +127,7 @@ const Update_Profile = ({ user, profile }) => {
                 setPreview={setPreview}
             />
             <div className='flex flex-row items-center justify-between'>
-                <h2 className='text-2xl text-gray-800 font-semibold'>Update Profile</h2>
+                <h2 className='text-3xl font-bold text-gray-800 mb-12'>Update Profile</h2>
                 <Link to="/account/settings">
                     <button className=" bg-gray-100 hover:bg-gray-800  hover:text-gray-100 text-gray-800 font-semibold my-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
                         Back
@@ -247,7 +249,7 @@ const Change_Password = ({ user, alert }) => {
     return (
         <div>
             <div className='flex flex-row items-center justify-between'>
-                <h2 className='text-2xl text-gray-800 font-semibold'>Change Password</h2>
+                <h2 className='text-3xl font-bold text-gray-800 mb-12'>Change Password</h2>
                 <Link to="/account/settings">
                     <button className=" bg-gray-100 hover:bg-gray-800  hover:text-gray-100 text-gray-800 font-semibold my-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
                         Back
@@ -346,7 +348,7 @@ const Options = ({ user, settings, alert }) => {
     return (
         <div>
             <div className='flex flex-row items-center justify-between'>
-                <h2 className='text-2xl text-gray-800 font-semibold'>Options</h2>
+                <h2 className='text-3xl font-bold text-gray-800 mb-12'>Options</h2>
                 <Link to="/account/settings">
                     <button className=" bg-gray-100 hover:bg-gray-800  hover:text-gray-100 text-gray-800 font-semibold my-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
                         Back

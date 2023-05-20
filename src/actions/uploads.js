@@ -73,16 +73,79 @@ export const removeVideo = createAsyncThunk('uploads/removeVideo', async (form, 
     }
 })
 
+export const changePrivacyById = createAsyncThunk('uploads/changePrivacyById', async (form, thunkAPI) => {
+    try {
+        const response = await api.changePrivacyById(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const changeStrictById = createAsyncThunk('uploads/changeStrictById', async (form, thunkAPI) => {
+    try {
+        const response = await api.changeStrictById(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const uploadsSlice = createSlice({
     name: 'uploads',
     initialState,
     extraReducers: (builder) => {
         builder.addCase(getUserVideo.fulfilled, (state, action) => {
+            console.log(action.payload.data.result)
             state.video = action.payload.data.result
             state.error = ''
             state.isLoading = false
         }),
         builder.addCase(getUserVideo.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(changePrivacyById.fulfilled, (state, action) => {
+            // Filtering the objects and replacing the matching ones
+            const filteredObjects = state.video.map(obj => {
+                if (obj._id === action.payload.data.result._id) {return action.payload.data.result;}
+                return obj;
+            });
+
+            state.video = filteredObjects
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(changePrivacyById.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(changeStrictById.fulfilled, (state, action) => {
+            // Filtering the objects and replacing the matching ones
+            const filteredObjects = state.video.map(obj => {
+                if (obj._id === action.payload.data.result._id) {return action.payload.data.result;}
+                return obj;
+            });
+
+            state.video = filteredObjects
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(changeStrictById.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         }),

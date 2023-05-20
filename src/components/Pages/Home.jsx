@@ -30,7 +30,6 @@ const Home = ({ path }) => {
 
     return (
         <div className='relative'>
-            <SideAlert/>
             <Alert />
             <Hero />
 

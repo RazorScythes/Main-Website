@@ -4,9 +4,10 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faClose, faEdit, faTrash, faVideoCamera, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
-import { getUserVideo, uploadVideo, clearAlert, editVideo, removeVideo } from "../../actions/uploads";
+import { getUserVideo, uploadVideo, clearAlert, editVideo, removeVideo, changePrivacyById, changeStrictById } from "../../actions/uploads";
 import VideoModal from '../VideoModal';
 import Alert from '../Alert';
+import VideoTableData from './sections/VideoTableData';
 import styles from '../../style'
 
 const Uploads = ({ user }) => {
@@ -63,11 +64,11 @@ const Uploads = ({ user }) => {
         if(video && video.length > 0){
             setData(video)
         }
-        setTags(['Loli','Creampie'])
+        setTags([])
         setForm({
-            title: 'Custom Udon #',
+            title: '',
             link: '',
-            owner: 'Custom Udon',
+            owner: '',
             tags: [],
             strict: true,
             privacy: false
@@ -438,26 +439,20 @@ const Uploads = ({ user }) => {
                                                                                 <FontAwesomeIcon onClick={() => { setVideoRecord(item.link); setRecordOpenModal(true) }} icon={faVideoCamera} className="px-[10px] py-[7px] bg-gray-700 hover:bg-gray-800 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
                                                                             </div>
                                                                         </td>
-                                                                        <td className="px-6 py-4 whitespace-no-wrap">
-                                                                            <div className="text-sm leading-5 text-gray-900 text-center">
-                                                                                {
-                                                                                    item.privacy ?
-                                                                                        <FontAwesomeIcon icon={faCheck} className="px-[10px] py-[7px] text-base text-green-700 rounded-md transition-all" />
-                                                                                    :
-                                                                                        <FontAwesomeIcon icon={faClose} className="px-[10px] py-[7px] text-base text-red-700 rounded-md transition-all" />
-                                                                                }
-                                                                            </div>
-                                                                        </td>
-                                                                        <td className="px-6 py-4 whitespace-no-wrap">
-                                                                            <div className="text-sm leading-5 text-gray-900">
-                                                                                {
-                                                                                    item.strict ?
-                                                                                        <FontAwesomeIcon icon={faCheck} className="px-[10px] py-[7px] text-base text-green-700 rounded-md transition-all" />
-                                                                                    :
-                                                                                        <FontAwesomeIcon icon={faClose} className="px-[10px] py-[7px] text-base text-red-700 rounded-md transition-all" />
-                                                                                }
-                                                                            </div>
-                                                                        </td>
+                                                                        <VideoTableData 
+                                                                            cond={item.privacy}
+                                                                            api_call={changePrivacyById({
+                                                                                id: item._id,
+                                                                                privacy: !item.privacy
+                                                                            })}
+                                                                        />
+                                                                        <VideoTableData 
+                                                                            cond={item.strict}
+                                                                            api_call={changeStrictById({
+                                                                                id: item._id,
+                                                                                strict: !item.strict
+                                                                            })}
+                                                                        />
                                                                         <td className="px-6 py-4 whitespace-no-wrap">
                                                                             <div className="text-sm leading-5 text-gray-900">{item.owner}</div>
                                                                         </td>

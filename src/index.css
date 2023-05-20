@@ -68,13 +68,13 @@
     right: -200px;
   }
   to {
-    right: 0px;
+    right: -1px;
   }
 }
 
 @keyframes slide-out {
   from {
-    right: 0px;
+    right: -1px;
   }
   to {
     right: -750px;
