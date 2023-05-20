@@ -15,8 +15,8 @@ const NotFound = () => {
                         alt="404 Error - Project Not Found"
                         className="md:w-[550px] w-96 h-auto mb-8"
                     />
-                    <h1 className="text-white text-4xl font-bold mb-4">Page not Found</h1>
-                    <p className="text-white text-lg mb-8">The page you are looking for does not exist, or you may have mistyped the url you are looking for.</p>
+                    <h1 className="text-white text-4xl font-bold mb-4 text-center">Page not Found</h1>
+                    <p className="text-white text-lg mb-8 text-center">The page you are looking for does not exist, or you may have mistyped the url you are looking for.</p>
                     <a href="/" className="text-white underline hover:text-gray-200">Go back to home page</a>
                 </div>
             </div>

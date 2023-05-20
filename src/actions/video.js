@@ -12,7 +12,8 @@ const initialState = {
     comments: [],
     relatedVideos: [],
     avatar: '',
-    message: ''
+    message: '',
+    forbiden: ''
 }
 
 export const getVideoByID = createAsyncThunk('video/getVideoByID', async (form, thunkAPI) => {
@@ -159,6 +160,21 @@ export const removeComment = createAsyncThunk('video/removeComment', async (form
     }
 })
 
+export const getVideoByTag = createAsyncThunk('video/getVideoByTag', async (form, thunkAPI) => {
+    try {
+        const response = await api.getVideoByTag(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
 
 export const videoSlice = createSlice({
     name: 'video',
@@ -172,6 +188,14 @@ export const videoSlice = createSlice({
         builder.addCase(getVideos.rejected, (state, action) => {
             state.message = action.payload.message
         }),
+        builder.addCase(getVideoByTag.fulfilled, (state, action) => {
+            state.videos = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getVideoByTag.rejected, (state, action) => {
+            state.message = action.payload.message
+        }),
         builder.addCase(getVideoByID.fulfilled, (state, action) => {
             state.notFound = false
             state.data = action.payload.data.result
@@ -183,6 +207,7 @@ export const videoSlice = createSlice({
             state.isLoading = true
         }),
         builder.addCase(getVideoByID.rejected, (state, action) => {
+            state.forbiden = action.payload.forbiden
             state.alert = action.payload.message
             state.variant = action.payload.variant
             state.notFound = action.payload.notFound

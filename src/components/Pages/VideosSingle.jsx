@@ -46,6 +46,7 @@ const VideosSingle = ({ user }) => {
     const comments = useSelector((state) => state.video.comments)
     const related_video = useSelector((state) => state.video.relatedVideos)
     const notFound = useSelector((state) => state.video.notFound)
+    const forbiden = useSelector((state) => state.video.forbiden)
     const isLoading = useSelector((state) => state.video.isLoading)
 
     const [avatar, setAvatar] = useState(localStorage.getItem('avatar')?.replaceAll('"', ""))
@@ -63,7 +64,7 @@ const VideosSingle = ({ user }) => {
     const [isAnimatingTD, setIsAnimatingTD] = useState(false)
 
     useEffect(() => {
-        dispatch(getVideoByID({ videoId: id }))
+        dispatch(getVideoByID({ id: user ? user.result?._id : '', videoId: id }))
         dispatch(getComments({ videoId: id }))
         dispatch(getRelatedVideos({ videoId: id, id: user ? user.result?._id : '' }))
         setData({})
@@ -203,6 +204,38 @@ const VideosSingle = ({ user }) => {
                                     </div>
                                 </div>
                             :
+                            forbiden === 'strict' ?
+                                <div
+                                    className="relative bg-cover bg-center py-20"
+                                    style={{ backgroundColor: "#111827" }}
+                                >   
+                                    <div className={`${styles.marginX} ${styles.flexCenter}`}>
+                                        <div className={`${styles.boxWidthEx}`}>
+                                            <div className="flex flex-col justify-center items-center">
+                                                <h1 className="text-white text-4xl font-bold mb-4">Restricted Video</h1>
+                                                <p className="text-white text-lg mb-8">You don't have permission to view this video.</p>
+                                                <a href="/videos" className="text-white underline hover:text-gray-200">Go back to videos page</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            :
+                            forbiden === 'private' ?
+                                <div
+                                    className="relative bg-cover bg-center py-20"
+                                    style={{ backgroundColor: "#111827" }}
+                                >   
+                                    <div className={`${styles.marginX} ${styles.flexCenter}`}>
+                                        <div className={`${styles.boxWidthEx}`}>
+                                            <div className="flex flex-col justify-center items-center">
+                                                <h1 className="text-white text-4xl font-bold mb-4">Video is Private</h1>
+                                                <p className="text-white text-lg mb-8">Contact the owner to provide information about this.</p>
+                                                <a href="/videos" className="text-white underline hover:text-gray-200">Go back to videos page</a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            :
                             notFound ?
                                 <div
                                     className="relative bg-cover bg-center py-20"
@@ -211,14 +244,9 @@ const VideosSingle = ({ user }) => {
                                     <div className={`${styles.marginX} ${styles.flexCenter}`}>
                                         <div className={`${styles.boxWidthEx}`}>
                                             <div className="flex flex-col justify-center items-center">
-                                                <img
-                                                    src={Page_not_found}
-                                                    alt="404 Error - Page Not Found"
-                                                    className="md:w-[550px] w-96 h-auto mb-8"
-                                                />
                                                 <h1 className="text-white text-4xl font-bold mb-4">Video not Found</h1>
                                                 <p className="text-white text-lg mb-8">The video you're looking for doesn't exist.</p>
-                                                <a href="/videos" className="text-white underline hover:text-gray-200">Go back to video</a>
+                                                <a href="/videos" className="text-white underline hover:text-gray-200">Go back to videos page</a>
                                             </div>
                                         </div>
                                     </div>
@@ -310,7 +338,7 @@ const VideosSingle = ({ user }) => {
                                                         {
                                                                 data.video.tags.map((item, i) => {
                                                                     return (
-                                                                        <Link key={i} to={`/video/tag/${item}`}><p className='mt-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-white border border-gray-100 px-4 py-1 mr-2 xs:text-sm text-sm transition-all capitalize'>{item}</p></Link>
+                                                                        <Link key={i} to={`/videos/tags/${item}`}><p className='mt-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-white border border-gray-100 px-4 py-1 mr-2 xs:text-sm text-sm transition-all capitalize'>{item}</p></Link>
                                                                     )
                                                                 })
                                                         }

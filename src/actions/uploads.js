@@ -110,7 +110,6 @@ export const uploadsSlice = createSlice({
     initialState,
     extraReducers: (builder) => {
         builder.addCase(getUserVideo.fulfilled, (state, action) => {
-            console.log(action.payload.data.result)
             state.video = action.payload.data.result
             state.error = ''
             state.isLoading = false

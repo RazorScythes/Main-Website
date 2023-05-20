@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getVideos } from "../../actions/video";
+import { getVideoByTag } from "../../actions/video";
+import { useParams } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from 'react-router-dom';
@@ -30,20 +31,21 @@ const getVideoId = (url) => {
     return videoId;
 };
 
-const Videos = ({ user }) => {
+const VideoTag = ({ user }) => {
     const navigate  = useNavigate()
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [active, setActive] = useState(0)
-    
+    const [tags, setTags] = useState([])
+
     const dispatch = useDispatch()
+
+    const { tag } = useParams();
 
     const video = useSelector((state) => state.video.videos)
     const message = useSelector((state) => state.video.message)
 
     const pageIndex = searchParams.get('page') ? parseInt(searchParams.get('page')) : 1
-    const paramIndex = searchParams.get('type') === null || searchParams.get('type') === ''
-    const checkParams = (val) => {return searchParams.get('type') === val}
 
     const [displayedPages, setDisplayedPages] = useState([]);
 
@@ -52,10 +54,12 @@ const Videos = ({ user }) => {
     }, [message])
 
     useEffect(() => {
-      dispatch(getVideos({
-        id: user ? user.result?._id : ''
-      }))
-    }, [])
+        dispatch(getVideoByTag({
+            id: user ? user.result?._id : '',
+            tag: tag.length > 0 ? tag.split("+") : []
+        }))
+        setTags(tag.split("+"))
+    }, [tag])
 
     useEffect(() => {
       setCurrentPage(pageIndex)
@@ -110,22 +114,30 @@ const Videos = ({ user }) => {
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
 
-        navigate(`/videos?type=${(searchParams.get('type') !== null) ? searchParams.get('type') : ''}&page=${pageNumber}`)
+        navigate(`/videos/tags/${tag}?page=${pageNumber}`)
     };
-
     return (
         <div
             className="relative bg-cover bg-center py-8"
             style={{ backgroundColor: "#111827" }}
         >   
-            {/* <div className={`${styles.flexCenter}`}> */}
-              <div className=' flex flex-row flex-wrap items-start justify-start mb-4 sm:px-16 px-6'>
-                  <Link to={`/videos?page=${pageIndex}`}><p style={{backgroundColor: paramIndex && 'rgb(243, 244, 246)', color: paramIndex && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>All</p></Link>
-                  <Link to={`/videos?type=latest&page=${pageIndex}`}><p style={{backgroundColor: checkParams('latest') && 'rgb(243, 244, 246)', color: checkParams('latest') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Latest</p></Link>
-                  <Link to={`/videos?type=most_viewed&page=${pageIndex}`}><p style={{backgroundColor: checkParams('most_viewed') && 'rgb(243, 244, 246)', color: checkParams('most_viewed') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Most Viewed</p></Link>
-                  <Link to={`/videos?type=popular&page=${pageIndex}`}><p style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Popular</p></Link>
-              </div>
-            {/* </div> */}
+            <div className='flex flex-wrap items-center sm:px-16 px-4 py-8'>
+                <h3 className='text-white xs:text-3xl text-2xl font-semibold mr-3'>Tags:</h3>
+                {
+                    tags && tags.length > 0 &&
+                        tags.map((item, index) => {
+                            return (
+                                <div key={index} className='flex flex-wrap'>
+                                    {
+                                        item !== '' &&
+                                            <p className='mt-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-white border border-gray-100 px-4 py-1 mr-2 xs:text-sm text-sm transition-all capitalize'>{item}</p>
+                                    }
+                                </div>
+                            )
+                        })
+                }
+                
+            </div>
             <div className={`${styles.flexCenter}`}> 
                 {
                   message.length > 0 ?
@@ -202,4 +214,4 @@ const Videos = ({ user }) => {
     )
 }
 
-export default Videos
+export default VideoTag

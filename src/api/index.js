@@ -90,6 +90,7 @@ export const addOneLikes                                = (formData) => User_API
 export const addOneDislikes                             = (formData) => User_API.post('/video/addOneDislikes', formData)
 export const addOneViews                                = (formData) => User_API.post('/video/addOneViews', formData)
 export const getVideoByID                               = (formData) => User_API.post('/video/getVideoByID', formData)
+export const getVideoByTag                              = (formData) => User_API.post('/video/getVideoByTag', formData)
 export const getComments                                = (formData) => User_API.post('/video/getComments', formData)
 export const getRelatedVideos                           = (formData) => User_API.post('/video/getRelatedVideos', formData)
 export const uploadComment                              = (formData) => User_API.post('/video/uploadComment', formData)

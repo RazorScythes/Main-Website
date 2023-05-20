@@ -26,8 +26,10 @@ import Archive from './Pages/Archive'
 import Videos from './Pages/Videos'
 import VideosSingle from './Pages/VideosSingle'
 import Verify from './Pages/Verify'
+import VideoTag from './Pages/VideoTag'
 export {
     Verify,
+    VideoTag,
     Home,
     Games,
     Videos,
