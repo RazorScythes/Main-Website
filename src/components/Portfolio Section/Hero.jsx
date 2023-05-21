@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { LazyLoadImage } from 'react-lazy-load-image-component';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFacebookF, faInstagram, faTwitter, faGithub, faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import styles from "../../style";
 
@@ -10,9 +12,11 @@ const Hero = ({ hero, resultRef }) => {
         full_name: '',
         description: '',
         profession: [],
-        animation: false
+        animation: false,
+        resume_link: '',
+        social_links: {}
     })
-
+    console.log(heroData)
     useEffect(() => {
         if(hero){
             setHeroData({
@@ -22,6 +26,8 @@ const Hero = ({ hero, resultRef }) => {
                 description: hero && hero.description && hero.description !== '' ? hero.description : 'Insert description',
                 profession: hero && hero.profession.length === 1 ? [...hero.profession, ...hero.profession] : hero.profession.length > 0 ? hero.profession : ['Insert profession', 'Insert profession'],
                 animation: hero && hero.animation ? hero.animation : true,
+                resume_link: hero && hero.resume_link ? hero.resume_link : '',
+                social_links: hero && hero.social_links ? hero.social_links : {},
             })
         }
     }, [hero])
@@ -109,9 +115,46 @@ const Hero = ({ hero, resultRef }) => {
                                 <p className="text-white text-lg sm:text-xl md:text-lg leading-relaxed mb-4">
                                     { heroData.description }
                                 </p>
-                                <button onClick={() => resultRef.current.scrollIntoView({ behavior: 'smooth' })} className="bg-gray-100 hover:bg-transparent hover:text-gray-100 text-gray-800 font-semibold my-8 py-2 px-8 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
-                                    Hire Me!
-                                </button>
+
+                                <div className="flex">
+                                    {
+                                        heroData.social_links?.facebook &&
+                                            (heroData.social_links.facebook.link && heroData.social_links.facebook.show) &&
+                                                <a href={heroData.social_links.facebook.link} target="_blank"><FontAwesomeIcon icon={faFacebookF} className='mr-2 w-4 h-4 text-gray-100 border border-solid border-bg-gray-100 rounded-full p-3 cursor-pointer hover:bg-gray-100 hover:text-gray-800 transition-all'/></a>
+                                    }
+                                    {
+                                        heroData.social_links?.twitter &&
+                                            (heroData.social_links.twitter.link && heroData.social_links.twitter.show) &&
+                                                <a href={heroData.social_links.twitter.link} target="_blank"><FontAwesomeIcon icon={faTwitter} className='mr-2 w-4 h-4 text-gray-100 border border-solid border-bg-gray-100 rounded-full p-3 cursor-pointer hover:bg-gray-100 hover:text-gray-800 transition-all'/></a>
+                                    }
+                                    {
+                                        heroData.social_links?.instagram &&
+                                            (heroData.social_links.instagram.link && heroData.social_links.instagram.show) &&
+                                                <a href={heroData.social_links.instagram.link} target="_blank"><FontAwesomeIcon icon={faInstagram} className='mr-2 w-4 h-4 text-gray-100 border border-solid border-bg-gray-100 rounded-full p-3 cursor-pointer hover:bg-gray-100 hover:text-gray-800 transition-all'/></a>
+                                    }
+                                    {
+                                        heroData.social_links?.github &&
+                                            (heroData.social_links.github.link && heroData.social_links.github.show) &&
+                                                <a href={heroData.social_links.github.link} target="_blank"><FontAwesomeIcon icon={faGithub} className='mr-2 w-4 h-4 text-gray-100 border border-solid border-bg-gray-100 rounded-full p-3 cursor-pointer hover:bg-gray-100 hover:text-gray-800 transition-all'/></a>
+                                    }
+                                    {
+                                        heroData.social_links?.linkedin &&
+                                            (heroData.social_links.linkedin.link && heroData.social_links.linkedin.show) &&
+                                                <a href={heroData.social_links.linkedin.link} target="_blank"><FontAwesomeIcon icon={faLinkedinIn} className='mr-2 w-4 h-4 text-gray-100 border border-solid border-bg-gray-100 rounded-full p-3 cursor-pointer hover:bg-gray-100 hover:text-gray-800 transition-all'/></a>
+                                    }
+                                </div>
+                                <div className="flex xs:flex-row flex-col my-8 ">
+                                    {
+                                        heroData.resume_link && (
+                                            <a href={heroData.resume_link} target="_blank" target="_blank" className="mb-2 bg-transparent hover:bg-gray-100 hover:text-gray-800 text-gray-100 font-semibold py-2 px-8 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                Download CV
+                                            </a>
+                                        )
+                                    }
+                                    <button onClick={() => resultRef.current.scrollIntoView({ behavior: 'smooth' })} className="mb-2 bg-gray-100 hover:bg-transparent hover:text-gray-100 text-gray-800 font-semibold py-2 px-8 border border-gray-100 rounded transition-colors duration-300 ease-in-out xs:ml-2">
+                                        Hire Me!
+                                    </button>
+                                </div>
                             </div>
                             <div className="lg:w-1/3 md:w-1/3 md:block hidden ml-0">
                                 <div className="rounded-lg shadow-lg lg:w-[400px]">

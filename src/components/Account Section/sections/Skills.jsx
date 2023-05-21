@@ -1,13 +1,14 @@
 import React,{ useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faChevronRight, faChevronDown, faClose } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faChevronRight, faChevronDown, faClose, faEye } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { uploadSkills, getPortfolio } from "../../../actions/portfolio";
 import { clearAlert } from '../../../actions/portfolio';
 import { useDropzone } from 'react-dropzone'
 import { portfolio_selector } from '../../../constants';
-
+import ImageModal from '../../ImageModal';
 import Alert from '../../Alert';
+import { Link } from 'react-router-dom';
 
 const getRandomColor = (hue) => {
     let h, s, l;
@@ -103,7 +104,8 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
     const [active, setActive] = useState(0)
 
     const [submitted, setSubmitted] = useState(false)
-
+    const [openModal, setOpenModal] = useState(false)
+    const [preview, setPreview] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
     const [alertInfo, setAlertInfo] = useState({
         alert: '',
@@ -124,6 +126,7 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
     })
 
     const [input, setInput] = useState({
+        display_image: '',
         skill: {
             image: '',
             skill_name: '',
@@ -132,9 +135,9 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
         }
     })
 
-    useEffect(() => {
-        dispatch(getPortfolio({id: user.result?._id}))
-    }, [])
+    // useEffect(() => {
+    //     dispatch(getPortfolio({id: user.result?._id}))
+    // }, [])
 
     useEffect(() => {
         setSubmitted(false)
@@ -148,6 +151,10 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
             project_completed: portfolio ? portfolio.project_completed : 0,
             heading: portfolio ? portfolio.heading : '',
             skill: portfolio ? portfolio.skill : []
+        })
+        setInput({
+            ...input,
+            display_image: portfolio ? portfolio.image : '',
         })
     }, [portfolio])
 
@@ -338,6 +345,13 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
                 alertInfo.alert && alertInfo.variant && showAlert &&
                     <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
             }
+            <ImageModal
+                openModal={openModal}
+                setOpenModal={setOpenModal}
+                image={input.display_image}
+                preview={preview}
+                setPreview={setPreview}
+            />
             <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                 <div className='relative'>
                     <div className='flex flex-row items-center relative'>
@@ -353,17 +367,18 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
                             {
                                 portfolio_selector.map((selector, i) => {
                                     return(
-                                        <li
-                                            onClick={() => {
-                                                setActive(i)
-                                                setIndex(i)
-                                            }}
-                                            key={i}
-                                            className={`cursor-pointer ${index === i ? 'text-[#FFFF00]' : 'text-white'} hover:text-blue-200 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-4'}`}
-                                        >
-                                            <FontAwesomeIcon icon={faChevronRight} className="mr-2" />
-                                            <a href={`#`}>{selector}</a>
-                                        </li>
+                                        <Link to={`/account/portfolio?navigation=${selector.toLowerCase()}`} key={i}>
+                                            <li
+                                                onClick={() => {
+                                                    setActive(i)
+                                                    setIndex(i)
+                                                }}
+                                                className={`cursor-pointer ${index === i ? 'text-[#FFFF00]' : 'text-white'} hover:text-blue-200 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-4'}`}
+                                            >
+                                                <FontAwesomeIcon icon={faChevronRight} className="mr-2" />
+                                                <a href={`#`}>{selector}</a>
+                                            </li>
+                                        </Link>
                                     )   
                                 })
                             }
@@ -371,21 +386,36 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
                     </div>
                 </div>
             </div>
-            <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
+            <div className='grid md:grid-cols-2 sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                 <div className='flex flex-col'>
                     <label className="block mb-2 font-medium" htmlFor="file_input">Upload picture</label>
-                    <input 
-                        className="block w-full text-gray-800 border border-gray-300 cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
-                        id="file_input" 
-                        type="file"
-                        accept="image/*" 
-                        onChange={convertImage}
-                        value={input.skill.image}
-                    />
+                    <div className='flex flex-row'>
+                        <input 
+                            className="block w-full text-gray-800 border border-gray-300 cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
+                            id="file_input" 
+                            type="file"
+                            accept="image/*" 
+                            onChange={convertImage}
+                            value={input.skill.image}
+                        />
+                        {
+                            input.display_image && (
+                                <div className='flex flex-row items-end'>
+                                    <button 
+                                        onClick={() => {
+                                            setPreview(true)
+                                            setOpenModal(true)
+                                        }} 
+                                        className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-1'><FontAwesomeIcon icon={faEye} className="mx-4"/>
+                                    </button>
+                                </div>
+                            )
+                        }
+                    </div>
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">PNG, JPG</p>
                 </div>
             </div>
-            <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1  gap-5 place-content-start mb-4'>
+            <div className='grid md:grid-cols-2 sm:grid-cols-2 grid-cols-1  gap-5 place-content-start mb-4'>
                 <div className='flex flex-col'>
                     <label className='font-semibold'> Heading:  </label>
                     <input 
@@ -396,7 +426,7 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
                     />
                 </div>
             </div>
-            <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1  gap-5 place-content-start mb-4'>
+            <div className='grid md:grid-cols-2 sm:grid-cols-2 grid-cols-1  gap-5 place-content-start mb-4'>
                 <div className='flex flex-col'>
                     <label className='font-semibold'> Project Completed:  </label>
                     <input 

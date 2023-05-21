@@ -14,6 +14,7 @@ import { list } from 'postcss';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
+import { Link } from 'react-router-dom';
 
 library.add(fas, far, fab);
 
@@ -458,17 +459,18 @@ const Projects = ({ user, portfolio, index, setIndex }) => {
                                                 {
                                                     portfolio_selector.map((selector, i) => {
                                                         return(
-                                                            <li
-                                                                onClick={() => {
-                                                                    setActive(i)
-                                                                    setIndex(i)
-                                                                }}
-                                                                key={i}
-                                                                className={`cursor-pointer ${index === i ? 'text-[#FFFF00]' : 'text-white'} hover:text-blue-200 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-4'}`}
-                                                            >
-                                                                <FontAwesomeIcon icon={faChevronRight} className="mr-2" />
-                                                                <a href={`#`}>{selector}</a>
-                                                            </li>
+                                                            <Link to={`/account/portfolio?navigation=${selector.toLowerCase()}`} key={i}>
+                                                                <li
+                                                                    onClick={() => {
+                                                                        setActive(i)
+                                                                        setIndex(i)
+                                                                    }}
+                                                                    className={`cursor-pointer ${index === i ? 'text-[#FFFF00]' : 'text-white'} hover:text-blue-200 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-4'}`}
+                                                                >
+                                                                    <FontAwesomeIcon icon={faChevronRight} className="mr-2" />
+                                                                    <a href={`#`}>{selector}</a>
+                                                                </li>
+                                                            </Link>
                                                         )   
                                                     })
                                                 }

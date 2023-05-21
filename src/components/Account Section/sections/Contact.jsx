@@ -7,6 +7,7 @@ import { clearAlert } from '../../../actions/portfolio';
 import { portfolio_selector } from '../../../constants';
 
 import Alert from '../../Alert';
+import { Link } from 'react-router-dom';
 const Contact = ({ user, portfolio, index, setIndex }) => {
 
   const dispatch = useDispatch()
@@ -115,17 +116,18 @@ const Contact = ({ user, portfolio, index, setIndex }) => {
                         {
                             portfolio_selector.map((selector, i) => {
                                 return(
-                                    <li
-                                        onClick={() => {
-                                            setActive(i)
-                                            setIndex(i)
-                                        }}
-                                        key={i}
-                                        className={`cursor-pointer ${index === i ? 'text-[#FFFF00]' : 'text-white'} hover:text-blue-200 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-4'}`}
-                                    >
-                                        <FontAwesomeIcon icon={faChevronRight} className="mr-2" />
-                                        <a href={`#`}>{selector}</a>
-                                    </li>
+                                    <Link to={`/account/portfolio?navigation=${selector.toLowerCase()}`} key={i}>
+                                        <li
+                                            onClick={() => {
+                                                setActive(i)
+                                                setIndex(i)
+                                            }}
+                                            className={`cursor-pointer ${index === i ? 'text-[#FFFF00]' : 'text-white'} hover:text-blue-200 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-4'}`}
+                                        >
+                                            <FontAwesomeIcon icon={faChevronRight} className="mr-2" />
+                                            <a href={`#`}>{selector}</a>
+                                        </li>
+                                    </Link>
                                 )   
                             })
                         }

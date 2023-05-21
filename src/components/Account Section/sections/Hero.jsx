@@ -1,12 +1,13 @@
 import React,{ useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faChevronRight, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faChevronRight, faChevronDown, faEye, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { uploadHero, getPortfolio } from "../../../actions/portfolio";
 import { clearAlert } from '../../../actions/portfolio';
 import { portfolio_selector } from '../../../constants';
-
+import ImageModal from '../../ImageModal';
 import Alert from '../../Alert';
+import { Link } from 'react-router-dom';
 const Hero = ({ user, portfolio, index, setIndex }) => {
 
     const dispatch = useDispatch()
@@ -18,7 +19,8 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
     const [active, setActive] = useState(0)
     
     const [submitted, setSubmitted] = useState(false)
-
+    const [openModal, setOpenModal] = useState(false)
+    const [preview, setPreview] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
     const [alertInfo, setAlertInfo] = useState({
         alert: '',
@@ -32,22 +34,45 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
         full_name: '',
         description: '',
         profession: [],
-        animation: false
+        animation: false,
+        social_links: {},
+        resume_link: ''
     })
 
     const [input, setInput] = useState({
+        display_image: '',
         hero: {
             image: '',
             full_name: '',
             description: '',
             profession: '',
             animation: false
-        }
+        },
+        facebook: {
+            link: '',
+            show: false
+        },
+        twitter: {
+            link: '',
+            show: false
+        },
+        instagram: {
+            link: '',
+            show: false
+        },
+        github: {
+            link: '',
+            show: false
+        },
+        linkedin: {
+            link: '',
+            show: false
+        },
     })
 
-    useEffect(() => {
-        dispatch(getPortfolio({id: user.result?._id}))
-    }, [])
+    // useEffect(() => {
+    //     dispatch(getPortfolio({id: user.result?._id}))
+    // }, [])
 
     useEffect(() => {
         setHero({
@@ -55,7 +80,32 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
             full_name: portfolio ? portfolio.full_name : '',
             description: portfolio ? portfolio.description : '',
             profession: portfolio ? portfolio.profession : [],
-            animation: portfolio ? portfolio.animation : false
+            animation: portfolio ? portfolio.animation : false,
+            resume_link: portfolio ? portfolio.resume_link : 'false',
+        })
+        setInput({
+            ...input,
+            display_image: portfolio ? portfolio.image : '',
+            facebook: {
+                link: portfolio && portfolio.social_links?.facebook ? portfolio.social_links.facebook.link : '',
+                show: portfolio && portfolio.social_links?.facebook ? portfolio.social_links.facebook.show : false
+            },
+            twitter: {
+                link: portfolio && portfolio.social_links?.twitter ? portfolio.social_links.twitter.link : '',
+                show: portfolio && portfolio.social_links?.twitter ? portfolio.social_links.twitter.show : false
+            },
+            instagram: {
+                link: portfolio && portfolio.social_links?.instagram ? portfolio.social_links.instagram.link : '',
+                show: portfolio && portfolio.social_links?.instagram ? portfolio.social_links.instagram.show : false
+            },
+            github: {
+                link: portfolio && portfolio.social_links?.github ? portfolio.social_links.github.link : '',
+                show: portfolio && portfolio.social_links?.github ? portfolio.social_links.github.show : false
+            },
+            linkedin: {
+                link: portfolio && portfolio.social_links?.linkedin ? portfolio.social_links.linkedin.link : '',
+                show: portfolio && portfolio.social_links?.linkedin ? portfolio.social_links.linkedin.show : false
+            },
         })
         setSubmitted(false)
     }, [portfolio])
@@ -153,8 +203,19 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
     });
 
     const handleSubmit = () => {
+        const social_media = {
+            facebook: input.facebook,
+            twitter: input.twitter,
+            instagram: input.instagram,
+            github: input.github,
+            linkedin: input.linkedin
+        }
+
+        const form_list = hero
+        form_list.social_links = social_media
+
         if(!submitted){
-            dispatch(uploadHero(hero))
+            dispatch(uploadHero(form_list))
             setSubmitted(true)
         }
         setHero({...hero, image: ''})
@@ -167,6 +228,13 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                 alertInfo.alert && alertInfo.variant && showAlert &&
                     <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
             }
+            <ImageModal
+                openModal={openModal}
+                setOpenModal={setOpenModal}
+                image={input.display_image}
+                preview={preview}
+                setPreview={setPreview}
+            />
             <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                 <div className='relative'>
                     <div className='flex flex-row items-center relative'>
@@ -182,17 +250,18 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                             {
                                 portfolio_selector.map((selector, i) => {
                                     return(
-                                        <li
-                                            onClick={() => {
-                                                setActive(i)
-                                                setIndex(i)
-                                            }}
-                                            key={i}
-                                            className={`cursor-pointer ${index === i ? 'text-[#FFFF00]' : 'text-white'} hover:text-blue-200 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-4'}`}
-                                        >
-                                            <FontAwesomeIcon icon={faChevronRight} className="mr-2" />
-                                            <a href={`#`}>{selector}</a>
-                                        </li>
+                                        <Link to={`/account/portfolio?navigation=${selector.toLowerCase()}`} key={i}>
+                                            <li
+                                                onClick={() => {
+                                                    setActive(i)
+                                                    setIndex(i)
+                                                }}
+                                                className={`cursor-pointer ${index === i ? 'text-[#FFFF00]' : 'text-white'} hover:text-blue-200 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-4'}`}
+                                            >
+                                                <FontAwesomeIcon icon={faChevronRight} className="mr-2" />
+                                                <a href={`#`}>{selector}</a>
+                                            </li>
+                                        </Link>
                                     )   
                                 })
                             }
@@ -203,14 +272,29 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
             <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                 <div className='flex flex-col'>
                     <label className="block mb-2 font-medium" htmlFor="file_input">Upload file</label>
-                    <input 
-                        className="block w-full text-gray-800 border border-gray-300 cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
-                        id="file_input" 
-                        type="file"
-                        accept="image/*" 
-                        onChange={convertImage}
-                        value={input.hero.image}
-                    />
+                    <div className='flex flex-row'>
+                        <input 
+                            className="block w-full text-gray-800 border border-gray-300 cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
+                            id="file_input" 
+                            type="file"
+                            accept="image/*" 
+                            onChange={convertImage}
+                            value={input.hero.image}
+                        />
+                        {
+                            input.display_image && (
+                                <div className='flex flex-row items-end'>
+                                    <button 
+                                        onClick={() => {
+                                            setPreview(true)
+                                            setOpenModal(true)
+                                        }} 
+                                        className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-1'><FontAwesomeIcon icon={faEye} className="mx-4"/>
+                                    </button>
+                                </div>
+                            )
+                        }
+                    </div>
                     <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">PNG, JPG</p>
                 </div>
             </div>
@@ -241,7 +325,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     </div>
                 </div>
             </div>
-            <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start text-white mb-2'>
+            <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start text-white mb-2'>
                 <div className='flex flex-row flex-wrap'>
                     {
                         hero.profession.length > 0 &&
@@ -260,7 +344,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                         }
                 </div>
             </div>
-            <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
+            <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
                 <div className='flex flex-col'>
                     <label className='font-semibold'> Portfolio description: </label>
                     <div className='flex flex-row'>
@@ -288,6 +372,127 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                         className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
                     <label htmlFor="default-checkbox" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Typing Animation</label>
+                </div>
+            </div>
+            <div className='grid md:grid-cols-2 grid-cols-1  gap-5 place-content-start'>
+                <div className='flex flex-col'>
+                    <label className='font-semibold'> Resume Link: </label>
+                    <input 
+                        type="text" 
+                        className='p-2 border border-solid border-[#c0c0c0]'
+                        onChange={(e) => setHero({...hero, resume_link: e.target.value})}
+                        value={hero.resume_link}
+                    />
+                </div>
+            </div>
+
+            <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
+                <h2 className='text-2xl font-bold text-gray-800 my-4'>Social Links</h2>        
+            </div>
+
+            <div className='grid md:grid-cols-3 grid-cols-3  gap-5 place-content-start mb-3'>
+                <div className='flex flex-col justify-center md:col-span-1 col-span-2'>
+                    <label className='font-semibold'> Facebook: </label>
+                    <input 
+                        type="text" 
+                        className='p-2 border border-solid border-[#c0c0c0]'
+                        onChange={(e) => setInput({...input, facebook: { ...input.facebook, link: e.target.value }})}
+                        value={input.facebook.link}
+                    />
+                </div>
+                <div className="flex items-center mt-5">
+                    <input 
+                        id="default-checkbox1" 
+                        type="checkbox" 
+                        checked={input.facebook.show}
+                        onChange={(e) => setInput({...input, facebook: { ...input.facebook, show: !input.facebook.show }})}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="default-checkbox1" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Show</label>
+                </div>
+            </div>
+            <div className='grid md:grid-cols-3 grid-cols-3  gap-5 place-content-start mb-3'>
+                <div className='flex flex-col justify-center md:col-span-1 col-span-2'>
+                    <label className='font-semibold'> Twitter: </label>
+                    <input 
+                        type="text" 
+                        className='p-2 border border-solid border-[#c0c0c0]'
+                        onChange={(e) => setInput({...input, twitter: { ...input.twitter, link: e.target.value }})}
+                        value={input.twitter.link}
+                    />
+                </div>
+                <div className="flex items-center mt-5">
+                    <input 
+                        id="default-checkbox2" 
+                        type="checkbox" 
+                        checked={input.twitter.show}
+                        onChange={(e) => setInput({...input, twitter: { ...input.twitter, show: !input.twitter.show }})}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="default-checkbox2" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Show</label>
+                </div>
+            </div>
+            <div className='grid md:grid-cols-3 grid-cols-3  gap-5 place-content-start mb-3'>
+                <div className='flex flex-col justify-center md:col-span-1 col-span-2'>
+                    <label className='font-semibold'> Instagram: </label>
+                    <input 
+                        type="text" 
+                        className='p-2 border border-solid border-[#c0c0c0]'
+                        onChange={(e) => setInput({...input, instagram: { ...input.instagram, link: e.target.value }})}
+                        value={input.instagram.link}
+                    />
+                </div>
+                <div className="flex items-center mt-5">
+                    <input 
+                        id="default-checkbox3" 
+                        type="checkbox" 
+                        checked={input.instagram.show}
+                        onChange={(e) => setInput({...input, instagram: { ...input.instagram, show: !input.instagram.show }})}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="default-checkbox3" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Show</label>
+                </div>
+            </div>
+            <div className='grid md:grid-cols-3 grid-cols-3  gap-5 place-content-start mb-3'>
+                <div className='flex flex-col justify-center md:col-span-1 col-span-2'>
+                    <label className='font-semibold'> Github: </label>
+                    <input 
+                        type="text" 
+                        className='p-2 border border-solid border-[#c0c0c0]'
+                        onChange={(e) => setInput({...input, github: { ...input.github, link: e.target.value }})}
+                        value={input.github.link}
+                    />
+                </div>
+                <div className="flex items-center mt-5">
+                    <input 
+                        id="default-checkbox4" 
+                        type="checkbox" 
+                        checked={input.github.show}
+                        onChange={(e) => setInput({...input, github: { ...input.github, show: !input.github.show }})}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="default-checkbox4" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Show</label>
+                </div>
+            </div>
+            <div className='grid md:grid-cols-3 grid-cols-3  gap-5 place-content-start mb-10'>
+                <div className='flex flex-col justify-center md:col-span-1 col-span-2'>
+                    <label className='font-semibold'> LinkedIn: </label>
+                    <input 
+                        type="text" 
+                        className='p-2 border border-solid border-[#c0c0c0]'
+                        onChange={(e) => setInput({...input, linkedin: { ...input.linkedin, link: e.target.value }})}
+                        value={input.linkedin.link}
+                    />
+                </div>
+                <div className="flex items-center mt-5">
+                    <input 
+                        id="default-checkbox5" 
+                        type="checkbox" 
+                        checked={input.linkedin.show}
+                        onChange={(e) => setInput({...input, linkedin: { ...input.linkedin, show: !input.linkedin.show }})}
+                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <label htmlFor="default-checkbox5" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Show</label>
                 </div>
             </div>
             <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>

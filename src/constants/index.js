@@ -28,7 +28,12 @@ export const account_links = [
 ]
 
 export const portfolio_selector = [
-    'Hero', 'Skillset', 'Services', 'Work Experience', 'Projects', 'Contact'
+    'Hero', 
+    'Skillset', 
+    'Services', 
+    'Work Experience', 
+    'Projects', 
+    'Contact'
 ]
 
 export const nav_links = [

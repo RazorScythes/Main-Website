@@ -2,9 +2,11 @@ import React,{ useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
+import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Header } from './index'
 import { uploadHero, getPortfolio, publishPortfolio, unpublishPortfolio } from "../../actions/portfolio";
+import { portfolio_selector } from '../../constants';
 
 import Hero from './sections/Hero';
 import Skills from './sections/Skills';
@@ -17,6 +19,7 @@ import styles from '../../style'
 
 const AccountPortfolio = ({ user }) => {
 
+    const dispatch = useDispatch()
     const navigate  = useNavigate()
 
     const portfolio = useSelector((state) => state.portfolio.data)
@@ -29,9 +32,19 @@ const AccountPortfolio = ({ user }) => {
 
     const [index, setIndex] = useState(0)
     const [submitted, setSubmitted] = useState(false)
+    const [searchParams, setSearchParams] = useSearchParams();
+
+    const portfolioPage = searchParams.get('navigation')
+
+    const lowercaseArray = portfolio_selector.map(element => element.toLowerCase());
+    const lowercaseSearchString = searchParams.get('navigation') !== null ? portfolioPage.toLowerCase() : '';
+
+    const pageIndex = lowercaseArray.indexOf(lowercaseSearchString) > 0 ? lowercaseArray.indexOf(lowercaseSearchString) : 0
 
     useEffect(() => {
         if(!user) navigate(`/`)
+
+        dispatch(getPortfolio({id: user.result?._id}))
     }, [])
 
     useEffect(() => {
@@ -58,56 +71,56 @@ const AccountPortfolio = ({ user }) => {
                             user &&
                             <>
                                 {
-                                    index === 0 &&
+                                    (portfolioPage === 'hero' || (portfolioPage === '' || portfolioPage === null)) &&
                                         <Hero 
                                             user={user}
                                             portfolio={hero}
-                                            index={index}
+                                            index={pageIndex ? pageIndex : 0}
                                             setIndex={setIndex}
                                         />
                                 }
                                 {
-                                    index === 1 &&
+                                    (portfolioPage === 'skillset') &&
                                         <Skills 
                                             user={user}
                                             portfolio={skills}
-                                            index={index}
+                                            index={pageIndex}
                                             setIndex={setIndex}
                                         />
                                 }
                                 {
-                                    index === 2 &&
+                                    (portfolioPage === 'services') &&
                                         <Services
                                             user={user}
                                             portfolio={services}
-                                            index={index}
+                                            index={pageIndex}
                                             setIndex={setIndex}
                                         />
                                 }
                                 {
-                                    index === 3 &&
+                                    (portfolioPage === 'work experience') &&
                                         <Experience
                                             user={user}
                                             portfolio={experience}
-                                            index={index}
+                                            index={pageIndex}
                                             setIndex={setIndex}
                                         />
                                 }
                                 {
-                                    index === 4 &&
+                                    (portfolioPage === 'projects') &&
                                         <Projects
                                             user={user}
                                             portfolio={projects}
-                                            index={index}
+                                            index={pageIndex}
                                             setIndex={setIndex}
                                         />
                                 }
                                 {
-                                    index === 5 &&
+                                    (portfolioPage === 'contact') &&
                                         <Contact
                                             user={user}
                                             portfolio={contact}
-                                            index={index}
+                                            index={pageIndex}
                                             setIndex={setIndex}
                                         />
                                 }

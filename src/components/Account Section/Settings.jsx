@@ -12,7 +12,6 @@ import SideAlert from '../SideAlert';
 import styles from '../../style'
 
 const Index = ({ user, settings, submitted, setSubmitted }) => {
-    console.log(settings.verified)
     const dispatch = useDispatch()
 
     const sendEmail = () => {
@@ -413,7 +412,6 @@ const Settings = ({ user, settings }) => {
     })
     const [active, setActive] = useState(false)
 
-    const [openModal, setOpenModal] = useState(false)
     const { options } = useParams();
 
     useEffect(() => {
@@ -438,10 +436,6 @@ const Settings = ({ user, settings }) => {
                 paragraph={message.paragraph}
                 active={active}
                 setActive={setActive}
-            />
-            <ImageModal
-                openModal={openModal}
-                setOpenModal={setOpenModal}
             />
             <Header 
                 heading='Settings'
