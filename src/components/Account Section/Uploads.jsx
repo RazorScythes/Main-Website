@@ -322,7 +322,7 @@ const Uploads = ({ user }) => {
            
             files.forEach(async (file) => {
                 
-                if(!file.name.toLowerCase().includes(".mp4")) return
+                if(!file.name.toLowerCase().includes(".gif")) return
 
                 var longTitle = false
                 if(is64CharactersNoSpaces(file.name.replace(/\.mp4$/, ""))) longTitle = true
