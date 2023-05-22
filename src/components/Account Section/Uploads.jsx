@@ -294,7 +294,7 @@ const Uploads = ({ user }) => {
 
     const handleBulkInsert = async () => {
         if(!bulkForm.api_key || !bulkForm.drive_id || !bulkForm.owner) return 
-        
+
         const files = await fetchDriveFiles(bulkForm.api_key, bulkForm.drive_id)
 
         if(files.code && files.message) {
@@ -311,7 +311,15 @@ const Uploads = ({ user }) => {
 
             var num_video_count = 1;
             var file_count = 1
-            const User_API = axios.create({ baseURL: `${import.meta.env.VITE_APP_PROTOCOL}://${import.meta.env.VITE_APP_LOCALHOST}:${import.meta.env.VITE_APP_SERVER_PORT}`})
+            var User_API
+            
+            if(import.meta.env.VITE_DEVELOPMENT == "true"){
+                User_API = axios.create({ baseURL: `${import.meta.env.VITE_APP_PROTOCOL}://${import.meta.env.VITE_APP_LOCALHOST}:${import.meta.env.VITE_APP_SERVER_PORT}`})
+            }
+            else {
+                User_API = axios.create({ baseURL: `https://main-api-eight.vercel.app/`})
+            }
+           
             files.forEach(async (file) => {
                 
                 if(!file.name.toLowerCase().includes(".mp4")) return
