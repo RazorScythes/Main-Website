@@ -430,10 +430,6 @@ const Uploads = ({ user }) => {
                                         <div className="md:flex items-start justify-center mt-8">
                                             <div className="lg:w-1/2 md:w-1/2 w-full">
                                                 {
-                                                    alertInfo.alert && alertInfo.variant && showAlert &&
-                                                        <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
-                                                }
-                                                {
                                                     edit &&
                                                     <div className='grid grid-cols-2  gap-5 place-content-start mb-4 md:mt-0 mt-8'>
                                                         <h2 className='text-3xl font-bold text-gray-800'>Edit</h2>
@@ -455,7 +451,10 @@ const Uploads = ({ user }) => {
                                                             </div>
                                                         </div>  
                                                 }   
-
+                                                {
+                                                    alertInfo.alert && alertInfo.variant && showAlert &&
+                                                        <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
+                                                }
                                                 {  
                                                     (edit || !bulkStatus) ?   
                                                         <>              
