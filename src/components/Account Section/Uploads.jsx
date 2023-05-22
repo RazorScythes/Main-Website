@@ -226,17 +226,17 @@ const Uploads = ({ user }) => {
         if(bulkUpload) {
             setBulkUpload(false)
             setBulkSubmitted(false)
-            setBulkForm({
-                ...bulkForm,
-                drive_id: '',
-                title: '',
-                link: '',
-                owner: '',
-                privacy: false,
-                strict: true,
-                tags: []
-            })
-            setBulkTags('')
+            // setBulkForm({
+            //     ...bulkForm,
+            //     drive_id: '',
+            //     title: '',
+            //     link: '',
+            //     owner: '',
+            //     privacy: false,
+            //     strict: true,
+            //     tags: []
+            // })
+            // setBulkTags('')
         }
     }, [bulkUpload])
 
@@ -319,10 +319,9 @@ const Uploads = ({ user }) => {
             else {
                 User_API = axios.create({ baseURL: `https://main-api-eight.vercel.app/`})
             }
-           
+
             files.forEach(async (file) => {
-                
-                if(!file.name.toLowerCase().includes(".gif")) return
+                if(file.name.toLowerCase().includes(".gif") || file.name.toLowerCase().includes(".png") || file.name.toLowerCase().includes(".jpg")) return
 
                 var longTitle = false
                 if(is64CharactersNoSpaces(file.name.replace(/\.mp4$/, ""))) longTitle = true
