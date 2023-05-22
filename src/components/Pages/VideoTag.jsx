@@ -37,7 +37,7 @@ const VideoTag = ({ user }) => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [active, setActive] = useState(0)
     const [tags, setTags] = useState([])
-
+    const [videos, setVideos] = useState([])
     const dispatch = useDispatch()
 
     const { tag } = useParams();
@@ -54,6 +54,12 @@ const VideoTag = ({ user }) => {
     }, [message])
 
     useEffect(() => {
+      if(video.length > 0)
+        setVideos(video)
+    }, [video])
+
+    useEffect(() => {
+        setVideos([])
         dispatch(getVideoByTag({
             id: user ? user.result?._id : '',
             tag: tag.length > 0 ? tag.split("+") : []
@@ -66,7 +72,7 @@ const VideoTag = ({ user }) => {
     }, [pageIndex])
 
     const itemsPerPage = 50; // Number of items per page
-    const totalPages = Math.ceil(video?.length / itemsPerPage); // Total number of pages
+    const totalPages = Math.ceil(videos?.length / itemsPerPage); // Total number of pages
     const [currentPage, setCurrentPage] = useState(pageIndex);
     // Calculate the start and end indices for the current page
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -118,10 +124,10 @@ const VideoTag = ({ user }) => {
     };
     return (
         <div
-            className="relative bg-cover bg-center py-8"
+            className="relative bg-cover bg-center pb-8"
             style={{ backgroundColor: "#111827" }}
         >   
-            <div className='flex flex-wrap items-center sm:px-16 px-4 py-8'>
+            <div className='flex flex-wrap items-center sm:px-16 px-4 pt-8 pb-4'>
                 <h3 className='text-white xs:text-3xl text-2xl font-semibold mr-3'>Tags:</h3>
                 {
                     tags && tags.length > 0 &&
@@ -130,13 +136,15 @@ const VideoTag = ({ user }) => {
                                 <div key={index} className='flex flex-wrap'>
                                     {
                                         item !== '' &&
-                                            <p className='mt-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-white border border-gray-100 px-4 py-1 mr-2 xs:text-sm text-sm transition-all capitalize'>{item}</p>
+                                            <p className='font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out mr-2'>{item}</p>
                                     }
                                 </div>
                             )
                         })
                 }
-                
+            </div>
+            <div className='sm:px-16 px-4'>
+                <hr/>
             </div>
             <div className={`${styles.flexCenter}`}> 
                 {
@@ -150,11 +158,11 @@ const VideoTag = ({ user }) => {
                       </a>
                     </div>
                   :
-                  video && video.length > 0 ?
+                  videos && videos.length > 0 ?
                     <div>
                       <div className='grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-5 place-content-start sm:px-16 py-8'>
                         {
-                            video.slice(startIndex, endIndex).map((item, index) => {
+                            videos.slice(startIndex, endIndex).map((item, index) => {
                               return (
                                 <VideoThumbnail 
                                   key={index} 

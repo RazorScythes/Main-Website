@@ -120,33 +120,33 @@ const Hero = ({ hero, resultRef }) => {
                                     {
                                         heroData.social_links?.facebook &&
                                             (heroData.social_links.facebook.link && heroData.social_links.facebook.show) &&
-                                                <a href={heroData.social_links.facebook.link} target="_blank"><FontAwesomeIcon icon={faFacebookF} className='mr-2 w-4 h-4 text-gray-100 border border-solid border-bg-gray-100 rounded-full p-3 cursor-pointer hover:bg-gray-100 hover:text-gray-800 transition-all'/></a>
+                                                <a href={heroData.social_links.facebook.link} target="_blank"><FontAwesomeIcon icon={faFacebookF} className='mr-4 w-4 h-4 text-gray-100 border border-solid border-bg-gray-100 rounded-full p-3 cursor-pointer hover:bg-gray-100 hover:text-gray-800 transition-all'/></a>
                                     }
                                     {
                                         heroData.social_links?.twitter &&
                                             (heroData.social_links.twitter.link && heroData.social_links.twitter.show) &&
-                                                <a href={heroData.social_links.twitter.link} target="_blank"><FontAwesomeIcon icon={faTwitter} className='mr-2 w-4 h-4 text-gray-100 border border-solid border-bg-gray-100 rounded-full p-3 cursor-pointer hover:bg-gray-100 hover:text-gray-800 transition-all'/></a>
+                                                <a href={heroData.social_links.twitter.link} target="_blank"><FontAwesomeIcon icon={faTwitter} className='mr-4 w-4 h-4 text-gray-100 border border-solid border-bg-gray-100 rounded-full p-3 cursor-pointer hover:bg-gray-100 hover:text-gray-800 transition-all'/></a>
                                     }
                                     {
                                         heroData.social_links?.instagram &&
                                             (heroData.social_links.instagram.link && heroData.social_links.instagram.show) &&
-                                                <a href={heroData.social_links.instagram.link} target="_blank"><FontAwesomeIcon icon={faInstagram} className='mr-2 w-4 h-4 text-gray-100 border border-solid border-bg-gray-100 rounded-full p-3 cursor-pointer hover:bg-gray-100 hover:text-gray-800 transition-all'/></a>
+                                                <a href={heroData.social_links.instagram.link} target="_blank"><FontAwesomeIcon icon={faInstagram} className='mr-4 w-4 h-4 text-gray-100 border border-solid border-bg-gray-100 rounded-full p-3 cursor-pointer hover:bg-gray-100 hover:text-gray-800 transition-all'/></a>
                                     }
                                     {
                                         heroData.social_links?.github &&
                                             (heroData.social_links.github.link && heroData.social_links.github.show) &&
-                                                <a href={heroData.social_links.github.link} target="_blank"><FontAwesomeIcon icon={faGithub} className='mr-2 w-4 h-4 text-gray-100 border border-solid border-bg-gray-100 rounded-full p-3 cursor-pointer hover:bg-gray-100 hover:text-gray-800 transition-all'/></a>
+                                                <a href={heroData.social_links.github.link} target="_blank"><FontAwesomeIcon icon={faGithub} className='mr-4 w-4 h-4 text-gray-100 border border-solid border-bg-gray-100 rounded-full p-3 cursor-pointer hover:bg-gray-100 hover:text-gray-800 transition-all'/></a>
                                     }
                                     {
                                         heroData.social_links?.linkedin &&
                                             (heroData.social_links.linkedin.link && heroData.social_links.linkedin.show) &&
-                                                <a href={heroData.social_links.linkedin.link} target="_blank"><FontAwesomeIcon icon={faLinkedinIn} className='mr-2 w-4 h-4 text-gray-100 border border-solid border-bg-gray-100 rounded-full p-3 cursor-pointer hover:bg-gray-100 hover:text-gray-800 transition-all'/></a>
+                                                <a href={heroData.social_links.linkedin.link} target="_blank"><FontAwesomeIcon icon={faLinkedinIn} className='mr-4 w-4 h-4 text-gray-100 border border-solid border-bg-gray-100 rounded-full p-3 cursor-pointer hover:bg-gray-100 hover:text-gray-800 transition-all'/></a>
                                     }
                                 </div>
                                 <div className="flex xs:flex-row flex-col my-8 ">
                                     {
                                         heroData.resume_link && (
-                                            <a href={heroData.resume_link} target="_blank" target="_blank" className="mb-2 bg-transparent hover:bg-gray-100 hover:text-gray-800 text-gray-100 font-semibold py-2 px-8 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                            <a href={heroData.resume_link} target="_blank" className="text-center mb-2 bg-transparent hover:bg-gray-100 hover:text-gray-800 text-gray-100 font-semibold py-2 px-8 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
                                                 Download CV
                                             </a>
                                         )
