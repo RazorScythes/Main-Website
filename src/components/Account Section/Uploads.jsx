@@ -4,7 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faClose, faEdit, faTrash, faVideoCamera, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
-import { getUserVideo, uploadVideo, clearAlert, editVideo, removeVideo, changePrivacyById, changeStrictById } from "../../actions/uploads";
+import { getUserVideo, uploadVideo, clearAlert, editVideo, removeVideo, changePrivacyById, changeStrictById, bulkRemoveVideo } from "../../actions/uploads";
 import axios from 'axios';
 import VideoModal from '../VideoModal';
 import Alert from '../Alert';
@@ -78,6 +78,7 @@ const Uploads = ({ user }) => {
         setSubmitted(false)
         setEdit(false)
         setCurrentIndex(0)
+        setCurrentPage(1)
     }, [video])
 
     useEffect(() => {
@@ -226,17 +227,17 @@ const Uploads = ({ user }) => {
         if(bulkUpload) {
             setBulkUpload(false)
             setBulkSubmitted(false)
-            // setBulkForm({
-            //     ...bulkForm,
-            //     drive_id: '',
-            //     title: '',
-            //     link: '',
-            //     owner: '',
-            //     privacy: false,
-            //     strict: true,
-            //     tags: []
-            // })
-            // setBulkTags('')
+            setBulkForm({
+                ...bulkForm,
+                drive_id: '',
+                title: '',
+                link: '',
+                owner: '',
+                privacy: false,
+                strict: true,
+                tags: []
+            })
+            setBulkTags('')
         }
     }, [bulkUpload])
 
@@ -321,7 +322,10 @@ const Uploads = ({ user }) => {
             }
 
             files.forEach(async (file) => {
-                if(file.name.toLowerCase().includes(".gif") || file.name.toLowerCase().includes(".png") || file.name.toLowerCase().includes(".jpg")) return
+                if(file.name.toLowerCase().includes(".gif") || file.name.toLowerCase().includes(".png") || file.name.toLowerCase().includes(".jpg")) {
+                    file_count = file_count + 1
+                    return
+                }
 
                 var longTitle = false
                 if(is64CharactersNoSpaces(file.name.replace(/\.mp4$/, ""))) longTitle = true
@@ -362,6 +366,30 @@ const Uploads = ({ user }) => {
                 }
             
             })
+        }
+    }
+
+    const [deleteId, setDeleteId] = useState([])
+
+    const addDeleteId = (index, id) => {
+        const checkId = deleteId.includes(id)
+
+        if(checkId) {
+            var arr = deleteId.filter(item => item !== id);
+            setDeleteId([...arr])
+        }
+        else {
+            setDeleteId(deleteId.concat(id))
+        }
+    }
+
+    const deleteMultipleVideos = () => {
+        if(confirm(`Are you sure you want to delete ${deleteId.length} video${deleteId.length > 1 ? 's' : ''}?`)){
+            dispatch(bulkRemoveVideo({ 
+                id: user.result?._id,
+                videos_id: deleteId
+            }))
+            setDeleteId([])
         }
     }
 
@@ -691,11 +719,26 @@ const Uploads = ({ user }) => {
                                                 
                                             </div>
                                         </div>
-
-                                        <div className="overflow-x-auto mt-8">
+                                        
+                                        {
+                                            deleteId.length > 0 &&
+                                            <div className='grid grid-cols-2  gap-5 place-content-start mb-1 md:mt-0 mt-8'>
+                                                <h2 className='text-3xl font-bold text-gray-800'></h2>
+                                                <div className='flex justify-end'>
+                                                    <button onClick={() => deleteMultipleVideos()} className='w-28 disabled:bg-gray-600 disabled:border-red-700 font-semibold border border-solid border-red-600 bg-red-600 hover:bg-red-700 hover:text-100-800 rounded-sm transition-all text-white p-2'>
+                                                        Delete ({deleteId.length})
+                                                    </button>
+                                                </div>
+                                            </div>  
+                                        }
+                                        
+                                        <div className="overflow-x-auto mt-2">
                                             <table className="min-w-full divide-y divide-gray-200 transition-all">
                                                 <thead className='bg-gray-800 text-white'>
                                                     <tr>
+                                                        <th className="">
+                                                            
+                                                        </th>
                                                         <th className="px-6 py-3 sm:w-1/5 w-1/2 text-left text-xs leading-4 font-medium uppercase tracking-wider">
                                                             Title
                                                         </th>
@@ -725,6 +768,17 @@ const Uploads = ({ user }) => {
                                                             data.slice(startIndex, endIndex).map((item, index) => {
                                                                 return (
                                                                     <tr key={index}>
+                                                                        <td className="pl-4">
+                                                                            <div className="text-sm leading-5 text-gray-900">
+                                                                                <input 
+                                                                                    id={`default-checkbox${10+index}`}
+                                                                                    type="checkbox" 
+                                                                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                                                    checked={deleteId.includes(item._id)}
+                                                                                    onChange={() => addDeleteId(index, item._id)}
+                                                                                />
+                                                                            </div>
+                                                                        </td>
                                                                         <td className="sm:w-1/5 w-1/2 px-6 py-4 whitespace-no-wrap break-keep">
                                                                             <div className="text-sm leading-5 text-gray-900">{item.title}</div>
                                                                         </td>

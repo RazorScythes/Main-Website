@@ -74,6 +74,7 @@ export const getUserVideo                               = (formData) => User_API
 export const uploadVideo                                = (formData) => User_API.post('/uploads/uploadVideo', formData)
 export const editVideo                                  = (formData) => User_API.post('/uploads/editVideo', formData)
 export const removeVideo                                = (formData) => User_API.post('/uploads/removeVideo', formData)
+export const bulkRemoveVideo                            = (formData) => User_API.post('/uploads/bulkRemoveVideo', formData)
 export const changePrivacyById                          = (formData) => User_API.post('/uploads/changePrivacyById', formData)
 export const changeStrictById                           = (formData) => User_API.post('/uploads/changeStrictById', formData)
 

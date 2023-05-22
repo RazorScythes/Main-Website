@@ -73,6 +73,22 @@ export const removeVideo = createAsyncThunk('uploads/removeVideo', async (form, 
     }
 })
 
+export const bulkRemoveVideo = createAsyncThunk('uploads/bulkRemoveVideo', async (form, thunkAPI) => {
+    try {
+        const response = await api.bulkRemoveVideo(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const changePrivacyById = createAsyncThunk('uploads/changePrivacyById', async (form, thunkAPI) => {
     try {
         const response = await api.changePrivacyById(form)
@@ -169,8 +185,7 @@ export const uploadsSlice = createSlice({
         builder.addCase(editVideo.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
-        })
-        ,
+        }),
         builder.addCase(removeVideo.fulfilled, (state, action) => {
             state.video = action.payload.data.result
             state.alert = action.payload.data.message
@@ -179,6 +194,17 @@ export const uploadsSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(removeVideo.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(bulkRemoveVideo.fulfilled, (state, action) => {
+            state.video = action.payload.data.result
+            state.alert = action.payload.data.message
+            state.variant = action.payload.data.variant
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(bulkRemoveVideo.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         })
