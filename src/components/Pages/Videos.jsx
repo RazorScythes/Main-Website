@@ -179,13 +179,13 @@ const Videos = ({ user }) => {
             className="relative bg-cover bg-center py-8"
             style={{ backgroundColor: "#111827" }}
         >   
-            <div className='flex flex-row flex-wrap items-start justify-start sm:px-16 px-6'>
+            <div className='flex flex-row flex-wrap items-start justify-start lg:px-16 sm:px-4'>
                 <Link to={`/videos?page=${1}`}><p style={{backgroundColor: paramIndex && 'rgb(243, 244, 246)', color: paramIndex && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100  transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All</p></Link>
                 <Link to={`/videos?type=latest&page=${1}`}><p style={{backgroundColor: checkParams('latest') && 'rgb(243, 244, 246)', color: checkParams('latest') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Latest</p></Link>
                 <Link to={`/videos?type=most_viewed&page=${1}`}><p style={{backgroundColor: checkParams('most_viewed') && 'rgb(243, 244, 246)', color: checkParams('most_viewed') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Most Viewed</p></Link>
                 <Link to={`/videos?type=popular&page=${1}`}><p style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Popular</p></Link>
             </div>
-            <div className='sm:px-16 px-2'>
+            <div className='lg:px-16 sm:px-4'>
                 <hr/>
             </div>
             <div className={`${styles.flexCenter}`}> 
@@ -202,7 +202,7 @@ const Videos = ({ user }) => {
                   :
                   videos && videos.length > 0 ?
                     <div>
-                      <div className='grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-5 place-content-start sm:px-16 py-8'>
+                      <div className='grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-5 place-content-start lg:px-16 sm:px-4 py-8'>
                         {
                             videos.slice(startIndex, endIndex).map((item, index) => {
                               return (

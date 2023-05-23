@@ -18,7 +18,7 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
     if(index !== active) setIsOpen(false)
   }, [active])
   return (
-    <div className='w-full text-white transition-all px-4'>
+    <div className='xs:w-full w-80 text-white transition-all sm:px-0 xs:px-4 px-2'>
         <Link to={`/videos/${id}`}>
           <div className='bg-black'>
             <img 
@@ -29,7 +29,7 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
           </div>
         </Link>
         <div className='relative'>
-        <Link to={`/videos/${embedLink}`}><p><TextWithEllipsis text={title} /></p></Link>
+        <Link to={`/videos/${embedLink}`}><p className='break-words'><TextWithEllipsis text={title} /></p></Link>
           <div className='flex items-center mt-2 text-gray-400 text-sm'>
             <FontAwesomeIcon icon={faEye} className="mr-1"/>
             <p>{views.length}</p>
