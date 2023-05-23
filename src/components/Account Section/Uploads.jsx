@@ -262,7 +262,7 @@ const Uploads = ({ user }) => {
     }
 
     const is64CharactersNoSpaces = (str) => {
-        return str.length === 64 && !str.includes(" ");
+        return str.length > 35 && !str.includes(" ");
     }
 
     const fetchDriveFiles = async (api_key, drive_id) => {
