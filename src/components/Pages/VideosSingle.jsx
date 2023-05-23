@@ -434,7 +434,7 @@ const VideosSingle = ({ user }) => {
                                                             )
                                                         })
                                                         :
-                                                        <p className='mt-8'> No comments to show</p>
+                                                        <p className='my-8'> No comments to show</p>
                                                 }
                                             </div>
                                         </div>
@@ -550,7 +550,7 @@ const VideosSingle = ({ user }) => {
                                                         )
                                                     })
                                                     :
-                                                    <p className='mt-8'> No comments to show</p>
+                                                    <p className='my-8'> No comments to show</p>
                                             }
                                         </div>
                                     </div>

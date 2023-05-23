@@ -46,10 +46,71 @@ const Videos = ({ user }) => {
     const checkParams = (val) => {return searchParams.get('type') === val}
 
     const [displayedPages, setDisplayedPages] = useState([]);
+    const [videos, setVideos] = useState([])
 
     useEffect(() => {
       
     }, [message])
+
+    useEffect(() => {
+      window.scrollTo(0, 0)
+      if(searchParams.get('type') === null || searchParams.get('type') === '') {
+        setVideos(video)
+      }
+      else if(searchParams.get('type') === 'latest') {
+        // Filter and group the objects by date
+        const groupedData = video.reduce((result, obj) => {
+          const date = obj.createdAt.split('T')[0];
+          if (result[date]) {
+            result[date].push(obj);
+          } else {
+            result[date] = [obj];
+          }
+          return result;
+        }, {});
+
+        // Get the latest date from the groupedData object
+        const latestDate = Object.keys(groupedData).sort().pop();
+
+        // Get the objects related to the latest date
+        const latestVideos = groupedData[latestDate];
+
+        if(latestVideos !== undefined)
+          setVideos(latestVideos)
+      }
+      else if(searchParams.get('type') === 'most_viewed') {
+        // Sort the data based on views in ascending order
+        if(video.length > 0) {
+          var arr = [...video]
+
+          const sortedData = arr.sort((a, b) => b.views.length - a.views.length);
+
+          // Filter out objects where views is 0
+          const filteredData = sortedData.filter(obj => obj.views.length !== 0);
+
+          if(filteredData.length > 0)
+            setVideos(filteredData)
+        }
+      }
+      else if(searchParams.get('type') === 'popular') {
+        // Sort the data based on views in ascending order
+        if(video.length > 0) {
+          var arr = []
+
+          video.forEach(item => {
+            var popularity = ((item.views.length/2) + item.likes.length) - item.dislikes.length
+            if(popularity > 0) { 
+              arr.push({...item, popularity: popularity})
+            }
+          });
+
+          const sortedData = arr.sort((a, b) => b.popularity - a.popularity);
+
+          if(sortedData.length > 0)
+            setVideos(sortedData)
+        }
+      }
+    },[video, searchParams.get('type')])
 
     useEffect(() => {
       dispatch(getVideos({
@@ -62,7 +123,7 @@ const Videos = ({ user }) => {
     }, [pageIndex])
 
     const itemsPerPage = 50; // Number of items per page
-    const totalPages = Math.ceil(video?.length / itemsPerPage); // Total number of pages
+    const totalPages = Math.ceil(videos?.length / itemsPerPage); // Total number of pages
     const [currentPage, setCurrentPage] = useState(pageIndex);
     // Calculate the start and end indices for the current page
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -119,10 +180,10 @@ const Videos = ({ user }) => {
             style={{ backgroundColor: "#111827" }}
         >   
             <div className='flex flex-row flex-wrap items-start justify-start sm:px-16 px-6'>
-                <Link to={`/videos?page=${pageIndex}`}><p style={{backgroundColor: paramIndex && 'rgb(243, 244, 246)', color: paramIndex && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100  transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All</p></Link>
-                <Link to={`/videos?type=latest&page=${pageIndex}`}><p style={{backgroundColor: checkParams('latest') && 'rgb(243, 244, 246)', color: checkParams('latest') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Latest</p></Link>
-                <Link to={`/videos?type=most_viewed&page=${pageIndex}`}><p style={{backgroundColor: checkParams('most_viewed') && 'rgb(243, 244, 246)', color: checkParams('most_viewed') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Most Viewed</p></Link>
-                <Link to={`/videos?type=popular&page=${pageIndex}`}><p style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Popular</p></Link>
+                <Link to={`/videos?page=${1}`}><p style={{backgroundColor: paramIndex && 'rgb(243, 244, 246)', color: paramIndex && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100  transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All</p></Link>
+                <Link to={`/videos?type=latest&page=${1}`}><p style={{backgroundColor: checkParams('latest') && 'rgb(243, 244, 246)', color: checkParams('latest') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Latest</p></Link>
+                <Link to={`/videos?type=most_viewed&page=${1}`}><p style={{backgroundColor: checkParams('most_viewed') && 'rgb(243, 244, 246)', color: checkParams('most_viewed') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Most Viewed</p></Link>
+                <Link to={`/videos?type=popular&page=${1}`}><p style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Popular</p></Link>
             </div>
             <div className='sm:px-16 px-2'>
                 <hr/>
@@ -139,11 +200,11 @@ const Videos = ({ user }) => {
                       </a>
                     </div>
                   :
-                  video && video.length > 0 ?
+                  videos && videos.length > 0 ?
                     <div>
                       <div className='grid lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-5 place-content-start sm:px-16 py-8'>
                         {
-                            video.slice(startIndex, endIndex).map((item, index) => {
+                            videos.slice(startIndex, endIndex).map((item, index) => {
                               return (
                                 <VideoThumbnail 
                                   key={index} 

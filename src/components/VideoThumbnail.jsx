@@ -18,7 +18,7 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
     if(index !== active) setIsOpen(false)
   }, [active])
   return (
-    <div className='w-full text-white transition-all'>
+    <div className='w-full text-white transition-all px-4'>
         <Link to={`/videos/${id}`}>
           <div className='bg-black'>
             <img 
