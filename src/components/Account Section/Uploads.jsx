@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { Header } from './index'
 import { Link, useSearchParams } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faClose, faEdit, faTrash, faVideoCamera, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faClose, faEdit, faTrash, faVideoCamera, faChevronLeft, faChevronRight, faAngleDoubleLeft, faAngleDoubleRight } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
-import { getUserVideo, uploadVideo, clearAlert, editVideo, removeVideo, changePrivacyById, changeStrictById, bulkRemoveVideo } from "../../actions/uploads";
+import { getUserVideo, uploadVideo, clearAlert, editVideo, removeVideo, changePrivacyById, changeStrictById, changeDownloadById, bulkRemoveVideo } from "../../actions/uploads";
 import axios from 'axios';
 import VideoModal from '../VideoModal';
 import Alert from '../Alert';
@@ -42,7 +42,8 @@ const Uploads = ({ user }) => {
         owner: '',
         tags: [],
         strict: true,
-        privacy: false
+        privacy: false,
+        downloadable: false
     })
     const [input, setInput] = useState({
         tags: ''
@@ -72,13 +73,14 @@ const Uploads = ({ user }) => {
             owner: '',
             tags: [],
             strict: true,
-            privacy: false
+            privacy: false,
+            downloadable: false
         })
         setInput({tags: ''})
         setSubmitted(false)
         setEdit(false)
         setCurrentIndex(0)
-        setCurrentPage(1)
+        //setCurrentPage(1)
     }, [video])
 
     useEffect(() => {
@@ -132,7 +134,8 @@ const Uploads = ({ user }) => {
             owner: video[index].owner,
             tags: video[index].tags,
             strict: video[index].strict,
-            privacy: video[index].privacy
+            privacy: video[index].privacy,
+            downloadable: video[index].downloadable
         })
 
         setTags(video[index].tags)
@@ -147,7 +150,8 @@ const Uploads = ({ user }) => {
             owner: '',
             tags: [],
             strict: true,
-            privacy: false
+            privacy: false,
+            downloadable: false
         })
         setInput({ tags: '' })
         setEdit(false)
@@ -175,6 +179,7 @@ const Uploads = ({ user }) => {
                 tags: tags,
                 strict: form.strict,
                 privacy: form.privacy,
+                downloadable: form.downloadable
             }
 
             dispatch(editVideo({
@@ -211,6 +216,7 @@ const Uploads = ({ user }) => {
         owner: '',
         privacy: false,
         strict: true,
+        downloadable: false,
         tags: []
     })
 
@@ -235,6 +241,7 @@ const Uploads = ({ user }) => {
                 owner: '',
                 privacy: false,
                 strict: true,
+                downloadable: false,
                 tags: []
             })
             setBulkTags('')
@@ -337,6 +344,7 @@ const Uploads = ({ user }) => {
                         owner: bulkForm.owner,
                         privacy: bulkForm.privacy,
                         strict: bulkForm.strict,
+                        downloadable: bulkForm.downloadable,
                         tags: bulkForm.tags
                     }
                 }
@@ -504,7 +512,7 @@ const Uploads = ({ user }) => {
                                                             <label htmlFor="default-checkbox" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Private</label>
                                                         </div>
 
-                                                        <div className="flex items-center mb-4 pt-2">
+                                                        <div className="flex items-center mb-2 pt-2">
                                                             <input 
                                                                 id="default-checkbox2" 
                                                                 type="checkbox" 
@@ -514,6 +522,17 @@ const Uploads = ({ user }) => {
                                                             />
                                                             <label htmlFor="default-checkbox2" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Safe Content Restriction</label>
                                                         </div>     
+                                                        
+                                                        <div className="flex items-center mb-4 pt-2">
+                                                            <input 
+                                                                id="default-checkbox8" 
+                                                                type="checkbox" 
+                                                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                                checked={form.downloadable}
+                                                                onChange={(e) => setForm({...form, downloadable: !form.downloadable})}
+                                                            />
+                                                            <label htmlFor="default-checkbox8" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Downloadable</label>
+                                                        </div>
 
                                                         <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
                                                             <div className='flex flex-col'>
@@ -649,7 +668,7 @@ const Uploads = ({ user }) => {
                                                             <label htmlFor="default-checkbox3" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Private</label>
                                                         </div>
 
-                                                        <div className="flex items-center mb-4 pt-2">
+                                                        <div className="flex items-center mb-2 pt-2">
                                                             <input 
                                                                 id="default-checkbox4" 
                                                                 type="checkbox" 
@@ -660,6 +679,17 @@ const Uploads = ({ user }) => {
                                                             <label htmlFor="default-checkbox4" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Safe Content Restriction</label>
                                                         </div>     
                                                         
+                                                        <div className="flex items-center mb-4 pt-2">
+                                                            <input 
+                                                                id="default-checkbox10" 
+                                                                type="checkbox" 
+                                                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                                checked={bulkForm.downloadable}
+                                                                onChange={(e) => setBulkForm({...bulkForm, downloadable: !bulkForm.downloadable})}
+                                                            />
+                                                            <label htmlFor="default-checkbox10" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Downloadable</label>
+                                                        </div>
+
                                                         <div className='grid grid-cols-1  gap-5 place-content-start'>
                                                             <div className='flex flex-col'>
                                                                 <label className='font-semibold'> Add Default Tags: </label>
@@ -748,7 +778,10 @@ const Uploads = ({ user }) => {
                                                             Private
                                                         </th>
                                                         <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                            Restrict
+                                                            Strict
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
+                                                            Download
                                                         </th>
                                                         <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
                                                             Artist
@@ -800,6 +833,13 @@ const Uploads = ({ user }) => {
                                                                                 strict: !item.strict
                                                                             })}
                                                                         />
+                                                                        <VideoTableData 
+                                                                            cond={item.downloadable}
+                                                                            api_call={changeDownloadById({
+                                                                                id: item._id,
+                                                                                downloadable: !item.downloadable
+                                                                            })}
+                                                                        />
                                                                         <td className="px-6 py-4 whitespace-no-wrap">
                                                                             <div className="text-sm leading-5 text-gray-900">{item.owner}</div>
                                                                         </td>
@@ -821,14 +861,18 @@ const Uploads = ({ user }) => {
                                             </table>
                                             <div className='md:flex justify-end mt-4 hidden'>
                                                 <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(endIndex >= data?.length) ? data?.length : endIndex }/{data?.length}</p>
+                                                <button disabled={currentPage === 1} onClick={() => goToPage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
                                                 <button disabled={currentPage === 1} onClick={() => goToPage(currentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                                <button disabled={endIndex >= data?.length} onClick={() => goToPage(currentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
+                                                <button disabled={endIndex >= data?.length} onClick={() => goToPage(currentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                                <button disabled={endIndex >= data?.length} onClick={() => goToPage(data?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
                                             </div>
                                         </div>
                                         <div className='md:hidden justify-end mt-4 flex'>
                                             <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(endIndex >= data?.length) ? data?.length : endIndex }/{data?.length}</p>
+                                            <button disabled={currentPage === 1} onClick={() => goToPage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
                                             <button disabled={currentPage === 1} onClick={() => goToPage(currentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                            <button disabled={endIndex >= data?.length} onClick={() => goToPage(currentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
+                                            <button disabled={endIndex >= data?.length} onClick={() => goToPage(currentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                            <button disabled={endIndex >= data?.length} onClick={() => goToPage(data?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
                                         </div>
                                     </div>
                                 )

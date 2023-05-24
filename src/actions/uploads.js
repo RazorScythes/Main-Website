@@ -121,6 +121,22 @@ export const changeStrictById = createAsyncThunk('uploads/changeStrictById', asy
     }
 })
 
+export const changeDownloadById = createAsyncThunk('uploads/changeDownloadById', async (form, thunkAPI) => {
+    try {
+        const response = await api.changeDownloadById(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const uploadsSlice = createSlice({
     name: 'uploads',
     initialState,
@@ -161,6 +177,21 @@ export const uploadsSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(changeStrictById.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(changeDownloadById.fulfilled, (state, action) => {
+            // Filtering the objects and replacing the matching ones
+            const filteredObjects = state.video.map(obj => {
+                if (obj._id === action.payload.data.result._id) {return action.payload.data.result;}
+                return obj;
+            });
+
+            state.video = filteredObjects
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(changeDownloadById.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         }),

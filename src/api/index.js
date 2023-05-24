@@ -77,6 +77,7 @@ export const removeVideo                                = (formData) => User_API
 export const bulkRemoveVideo                            = (formData) => User_API.post('/uploads/bulkRemoveVideo', formData)
 export const changePrivacyById                          = (formData) => User_API.post('/uploads/changePrivacyById', formData)
 export const changeStrictById                           = (formData) => User_API.post('/uploads/changeStrictById', formData)
+export const changeDownloadById                         = (formData) => User_API.post('/uploads/changeDownloadById', formData)
 
 /*
     Logs
@@ -96,3 +97,4 @@ export const getComments                                = (formData) => User_API
 export const getRelatedVideos                           = (formData) => User_API.post('/video/getRelatedVideos', formData)
 export const uploadComment                              = (formData) => User_API.post('/video/uploadComment', formData)
 export const removeComment                              = (formData) => User_API.post('/video/removeComment', formData)
+export const addToWatchLater                            = (formData) => User_API.post('/video/addToWatchLater', formData)

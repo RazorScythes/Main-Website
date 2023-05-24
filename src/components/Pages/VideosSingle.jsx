@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef  } from 'react';
 import { Link } from 'react-router-dom';
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEllipsisV, faThumbsUp, faThumbsDown, faAdd, faDownload, faArrowRightRotate, faClock, faCalendar, faTrash } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; 
+import { faEye, faEllipsisV, faThumbsUp, faThumbsDown, faAdd, faDownload, faArrowRightRotate, faClock, faCalendar, faTrash, faLinkSlash } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
-import { addOneLikes, addOneDislikes, addOneViews, getVideoByID, getComments, getRelatedVideos, uploadComment, removeComment } from "../../actions/video";
+import { addOneLikes, addOneDislikes, addOneViews, getVideoByID, getComments, getRelatedVideos, uploadComment, removeComment, addToWatchLater, clearAlert } from "../../actions/video";
 import { useParams } from 'react-router-dom'
 import { Page_not_found } from '../../assets';
 import moment from 'moment'
@@ -11,6 +11,7 @@ import styles from "../../style";
 import VideoThumbnail from '../VideoThumbnail';
 import Avatar from '../../assets/avatar.png'
 import Cookies from 'universal-cookie';
+import SideAlert from '../SideAlert'
 import ReactPlayer from 'react-player/youtube'
 import Iframe from 'react-iframe'
 
@@ -48,6 +49,7 @@ const VideosSingle = ({ user }) => {
     const notFound = useSelector((state) => state.video.notFound)
     const forbiden = useSelector((state) => state.video.forbiden)
     const isLoading = useSelector((state) => state.video.isLoading)
+    const sideAlert = useSelector((state) => state.video.sideAlert)
 
     const [avatar, setAvatar] = useState(localStorage.getItem('avatar')?.replaceAll('"', ""))
     const [active, setActive] = useState(0)
@@ -77,6 +79,26 @@ const VideosSingle = ({ user }) => {
         setIsAnimatingTD(false)
         window.scrollTo(0, 0)
     }, [id])
+
+    const [alertActive, setAlertActive] = useState(false)
+    const [alertInfo, setAlertInfo] = useState({
+        variant: '',
+        heading: '',
+        paragraph: ''
+    })
+
+    useEffect(() => {
+        if(Object.keys(sideAlert).length !== 0){
+            setAlertInfo({
+                variant: sideAlert.variant,
+                heading: sideAlert.heading,
+                paragraph: sideAlert.paragraph
+            })
+            setAlertActive(true)
+
+            dispatch(clearAlert())
+        }
+    }, [sideAlert])
 
     useEffect(() => {
         setData(video)
@@ -188,6 +210,23 @@ const VideosSingle = ({ user }) => {
         }
     }
 
+    const watchLater = () => {
+        if(!user) {
+            setAlertInfo({
+                variant: 'info',
+                heading: 'Login Required',
+                paragraph: 'Please login to add this video.'
+            })
+            setAlertActive(true)
+        }
+        else {
+            dispatch(addToWatchLater({
+                id: user?.result._id,
+                videoId: id
+            }))
+        }
+    }
+
     return (
         <div
             className="relative bg-cover bg-center py-8"
@@ -196,6 +235,13 @@ const VideosSingle = ({ user }) => {
             <div className={`${styles.marginX} ${styles.flexCenter}`}>
                 <div className={`${styles.boxWidthEx}`}>
                     <div className="container mx-auto file:lg:px-8 relative px-0">
+                        <SideAlert
+                            variants={alertInfo.variant}
+                            heading={alertInfo.heading}
+                            paragraph={alertInfo.paragraph}
+                            active={alertActive}
+                            setActive={setAlertActive}
+                        />
                         {
                             isLoading ?
                                 <div className='h-96 flex items-center justify-center'>
@@ -316,16 +362,20 @@ const VideosSingle = ({ user }) => {
                                                 </div>
                                             </div>
                                             <div className='flex items-center sm:justify-end sm:mt-0 mt-2'>
-                                                <div className='sm:w-auto w-full grid grid-cols-2 gap-5 mt-2'>
+                                                <div className='sm:w-auto w-full grid grid-cols-2 gap-2 mt-2'>
+                                                    <button onClick={() => watchLater()} className="w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                        <FontAwesomeIcon icon={faAdd} className="text-white mr-2"/> Watch Later
+                                                    </button>
                                                     {
-                                                        user &&
-                                                            <button className="w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
-                                                                <FontAwesomeIcon icon={faAdd} className="text-white mr-2"/> Watch Later
+                                                        data && data.video && data.video.downloadable ? 
+                                                            <button className="sm:w-auto w-full bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                                <FontAwesomeIcon icon={faDownload} className="text-white mr-2"/> Download
+                                                            </button>
+                                                            :
+                                                            <button disabled={true} className="sm:w-auto w-full disabled:bg-gray-500 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                                <FontAwesomeIcon icon={faLinkSlash} className="text-white mr-2"/> Download
                                                             </button>
                                                     }
-                                                    <button className="sm:w-auto w-full bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
-                                                        <FontAwesomeIcon icon={faDownload} className="text-white mr-2"/> Download
-                                                    </button>
                                                 </div>
                                             </div>
                                         </div>

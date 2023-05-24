@@ -13,7 +13,8 @@ const initialState = {
     relatedVideos: [],
     avatar: '',
     message: '',
-    forbiden: ''
+    forbiden: '',
+    sideAlert: {}
 }
 
 export const getVideoByID = createAsyncThunk('video/getVideoByID', async (form, thunkAPI) => {
@@ -176,6 +177,22 @@ export const getVideoByTag = createAsyncThunk('video/getVideoByTag', async (form
     }
 })
 
+export const addToWatchLater = createAsyncThunk('video/addToWatchLater', async (form, thunkAPI) => {
+    try {
+        const response = await api.addToWatchLater(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const videoSlice = createSlice({
     name: 'video',
     initialState,
@@ -223,7 +240,6 @@ export const videoSlice = createSlice({
             state.variant = action.payload.variant
         }),
         builder.addCase(getRelatedVideos.fulfilled, (state, action) => {
-            console.log(action.payload.data.relatedVideos)
             state.relatedVideos = action.payload.data.relatedVideos
             state.error = ''
             state.isLoading = false
@@ -249,12 +265,19 @@ export const videoSlice = createSlice({
         builder.addCase(removeComment.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
+        }),
+        builder.addCase(addToWatchLater.fulfilled, (state, action) => {
+            state.sideAlert = action.payload.data.sideAlert
+        }),
+        builder.addCase(addToWatchLater.rejected, (state, action) => {
+            state.sideAlert = action.payload.sideAlert
         })
     },
     reducers: {
       clearAlert: (state) => {
         state.alert = '',
         state.variant = ''
+        state.sideAlert = {}
       },
       clearMailStatus: (state) => {
         state.mailStatus = ''
