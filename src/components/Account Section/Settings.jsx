@@ -23,33 +23,69 @@ const Index = ({ user, settings, submitted, setSubmitted }) => {
 
     return (
         <div>
+            <div className='mb-6 grid xs:grid-cols-2 grid-cols-1 px-8 py-4 border border-solid border-[#CAD5DF]'>
+                <div>
+                    <h2 className='text-2xl font-bold text-gray-800 mb-4'>Update Profile</h2>
+                    <p className='text-gray-700 text-base mb-2 font-semibold'>Manage your avatar, name and email</p>
+                </div>
+                <div className='xs:flex xs:items-center xs:justify-end'>
+                    <Link to="/account/settings/update_profile">
+                        <button className="w-full bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-8 border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out">
+                            Manage
+                        </button>
+                    </Link>
+                </div>
+            </div>
+            <div className='mb-6 grid xs:grid-cols-2 grid-cols-1 px-8 py-4 border border-solid border-[#CAD5DF]'>
+                <div>
+                    <h2 className='text-2xl font-bold text-gray-800 mb-4'>Change Password</h2>
+                    <p className='text-gray-700 text-base mb-2 font-semibold'>Manage your password.</p>
+                </div>
+                <div className='xs:flex xs:items-center xs:justify-end'>
+                    <Link to="/account/settings/change_password">
+                        <button className="w-full bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-8 border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out">
+                            Manage
+                        </button>
+                    </Link>
+                </div>
+            </div>
+            <div className='mb-6 grid xs:grid-cols-2 grid-cols-1 px-8 py-4 border border-solid border-[#CAD5DF]'>
+                <div>
+                    <h2 className='text-2xl font-bold text-gray-800 mb-4'>Options</h2>
+                    <p className='text-gray-700 text-base mb-2 font-semibold'>Manage your safe content etc.</p>
+                </div>
+                <div className='xs:flex xs:items-center xs:justify-end'>
+                    <Link to="/account/settings/options">
+                        <button className="w-full bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-8 border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out">
+                            Manage
+                        </button>
+                    </Link>
+                </div>
+            </div>
             {
                 (settings?.verified) ?
-                    <div className='flex justify-center bg-gray-800 text-white w-36 p-2 rounded-md mb-12'>
-                        <p className=''>Status: <span className='text-green-600'>Verified</span></p>
+                    <div className='mb-6 grid xs:grid-cols-2 grid-cols-1 px-8 py-4 border border-solid border-[#CAD5DF]'>
+                        <div>
+                            <h2 className='text-2xl font-bold text-gray-800 mb-4'>Verification:</h2>
+                            <p className='text-gray-700 text-base mb-2 font-semibold'>Your account is now verified!</p>
+                        </div>
+                        <div className='xs:flex xs:items-center xs:justify-end'>
+                            
+                        </div>
                     </div>
                     :
-                    <div className='flex flex-row items-center justify-between'>
-                        <div className='flex justify-center bg-gray-800 text-white w-48 p-2 rounded-md'>
-                            <p className=''>Status: <span className='text-[#CD3242]'>Not Verified</span></p>
+                    <div className='mb-6 grid xs:grid-cols-2 grid-cols-1 px-8 py-4 border border-solid border-[#CAD5DF]'>
+                        <div>
+                            <h2 className='text-2xl font-bold text-gray-800 mb-4'>Verification:</h2>
+                            <p className='text-gray-700 text-base mb-2 font-semibold'>Account not verified.</p>
                         </div>
-                        <button onClick={() => sendEmail()} className=" bg-gray-800 hover:bg-gray-900  hover:text-gray-100 text-gray-100 font-semibold my-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
-                            Verify
-                        </button>
+                        <div className='xs:flex xs:items-center xs:justify-end'>
+                            <button onClick={() => sendEmail()}  className="xs:w-auto w-full bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-8 border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out">
+                                Verify
+                            </button>
+                        </div>
                     </div>
             }
-            <div className='mb-6'>
-                <Link to="/account/settings/update_profile"><p className='text-[#CD3242] font-semibold mb-2 hover:underline'>Update Profile</p></Link>
-                <p className='text-gray-500 text-sm italic mb-2'>Updating your profile can be important for ensuring that other users can easily identify and connect with you, as well as for providing a more personalized experience on the website or application. By providing accurate and up-to-date information, you can receive tailored recommendations and content based on your interests and preferences.</p>
-            </div>
-            <div className='mb-6'>
-                <Link to="/account/settings/change_password"><p className='text-[#CD3242] font-semibold mb-2 hover:underline'>Change Password</p></Link>
-                <p className='text-gray-500 text-sm italic mb-2'>It's important to choose a strong and unique password that is difficult for others to guess or crack. Many websites and applications may also recommend that you change your password periodically as an additional security measure.</p>
-            </div>
-            <div className='mb-6'>
-                <Link to="/account/settings/options"><p className='text-[#CD3242] font-semibold mb-2 hover:underline'>Options</p></Link>
-                <p className='text-gray-500 text-sm italic mb-2'>Account options such as blacklists, safe only searching, and almost anything configurable for your account is on this page. You should not really spend too much time here.</p>
-            </div>
         </div>
     )
 }
@@ -125,16 +161,18 @@ const Update_Profile = ({ user, profile }) => {
                 preview={preview}
                 setPreview={setPreview}
             />
-            <div className='flex flex-row items-center justify-between'>
-                <h2 className='text-3xl font-bold text-gray-800 mb-12'>Update Profile</h2>
-                <Link to="/account/settings">
-                    <button className=" bg-gray-100 hover:bg-gray-800  hover:text-gray-100 text-gray-800 font-semibold my-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
-                        Back
-                    </button>
-                </Link>
+            <div className='grid md:grid-cols-2 grid-cols-1 mb-12'>
+                <div className='flex flex-row items-center justify-between'>
+                    <h2 className='text-3xl font-bold text-gray-800'>Update Profile</h2>
+                    <Link to="/account/settings">
+                        <button className=" bg-gray-800 hover:bg-gray-100  hover:text-gray-800 text-gray-100 font-semibold my-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
+                            Back
+                        </button>
+                    </Link>
+                </div>
             </div>
             <div className='mb-6'>
-                <div className='grid grid-cols-1 gap-5 place-content-start mb-4'>
+                <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                     <div className='flex flex-col'>
                             <label className="block mb-2 font-medium" htmlFor="file_input">Avatar</label>
                             <div className='flex flex-row'>
@@ -163,9 +201,9 @@ const Update_Profile = ({ user, profile }) => {
                                     )
                                 }
                             </div>
-                        </div>
+                    </div>
                 </div>
-                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                     <div className='flex flex-col'>
                         <label className='font-semibold'> Full Name: </label>
                         <input 
@@ -176,7 +214,7 @@ const Update_Profile = ({ user, profile }) => {
                         />
                     </div>
                 </div>
-                <div className='grid grid-cols-1  gap-5 place-content-start mb-8'>
+                <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-8'>
                     <div className='flex flex-col'>
                         <label className='font-semibold'> Email: </label>
                         <input 
@@ -187,7 +225,7 @@ const Update_Profile = ({ user, profile }) => {
                         />
                     </div>
                 </div>
-                <div className='grid sm:grid-cols-3 grid-cols-1 gap-5 place-content-start mb-2'>
+                <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
                     <button onClick={handleSubmit} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
                         {
                             !submitted ?
@@ -247,15 +285,17 @@ const Change_Password = ({ user, alert }) => {
 
     return (
         <div>
-            <div className='flex flex-row items-center justify-between'>
-                <h2 className='text-3xl font-bold text-gray-800 mb-12'>Change Password</h2>
-                <Link to="/account/settings">
-                    <button className=" bg-gray-100 hover:bg-gray-800  hover:text-gray-100 text-gray-800 font-semibold my-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
-                        Back
-                    </button>
-                </Link>
+            <div className='grid md:grid-cols-2 grid-cols-1 mb-12'>
+                <div className='flex flex-row items-center justify-between'>
+                    <h2 className='text-3xl font-bold text-gray-800'>Change Password</h2>
+                    <Link to="/account/settings">
+                        <button className=" bg-gray-800 hover:bg-gray-100  hover:text-gray-800 text-gray-100 font-semibold my-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
+                            Back
+                        </button>
+                    </Link>
+                </div>
             </div>
-            <div className='mb-6'>
+            <div className='grid md:grid-cols-2 grid-cols-1 mb-6'>
             <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
                     <div className='flex flex-col'>
                         <label className='font-semibold'> Current Password: </label>
@@ -284,7 +324,7 @@ const Change_Password = ({ user, alert }) => {
                             value={password.confirm}
                         />
                     </div>
-                    <div className='grid sm:grid-cols-3 grid-cols-1 gap-5 place-content-start mb-2'>
+                    <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
                         <button onClick={handleSubmit} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
                             {
                                 !submitted ?
@@ -346,13 +386,15 @@ const Options = ({ user, settings, alert }) => {
 
     return (
         <div>
-            <div className='flex flex-row items-center justify-between'>
-                <h2 className='text-3xl font-bold text-gray-800 mb-12'>Options</h2>
-                <Link to="/account/settings">
-                    <button className=" bg-gray-100 hover:bg-gray-800  hover:text-gray-100 text-gray-800 font-semibold my-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
-                        Back
-                    </button>
-                </Link>
+            <div className='grid md:grid-cols-2 grid-cols-1 mb-12'>
+                <div className='flex flex-row items-center justify-between'>
+                    <h2 className='text-3xl font-bold text-gray-800'>Options</h2>
+                    <Link to="/account/settings">
+                        <button className=" bg-gray-800 hover:bg-gray-100  hover:text-gray-800 text-gray-100 font-semibold my-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
+                            Back
+                        </button>
+                    </Link>
+                </div>
             </div>
             <div className='mb-6'>
                 <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
@@ -368,7 +410,7 @@ const Options = ({ user, settings, alert }) => {
                     </div>
                 </div>
                 <p className='text-gray-500 text-sm italic mb-12'>You may be access to more fringe results content if not checked. (Need account verify to disable)</p>
-                <div className='grid sm:grid-cols-3 grid-cols-1 gap-5 place-content-start mb-2'>
+                <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
                     <button onClick={handleSubmit} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
                         {
                             !submitted ?
@@ -443,7 +485,7 @@ const Settings = ({ user, settings }) => {
                 button_text="Explore Now!"
                 button_link={`#`}
             />
-            <div className="relative bg-[#F0F4F7]">   
+            <div className="relative ">   
                 <div className={`${styles.marginX} ${styles.flexCenter}`}>
                     <div className={`${styles.boxWidthEx}`}>
                         <div className="container mx-auto relative px-0 sm:px-4 py-16">
@@ -451,7 +493,7 @@ const Settings = ({ user, settings }) => {
                                 alertInfo.alert && alertInfo.variant && showAlert &&
                                     <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
                             }
-                            <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
+                            <div className='grid md:grid-cols-1 grid-cols-1 gap-5 place-content-start mb-4'>
                                 {
                                     options === 'update_profile' ?
                                         <Update_Profile user={user} profile={settings} />

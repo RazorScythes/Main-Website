@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef  } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; 
-import { faEye, faEllipsisV, faThumbsUp, faThumbsDown, faAdd, faDownload, faArrowRightRotate, faClock, faCalendar, faTrash, faLinkSlash } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEllipsisV, faThumbsUp, faThumbsDown, faAdd, faDownload, faArrowRightRotate, faClock, faCalendar, faTrash, faLinkSlash, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { addOneLikes, addOneDislikes, addOneViews, getVideoByID, getComments, getRelatedVideos, uploadComment, removeComment, addToWatchLater, clearAlert } from "../../actions/video";
 import { useParams } from 'react-router-dom'
@@ -81,12 +81,25 @@ const VideosSingle = ({ user }) => {
     }, [id])
 
     const [alertActive, setAlertActive] = useState(false)
+    const [alertSubActive, setAlertSubActive] = useState('')
     const [alertInfo, setAlertInfo] = useState({
         variant: '',
         heading: '',
         paragraph: ''
     })
 
+    useEffect(() => {
+        if(alertSubActive === 'no user') {
+            setAlertInfo({
+                variant: 'info',
+                heading: 'Login Required',
+                paragraph: 'Please login to add this video.'
+            })
+            setAlertActive(true)
+            setAlertSubActive('')
+        }
+    }, [alertSubActive])
+    
     useEffect(() => {
         if(Object.keys(sideAlert).length !== 0){
             setAlertInfo({
@@ -201,13 +214,14 @@ const VideosSingle = ({ user }) => {
     }
 
     const deleteComment = (parent_id, comment_id) => {
-        if(!deleted) {
-            dispatch(removeComment({
-                parent_id: parent_id,
-                comment_id: comment_id
-            }))
-            setDeleted(true)
-        }
+        if(confirm("Are you sure you want to remove your comment? action cannot be undone."))
+            if(!deleted) {
+                dispatch(removeComment({
+                    parent_id: parent_id,
+                    comment_id: comment_id
+                }))
+                setDeleted(true)
+            }
     }
 
     const watchLater = () => {
@@ -362,18 +376,21 @@ const VideosSingle = ({ user }) => {
                                                 </div>
                                             </div>
                                             <div className='flex items-center sm:justify-end sm:mt-0 mt-2'>
-                                                <div className='sm:w-auto w-full grid grid-cols-2 gap-2 mt-2'>
-                                                    <button onClick={() => watchLater()} className="w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
-                                                        <FontAwesomeIcon icon={faAdd} className="text-white mr-2"/> Watch Later
+                                                <div className='sm:w-auto w-full grid grid-cols-3 gap-2 mt-2'>
+                                                    <button onClick={() => watchLater()} className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                        <FontAwesomeIcon icon={faAdd} className="text-white"/> Watch Later
+                                                    </button>
+                                                    <button disabled={true} onClick={() => watchLater()} className="disabled:bg-gray-500 disabled:cursor-no-drop sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                        <FontAwesomeIcon icon={faExclamationTriangle} className="text-white"/> Report
                                                     </button>
                                                     {
                                                         data && data.video && data.video.downloadable ? 
-                                                            <button className="sm:w-auto w-full bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
-                                                                <FontAwesomeIcon icon={faDownload} className="text-white mr-2"/> Download
+                                                            <button className="sm:text-base text-sm sm:w-auto w-full bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                                <FontAwesomeIcon icon={faDownload} className="text-white"/> Download
                                                             </button>
                                                             :
-                                                            <button disabled={true} className="sm:w-auto w-full disabled:bg-gray-500 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
-                                                                <FontAwesomeIcon icon={faLinkSlash} className="text-white mr-2"/> Download
+                                                            <button disabled={true} className="sm:text-base text-sm sm:w-auto w-full disabled:bg-gray-500 disabled:cursor-no-drop bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                                <FontAwesomeIcon icon={faLinkSlash} className="text-white"/> Download
                                                             </button>
                                                     }
                                                 </div>
@@ -508,6 +525,8 @@ const VideosSingle = ({ user }) => {
                                                                         setActive={setActive} 
                                                                         active={active} 
                                                                         embedLink={getVideoId(item.link)}
+                                                                        user={user}
+                                                                        setAlertSubActive={setAlertSubActive}
                                                                     />
                                                                 </div>
                                                             )

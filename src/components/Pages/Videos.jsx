@@ -5,9 +5,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from 'react-router-dom';
 import { useSearchParams } from "react-router-dom";
+import { clearAlert } from "../../actions/video";
 import Loading from './Loading';
 import styles from "../../style";
 import VideoThumbnail from '../VideoThumbnail';
+import SideAlert from '../SideAlert'
 
 const getVideoId = (url) => {
     let videoId;
@@ -40,6 +42,7 @@ const Videos = ({ user }) => {
 
     const video = useSelector((state) => state.video.videos)
     const message = useSelector((state) => state.video.message)
+    const sideAlert = useSelector((state) => state.video.sideAlert)
 
     const pageIndex = searchParams.get('page') ? parseInt(searchParams.get('page')) : 1
     const paramIndex = searchParams.get('type') === null || searchParams.get('type') === ''
@@ -47,6 +50,14 @@ const Videos = ({ user }) => {
 
     const [displayedPages, setDisplayedPages] = useState([]);
     const [videos, setVideos] = useState([])
+
+    const [alertActive, setAlertActive] = useState(false)
+    const [alertSubActive, setAlertSubActive] = useState('')
+    const [alertInfo, setAlertInfo] = useState({
+        variant: '',
+        heading: '',
+        paragraph: ''
+    })
 
     useEffect(() => {
       
@@ -174,11 +185,43 @@ const Videos = ({ user }) => {
         navigate(`/videos?type=${(searchParams.get('type') !== null) ? searchParams.get('type') : ''}&page=${pageNumber}`)
     };
 
+    useEffect(() => {
+      if(alertSubActive === 'no user') {
+          setAlertInfo({
+              variant: 'info',
+              heading: 'Login Required',
+              paragraph: 'Please login to add this video.'
+          })
+          setAlertActive(true)
+          setAlertSubActive('')
+      }
+    }, [alertSubActive])
+
+    useEffect(() => {
+      if(Object.keys(sideAlert).length !== 0){
+          setAlertInfo({
+              variant: sideAlert.variant,
+              heading: sideAlert.heading,
+              paragraph: sideAlert.paragraph
+          })
+          setAlertActive(true)
+
+          dispatch(clearAlert())
+      }
+    }, [sideAlert])
+
     return (
         <div
             className="relative bg-cover bg-center py-8"
             style={{ backgroundColor: "#111827" }}
         >   
+            <SideAlert
+                variants={alertInfo.variant}
+                heading={alertInfo.heading}
+                paragraph={alertInfo.paragraph}
+                active={alertActive}
+                setActive={setAlertActive}
+            />
             <div className='flex flex-row flex-wrap items-start justify-start lg:px-16 sm:px-4'>
                 <Link to={`/videos?page=${1}`}><p style={{backgroundColor: paramIndex && 'rgb(243, 244, 246)', color: paramIndex && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100  transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All</p></Link>
                 <Link to={`/videos?type=latest&page=${1}`}><p style={{backgroundColor: checkParams('latest') && 'rgb(243, 244, 246)', color: checkParams('latest') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Latest</p></Link>
@@ -216,6 +259,8 @@ const Videos = ({ user }) => {
                                   setActive={setActive} 
                                   active={active} 
                                   embedLink={getVideoId(item.link)}
+                                  user={user}
+                                  setAlertSubActive={setAlertSubActive}
                                 />
                               )
                             })

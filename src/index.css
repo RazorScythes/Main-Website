@@ -80,3 +80,25 @@
     right: -750px;
   }
 }
+
+
+.star {
+  font-size: 24px;
+  color: #ccc;
+  cursor: pointer;
+  position: relative;
+}
+
+.filled {
+  color: gold;
+}
+
+.star.half-filled:after {
+  color: #ccc;
+  content:'\2605';
+  color: gold;
+  position: absolute;
+  margin-left: -20px;
+  width: 10px;
+  overflow: hidden;
+}

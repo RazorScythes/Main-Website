@@ -427,7 +427,7 @@ const Uploads = ({ user }) => {
                         <div className="container mx-auto relative px-0 sm:px-4 pb-16 pt-8">
                             <div className='flex flex-row flex-wrap items-start justify-start mb-4'>
                                 <Link to={`/account/uploads`}><p style={{backgroundColor: (paramIndex || checkParams('video')) && 'rgb(31, 41, 55)', color: (paramIndex || checkParams('video')) && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Video ({video && video.length > 0 ? video.length : 0})</p></Link>
-                                <Link to={`/account/uploads?type=latest`}><p style={{backgroundColor: checkParams('latest') && 'rgb(31, 41, 55)', color: checkParams('latest') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Latest</p></Link>
+                                <Link to={`/account/uploads?type=games`}><p style={{backgroundColor: checkParams('games') && 'rgb(31, 41, 55)', color: checkParams('games') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Games</p></Link>
                                 <Link to={`/account/uploads?type=most_viewed`}><p style={{backgroundColor: checkParams('most_viewed') && 'rgb(31, 41, 55)', color: checkParams('most_viewed') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Most Viewed</p></Link>
                                 <Link to={`/account/uploads?type=popular`}><p style={{backgroundColor: checkParams('popular') && 'rgb(31, 41, 55)', color: checkParams('popular') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Popular</p></Link>
                             </div>
@@ -761,7 +761,7 @@ const Uploads = ({ user }) => {
                                             </div>  
                                         }
                                         
-                                        <div className="overflow-x-auto mt-2">
+                                        <div className="overflow-x-auto  mt-8">
                                             <table className="min-w-full divide-y divide-gray-200 transition-all">
                                                 <thead className='bg-gray-800 text-white'>
                                                     <tr>

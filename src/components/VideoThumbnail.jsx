@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEllipsisV } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch } from 'react-redux'
+import { addToWatchLater } from "../actions/video";
 import { Link } from 'react-router-dom';
 import moment from 'moment'
 
@@ -11,12 +13,28 @@ const TextWithEllipsis = ({ text, limit = 30 }) => {
   return <span>{text}</span>;
 }
 
-const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp, setActive, height }) => {
+const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp, setActive, height, user, setAlertSubActive }) => {
+
+  const dispatch = useDispatch()
+
   const [isOpen, setIsOpen] = useState(false)
 
-  useEffect(() => {
+  useEffect(() => { 
     if(index !== active) setIsOpen(false)
   }, [active])
+
+  const watchLater = () => {
+    if(!user) {
+        setAlertSubActive('no user')
+    }
+    else {
+        dispatch(addToWatchLater({
+            id: user?.result._id,
+            videoId: id
+        }))
+    }
+  }
+
   return (
     <div className='xs:w-full w-80 text-white transition-all sm:px-0 xs:px-4 px-2'>
         <Link to={`/videos/${id}`}>
@@ -42,7 +60,7 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
           {
             isOpen && (index === active) &&
               <div className='absolute bottom-[-95px] z-10 right-0 flex flex-col bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] w-32'>
-                <Link to="" className='px-4 py-2 hover:bg-gray-900'>Watch Later</Link>
+                <Link onClick={() => watchLater()} to="" className='px-4 py-2 hover:bg-gray-900'>Watch Later</Link>
                 <Link to="" className='px-4 py-2 hover:bg-gray-900'>Report</Link>
               </div>
           }

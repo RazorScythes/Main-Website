@@ -17,13 +17,13 @@ const Header = ({ heading, description, button_text, button_secondary_text, butt
     }
 
     return (
-        <div className="relative bg-white">   
+        <div className="relative bg-white border-b border-solid border-[#CAD5DF]">   
             <div className={`${styles.marginX} ${styles.flexCenter}`}>
                 <div className={`${styles.boxWidthEx}`}>
                     <div className="container mx-auto relative px-0 pt-12 md:pb-12 pb-8">
                         <div className="lg:flex md:flex items-center justify-center">
                             <div className="lg:w-1/2 md:w-1/2 w-full sm:px-4">
-                                <h2 className='text-4xl font-bold text-gray-800 mb-2'>{ heading || 'Welcome' }</h2>
+                                <h2 className='text-4xl font-bold text-gray-800 mb-2 capitalize'>{ heading || 'Welcome' }</h2>
                                 <p className='text-lg text-gray-600 font-semibold'>{ description || 'Select a website to manage, or create a new one from scratch.' }</p>
                                 { counter_text && <p className='text-base text-gray-800 font-semibold'>{ counter_text || 'Count ' }: [{counter || 0}]</p> }
                             </div>
@@ -31,12 +31,12 @@ const Header = ({ heading, description, button_text, button_secondary_text, butt
                                 {
                                     button_link ? 
                                     <Link onClick={handleClick} to={button_link || "#"}>
-                                        <button className="bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 font-semibold my-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
+                                        <button className="my-8 w-full bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-8 border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out">
                                             { button_text || 'Explore Now!' }
                                         </button>
                                     </Link>
                                     :
-                                    <button onClick={handleClick} className="bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 font-semibold mt-8 py-2 px-8 border border-gray-800 rounded transition-colors duration-300 ease-in-out">
+                                    <button onClick={handleClick} className="my-8 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-8 border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out">
                                         {
                                             !submitted ?
                                                 button_text || 'Explore Now!' 
