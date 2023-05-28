@@ -6,9 +6,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from 'react-router-dom';
 import { useSearchParams } from "react-router-dom";
+import { clearAlert } from "../../actions/video";
 import Loading from './Loading';
 import styles from "../../style";
 import VideoThumbnail from '../VideoThumbnail';
+import SideAlert from '../SideAlert'
 
 const getVideoId = (url) => {
     let videoId;
@@ -44,10 +46,18 @@ const VideoTag = ({ user }) => {
 
     const video = useSelector((state) => state.video.videos)
     const message = useSelector((state) => state.video.message)
+    const sideAlert = useSelector((state) => state.video.sideAlert)
 
     const pageIndex = searchParams.get('page') ? parseInt(searchParams.get('page')) : 1
 
     const [displayedPages, setDisplayedPages] = useState([]);
+    const [alertActive, setAlertActive] = useState(false)
+    const [alertSubActive, setAlertSubActive] = useState('')
+    const [alertInfo, setAlertInfo] = useState({
+        variant: '',
+        heading: '',
+        paragraph: ''
+    })
 
     useEffect(() => {
       
@@ -133,11 +143,44 @@ const VideoTag = ({ user }) => {
         else if(artist_name)
           navigate(`/videos/artist/${artist_name}?page=${pageNumber}`)
     };
+
+    useEffect(() => {
+      if(alertSubActive === 'no user') {
+          setAlertInfo({
+              variant: 'info',
+              heading: 'Login Required',
+              paragraph: 'Please login to add this video.'
+          })
+          setAlertActive(true)
+          setAlertSubActive('')
+      }
+    }, [alertSubActive])
+
+    useEffect(() => {
+      if(Object.keys(sideAlert).length !== 0){
+          setAlertInfo({
+              variant: sideAlert.variant,
+              heading: sideAlert.heading,
+              paragraph: sideAlert.paragraph
+          })
+          setAlertActive(true)
+
+          dispatch(clearAlert())
+      }
+    }, [sideAlert])
+
     return (
         <div
             className="relative bg-cover bg-center pb-8"
             style={{ backgroundColor: "#111827" }}
         >   
+            <SideAlert
+                variants={alertInfo.variant}
+                heading={alertInfo.heading}
+                paragraph={alertInfo.paragraph}
+                active={alertActive}
+                setActive={setAlertActive}
+            />
             {
               tag ?
                 <div className='flex flex-wrap items-center sm:px-16 px-4 pt-8 pb-4'>
@@ -193,6 +236,8 @@ const VideoTag = ({ user }) => {
                                   setActive={setActive} 
                                   active={active} 
                                   embedLink={getVideoId(item.link)}
+                                  user={user}
+                                  setAlertSubActive={setAlertSubActive}
                                 />
                               )
                             })
