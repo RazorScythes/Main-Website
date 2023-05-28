@@ -52,6 +52,7 @@ const App = () => {
               <Route path="videos" element={<><Videos user={user} /> <Footer /></>} />
               <Route path="videos/:id" element={<><VideosSingle user={user} /> <Footer /></>} />
               <Route path="videos/tags/:tag" element={<><VideoTag user={user} /> <Footer /></>} />
+              <Route path="videos/artist/:artist_name" element={<><VideoTag user={user} /> <Footer /></>} />
               <Route path="archive" element={<><Archive /> <Footer /></>} />
 
               <Route path="/:username/portfolio" element={<><Portfolio /> <Footer /></>} />

@@ -414,8 +414,8 @@ const VideosSingle = ({ user }) => {
                                             )
                                         }
                                         <div className='flex mt-4'>
-                                            <p className='mr-2'>Owner:</p>
-                                            <Link to=""><p className=''>{data && data.video && data.video.owner ? data.video.owner : "Anonymous"}</p></Link>
+                                            <p className='mr-2'>Artist:</p>
+                                            <Link to={`/videos/artist/${data && data.video && data.video.owner ? data.video.owner : "Anonymous"}`}><p className=''>{data && data.video && data.video.owner ? data.video.owner : "Anonymous"}</p></Link>
                                         </div>
                                         <div className='md:block hidden'>
                                             {

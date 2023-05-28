@@ -36,7 +36,7 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
   }
 
   return (
-    <div className='xs:w-full w-80 text-white transition-all sm:px-0 xs:px-4 px-2'>
+    <div className='mx-auto w-64 text-white transition-all sm:px-0 xs:px-4 px-2'>
         <Link to={`/videos/${id}`}>
           <div className='bg-black'>
             <img 

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getVideoByTag } from "../../actions/video";
+import { getVideoByTag, getVideoByArtist } from "../../actions/video";
 import { useParams } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
@@ -40,7 +40,7 @@ const VideoTag = ({ user }) => {
     const [videos, setVideos] = useState([])
     const dispatch = useDispatch()
 
-    const { tag } = useParams();
+    const { tag, artist_name } = useParams();
 
     const video = useSelector((state) => state.video.videos)
     const message = useSelector((state) => state.video.message)
@@ -60,12 +60,20 @@ const VideoTag = ({ user }) => {
 
     useEffect(() => {
         setVideos([])
-        dispatch(getVideoByTag({
+        if(tag) {
+          dispatch(getVideoByTag({
+              id: user ? user.result?._id : '',
+              tag: tag.length > 0 ? tag.split("+") : []
+          }))
+          setTags(tag.split("+"))
+        }
+        else if(artist_name){
+          dispatch(getVideoByArtist({
             id: user ? user.result?._id : '',
-            tag: tag.length > 0 ? tag.split("+") : []
+            artist: artist_name
         }))
-        setTags(tag.split("+"))
-    }, [tag])
+        }
+    }, [tag, artist_name])
 
     useEffect(() => {
       setCurrentPage(pageIndex)
@@ -120,29 +128,40 @@ const VideoTag = ({ user }) => {
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
 
-        navigate(`/videos/tags/${tag}?page=${pageNumber}`)
+        if(tag)
+          navigate(`/videos/tags/${tag}?page=${pageNumber}`)
+        else if(artist_name)
+          navigate(`/videos/artist/${artist_name}?page=${pageNumber}`)
     };
     return (
         <div
             className="relative bg-cover bg-center pb-8"
             style={{ backgroundColor: "#111827" }}
         >   
-            <div className='flex flex-wrap items-center sm:px-16 px-4 pt-8 pb-4'>
-                <h3 className='text-white xs:text-3xl text-2xl font-semibold mr-3'>Tags:</h3>
-                {
-                    tags && tags.length > 0 &&
-                        tags.map((item, index) => {
-                            return (
-                                <div key={index} className='flex flex-wrap'>
-                                    {
-                                        item !== '' &&
-                                            <p className='font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out mr-2'>{item}</p>
-                                    }
-                                </div>
-                            )
-                        })
-                }
-            </div>
+            {
+              tag ?
+                <div className='flex flex-wrap items-center sm:px-16 px-4 pt-8 pb-4'>
+                    <h3 className='text-white xs:text-3xl text-2xl font-semibold mr-3'>Tags:</h3>
+                    {
+                        tags && tags.length > 0 &&
+                            tags.map((item, index) => {
+                                return (
+                                    <div key={index} className='flex flex-wrap'>
+                                        {
+                                            item !== '' &&
+                                                <p className='font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out mr-2'>{item}</p>
+                                        }
+                                    </div>
+                                )
+                            })
+                    }
+                </div>
+              :
+              <div className='flex flex-wrap items-center sm:px-16 px-4 pt-8 pb-4'>
+                 <h3 className='text-white xs:text-3xl text-2xl font-semibold mr-3'>Artist: {artist_name}</h3>
+              </div>
+            }
+          
             <div className='sm:px-16 px-4'>
                 <hr/>
             </div>
