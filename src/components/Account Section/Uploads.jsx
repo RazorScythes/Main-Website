@@ -2,13 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { Header } from './index'
 import { Link, useSearchParams } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faClose, faEdit, faTrash, faVideoCamera, faChevronLeft, faChevronRight, faAngleDoubleLeft, faAngleDoubleRight } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faClose, faEdit, faTrash, faVideoCamera, faChevronLeft, faChevronRight, faAngleDoubleLeft, faAngleDoubleRight, faEye } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { getUserVideo, uploadVideo, clearAlert, editVideo, removeVideo, changePrivacyById, changeStrictById, changeDownloadById, bulkRemoveVideo } from "../../actions/uploads";
 import axios from 'axios';
 import VideoModal from '../VideoModal';
 import Alert from '../Alert';
 import VideoTableData from './sections/VideoTableData';
+import ImageModal from '../ImageModal';
 import styles from '../../style'
 
 const Uploads = ({ user }) => {
@@ -46,7 +47,11 @@ const Uploads = ({ user }) => {
         downloadable: false
     })
     const [input, setInput] = useState({
-        tags: ''
+        tags: '',
+        gameTags: '',
+        gallery: '',
+        storage_name: 'Google Drive',
+        link_list: []
     })
     
     const [showAlert, setShowAlert] = useState(false)
@@ -76,7 +81,7 @@ const Uploads = ({ user }) => {
             privacy: false,
             downloadable: false
         })
-        setInput({tags: ''})
+        setInput({tags: '', gameTags: '', gallery: '', storage_name: 'Google Drive', link_list: []})
         setSubmitted(false)
         setEdit(false)
         setCurrentIndex(0)
@@ -99,22 +104,17 @@ const Uploads = ({ user }) => {
 
     const addTags = () => {
         let duplicate = false
-
         if(input.tags.length === 0) return;
-
         tags.forEach(item => { if(input.tags === item) duplicate = true })
-
         if(duplicate) { duplicate = false; return;}
-
         setTags(tags.concat(input.tags))
-
         setInput({...input, tags: ''})
     }
 
     const deleteTags = (e) => {
-        let arr = [...tags]
+        let arr = [...gameTags]
         arr.splice(e.currentTarget.id, 1)
-        setTags([...arr])
+        setGameTags([...arr])
     }
 
     const checkDriveValidity = (url) => {
@@ -153,7 +153,7 @@ const Uploads = ({ user }) => {
             privacy: false,
             downloadable: false
         })
-        setInput({ tags: '' })
+        setInput({ tags: '', gameTags: '', gallery: ''})
         setEdit(false)
         setCurrentIndex(0)
     }
@@ -401,6 +401,113 @@ const Uploads = ({ user }) => {
         }
     }
 
+    const [openImageModal, setOpenImageModal] = useState(false)
+    const [displayImage, setDisplayImage] = useState('')
+    const [preview, setPreview] = useState(false)
+    const [gameTags, setGameTags] = useState([])
+    const [gameSubmitted, setGameSubmitted] = useState(false)
+    const [gameForm, setGameForm] = useState({
+        featured_image: '',
+        title: '',
+        description: '',
+        strict: false,
+        privacy: false,
+        details: {
+            latest_version: '',
+            censorship: 'Uncensored',
+            language: 'English',
+            developer: '',
+            upload_date: Date.now(),
+            platform: 'Desktop'
+        },
+        leave_uploader_message: '',
+        gallery: [],
+        download_link: []
+    })
+
+    const deleteGameTags = (e) => {
+        let arr = [...gameTags]
+        arr.splice(e.currentTarget.id, 1)
+        setGameTags([...arr])
+    }
+
+    const addGameTags = () => {
+        let duplicate = false
+        if(input.gameTags.length === 0) return;
+        gameTags.forEach(item => { if(input.gameTags === item) duplicate = true })
+        if(duplicate) { duplicate = false; return;}
+        setGameTags(gameTags.concat(input.gameTags))
+        setInput({...input, gameTags: ''})
+    }
+
+    function checkWebsiteUrl(url) {
+        return url.startsWith("https://") && url.includes(".") ? true : false
+    }
+
+    const addImageURL = () => {
+        let duplicate = false
+        if(input.gallery.length === 0 || !checkWebsiteUrl(input.gallery)) return;
+        gameForm.gallery.forEach(item => { if(input.gallery === item) duplicate = true })
+        if(duplicate) { duplicate = false; return;}
+        setGameForm({ ...gameForm, gallery: gameForm.gallery.concat(input.gallery)})
+        setInput({ ...input, gallery: ''})
+    }
+
+    const deleteImageURL = (e) => {
+        let arr = [...gameForm.gallery]
+        arr.splice(e.currentTarget.id, 1)
+        setGameForm({...gameForm, gallery: [...arr]})
+    }
+
+    const addDownloadLink = () => {
+        let duplicate = false
+        if(input.storage_name.length === 0) return;
+        gameForm.download_link.forEach(item => { if(input.storage_name === item.storage_name) duplicate = true })
+        if(duplicate) { duplicate = false; return;}
+        setGameForm({ ...gameForm, download_link: gameForm.download_link.concat({storage_name: input.storage_name, links: []})})
+        setInput({ ...input, storage_name: 'Google Drive'})
+    }
+    
+    const deleteDownloadLink = (e) => {
+        let arr = [...gameForm.download_link]
+        arr.splice(e.currentTarget.id, 1)
+        setGameForm({...gameForm, download_link: [...arr]})
+    }
+
+    const addDownloadLinkItem = (e) => {
+        if(input.link_list[e.currentTarget.id].length === 0) return;
+
+        const newList = [...gameForm.download_link];
+        newList[e.currentTarget.id] = {
+        ...newList[e.currentTarget.id],
+        links: [...newList[e.currentTarget.id].links, input.link_list[e.currentTarget.id]]
+        };
+
+        setGameForm({...gameForm, download_link: newList});
+
+        const newInputList = [...input.link_list];
+        newInputList[e.currentTarget.id] = '';
+
+        setInput({...input, link_list: newInputList});
+    }
+
+    const deleteDownloadLinkItem = (e, id, parent_id) => {
+        let arr = [...gameForm.download_link]
+        arr[parent_id].links.splice(id, 1)
+        setGameForm({...gameForm, download_link: [...arr]})
+    }
+
+    const handleDownloadLinkItemChange = (e) => {
+        let arr = [...input.link_list]
+        arr[e.currentTarget.id] = e.target.value
+        setInput({...input, link_list: [...arr]})
+    }   
+
+    const handleGameSubmit = () => {
+        const obj = {...gameForm}
+        obj['tags'] = gameTags
+        console.log(obj)
+    }
     return (
         <div className="relative bg-white">   
 
@@ -421,6 +528,15 @@ const Uploads = ({ user }) => {
                 button_text="Explore Now!"
                 button_link={`#`}
             />
+
+            <ImageModal
+                openModal={openImageModal}
+                setOpenModal={setOpenImageModal}
+                image={displayImage}
+                preview={preview}
+                setPreview={setPreview}
+            />
+
             <div className="relative bg-[#F0F4F7]">   
                 <div className={`${styles.marginX} ${styles.flexCenter}`}>
                     <div className={`${styles.boxWidthEx}`}>
@@ -433,7 +549,7 @@ const Uploads = ({ user }) => {
                             </div>
 
                             {
-                                (paramIndex || checkParams('video')) && (
+                                (paramIndex || checkParams('video')) ? (
                                     <div>
                                         <div className="md:flex items-start justify-center mt-8">
                                             <div className="lg:w-1/2 md:w-1/2 w-full">
@@ -873,6 +989,361 @@ const Uploads = ({ user }) => {
                                             <button disabled={currentPage === 1} onClick={() => goToPage(currentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
                                             <button disabled={endIndex >= data?.length} onClick={() => goToPage(currentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
                                             <button disabled={endIndex >= data?.length} onClick={() => goToPage(data?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
+                                        </div>
+                                    </div>
+                                )
+                                :
+                                (paramIndex || checkParams('games')) && (
+                                    <div>
+                                        <div className="md:flex items-start justify-center mt-8">
+                                            <div className="lg:w-1/2 md:w-1/2 w-full">
+
+                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Featured Image Url: </label>
+                                                        <div className='flex flex-row'>
+                                                            <input 
+                                                                type="text" 
+                                                                className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                value={gameForm.featured_image}
+                                                                onChange={(e) => setGameForm({...gameForm, featured_image: e.target.value})}
+                                                            />
+                                                            <div className='flex flex-row items-end'>
+                                                                <button 
+                                                                    onClick={() => {
+                                                                        setPreview(true)
+                                                                        setOpenImageModal(true)
+                                                                        setDisplayImage(gameForm.featured_image)
+                                                                    }} 
+                                                                    className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'><FontAwesomeIcon icon={faEye} className="mx-4"/>
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Game Title: </label>
+                                                        <input 
+                                                            type="text" 
+                                                            className='p-2 border border-solid border-[#c0c0c0]'
+                                                            value={gameForm.title}
+                                                            onChange={(e) => setGameForm({...gameForm, title: e.target.value})}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Game description: </label>
+                                                        <div className='flex flex-row'>
+                                                            <textarea
+                                                                name="message"
+                                                                id="message"
+                                                                cols="30"
+                                                                rows="8"
+                                                                placeholder="Message"
+                                                                className="w-full p-2 border border-solid border-[#c0c0c0]"
+                                                                onChange={(e) => setGameForm({...gameForm, description: e.target.value})}
+                                                                value={ gameForm.description }
+                                                            >
+                                                            </textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Leave a Message: </label>
+                                                        <div className='flex flex-row'>
+                                                            <textarea
+                                                                name="message"
+                                                                id="message"
+                                                                cols="30"
+                                                                rows="4"
+                                                                placeholder="Message"
+                                                                className="w-full p-2 border border-solid border-[#c0c0c0]"
+                                                                onChange={(e) => setGameForm({...gameForm, leave_uploader_message: e.target.value})}
+                                                                value={ gameForm.leave_uploader_message }
+                                                            >
+                                                            </textarea>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className="flex items-center mb-2 pt-2">
+                                                    <input 
+                                                        id="default-checkbox" 
+                                                        type="checkbox" 
+                                                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                        checked={gameForm.privacy}
+                                                        onChange={(e) => setGameForm({...gameForm, privacy: !gameForm.privacy})}
+                                                    />
+                                                    <label htmlFor="default-checkbox" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Private</label>
+                                                </div>
+                                                
+                                                <div className="flex items-center mb-4 pt-2">
+                                                    <input 
+                                                        id="default-checkbox2" 
+                                                        type="checkbox" 
+                                                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                        checked={gameForm.strict}
+                                                        onChange={(e) => setGameForm({...gameForm, strict: !gameForm.strict})}
+                                                    />
+                                                    <label htmlFor="default-checkbox2" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Safe Content Restriction</label>
+                                                </div>
+
+                                                <div className='grid grid-cols-1  gap-5 place-content-start'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Add Tags: </label>
+                                                        <div className='flex flex-row'>
+                                                            <input 
+                                                                type="text" 
+                                                                className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                value={input.gameTags}
+                                                                onChange={(e) => setInput({...input, gameTags: e.target.value})}
+                                                            />
+                                                            <div className='flex flex-row items-end'>
+                                                                <button onClick={addGameTags} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>          
+
+                                                <div className='flex flex-wrap items-center mt-2 mb-4 relative'>
+                                                    {
+                                                        gameTags && gameTags.length > 0 &&
+                                                            gameTags.map((item, index) => {
+                                                                return (
+                                                                    <div key={index} className='flex items-center relative mt-2 bg-gray-100 hover:text-gray-800 text-gray-800 border-2 border-gray-800 px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
+                                                                        <p>{item}</p>
+                                                                        <FontAwesomeIcon onClick={deleteGameTags} id={index} icon={faClose} className="ml-2 cursor-pointer" />
+                                                                    </div>
+                                                                )
+                                                            })
+                                                    }
+                                                </div>
+
+                                                <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
+                                                    <h2 className='text-2xl font-bold text-gray-800 my-4'>Download Links</h2>        
+                                                </div>
+                                                
+                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Storage Name: </label>
+                                                        <div className='flex flex-row'>
+                                                            <select
+                                                                className="sm:w-full w-2/3 capitalize appearance-none bg-gray-100 border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                                value={input.storage_name}
+                                                                onChange={(e) => setInput({...input, storage_name: e.target.value})}
+                                                            >
+                                                                <option value="Google Drive" className="capitalize">Google Drive</option>
+                                                                <option value="Dropbox" className="capitalize">Dropbox</option>
+                                                                <option value="Mediafire" className="capitalize">Mediafire</option>
+                                                            </select>
+                                                            <div className='flex flex-row items-end'>
+                                                                <button onClick={addDownloadLink} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className='grid grid-cols-1 gap-5 place-content-start text-white mb-2'>
+                                                    <div className='flex flex-row flex-wrap'>
+                                                        {
+                                                            gameForm.download_link.length > 0 &&
+                                                                gameForm.download_link.map((item, i) => {
+                                                                    return (
+                                                                        <div key={i} className='w-full border-2 border-dashed border-gray-700 p-2 mb-2'>
+                                                                            <div key={i} className='w-full flex flex-row p-2 py-3 bg-gray-800 mb-1'>
+                                                                                <div className='w-1/2 flex flex-col'>
+                                                                                    <div className='w-full flex flex-row items-center'>
+                                                                                        <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold'>{item.storage_name}</p>
+                                                                                    </div>
+                                                                                </div> 
+                                                                                <div className='w-1/2 text-right'>
+                                                                                    <FontAwesomeIcon id={i} onClick={deleteDownloadLink} icon={faTrash} className="mr-2 hover:cursor-pointer" />
+                                                                                </div>
+                                                                            </div>
+
+                                                                            <div className='grid grid-cols-1 gap-5 place-content-start mb-2 text-[#000]'>
+                                                                                <div className='flex flex-col'>
+                                                                                    <label className='font-semibold'> Download Links: </label>
+                                                                                    <div className='flex flex-row'>
+                                                                                        <input 
+                                                                                            id={i}
+                                                                                            type="text" 
+                                                                                            className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                            value={input.link_list[i] ? input.link_list[i] : ''}
+                                                                                            onChange={handleDownloadLinkItemChange}
+                                                                                        />
+                                                                                        <div className='flex flex-row items-end'>
+                                                                                            <button id={i} onClick={addDownloadLinkItem} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+
+                                                                            {
+                                                                                gameForm.download_link[i].links.length > 0 &&
+                                                                                    gameForm.download_link[i].links.map((data, id) => {
+                                                                                        return(
+                                                                                            <div key={id} className='w-full flex flex-row p-2 py-3 bg-gray-800 mb-1'>
+                                                                                                <div className='w-1/2 flex flex-col'>
+                                                                                                    <div className='w-full flex flex-row items-center'>
+                                                                                                        <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold'>{data}</p>
+                                                                                                    </div>
+                                                                                                </div> 
+                                                                                                <div className='w-1/2 text-right'>
+                                                                                                    <FontAwesomeIcon onClick={(e) => deleteDownloadLinkItem(e, id, i)} id={id} parent_id={i} icon={faTrash} className="mr-2 hover:cursor-pointer" />
+                                                                                                </div>
+                                                                                            </div>
+                                                                                        )
+                                                                                    })
+                                                                            }
+                                                                        </div>
+                                                                    )
+                                                                })
+                                                            }
+                                                    </div>
+                                                </div>
+
+                                                <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
+                                                    <h2 className='text-2xl font-bold text-gray-800 my-4'>Game Details</h2>        
+                                                </div>
+                                                
+                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Version Number: </label>
+                                                        <input 
+                                                            type="text" 
+                                                            className='p-2 border border-solid border-[#c0c0c0]'
+                                                            value={gameForm.details.latest_version}
+                                                            onChange={(e) => setGameForm({...gameForm, details: {...gameForm.details, latest_version: e.target.value}})}
+                                                        />
+                                                    </div>
+                                                </div>
+
+                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Censorship: </label>
+                                                        <select
+                                                            className="sm:w-full w-2/3 capitalize appearance-none bg-gray-100 border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                            value={gameForm.details.censorship}
+                                                            onChange={(e) => setGameForm({...gameForm, details: {...gameForm.details, censorship: e.target.value}})}
+                                                        >
+                                                            <option value="Uncensored" className="capitalize">Uncensored</option>
+                                                            <option value="Censored" className="capitalize">Censored</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Language: </label>
+                                                        <select
+                                                            className="sm:w-full w-2/3 capitalize appearance-none bg-gray-100 border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                            value={gameForm.details.language}
+                                                            onChange={(e) => setGameForm({...gameForm, details: {...gameForm.details, language: e.target.value}})}
+                                                        >
+                                                            <option value="English" className="capitalize">English</option>
+                                                            <option value="Japanese" className="capitalize">Japanese</option>
+                                                            <option value="Chinese" className="capitalize">Chinese</option>
+                                                            <option value="Spanish" className="capitalize">Spanish</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Developer: </label>
+                                                        <input 
+                                                            type="text" 
+                                                            className='p-2 border border-solid border-[#c0c0c0]'
+                                                            value={gameForm.details.developer}
+                                                            onChange={(e) => setGameForm({...gameForm, details: {...gameForm.details, developer: e.target.value}})}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Platform: </label>
+                                                        <select
+                                                            className="sm:w-full w-2/3 capitalize appearance-none bg-gray-100 border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                            value={gameForm.details.platform}
+                                                            onChange={(e) => setGameForm({...gameForm, details: {...gameForm.details, platform: e.target.value}})}
+                                                        >
+                                                            <option value="Desktop" className="capitalize">Desktop</option>
+                                                            <option value="Android" className="capitalize">Android</option>
+                                                            <option value="iOS" className="capitalize">iOS</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
+                                                    <h2 className='text-2xl font-bold text-gray-800 my-4'>Gallery Showcase</h2>        
+                                                </div>
+                                                
+                                                <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Image URL: </label>
+                                                        <div className='flex flex-row'>
+                                                            <input 
+                                                                type="text" 
+                                                                className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                value={input.gallery}
+                                                                onChange={(e) => setInput({...input, gallery: e.target.value })}
+                                                            />
+                                                            <div className='flex flex-row items-end'>
+                                                                <button onClick={addImageURL} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className='grid grid-cols-1 gap-5 place-content-start text-white mb-2'>
+                                                    <div className='flex flex-row flex-wrap'>
+                                                        {
+                                                            gameForm.gallery.length > 0 &&
+                                                                gameForm.gallery.map((item, i) => {
+                                                                    return (
+                                                                        <div key={i} className='w-full flex flex-row p-2 py-3 bg-gray-800 mb-1'>
+                                                                            <div className='w-1/2 flex flex-row items-center'>
+                                                                                <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold'>{item}</p>
+                                                                            </div>
+                                                                            <div className='w-1/2 text-right'>
+                                                                                <FontAwesomeIcon id={i} onClick={deleteImageURL} icon={faTrash} className="mr-2 hover:cursor-pointer" />
+                                                                            </div>
+                                                                        </div>
+                                                                    )
+                                                                })
+                                                            }
+                                                    </div>
+                                                </div>
+                                                
+                                                <button onClick={handleGameSubmit} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
+                                                    {
+                                                        !gameSubmitted ?
+                                                        "Upload Game"
+                                                        :
+                                                        <div className='flex flex-row justify-center items-center'>
+                                                            Uploading
+                                                            <div role="status">
+                                                                <svg aria-hidden="true" class="w-5 h-5 ml-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                                                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                                                </svg>
+                                                                <span class="sr-only">Loading...</span>
+                                                            </div>
+                                                        </div>
+                                                    }
+                                                </button>
+                                            </div>
+
+                                            <div className="lg:w-1/2 md:w-1/2 w-full">
+                                            </div>
                                         </div>
                                     </div>
                                 )

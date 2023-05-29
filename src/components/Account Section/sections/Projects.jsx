@@ -351,14 +351,6 @@ const Projects = ({ user, portfolio, index, setIndex }) => {
     }
 
     const addListItem = (e) => {
-        // if(input.list_item[e.currentTarget.id].length === 0) return
-
-        // let arr = [...project.list]
-        // arr[e.currentTarget.id].list_item.push(input.list_item[e.currentTarget.id])
-        // setProject({...project, list: [...arr]})
-        // arr = [...input.list_item]
-        // arr[e.currentTarget.id] = ''
-        // setInput({...input, list_item: arr})
         if(input.list_item[e.currentTarget.id].length === 0) return;
 
         const newList = [...project.list];
