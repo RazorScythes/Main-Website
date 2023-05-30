@@ -1,17 +1,34 @@
 import React, { useEffect, useState } from 'react'
-import styles from "../../style";
+import { useDispatch, useSelector } from 'react-redux'
 import { Error_forbiden } from '../../assets';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faDownload } from "@fortawesome/free-solid-svg-icons";
+import { getGames, clearAlert } from "../../actions/game";
 import GamesCards from './GamesCards';
 import image from '../../assets/hero-bg.jpg'
 import avatar from '../../assets/avatar.png'
-const Games = () => {
+import styles from "../../style";
+const Games = ({ user }) => {
+
+    const dispatch = useDispatch()
+
+    const game = useSelector((state) => state.game.games)
 
     const [rating, setRating] = useState(0);
     const [fixedRating, setFixedRating] = useState(3.5)
+    const [games, setGames] = useState([])
 
+    useEffect(() => {
+        dispatch(getGames({
+          id: user ? user.result?._id : ''
+        }))
+    }, [])
+
+    useEffect(() => {
+        if(game.length > 0)
+            setGames(game)
+    }, [game])
     const handleMouseEnter = (index, isHalf) => {
         setRating(index + (isHalf ? 0.5 : 1));
     };
@@ -45,42 +62,23 @@ const Games = () => {
                 <div className={`${styles.boxWidthEx}`}>
                     <div className="container mx-auto file:lg:px-8 relative px-0">
                         <div className="grid md:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-5 place-content-start my-10">
-                            <GamesCards  
-                                id={''}
-                                heading={'Adventure time Adventure time Adventure time Adventure time'} 
-                                image={image} 
-                                downloads={1}
-                                category={'Simulation'} 
-                                uploader={'RazorScythe'} 
-                                ratings={3}
-                            />
-                            <GamesCards  
-                                id={''}
-                                heading={'Adventure time Adventure time Adventure time Adventure time'} 
-                                image={image} 
-                                downloads={5}
-                                category={'Simulation'} 
-                                uploader={'RazorScythe'} 
-                                ratings={52}
-                            />
-                            <GamesCards  
-                                id={''}
-                                heading={'Adventure time Adventure time Adventure time Adventure time'} 
-                                image={image} 
-                                downloads={5}
-                                category={'Simulation'} 
-                                uploader={'RazorScythe'} 
-                                ratings={0.5}
-                            />
-                            <GamesCards  
-                                id={''}
-                                heading={'Adventure time Adventure time Adventure time Adventure time'} 
-                                image={image} 
-                                downloads={5}
-                                category={'Simulation'} 
-                                uploader={'RazorScythe'} 
-                                ratings={0.5}
-                            />
+                            {
+                                games && games.length > 0 &&
+                                    games.map((item, index) => {
+                                        return (
+                                            <GamesCards  
+                                                key={index}
+                                                id={item._id}
+                                                heading={item.title} 
+                                                image={item.featured_image} 
+                                                downloads={1}
+                                                category={item.tags.length > 0 ? item.tags[0] : 'No Categories'} 
+                                                uploader={item.user.username} 
+                                                ratings={item.ratings}
+                                            />
+                                        )
+                                    })
+                            }
                         </div>
                     </div>
                 </div>

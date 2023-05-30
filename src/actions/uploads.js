@@ -7,11 +7,28 @@ const initialState = {
     alert: '',
     variant: '',
     video: {},
+    game: {}
 }
 
 export const getUserVideo = createAsyncThunk('uploads/getUserVideo', async (form, thunkAPI) => {
     try {
         const response = await api.getUserVideo(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const getUserGame = createAsyncThunk('uploads/getUserGame', async (form, thunkAPI) => {
+    try {
+        const response = await api.getUserGame(form)
         return response
     }
     catch (err) {
@@ -137,6 +154,22 @@ export const changeDownloadById = createAsyncThunk('uploads/changeDownloadById',
     }
 })
 
+export const uploadGame= createAsyncThunk('uploads/uploadGame', async (form, thunkAPI) => {
+    try {
+        const response = await api.uploadGame(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const uploadsSlice = createSlice({
     name: 'uploads',
     initialState,
@@ -147,6 +180,15 @@ export const uploadsSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(getUserVideo.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(getUserGame.fulfilled, (state, action) => {
+            state.game = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getUserGame.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         }),
@@ -203,6 +245,17 @@ export const uploadsSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(uploadVideo.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(uploadGame.fulfilled, (state, action) => {
+            state.game = action.payload.data.result
+            state.alert = action.payload.data.message
+            state.variant = action.payload.data.variant
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(uploadGame.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         }),

@@ -1,24 +1,38 @@
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { addRatings } from "../../actions/game";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
 
-const divideAndScale = (a, b) => {
-    var result = a / b;
-    var scaledResult = result % 5;
+const divideAndScale = (ratings) => {
+    const totalRating = ratings.reduce((sum, item) => sum + item.rating, 0);
+    const averageRating = totalRating / ratings.length;
+
+    return averageRating
+    // var result = a / b;
+    // var scaledResult = result % 5;
   
-    if (scaledResult < 0) {
-      scaledResult += 5;
-    }
-    console.log(Number(scaledResult.toFixed(1)))
-    return Number(scaledResult.toFixed(1));
+    // if (scaledResult <= 0) {
+    //   scaledResult += 5;
+    // }
+
+    // console.log(scaledResult, Number(scaledResult.toFixed(1)))
+    // return Number(scaledResult.toFixed(1));
 }
 
 const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings }) => {
 
+    const dispatch = useDispatch()
+
     const [rating, setRating] = useState(0);
-    const [fixedRating, setFixedRating] = useState(ratings ? divideAndScale(ratings, 3) : 0)
-    const [ratingNumber, setRatingNumber] = useState(ratings ? divideAndScale(ratings, 3) : 0)
+    const [fixedRating, setFixedRating] = useState(0)
+    const [ratingNumber, setRatingNumber] = useState(0)
+
+    useEffect(() => {
+        setFixedRating(ratings ? divideAndScale(ratings) : 0)
+        setRatingNumber(ratings ? divideAndScale(ratings) : 0)
+    }, [ratings])
 
     const handleMouseEnter = (index, isHalf) => {
         setRating(index + (isHalf ? 0.5 : 1));
@@ -32,6 +46,10 @@ const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings
         const newRating = index + (isHalf ? 0.5 : 1);
         setFixedRating(newRating === fixedRating ? 0 : newRating);
         // You can add your logic here to handle the rating value
+        dispatch(addRatings({
+            gameId: id,
+            ratings: newRating === fixedRating ? 0 : newRating
+        }))
     };
 
     const TextWithEllipsis = ({ text, limit = 25 }) => {

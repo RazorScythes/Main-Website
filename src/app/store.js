@@ -5,6 +5,7 @@ import settingsSlice from '../actions/settings'
 import logsSlice from '../actions/logs'
 import videoSlice from '../actions/video'
 import uploadsSlice from '../actions/uploads'
+import gameSlice from '../actions/game'
 
 export const store = configureStore({
     reducer: {
@@ -13,7 +14,8 @@ export const store = configureStore({
         settings: settingsSlice,
         logs: logsSlice,
         video: videoSlice,
-        uploads: uploadsSlice
+        uploads: uploadsSlice,
+        game: gameSlice
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({

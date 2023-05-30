@@ -4,13 +4,14 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faClose, faEdit, faTrash, faVideoCamera, faChevronLeft, faChevronRight, faAngleDoubleLeft, faAngleDoubleRight, faEye } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
-import { getUserVideo, uploadVideo, clearAlert, editVideo, removeVideo, changePrivacyById, changeStrictById, changeDownloadById, bulkRemoveVideo } from "../../actions/uploads";
+import { getUserVideo, getUserGame, uploadVideo, clearAlert, editVideo, removeVideo, changePrivacyById, changeStrictById, changeDownloadById, bulkRemoveVideo, uploadGame } from "../../actions/uploads";
 import axios from 'axios';
 import VideoModal from '../VideoModal';
 import Alert from '../Alert';
 import VideoTableData from './sections/VideoTableData';
 import ImageModal from '../ImageModal';
 import styles from '../../style'
+import { game } from '../../assets';
 
 const Uploads = ({ user }) => {
     const dispatch = useDispatch()
@@ -18,6 +19,7 @@ const Uploads = ({ user }) => {
     const alert = useSelector((state) => state.uploads.alert)
     const variant = useSelector((state) => state.uploads.variant)
     const video = useSelector((state) => state.uploads.video)
+    const game = useSelector((state) => state.uploads.game)
 
     const itemsPerPage = 10; // Number of items per page
 
@@ -65,6 +67,7 @@ const Uploads = ({ user }) => {
 
     useEffect(() => {
         dispatch(getUserVideo({ id: user.result?._id }))
+        dispatch(getUserGame({ id: user.result?._id }))
     }, [])
 
     useEffect(() => {
@@ -406,6 +409,7 @@ const Uploads = ({ user }) => {
     const [preview, setPreview] = useState(false)
     const [gameTags, setGameTags] = useState([])
     const [gameSubmitted, setGameSubmitted] = useState(false)
+    const [gameData, setGameData] = useState([])
     const [gameForm, setGameForm] = useState({
         featured_image: '',
         title: '',
@@ -422,8 +426,42 @@ const Uploads = ({ user }) => {
         },
         leave_uploader_message: '',
         gallery: [],
-        download_link: []
+        download_link: [],
+        guide_link: '',
+        password: ''
     })
+
+    useEffect(() => {
+        if(game && game.length > 0){
+            setGameData(game)
+        }
+        setGameTags([])
+        setGameForm({
+            featured_image: '',
+            title: '',
+            description: '',
+            strict: false,
+            privacy: false,
+            details: {
+                latest_version: '',
+                censorship: 'Uncensored',
+                language: 'English',
+                developer: '',
+                upload_date: Date.now(),
+                platform: 'Desktop'
+            },
+            leave_uploader_message: '',
+            gallery: [],
+            download_link: [],
+            guide_link: '',
+            password: ''
+        })
+        setInput({tags: '', gameTags: '', gallery: '', storage_name: 'Google Drive', link_list: []})
+        setGameSubmitted(false)
+        setDisplayImage('')
+        setPreview(false)
+        setOpenImageModal(false)
+    }, [game])
 
     const deleteGameTags = (e) => {
         let arr = [...gameTags]
@@ -504,9 +542,18 @@ const Uploads = ({ user }) => {
     }   
 
     const handleGameSubmit = () => {
+        if(!gameForm.featured_image || !gameForm.title || !gameForm.description || !gameForm.download_link) return
+
         const obj = {...gameForm}
         obj['tags'] = gameTags
-        console.log(obj)
+
+        if(!gameSubmitted) {
+            dispatch(uploadGame({
+                id: user.result?._id,
+                data: obj
+            }))
+            setGameSubmitted(true)
+        }
     }
     return (
         <div className="relative bg-white">   
@@ -543,7 +590,7 @@ const Uploads = ({ user }) => {
                         <div className="container mx-auto relative px-0 sm:px-4 pb-16 pt-8">
                             <div className='flex flex-row flex-wrap items-start justify-start mb-4'>
                                 <Link to={`/account/uploads`}><p style={{backgroundColor: (paramIndex || checkParams('video')) && 'rgb(31, 41, 55)', color: (paramIndex || checkParams('video')) && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Video ({video && video.length > 0 ? video.length : 0})</p></Link>
-                                <Link to={`/account/uploads?type=games`}><p style={{backgroundColor: checkParams('games') && 'rgb(31, 41, 55)', color: checkParams('games') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Games</p></Link>
+                                <Link to={`/account/uploads?type=games`}><p style={{backgroundColor: checkParams('games') && 'rgb(31, 41, 55)', color: checkParams('games') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Games ({game && game.length > 0 ? game.length : 0})</p></Link>
                                 <Link to={`/account/uploads?type=most_viewed`}><p style={{backgroundColor: checkParams('most_viewed') && 'rgb(31, 41, 55)', color: checkParams('most_viewed') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Most Viewed</p></Link>
                                 <Link to={`/account/uploads?type=popular`}><p style={{backgroundColor: checkParams('popular') && 'rgb(31, 41, 55)', color: checkParams('popular') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Popular</p></Link>
                             </div>
@@ -995,9 +1042,15 @@ const Uploads = ({ user }) => {
                                 :
                                 (paramIndex || checkParams('games')) && (
                                     <div>
+                                        {
+                                            alertInfo.alert && alertInfo.variant && showAlert &&
+                                                <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
+                                        }
                                         <div className="md:flex items-start justify-center mt-8">
                                             <div className="lg:w-1/2 md:w-1/2 w-full">
-
+                                                <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
+                                                    <h2 className='text-2xl font-bold text-gray-800 my-4'>Upload Game</h2>        
+                                                </div>
                                                 <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
                                                     <div className='flex flex-col'>
                                                         <label className='font-semibold'> Featured Image Url: </label>
@@ -1093,6 +1146,30 @@ const Uploads = ({ user }) => {
                                                     />
                                                     <label htmlFor="default-checkbox2" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Safe Content Restriction</label>
                                                 </div>
+                                                
+                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Guide Game Link: </label>
+                                                        <input 
+                                                            type="text" 
+                                                            className='p-2 border border-solid border-[#c0c0c0]'
+                                                            value={gameForm.guide_link}
+                                                            onChange={(e) => setGameForm({...gameForm, guide_link: e.target.value})}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Password <span className='text-gray-500 font-normal italic text-sm'>(if game has password)</span>: </label>
+                                                        <input 
+                                                            type="text" 
+                                                            className='p-2 border border-solid border-[#c0c0c0]'
+                                                            value={gameForm.password}
+                                                            onChange={(e) => setGameForm({...gameForm, password: e.target.value})}
+                                                        />
+                                                    </div>
+                                                </div>
 
                                                 <div className='grid grid-cols-1  gap-5 place-content-start'>
                                                     <div className='flex flex-col'>
@@ -1124,7 +1201,9 @@ const Uploads = ({ user }) => {
                                                             })
                                                     }
                                                 </div>
+                                            </div>
 
+                                            <div className="lg:w-1/2 md:w-1/2 w-full md:pl-8">
                                                 <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
                                                     <h2 className='text-2xl font-bold text-gray-800 my-4'>Download Links</h2>        
                                                 </div>
@@ -1134,7 +1213,7 @@ const Uploads = ({ user }) => {
                                                         <label className='font-semibold'> Storage Name: </label>
                                                         <div className='flex flex-row'>
                                                             <select
-                                                                className="sm:w-full w-2/3 capitalize appearance-none bg-gray-100 border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                                className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                                                 value={input.storage_name}
                                                                 onChange={(e) => setInput({...input, storage_name: e.target.value})}
                                                             >
@@ -1229,7 +1308,7 @@ const Uploads = ({ user }) => {
                                                     <div className='flex flex-col'>
                                                         <label className='font-semibold'> Censorship: </label>
                                                         <select
-                                                            className="sm:w-full w-2/3 capitalize appearance-none bg-gray-100 border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                            className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                                             value={gameForm.details.censorship}
                                                             onChange={(e) => setGameForm({...gameForm, details: {...gameForm.details, censorship: e.target.value}})}
                                                         >
@@ -1243,7 +1322,7 @@ const Uploads = ({ user }) => {
                                                     <div className='flex flex-col'>
                                                         <label className='font-semibold'> Language: </label>
                                                         <select
-                                                            className="sm:w-full w-2/3 capitalize appearance-none bg-gray-100 border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                            className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                                             value={gameForm.details.language}
                                                             onChange={(e) => setGameForm({...gameForm, details: {...gameForm.details, language: e.target.value}})}
                                                         >
@@ -1271,7 +1350,7 @@ const Uploads = ({ user }) => {
                                                     <div className='flex flex-col'>
                                                         <label className='font-semibold'> Platform: </label>
                                                         <select
-                                                            className="sm:w-full w-2/3 capitalize appearance-none bg-gray-100 border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                            className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                                             value={gameForm.details.platform}
                                                             onChange={(e) => setGameForm({...gameForm, details: {...gameForm.details, platform: e.target.value}})}
                                                         >
@@ -1282,7 +1361,7 @@ const Uploads = ({ user }) => {
                                                     </div>
                                                 </div>
                                                 
-                                                <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
+                                                <div className='grid grid-cols-1  gap-5 place-content-start '>
                                                     <h2 className='text-2xl font-bold text-gray-800 my-4'>Gallery Showcase</h2>        
                                                 </div>
                                                 
@@ -1321,30 +1400,26 @@ const Uploads = ({ user }) => {
                                                                 })
                                                             }
                                                     </div>
-                                                </div>
-                                                
-                                                <button onClick={handleGameSubmit} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
-                                                    {
-                                                        !gameSubmitted ?
-                                                        "Upload Game"
-                                                        :
-                                                        <div className='flex flex-row justify-center items-center'>
-                                                            Uploading
-                                                            <div role="status">
-                                                                <svg aria-hidden="true" class="w-5 h-5 ml-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                                                                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                                                                </svg>
-                                                                <span class="sr-only">Loading...</span>
-                                                            </div>
-                                                        </div>
-                                                    }
-                                                </button>
-                                            </div>
-
-                                            <div className="lg:w-1/2 md:w-1/2 w-full">
+                                                </div>       
                                             </div>
                                         </div>
+                                        <button onClick={handleGameSubmit} className='float-right font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2 px-6'>
+                                            {
+                                                !gameSubmitted ?
+                                                "Upload Game"
+                                                :
+                                                <div className='flex flex-row justify-center items-center'>
+                                                    Uploading
+                                                    <div role="status">
+                                                        <svg aria-hidden="true" class="w-5 h-5 ml-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                                        </svg>
+                                                        <span class="sr-only">Loading...</span>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </button>
                                     </div>
                                 )
                             }
