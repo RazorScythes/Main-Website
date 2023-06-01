@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useDispatch, useSelector } from 'react-redux'
 import { faCalendar, faInfoCircle, faImage, faDownload, faMinus, faChevronRight, faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
+import { useParams } from 'react-router-dom'
+import { getGames, clearAlert } from "../../actions/game";
 import Carousel from "react-multi-carousel";
 import GamesCards from './GamesCards';
 import styles from "../../style";
@@ -60,12 +63,31 @@ function formatDate(dateString) {
     return formattedDate;
 }
 
-const GamesSingle = () => {
+const GamesSingle = ({ user }) => {
+
+    const { id } = useParams();
+
+    const dispatch = useDispatch()
+
+    const game = useSelector((state) => state.game.games)
+
     const [active, setActive] = useState(0)
+    const [games, setGames] = useState([])
 
     useEffect(() => {
+        dispatch(getGames({
+            id: user ? user.result?._id : ''
+        }))
+
         window.scrollTo(0, 0)
     }, [])
+
+    useEffect(() => {
+        if(game.length > 0) {
+            const filteredObjects = game.filter(item => item._id !== id);
+            setGames(game)
+        }
+    }, [game])
 
     return (
         <div
@@ -293,42 +315,24 @@ const GamesSingle = () => {
                         </div>
                         <h1 className='text-3xl font-semibold mb-8 text-gray-300 mt-8'>You may also like:</h1>
                         <div className="grid md:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-5 place-content-start my-10">
-                            <GamesCards  
-                                id={''}
-                                heading={'Adventure time Adventure time Adventure time Adventure time'} 
-                                image={image} 
-                                downloads={1}
-                                category={'Simulation'} 
-                                uploader={'RazorScythe'} 
-                                ratings={0.5}
-                            />
-                            <GamesCards  
-                                id={''}
-                                heading={'Adventure time Adventure time Adventure time Adventure time'} 
-                                image={image} 
-                                downloads={5}
-                                category={'Simulation'} 
-                                uploader={'RazorScythe'} 
-                                ratings={0.5}
-                            />
-                            <GamesCards  
-                                id={''}
-                                heading={'Adventure time Adventure time Adventure time Adventure time'} 
-                                image={image} 
-                                downloads={5}
-                                category={'Simulation'} 
-                                uploader={'RazorScythe'} 
-                                ratings={0.5}
-                            />
-                            <GamesCards  
-                                id={''}
-                                heading={'Adventure time Adventure time Adventure time Adventure time'} 
-                                image={image} 
-                                downloads={5}
-                                category={'Simulation'} 
-                                uploader={'RazorScythe'} 
-                                ratings={0.5}
-                            />
+                            {
+                                games && games.length > 0 &&
+                                    games.map((item, index) => {
+                                        return (
+                                            <GamesCards  
+                                                key={index}
+                                                id={item._id}
+                                                heading={item.title} 
+                                                image={item.featured_image} 
+                                                downloads={1}
+                                                category={item.tags.length > 0 ? item.tags[0] : 'No Tag Available'} 
+                                                uploader={item.user.username} 
+                                                ratings={item.ratings}
+                                                download_links={item.download_link}
+                                            />
+                                        )
+                                    })
+                            }
                         </div>
                     </div>
                 </div>

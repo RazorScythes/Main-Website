@@ -115,9 +115,9 @@ const Uploads = ({ user }) => {
     }
 
     const deleteTags = (e) => {
-        let arr = [...gameTags]
+        let arr = [...tags]
         arr.splice(e.currentTarget.id, 1)
-        setGameTags([...arr])
+        setTags([...arr])
     }
 
     const checkDriveValidity = (url) => {
@@ -555,6 +555,26 @@ const Uploads = ({ user }) => {
             setGameSubmitted(true)
         }
     }
+
+    const [showGameRecord, setShowGameRecord] = useState(false)
+    const [showVideoRecord, setShowVideoRecord] = useState(false)
+
+    const [searchVideo, setSearchVideo] = useState('')
+
+    const handleVideoSearch = (event) => {
+        const keyword = event.target.value.toLowerCase();
+        setSearchVideo(event.target.value);
+    
+        const filteredData = video.filter((item) =>
+          Object.values(item).some((value) =>
+            String(value).toLowerCase().includes(keyword)
+          )
+        );
+
+        setCurrentPage(1)
+        setData(filteredData);
+    };
+
     return (
         <div className="relative bg-white">   
 
@@ -584,19 +604,19 @@ const Uploads = ({ user }) => {
                 setPreview={setPreview}
             />
 
-            <div className="relative bg-[#F0F4F7]">   
+            <div className="relative">   
                 <div className={`${styles.marginX} ${styles.flexCenter}`}>
                     <div className={`${styles.boxWidthEx}`}>
                         <div className="container mx-auto relative px-0 sm:px-4 pb-16 pt-8">
                             <div className='flex flex-row flex-wrap items-start justify-start mb-4'>
                                 <Link to={`/account/uploads`}><p style={{backgroundColor: (paramIndex || checkParams('video')) && 'rgb(31, 41, 55)', color: (paramIndex || checkParams('video')) && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Video ({video && video.length > 0 ? video.length : 0})</p></Link>
-                                <Link to={`/account/uploads?type=games`}><p style={{backgroundColor: checkParams('games') && 'rgb(31, 41, 55)', color: checkParams('games') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Games ({game && game.length > 0 ? game.length : 0})</p></Link>
+                                <Link to={`/account/uploads?type=games`}><p style={{backgroundColor: checkParams('games') && 'rgb(31, 41, 55)', color: checkParams('games') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Games ({gameData && gameData.length > 0 ? gameData.length : 0})</p></Link>
                                 <Link to={`/account/uploads?type=most_viewed`}><p style={{backgroundColor: checkParams('most_viewed') && 'rgb(31, 41, 55)', color: checkParams('most_viewed') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Most Viewed</p></Link>
                                 <Link to={`/account/uploads?type=popular`}><p style={{backgroundColor: checkParams('popular') && 'rgb(31, 41, 55)', color: checkParams('popular') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Popular</p></Link>
                             </div>
 
                             {
-                                (paramIndex || checkParams('video')) ? (
+                                ((paramIndex || checkParams('video')) && !showVideoRecord) ? (
                                     <div>
                                         <div className="md:flex items-start justify-center mt-8">
                                             <div className="lg:w-1/2 md:w-1/2 w-full">
@@ -605,7 +625,7 @@ const Uploads = ({ user }) => {
                                                     <div className='grid grid-cols-2  gap-5 place-content-start mb-4 md:mt-0 mt-8'>
                                                         <h2 className='text-3xl font-bold text-gray-800'>Edit</h2>
                                                         <div className='flex justify-end'>
-                                                            <button onClick={() => cancelEdit()} className='w-28 disabled:bg-gray-600 disabled:border-gray-600 font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
+                                                            <button onClick={() => cancelEdit()} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] transition-colors duration-300 ease-in-out'>
                                                                 Cancel
                                                             </button>
                                                         </div>
@@ -613,12 +633,17 @@ const Uploads = ({ user }) => {
                                                 }        
                                                 {
                                                     !edit &&
-                                                        <div className='grid grid-cols-2  gap-5 place-content-start mb-4 md:mt-0 mt-8'>
+                                                        <div className='flex justify-end mb-4 md:mt-0 mt-8'>
                                                             <h2 className='text-3xl font-bold text-gray-800'></h2>
                                                             <div className='flex justify-end'>
-                                                                <button onClick={() => setBulkStatus(!bulkStatus)} className='w-28 disabled:bg-gray-600 disabled:border-gray-600 font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
+                                                                <button onClick={() => setBulkStatus(!bulkStatus)} className=' bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out'>
                                                                     { bulkStatus ? 'Single Insert' : 'Bulk Insert' }
                                                                 </button>
+                                                                <div className='flex justify-end ml-2'>
+                                                                    <button title="view record" onClick={() => setShowVideoRecord(!showVideoRecord)} className='w-full bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out'>
+                                                                        <FontAwesomeIcon icon={faEye}/>
+                                                                    </button>
+                                                                </div>
                                                             </div>
                                                         </div>  
                                                 }   
@@ -656,7 +681,7 @@ const Uploads = ({ user }) => {
                                                                         }}
                                                                     />
                                                                     <div className='flex flex-row items-end'>
-                                                                        <button onClick={() => setOpenModal(true)} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Preview</button>
+                                                                        <button onClick={() => setOpenModal(true)} className='float-left w-full bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] transition-colors duration-300 ease-in-out'>Preview</button>
                                                                     </div>
                                                                 </div>
                                                                 { error && <span className='leading-tight text-sm mb-2 mt-1 text-[#FF0000]'>Invalid Google Drive Link</span> }
@@ -720,7 +745,7 @@ const Uploads = ({ user }) => {
                                                                         onChange={(e) => setInput({...input, tags: e.target.value})}
                                                                     />
                                                                     <div className='flex flex-row items-end'>
-                                                                        <button onClick={addTags} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                                        <button onClick={addTags} className='float-left w-full bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] transition-colors duration-300 ease-in-out'>Add</button>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -731,7 +756,7 @@ const Uploads = ({ user }) => {
                                                                 tags && tags.length > 0 &&
                                                                     tags.map((item, index) => {
                                                                         return (
-                                                                            <div key={index} className='flex items-center relative mt-2 bg-gray-100 hover:text-gray-800 text-gray-800 border-2 border-gray-800 px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
+                                                                            <div key={index} className='flex items-center relative mt-2 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF] px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
                                                                                 <p>{item}</p>
                                                                                 <FontAwesomeIcon onClick={deleteTags} id={index} icon={faClose} className="ml-2 cursor-pointer" />
                                                                             </div>
@@ -875,7 +900,7 @@ const Uploads = ({ user }) => {
                                                                 bulkForm.tags && bulkForm.tags.length > 0 &&
                                                                     bulkForm.tags.map((item, index) => {
                                                                         return (
-                                                                            <div key={index} className='flex items-center relative mt-2 bg-gray-100 hover:text-gray-800 text-gray-800 border-2 border-gray-800 px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
+                                                                            <div key={index} className='flex items-center relative mt-2 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF] px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
                                                                                 <p>{item}</p>
                                                                                 <FontAwesomeIcon onClick={deleteBulkTags} id={index} icon={faClose} className="ml-2 cursor-pointer" />
                                                                             </div>
@@ -922,11 +947,52 @@ const Uploads = ({ user }) => {
                                                     </button>
                                                 </div>
                                             </div>  
-                                        }
-                                        
-                                        <div className="overflow-x-auto  mt-8">
-                                            <table className="min-w-full divide-y divide-gray-200 transition-all">
-                                                <thead className='bg-gray-800 text-white'>
+                                        }      
+                                    </div>
+                                )
+                                :
+                                ((paramIndex || checkParams('video')) && showVideoRecord) ? (
+                                    <>
+                                        <div className='flex justify-end'>
+                                            <button title="return" onClick={() => setShowVideoRecord(!showVideoRecord)} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] transition-colors duration-300 ease-in-out'>
+                                                Go back
+                                            </button>
+                                        </div>
+                                        <div className='justify-end mb-2 sm:hidden flex mt-4'>
+                                            <div className="relative w-full max-w-md">
+                                                <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                                    <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" clipRule="evenodd" d="M8.5 1C4.35786 1 1 4.35786 1 8.5C1 12.6421 4.35786 16 8.5 16C10.0983 16 11.5667 15.4201 12.7103 14.4796L16.2929 18.0622C16.6834 18.4527 17.3166 18.4527 17.7071 18.0622C18.0976 17.6717 18.0976 17.0385 17.7071 16.648L14.1245 13.0654C15.04 11.9883 15.5 10.6837 15.5 9.25C15.5 5.41015 12.5899 2.5 8.75 2.5C4.91015 2.5 2 5.41015 2 9.25C2 13.0899 4.91015 16 8.75 16C12.5899 16 15.5 13.0899 15.5 9.25C15.5 7.8163 15.04 6.51169 14.1245 5.4346L10.5419 1.85202C9.60138 1.22149 8.43661 1 7.25 1H8.5ZM8.5 3C11.5376 3 14 5.46243 14 8.5C14 11.5376 11.5376 14 8.5 14C5.46243 14 3 11.5376 3 8.5C3 5.46243 5.46243 3 8.5 3Z"></path>
+                                                    </svg>
+                                                </div>
+                                                <input 
+                                                    className="block w-full py-2 pl-10 pr-3 leading-5 text-[#5A6C7F] placeholder-gray-500 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
+                                                    type="text" 
+                                                    placeholder="Search" 
+                                                    value={searchVideo}
+                                                    onChange={handleVideoSearch}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="overflow-x-auto sm:mt-4">
+                                            <div className='justify-end mb-2 sm:flex hidden'>
+                                                <div className="relative w-full max-w-md">
+                                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                                        <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" clipRule="evenodd" d="M8.5 1C4.35786 1 1 4.35786 1 8.5C1 12.6421 4.35786 16 8.5 16C10.0983 16 11.5667 15.4201 12.7103 14.4796L16.2929 18.0622C16.6834 18.4527 17.3166 18.4527 17.7071 18.0622C18.0976 17.6717 18.0976 17.0385 17.7071 16.648L14.1245 13.0654C15.04 11.9883 15.5 10.6837 15.5 9.25C15.5 5.41015 12.5899 2.5 8.75 2.5C4.91015 2.5 2 5.41015 2 9.25C2 13.0899 4.91015 16 8.75 16C12.5899 16 15.5 13.0899 15.5 9.25C15.5 7.8163 15.04 6.51169 14.1245 5.4346L10.5419 1.85202C9.60138 1.22149 8.43661 1 7.25 1H8.5ZM8.5 3C11.5376 3 14 5.46243 14 8.5C14 11.5376 11.5376 14 8.5 14C5.46243 14 3 11.5376 3 8.5C3 5.46243 5.46243 3 8.5 3Z"></path>
+                                                        </svg>
+                                                    </div>
+                                                    <input 
+                                                        className="block w-full py-2 pl-10 pr-3 leading-5 text-[#5A6C7F] placeholder-gray-500 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
+                                                        type="text" 
+                                                        placeholder="Search" 
+                                                        value={searchVideo}
+                                                        onChange={handleVideoSearch}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <table className="min-w-full divide-y divide-gray-200 transition-all border border-[#CAD5DF]">
+                                                <thead className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF]'>
                                                     <tr>
                                                         <th className="">
                                                             
@@ -957,71 +1023,79 @@ const Uploads = ({ user }) => {
                                                         </th>
                                                     </tr>
                                                 </thead>
-                                                <tbody className="bg-white divide-y divide-gray-200">
-                                                    {
-                                                        data && data.length > 0 &&
-                                                            data.slice(startIndex, endIndex).map((item, index) => {
-                                                                return (
-                                                                    <tr key={index}>
-                                                                        <td className="pl-4">
-                                                                            <div className="text-sm leading-5 text-gray-900">
-                                                                                <input 
-                                                                                    id={`default-checkbox${10+index}`}
-                                                                                    type="checkbox" 
-                                                                                    className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                                                                    checked={deleteId.includes(item._id)}
-                                                                                    onChange={() => addDeleteId(index, item._id)}
+                                                {
+                                                    (data && data.length > 0) &&
+                                                        <tbody className="bg-white divide-y divide-gray-200">
+                                                            {
+                                                                    data.slice(startIndex, endIndex).map((item, index) => {
+                                                                        return (
+                                                                            <tr key={index}>
+                                                                                <td className="pl-4">
+                                                                                    <div className="text-sm leading-5 text-gray-900">
+                                                                                        <input 
+                                                                                            id={`default-checkbox${10+index}`}
+                                                                                            type="checkbox" 
+                                                                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                                                            checked={deleteId.includes(item._id)}
+                                                                                            onChange={() => addDeleteId(index, item._id)}
+                                                                                        />
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td className="sm:w-1/5 w-1/2 px-6 py-4 whitespace-no-wrap break-keep">
+                                                                                    <div className="text-sm leading-5 text-gray-900">{item.title}</div>
+                                                                                </td>
+                                                                                <td className="px-6 py-4 whitespace-no-wrap">
+                                                                                    <div className="text-sm leading-5 text-gray-900">
+                                                                                        <FontAwesomeIcon onClick={() => { setVideoRecord(item.link); setRecordOpenModal(true) }} icon={faVideoCamera} className="px-[10px] py-[7px] bg-gray-700 hover:bg-gray-800 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
+                                                                                    </div>
+                                                                                </td>
+                                                                                <VideoTableData 
+                                                                                    cond={item.privacy}
+                                                                                    api_call={changePrivacyById({
+                                                                                        id: item._id,
+                                                                                        privacy: !item.privacy
+                                                                                    })}
                                                                                 />
-                                                                            </div>
-                                                                        </td>
-                                                                        <td className="sm:w-1/5 w-1/2 px-6 py-4 whitespace-no-wrap break-keep">
-                                                                            <div className="text-sm leading-5 text-gray-900">{item.title}</div>
-                                                                        </td>
-                                                                        <td className="px-6 py-4 whitespace-no-wrap">
-                                                                            <div className="text-sm leading-5 text-gray-900">
-                                                                                <FontAwesomeIcon onClick={() => { setVideoRecord(item.link); setRecordOpenModal(true) }} icon={faVideoCamera} className="px-[10px] py-[7px] bg-gray-700 hover:bg-gray-800 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
-                                                                            </div>
-                                                                        </td>
-                                                                        <VideoTableData 
-                                                                            cond={item.privacy}
-                                                                            api_call={changePrivacyById({
-                                                                                id: item._id,
-                                                                                privacy: !item.privacy
-                                                                            })}
-                                                                        />
-                                                                        <VideoTableData 
-                                                                            cond={item.strict}
-                                                                            api_call={changeStrictById({
-                                                                                id: item._id,
-                                                                                strict: !item.strict
-                                                                            })}
-                                                                        />
-                                                                        <VideoTableData 
-                                                                            cond={item.downloadable}
-                                                                            api_call={changeDownloadById({
-                                                                                id: item._id,
-                                                                                downloadable: !item.downloadable
-                                                                            })}
-                                                                        />
-                                                                        <td className="px-6 py-4 whitespace-no-wrap">
-                                                                            <div className="text-sm leading-5 text-gray-900">{item.owner}</div>
-                                                                        </td>
-                                                                        <td className="px-6 py-4 whitespace-no-wrap">
-                                                                            <div className="text-sm leading-5 text-gray-900 flex items-center capitalize">{item.tags.join(', ')}</div>
-                                                                        </td>
-                                                                        <td className="px-6 py-4 whitespace-no-wrap">
-                                                                            <div className="text-sm leading-5 text-gray-900 flex items-center">
-                                                                                <FontAwesomeIcon onClick={() => editMode(index)} icon={faEdit} className="px-[10px] py-[7px] bg-yellow-600 hover:bg-yellow-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
-                                                                                <FontAwesomeIcon onClick={() => deleteVideo(index)} icon={faTrash} className="px-[10px] py-[7px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all" />
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                )
-                                                            })
-                                                    } 
-                                                {/* Add more rows as needed */}
-                                                </tbody>
+                                                                                <VideoTableData 
+                                                                                    cond={item.strict}
+                                                                                    api_call={changeStrictById({
+                                                                                        id: item._id,
+                                                                                        strict: !item.strict
+                                                                                    })}
+                                                                                />
+                                                                                <VideoTableData 
+                                                                                    cond={item.downloadable}
+                                                                                    api_call={changeDownloadById({
+                                                                                        id: item._id,
+                                                                                        downloadable: !item.downloadable
+                                                                                    })}
+                                                                                />
+                                                                                <td className="px-6 py-4 whitespace-no-wrap">
+                                                                                    <div className="text-sm leading-5 text-gray-900">{item.owner}</div>
+                                                                                </td>
+                                                                                <td className="px-6 py-4 whitespace-no-wrap">
+                                                                                    <div className="text-sm leading-5 text-gray-900 flex items-center capitalize">{item.tags.join(', ')}</div>
+                                                                                </td>
+                                                                                <td className="px-6 py-4 whitespace-no-wrap">
+                                                                                    <div className="text-sm leading-5 text-gray-900 flex items-center">
+                                                                                        <FontAwesomeIcon onClick={() => { editMode(index); setShowVideoRecord(false) }} icon={faEdit} className="px-[10px] py-[7px] bg-yellow-600 hover:bg-yellow-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
+                                                                                        <FontAwesomeIcon onClick={() => deleteVideo(index)} icon={faTrash} className="px-[10px] py-[7px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all" />
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        )
+                                                                    })
+                                                            }
+                                                        </tbody>
+                                                }
                                             </table>
+                                            {
+                                                !(data && data.length > 0) && (
+                                                    <div className='p-4 py-8 w-full border border-[#CAD5DF]'>
+                                                        <h2 className='text-[#5A6C7F] text-center text-lg font-semibold'>No Record Found</h2>
+                                                    </div>
+                                                )
+                                            }
                                             <div className='md:flex justify-end mt-4 hidden'>
                                                 <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(endIndex >= data?.length) ? data?.length : endIndex }/{data?.length}</p>
                                                 <button disabled={currentPage === 1} onClick={() => goToPage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
@@ -1037,16 +1111,21 @@ const Uploads = ({ user }) => {
                                             <button disabled={endIndex >= data?.length} onClick={() => goToPage(currentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
                                             <button disabled={endIndex >= data?.length} onClick={() => goToPage(data?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
                                         </div>
-                                    </div>
+                                    </>
                                 )
                                 :
-                                (paramIndex || checkParams('games')) && (
+                                ((paramIndex || checkParams('games')) && !showGameRecord) ? (
                                     <div>
                                         {
                                             alertInfo.alert && alertInfo.variant && showAlert &&
                                                 <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
                                         }
-                                        <div className="md:flex items-start justify-center mt-8">
+                                        <div className='flex justify-end'>
+                                            <button title="view record" onClick={() => setShowGameRecord(!showGameRecord)} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out'>
+                                                <FontAwesomeIcon icon={faEye}/>
+                                            </button>
+                                        </div>
+                                        <div className="md:flex items-start justify-center mt-4">
                                             <div className="lg:w-1/2 md:w-1/2 w-full">
                                                 <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
                                                     <h2 className='text-2xl font-bold text-gray-800 my-4'>Upload Game</h2>        
@@ -1421,6 +1500,169 @@ const Uploads = ({ user }) => {
                                             }
                                         </button>
                                     </div>
+                                )
+                                :
+                                ((paramIndex || checkParams('games')) && showGameRecord) && (
+                                    <>
+                                        <div className='flex justify-end'>
+                                            <button title="return" onClick={() => setShowGameRecord(!showGameRecord)} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] transition-colors duration-300 ease-in-out'>
+                                                Go back
+                                            </button>
+                                        </div>
+                                        <div className='justify-end mb-2 sm:hidden flex mt-4'>
+                                            <div className="relative w-full max-w-md">
+                                                <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                                    <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" clipRule="evenodd" d="M8.5 1C4.35786 1 1 4.35786 1 8.5C1 12.6421 4.35786 16 8.5 16C10.0983 16 11.5667 15.4201 12.7103 14.4796L16.2929 18.0622C16.6834 18.4527 17.3166 18.4527 17.7071 18.0622C18.0976 17.6717 18.0976 17.0385 17.7071 16.648L14.1245 13.0654C15.04 11.9883 15.5 10.6837 15.5 9.25C15.5 5.41015 12.5899 2.5 8.75 2.5C4.91015 2.5 2 5.41015 2 9.25C2 13.0899 4.91015 16 8.75 16C12.5899 16 15.5 13.0899 15.5 9.25C15.5 7.8163 15.04 6.51169 14.1245 5.4346L10.5419 1.85202C9.60138 1.22149 8.43661 1 7.25 1H8.5ZM8.5 3C11.5376 3 14 5.46243 14 8.5C14 11.5376 11.5376 14 8.5 14C5.46243 14 3 11.5376 3 8.5C3 5.46243 5.46243 3 8.5 3Z"></path>
+                                                    </svg>
+                                                </div>
+                                                <input 
+                                                    className="block w-full py-2 pl-10 pr-3 leading-5 text-[#5A6C7F] placeholder-gray-500 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
+                                                    type="text" 
+                                                    placeholder="Search" 
+                                                    value={searchVideo}
+                                                    onChange={handleVideoSearch}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="overflow-x-auto sm:mt-4">
+                                            <div className='justify-end mb-2 sm:flex hidden'>
+                                                <div className="relative w-full max-w-md">
+                                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                                        <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" clipRule="evenodd" d="M8.5 1C4.35786 1 1 4.35786 1 8.5C1 12.6421 4.35786 16 8.5 16C10.0983 16 11.5667 15.4201 12.7103 14.4796L16.2929 18.0622C16.6834 18.4527 17.3166 18.4527 17.7071 18.0622C18.0976 17.6717 18.0976 17.0385 17.7071 16.648L14.1245 13.0654C15.04 11.9883 15.5 10.6837 15.5 9.25C15.5 5.41015 12.5899 2.5 8.75 2.5C4.91015 2.5 2 5.41015 2 9.25C2 13.0899 4.91015 16 8.75 16C12.5899 16 15.5 13.0899 15.5 9.25C15.5 7.8163 15.04 6.51169 14.1245 5.4346L10.5419 1.85202C9.60138 1.22149 8.43661 1 7.25 1H8.5ZM8.5 3C11.5376 3 14 5.46243 14 8.5C14 11.5376 11.5376 14 8.5 14C5.46243 14 3 11.5376 3 8.5C3 5.46243 5.46243 3 8.5 3Z"></path>
+                                                        </svg>
+                                                    </div>
+                                                    <input 
+                                                        className="block w-full py-2 pl-10 pr-3 leading-5 text-[#5A6C7F] placeholder-gray-500 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
+                                                        type="text" 
+                                                        placeholder="Search" 
+                                                        value={searchVideo}
+                                                        onChange={handleVideoSearch}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <table className="min-w-full divide-y divide-gray-200 transition-all border border-[#CAD5DF]">
+                                                <thead className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF]'>
+                                                    <tr>
+                                                        <th className="">
+                                                            
+                                                        </th>
+                                                        <th className="px-6 py-3 sm:w-1/5 w-1/2 text-left text-xs leading-4 font-medium uppercase tracking-wider">
+                                                            Title
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
+                                                            Video
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
+                                                            Private
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
+                                                            Strict
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
+                                                            Download
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
+                                                            Artist
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
+                                                            Tags
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
+                                                            Action
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                {
+                                                    (data && data.length > 0) &&
+                                                        <tbody className="bg-white divide-y divide-gray-200">
+                                                            {
+                                                                    data.slice(startIndex, endIndex).map((item, index) => {
+                                                                        return (
+                                                                            <tr key={index}>
+                                                                                <td className="pl-4">
+                                                                                    <div className="text-sm leading-5 text-gray-900">
+                                                                                        <input 
+                                                                                            id={`default-checkbox${10+index}`}
+                                                                                            type="checkbox" 
+                                                                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                                                            checked={deleteId.includes(item._id)}
+                                                                                            onChange={() => addDeleteId(index, item._id)}
+                                                                                        />
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td className="sm:w-1/5 w-1/2 px-6 py-4 whitespace-no-wrap break-keep">
+                                                                                    <div className="text-sm leading-5 text-gray-900">{item.title}</div>
+                                                                                </td>
+                                                                                <td className="px-6 py-4 whitespace-no-wrap">
+                                                                                    <div className="text-sm leading-5 text-gray-900">
+                                                                                        <FontAwesomeIcon onClick={() => { setVideoRecord(item.link); setRecordOpenModal(true) }} icon={faVideoCamera} className="px-[10px] py-[7px] bg-gray-700 hover:bg-gray-800 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
+                                                                                    </div>
+                                                                                </td>
+                                                                                <VideoTableData 
+                                                                                    cond={item.privacy}
+                                                                                    api_call={changePrivacyById({
+                                                                                        id: item._id,
+                                                                                        privacy: !item.privacy
+                                                                                    })}
+                                                                                />
+                                                                                <VideoTableData 
+                                                                                    cond={item.strict}
+                                                                                    api_call={changeStrictById({
+                                                                                        id: item._id,
+                                                                                        strict: !item.strict
+                                                                                    })}
+                                                                                />
+                                                                                <VideoTableData 
+                                                                                    cond={item.downloadable}
+                                                                                    api_call={changeDownloadById({
+                                                                                        id: item._id,
+                                                                                        downloadable: !item.downloadable
+                                                                                    })}
+                                                                                />
+                                                                                <td className="px-6 py-4 whitespace-no-wrap">
+                                                                                    <div className="text-sm leading-5 text-gray-900">{item.owner}</div>
+                                                                                </td>
+                                                                                <td className="px-6 py-4 whitespace-no-wrap">
+                                                                                    <div className="text-sm leading-5 text-gray-900 flex items-center capitalize">{item.tags.join(', ')}</div>
+                                                                                </td>
+                                                                                <td className="px-6 py-4 whitespace-no-wrap">
+                                                                                    <div className="text-sm leading-5 text-gray-900 flex items-center">
+                                                                                        <FontAwesomeIcon onClick={() => { editMode(index); setShowVideoRecord(false) }} icon={faEdit} className="px-[10px] py-[7px] bg-yellow-600 hover:bg-yellow-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
+                                                                                        <FontAwesomeIcon onClick={() => deleteVideo(index)} icon={faTrash} className="px-[10px] py-[7px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all" />
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        )
+                                                                    })
+                                                            }
+                                                        </tbody>
+                                                }
+                                            </table>
+                                            {
+                                                !(data && data.length > 0) && (
+                                                    <div className='p-4 py-8 w-full border border-[#CAD5DF]'>
+                                                        <h2 className='text-[#5A6C7F] text-center text-lg font-semibold'>No Record Found</h2>
+                                                    </div>
+                                                )
+                                            }
+                                            <div className='md:flex justify-end mt-4 hidden'>
+                                                <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(endIndex >= data?.length) ? data?.length : endIndex }/{data?.length}</p>
+                                                <button disabled={currentPage === 1} onClick={() => goToPage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                                <button disabled={currentPage === 1} onClick={() => goToPage(currentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                                <button disabled={endIndex >= data?.length} onClick={() => goToPage(currentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                                <button disabled={endIndex >= data?.length} onClick={() => goToPage(data?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
+                                            </div>
+                                        </div>
+                                        <div className='md:hidden justify-end mt-4 flex'>
+                                            <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(endIndex >= data?.length) ? data?.length : endIndex }/{data?.length}</p>
+                                            <button disabled={currentPage === 1} onClick={() => goToPage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                            <button disabled={currentPage === 1} onClick={() => goToPage(currentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                            <button disabled={endIndex >= data?.length} onClick={() => goToPage(currentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                            <button disabled={endIndex >= data?.length} onClick={() => goToPage(data?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
+                                        </div>
+                                    </>
                                 )
                             }
                         </div>

@@ -72,9 +72,10 @@ const Games = ({ user }) => {
                                                 heading={item.title} 
                                                 image={item.featured_image} 
                                                 downloads={1}
-                                                category={item.tags.length > 0 ? item.tags[0] : 'No Categories'} 
+                                                category={item.tags.length > 0 ? item.tags[0] : 'No Tag Available'} 
                                                 uploader={item.user.username} 
                                                 ratings={item.ratings}
+                                                download_links={item.download_link}
                                             />
                                         )
                                     })

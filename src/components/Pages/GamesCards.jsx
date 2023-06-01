@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { addRatings } from "../../actions/game";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faDownload } from "@fortawesome/free-solid-svg-icons";
+import { faDownload, faLinkSlash } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
 
 const divideAndScale = (ratings) => {
@@ -21,18 +21,37 @@ const divideAndScale = (ratings) => {
     // return Number(scaledResult.toFixed(1));
 }
 
-const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings }) => {
+const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings, download_links = [] }) => {
 
     const dispatch = useDispatch()
 
     const [rating, setRating] = useState(0);
     const [fixedRating, setFixedRating] = useState(0)
     const [ratingNumber, setRatingNumber] = useState(0)
+    const [downloadable, setDownloadable] = useState(1)
+    const [downloadLink, setDownloadLink] = useState('')
 
     useEffect(() => {
         setFixedRating(ratings ? divideAndScale(ratings) : 0)
         setRatingNumber(ratings ? divideAndScale(ratings) : 0)
     }, [ratings])
+
+    useEffect(() => {
+        if(download_links.length > 0) {
+            var default_link = ''
+            var find_link = download_links.some((link) => {
+                if(link.links.length > 0) {
+                    default_link = link.links[0]
+                    return true
+                }
+            })
+
+            if(find_link) {
+                setDownloadable(false)
+                setDownloadLink(default_link)
+            }
+        }
+    }, [download_links])
 
     const handleMouseEnter = (index, isHalf) => {
         setRating(index + (isHalf ? 0.5 : 1));
@@ -92,14 +111,22 @@ const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings
                     <p className='flex items-center text-sm'>{downloads} Download{downloads > 1 && 's'}</p>
                 </div>
                 <div className='grid grid-cols-3 gap-2 mt-2'>
-                    <Link to="/games/adventure_time" className='col-span-2 '>
+                    <Link to={`/games/${id}`} className='col-span-2 '>
                         <button className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
                             Preview
                         </button>
                     </Link>
-                    <button className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
-                        <FontAwesomeIcon icon={faDownload} className="text-white"/>
-                    </button>
+                    {
+                        downloadable ?
+                            <button disabled={true} className="disabled:bg-gray-500 disabled:cursor-no-drop sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
+                                <FontAwesomeIcon icon={faLinkSlash} className="text-white"/>
+                            </button>
+                        :
+                            <button className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
+                                <a href={downloadLink ? downloadLink : "#"} target='_blank'><FontAwesomeIcon icon={faDownload} className="text-white"/></a>
+                            </button>
+                    }
+                    
                 </div>
             </div>
         </div>

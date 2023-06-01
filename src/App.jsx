@@ -46,7 +46,7 @@ const App = () => {
           <Route path='/' element={<><Navbar path={URI_PATH_HOME} /> <Outlet/></>}>
               <Route index element={<Home path={URI_PATH_HOME}/>} />
               <Route path="games" element={<><Games user={user}/> <Footer /></>} />
-              <Route path="games/:games" element={<><GamesSingle user={user}/> <Footer /></>} />
+              <Route path="games/:id" element={<><GamesSingle user={user}/> <Footer /></>} />
               <Route path="forum" element={<><Forum /> <Footer /></>} />
               <Route path="store" element={<><Store /> <Footer /></>} />
               <Route path="videos" element={<><Videos user={user} /> <Footer /></>} />
