@@ -9,9 +9,9 @@ import axios from 'axios';
 import VideoModal from '../VideoModal';
 import Alert from '../Alert';
 import VideoTableData from './sections/VideoTableData';
+import GameViewModal from './sections/GameViewModal';
 import ImageModal from '../ImageModal';
 import styles from '../../style'
-import { game } from '../../assets';
 
 const Uploads = ({ user }) => {
     const dispatch = useDispatch()
@@ -28,6 +28,12 @@ const Uploads = ({ user }) => {
     // Calculate the start and end indices for the current page
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
+
+    const [gameCurrentPage, setGameCurrentPage] = useState(1);
+
+    // Calculate the start and end indices for the current page
+    const gameStartIndex = (gameCurrentPage - 1) * itemsPerPage;
+    const gameEndIndex = gameStartIndex + itemsPerPage;
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [openModal, setOpenModal] = useState(false)
@@ -103,6 +109,10 @@ const Uploads = ({ user }) => {
 
     const goToPage = (page) => {
         setCurrentPage(page);
+    };
+
+    const goToGamePage = (page) => {
+        setGameCurrentPage(page);
     };
 
     const addTags = () => {
@@ -381,7 +391,7 @@ const Uploads = ({ user }) => {
     }
 
     const [deleteId, setDeleteId] = useState([])
-
+    
     const addDeleteId = (index, id) => {
         const checkId = deleteId.includes(id)
 
@@ -404,6 +414,9 @@ const Uploads = ({ user }) => {
         }
     }
 
+    const [gameModal, setGameModal] = useState(false)
+    const [gameDataModal, setGameDataModal] = useState(null)
+    const [gameDeleteId, setGameDeleteId] = useState([])
     const [openImageModal, setOpenImageModal] = useState(false)
     const [displayImage, setDisplayImage] = useState('')
     const [preview, setPreview] = useState(false)
@@ -431,6 +444,9 @@ const Uploads = ({ user }) => {
         password: ''
     })
 
+    const currentDate = new Date();
+    const formattedDate = currentDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'Asia/Manila' });
+
     useEffect(() => {
         if(game && game.length > 0){
             setGameData(game)
@@ -447,7 +463,7 @@ const Uploads = ({ user }) => {
                 censorship: 'Uncensored',
                 language: 'English',
                 developer: '',
-                upload_date: Date.now(),
+                upload_date: formattedDate,
                 platform: 'Desktop'
             },
             leave_uploader_message: '',
@@ -574,6 +590,44 @@ const Uploads = ({ user }) => {
         setCurrentPage(1)
         setData(filteredData);
     };
+    
+    const deleteMultipleGames = () => {
+        if(confirm(`Are you sure you want to delete ${deleteId.length} video${deleteId.length > 1 ? 's' : ''}?`)){
+            // dispatch(bulkRemoveVideo({ 
+            //     id: user.result?._id,
+            //     videos_id: deleteId
+            // }))
+            setGameDeleteId([])
+        }
+    }
+
+    const addGameDeleteId = (index, id) => {
+        const checkId = gameDeleteId.includes(id)
+
+        if(checkId) {
+            var arr = gameDeleteId.filter(item => item !== id);
+            setGameDeleteId([...arr])
+        }
+        else {
+            setGameDeleteId(deleteId.concat(id))
+        }
+    }
+
+    const deleteGame = (index) => {
+        if(confirm(`Are you sure you want to delete video ${gameData[index].title}?`)) {
+            // dispatch(removeVideo({ 
+            //     id: user.result?._id,
+            //     video_id: video[index]._id 
+            // }))
+        }
+    }
+
+    const openGameDataModal = (index, id) => {
+        const gameById = gameData[index]
+        console.log(gameById)
+        setGameDataModal(gameById)
+        setGameModal(true)
+    }
 
     return (
         <div className="relative bg-white">   
@@ -602,6 +656,12 @@ const Uploads = ({ user }) => {
                 image={displayImage}
                 preview={preview}
                 setPreview={setPreview}
+            />
+
+            <GameViewModal
+                gameModal={gameModal}
+                setGameModal={setGameModal}
+                data={gameDataModal}
             />
 
             <div className="relative">   
@@ -1543,16 +1603,16 @@ const Uploads = ({ user }) => {
                                                 </div>
                                             </div>
                                             <table className="min-w-full divide-y divide-gray-200 transition-all border border-[#CAD5DF]">
-                                                <thead className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF]'>
+                                                <thead className='bg-[#EAF0F7] text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF]'>
                                                     <tr>
                                                         <th className="">
                                                             
                                                         </th>
                                                         <th className="px-6 py-3 sm:w-1/5 w-1/2 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                            Title
+                                                            Game Title
                                                         </th>
                                                         <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                            Video
+                                                            Developer
                                                         </th>
                                                         <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
                                                             Private
@@ -1561,13 +1621,10 @@ const Uploads = ({ user }) => {
                                                             Strict
                                                         </th>
                                                         <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                            Download
+                                                            Version
                                                         </th>
                                                         <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                            Artist
-                                                        </th>
-                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                            Tags
+                                                            Platform
                                                         </th>
                                                         <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
                                                             Action
@@ -1575,10 +1632,10 @@ const Uploads = ({ user }) => {
                                                     </tr>
                                                 </thead>
                                                 {
-                                                    (data && data.length > 0) &&
+                                                    (gameData && gameData.length > 0) &&
                                                         <tbody className="bg-white divide-y divide-gray-200">
                                                             {
-                                                                    data.slice(startIndex, endIndex).map((item, index) => {
+                                                                    gameData.slice(startIndex, endIndex).map((item, index) => {
                                                                         return (
                                                                             <tr key={index}>
                                                                                 <td className="pl-4">
@@ -1587,8 +1644,8 @@ const Uploads = ({ user }) => {
                                                                                             id={`default-checkbox${10+index}`}
                                                                                             type="checkbox" 
                                                                                             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                                                                            checked={deleteId.includes(item._id)}
-                                                                                            onChange={() => addDeleteId(index, item._id)}
+                                                                                            checked={gameDeleteId.includes(item._id)}
+                                                                                            onChange={() => addGameDeleteId(index, item._id)}
                                                                                         />
                                                                                     </div>
                                                                                 </td>
@@ -1597,7 +1654,7 @@ const Uploads = ({ user }) => {
                                                                                 </td>
                                                                                 <td className="px-6 py-4 whitespace-no-wrap">
                                                                                     <div className="text-sm leading-5 text-gray-900">
-                                                                                        <FontAwesomeIcon onClick={() => { setVideoRecord(item.link); setRecordOpenModal(true) }} icon={faVideoCamera} className="px-[10px] py-[7px] bg-gray-700 hover:bg-gray-800 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
+                                                                                        {item.details.developer}
                                                                                     </div>
                                                                                 </td>
                                                                                 <VideoTableData 
@@ -1614,23 +1671,17 @@ const Uploads = ({ user }) => {
                                                                                         strict: !item.strict
                                                                                     })}
                                                                                 />
-                                                                                <VideoTableData 
-                                                                                    cond={item.downloadable}
-                                                                                    api_call={changeDownloadById({
-                                                                                        id: item._id,
-                                                                                        downloadable: !item.downloadable
-                                                                                    })}
-                                                                                />
                                                                                 <td className="px-6 py-4 whitespace-no-wrap">
-                                                                                    <div className="text-sm leading-5 text-gray-900">{item.owner}</div>
+                                                                                    <div className="text-sm leading-5 text-gray-900">{item.details.latest_version}</div>
                                                                                 </td>
                                                                                 <td className="px-6 py-4 whitespace-no-wrap">
-                                                                                    <div className="text-sm leading-5 text-gray-900 flex items-center capitalize">{item.tags.join(', ')}</div>
+                                                                                    <div className="text-sm leading-5 text-gray-900">{item.details.platform}</div>
                                                                                 </td>
                                                                                 <td className="px-6 py-4 whitespace-no-wrap">
                                                                                     <div className="text-sm leading-5 text-gray-900 flex items-center">
-                                                                                        <FontAwesomeIcon onClick={() => { editMode(index); setShowVideoRecord(false) }} icon={faEdit} className="px-[10px] py-[7px] bg-yellow-600 hover:bg-yellow-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
-                                                                                        <FontAwesomeIcon onClick={() => deleteVideo(index)} icon={faTrash} className="px-[10px] py-[7px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all" />
+                                                                                        <FontAwesomeIcon title="view" onClick={() => { openGameDataModal(index, item._id) }} icon={faEye} className="px-[10px] py-[7px] bg-green-600 hover:bg-green-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
+                                                                                        <FontAwesomeIcon title="edit" onClick={() => { editMode(index); setShowVideoRecord(false) }} icon={faEdit} className="px-[10px] py-[7px] bg-yellow-600 hover:bg-yellow-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
+                                                                                        <FontAwesomeIcon title="delete" onClick={() => deleteGame(index)} icon={faTrash} className="px-[10px] py-[7px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all" />
                                                                                     </div>
                                                                                 </td>
                                                                             </tr>
@@ -1641,26 +1692,26 @@ const Uploads = ({ user }) => {
                                                 }
                                             </table>
                                             {
-                                                !(data && data.length > 0) && (
+                                                !(gameData && gameData.length > 0) && (
                                                     <div className='p-4 py-8 w-full border border-[#CAD5DF]'>
                                                         <h2 className='text-[#5A6C7F] text-center text-lg font-semibold'>No Record Found</h2>
                                                     </div>
                                                 )
                                             }
                                             <div className='md:flex justify-end mt-4 hidden'>
-                                                <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(endIndex >= data?.length) ? data?.length : endIndex }/{data?.length}</p>
-                                                <button disabled={currentPage === 1} onClick={() => goToPage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                                <button disabled={currentPage === 1} onClick={() => goToPage(currentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                                <button disabled={endIndex >= data?.length} onClick={() => goToPage(currentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                                <button disabled={endIndex >= data?.length} onClick={() => goToPage(data?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
+                                                <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(gameEndIndex >= gameData?.length) ? gameData?.length : endIndex }/{gameData?.length}</p>
+                                                <button disabled={currentPage === 1} onClick={() => goToGamePage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                                <button disabled={currentPage === 1} onClick={() => goToGamePage(gameCurrentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                                <button disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameCurrentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                                <button disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameData?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
                                             </div>
                                         </div>
                                         <div className='md:hidden justify-end mt-4 flex'>
-                                            <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(endIndex >= data?.length) ? data?.length : endIndex }/{data?.length}</p>
-                                            <button disabled={currentPage === 1} onClick={() => goToPage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                            <button disabled={currentPage === 1} onClick={() => goToPage(currentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                            <button disabled={endIndex >= data?.length} onClick={() => goToPage(currentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                            <button disabled={endIndex >= data?.length} onClick={() => goToPage(data?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
+                                            <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(gameEndIndex >= gameData?.length) ? gameData?.length : endIndex }/{gameData?.length}</p>
+                                            <button disabled={currentPage === 1} onClick={() => goToGamePage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                            <button disabled={currentPage === 1} onClick={() => goToGamePage(gameCurrentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                            <button disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameCurrentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                            <button disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameData?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
                                         </div>
                                     </>
                                 )
