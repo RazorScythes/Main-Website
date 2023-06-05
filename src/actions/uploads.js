@@ -74,6 +74,22 @@ export const editVideo = createAsyncThunk('uploads/editVideo', async (form, thun
     }
 })
 
+export const editGame = createAsyncThunk('uploads/editGame', async (form, thunkAPI) => {
+    try {
+        const response = await api.editGame(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const removeVideo = createAsyncThunk('uploads/removeVideo', async (form, thunkAPI) => {
     try {
         const response = await api.removeVideo(form)
@@ -138,6 +154,38 @@ export const changeStrictById = createAsyncThunk('uploads/changeStrictById', asy
     }
 })
 
+export const changeGamePrivacyById = createAsyncThunk('uploads/changeGamePrivacyById', async (form, thunkAPI) => {
+    try {
+        const response = await api.changeGamePrivacyById(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const changeGameStrictById = createAsyncThunk('uploads/changeGameStrictById', async (form, thunkAPI) => {
+    try {
+        const response = await api.changeGameStrictById(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const changeDownloadById = createAsyncThunk('uploads/changeDownloadById', async (form, thunkAPI) => {
     try {
         const response = await api.changeDownloadById(form)
@@ -154,9 +202,41 @@ export const changeDownloadById = createAsyncThunk('uploads/changeDownloadById',
     }
 })
 
-export const uploadGame= createAsyncThunk('uploads/uploadGame', async (form, thunkAPI) => {
+export const uploadGame = createAsyncThunk('uploads/uploadGame', async (form, thunkAPI) => {
     try {
         const response = await api.uploadGame(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const removeGame = createAsyncThunk('uploads/removeGame', async (form, thunkAPI) => {
+    try {
+        const response = await api.removeGame(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const bulkRemoveGame = createAsyncThunk('uploads/bulkRemoveGame', async (form, thunkAPI) => {
+    try {
+        const response = await api.bulkRemoveGame(form)
         return response
     }
     catch (err) {
@@ -207,18 +287,48 @@ export const uploadsSlice = createSlice({
             state.alert = action.payload.message
             state.variant = action.payload.variant
         }),
+        builder.addCase(changeGamePrivacyById.fulfilled, (state, action) => {
+            // Filtering the objects and replacing the matching ones
+            const filteredObjects = state.game.map(obj => {
+                if (obj._id === action.payload.data.result._id) {return action.payload.data.result;}
+                return obj;
+            });
+
+            state.game = filteredObjects
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(changeGamePrivacyById.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
         builder.addCase(changeStrictById.fulfilled, (state, action) => {
             // Filtering the objects and replacing the matching ones
             const filteredObjects = state.video.map(obj => {
                 if (obj._id === action.payload.data.result._id) {return action.payload.data.result;}
                 return obj;
             });
-
+            console.log(filteredObjects)
             state.video = filteredObjects
             state.error = ''
             state.isLoading = false
         }),
         builder.addCase(changeStrictById.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(changeGameStrictById.fulfilled, (state, action) => {
+            // Filtering the objects and replacing the matching ones
+            const filteredObjects = state.game.map(obj => {
+                if (obj._id === action.payload.data.result._id) {return action.payload.data.result;}
+                return obj;
+            });
+            console.log(filteredObjects)
+            state.game = filteredObjects
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(changeGameStrictById.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         }),
@@ -270,6 +380,17 @@ export const uploadsSlice = createSlice({
             state.alert = action.payload.message
             state.variant = action.payload.variant
         }),
+        builder.addCase(editGame.fulfilled, (state, action) => {
+            state.game = action.payload.data.result
+            state.alert = action.payload.data.message
+            state.variant = action.payload.data.variant
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(editGame.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
         builder.addCase(removeVideo.fulfilled, (state, action) => {
             state.video = action.payload.data.result
             state.alert = action.payload.data.message
@@ -289,6 +410,28 @@ export const uploadsSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(bulkRemoveVideo.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(removeGame.fulfilled, (state, action) => {
+            state.game = action.payload.data.result
+            state.alert = action.payload.data.message
+            state.variant = action.payload.data.variant
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(removeGame.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(bulkRemoveGame.fulfilled, (state, action) => {
+            state.game = action.payload.data.result
+            state.alert = action.payload.data.message
+            state.variant = action.payload.data.variant
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(bulkRemoveGame.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         })

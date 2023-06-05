@@ -75,10 +75,15 @@ export const getUserGame                                = (formData) => User_API
 export const uploadVideo                                = (formData) => User_API.post('/uploads/uploadVideo', formData)
 export const uploadGame                                 = (formData) => User_API.post('/uploads/uploadGame', formData)
 export const editVideo                                  = (formData) => User_API.post('/uploads/editVideo', formData)
+export const editGame                                   = (formData) => User_API.post('/uploads/editGame', formData)
 export const removeVideo                                = (formData) => User_API.post('/uploads/removeVideo', formData)
 export const bulkRemoveVideo                            = (formData) => User_API.post('/uploads/bulkRemoveVideo', formData)
+export const removeGame                                 = (formData) => User_API.post('/uploads/removeGame', formData)
+export const bulkRemoveGame                             = (formData) => User_API.post('/uploads/bulkRemoveGame', formData)
 export const changePrivacyById                          = (formData) => User_API.post('/uploads/changePrivacyById', formData)
 export const changeStrictById                           = (formData) => User_API.post('/uploads/changeStrictById', formData)
+export const changeGamePrivacyById                      = (formData) => User_API.post('/uploads/changeGamePrivacyById', formData)
+export const changeGameStrictById                       = (formData) => User_API.post('/uploads/changeGameStrictById', formData)
 export const changeDownloadById                         = (formData) => User_API.post('/uploads/changeDownloadById', formData)
 
 /*
@@ -106,5 +111,8 @@ export const addToWatchLater                            = (formData) => User_API
     Game
 */
 
+export const getGameByID                                = (formData) => User_API.post('/game/getGameByID', formData)
 export const getGames                                   = (formData) => User_API.post('/game/getGames', formData)
+export const getRelatedGames                            = (formData) => User_API.post('/game/getRelatedGames', formData)
 export const addRatings                                 = (formData) => User_API.post('/game/addRatings', formData, options)
+export const countTags                                  = (formData) => User_API.post('/game/countTags', formData, options)

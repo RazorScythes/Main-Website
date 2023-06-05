@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { addRatings } from "../../actions/game";
+import { addRatings, addRatingsRelated } from "../../actions/game";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload, faLinkSlash } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
@@ -21,7 +21,7 @@ const divideAndScale = (ratings) => {
     // return Number(scaledResult.toFixed(1));
 }
 
-const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings, download_links = [] }) => {
+const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings, download_links = [], relatedGames = false }) => {
 
     const dispatch = useDispatch()
 
@@ -65,10 +65,18 @@ const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings
         const newRating = index + (isHalf ? 0.5 : 1);
         setFixedRating(newRating === fixedRating ? 0 : newRating);
         // You can add your logic here to handle the rating value
-        dispatch(addRatings({
-            gameId: id,
-            ratings: newRating === fixedRating ? 0 : newRating
-        }))
+        if(relatedGames) {
+            dispatch(addRatingsRelated({
+                gameId: id,
+                ratings: newRating === fixedRating ? 0 : newRating
+            }))
+        }
+        else {
+            dispatch(addRatings({
+                gameId: id,
+                ratings: newRating === fixedRating ? 0 : newRating
+            }))
+        }
     };
 
     const TextWithEllipsis = ({ text, limit = 25 }) => {
@@ -118,13 +126,15 @@ const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings
                     </Link>
                     {
                         downloadable ?
-                            <button disabled={true} className="disabled:bg-gray-500 disabled:cursor-no-drop sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
+                            <button title="No Download Link" disabled={true} className="disabled:bg-gray-500 disabled:cursor-no-drop sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
                                 <FontAwesomeIcon icon={faLinkSlash} className="text-white"/>
                             </button>
                         :
-                            <button className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
-                                <a href={downloadLink ? downloadLink : "#"} target='_blank'><FontAwesomeIcon icon={faDownload} className="text-white"/></a>
-                            </button>
+                            <a href={downloadLink ? downloadLink : "#"} target='_blank'>
+                                <button className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
+                                    <FontAwesomeIcon icon={faDownload} className="text-white"/>
+                                </button>
+                            </a>
                     }
                     
                 </div>

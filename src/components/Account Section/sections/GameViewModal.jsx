@@ -58,7 +58,7 @@ const GameViewModal = ({ gameModal, setGameModal, data }) => {
                                 <div className="p-4 pb-8">
                                     <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                                         <img
-                                            // src={data.featured_image}
+                                            src={data.featured_image}
                                             alt="Featured Image"
                                             className='object-cover w-full border-gray-600 border-2 rounded-md'
                                         />
@@ -113,7 +113,7 @@ const GameViewModal = ({ gameModal, setGameModal, data }) => {
                                                     data.tags && data.tags.length > 0 &&
                                                         data.tags.map((item, index) => {
                                                             return (
-                                                                <div key={index} className='flex items-center relative bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF] px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
+                                                                <div key={index} className='mt-1 flex items-center relative bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF] px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
                                                                     <p>{item}</p>  
                                                                 </div>  
                                                             )
@@ -156,30 +156,34 @@ const GameViewModal = ({ gameModal, setGameModal, data }) => {
                                         data.download_link && data.download_link.length > 0 &&
                                             data.download_link.map((item, index) => {
                                                 return (
-                                                    <div key={index} className='flex justify-between py-1'>
-                                                        <p className='whitespace-pre-wrap font-semibold text-xl mt-4 mb-2'>{item.storage_name} ({item.links.length > 0 ? item.links.length : 0})</p>
+                                                    <div key={index}>
                                                         {
-                                                            item.links && item.links.length > 0 &&
-                                                                item.links.map((link, i) => {
-                                                                    return (
-                                                                        <div className='flex justify-between py-1'>
-                                                                            <p className='whitespace-pre-wrap font-semibold break-all'> - {link}</p>
-                                                                            <a key={i} href={link} target="_blank" className='cursor-pointer sm:block hidden'><FontAwesomeIcon icon={faArrowRight}/></a>
-                                                                        </div>
-                                                                    )
-                                                                })
+                                                            item.links.length > 0 &&
+                                                            <>
+                                                                <p className='whitespace-pre-wrap font-semibold text-xl mt-4 mb-2'>{item.storage_name} ({item.links.length > 0 ? item.links.length : 0})</p>
+                                                                {
+                                                                    item.links && item.links.length > 0 &&
+                                                                        item.links.map((link, i) => {
+                                                                            return (
+                                                                                <div className='flex justify-between py-1'>
+                                                                                    <p className='whitespace-pre-wrap font-semibold break-all w-4/5'> - {link}</p>
+                                                                                    <a key={i} href={link} target="_blank" className='cursor-pointer sm:block hidden'><FontAwesomeIcon icon={faArrowRight}/></a>
+                                                                                </div>
+                                                                            )
+                                                                        })
+                                                                }
+                                                            </>
                                                         }
-                                                        
                                                     </div>
                                                 )
                                         })
                                     }
                                     {
                                         !(data.download_link && data.download_link.length > 0) &&
-                                        <p className='mt-1 whitespace-pre-wrap'>No download to show</p>
+                                        <p className='mt-1 whitespace-pre-wrap'>No download link to show</p>
                                     }
                                     
-                                    <p className='whitespace-pre-wrap font-bold text-2xl mt-4 mb-2'>Message</p>
+                                    <p className='whitespace-pre-wrap font-bold text-2xl mt-4 mb-2'>Leave Message</p>
                                     <p className='whitespace-pre-wrap mb-2'>{data.leave_uploader_message}</p>
                                     
                                     {

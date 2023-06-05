@@ -272,8 +272,8 @@ const VideosSingle = ({ user }) => {
                                     <div className={`${styles.marginX} ${styles.flexCenter}`}>
                                         <div className={`${styles.boxWidthEx}`}>
                                             <div className="flex flex-col justify-center items-center">
-                                                <h1 className="text-white text-4xl font-bold mb-4">Restricted Video</h1>
-                                                <p className="text-white text-lg mb-8">You don't have permission to view this video.</p>
+                                                <h1 className="text-white text-4xl font-bold mb-4 text-center">Restricted Video</h1>
+                                                <p className="text-white text-lg mb-8 text-center">You don't have permission to view this video.</p>
                                                 <a href="/videos" className="text-white underline hover:text-gray-200">Go back to videos page</a>
                                             </div>
                                         </div>
@@ -288,8 +288,8 @@ const VideosSingle = ({ user }) => {
                                     <div className={`${styles.marginX} ${styles.flexCenter}`}>
                                         <div className={`${styles.boxWidthEx}`}>
                                             <div className="flex flex-col justify-center items-center">
-                                                <h1 className="text-white text-4xl font-bold mb-4">Video is Private</h1>
-                                                <p className="text-white text-lg mb-8">Contact the owner to provide information about this.</p>
+                                                <h1 className="text-white text-4xl font-bold mb-4 text-center">Video is Private</h1>
+                                                <p className="text-white text-lg mb-8 text-center">Contact the owner to provide information about this.</p>
                                                 <a href="/videos" className="text-white underline hover:text-gray-200">Go back to videos page</a>
                                             </div>
                                         </div>
@@ -304,8 +304,8 @@ const VideosSingle = ({ user }) => {
                                     <div className={`${styles.marginX} ${styles.flexCenter}`}>
                                         <div className={`${styles.boxWidthEx}`}>
                                             <div className="flex flex-col justify-center items-center">
-                                                <h1 className="text-white text-4xl font-bold mb-4">Video not Found</h1>
-                                                <p className="text-white text-lg mb-8">The video you're looking for doesn't exist.</p>
+                                                <h1 className="text-white text-4xl font-bold mb-4 text-center">Video not Found</h1>
+                                                <p className="text-white text-lg mb-8 text-center">The video you're looking for doesn't exist.</p>
                                                 <a href="/videos" className="text-white underline hover:text-gray-200">Go back to videos page</a>
                                             </div>
                                         </div>

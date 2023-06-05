@@ -4,7 +4,7 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faClose, faEdit, faTrash, faVideoCamera, faChevronLeft, faChevronRight, faAngleDoubleLeft, faAngleDoubleRight, faEye } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
-import { getUserVideo, getUserGame, uploadVideo, clearAlert, editVideo, removeVideo, changePrivacyById, changeStrictById, changeDownloadById, bulkRemoveVideo, uploadGame } from "../../actions/uploads";
+import { changeGamePrivacyById, changeGameStrictById, getUserVideo, getUserGame, uploadVideo, clearAlert, bulkRemoveGame, removeGame, editVideo, editGame, removeVideo, changePrivacyById, changeStrictById, changeDownloadById, bulkRemoveVideo, uploadGame } from "../../actions/uploads";
 import axios from 'axios';
 import VideoModal from '../VideoModal';
 import Alert from '../Alert';
@@ -166,7 +166,7 @@ const Uploads = ({ user }) => {
             privacy: false,
             downloadable: false
         })
-        setInput({ tags: '', gameTags: '', gallery: ''})
+        setInput({ ...input, tags: '', gameTags: '', gallery: ''})
         setEdit(false)
         setCurrentIndex(0)
     }
@@ -414,6 +414,8 @@ const Uploads = ({ user }) => {
         }
     }
 
+    const [currentGameIndex, setCurrentGameIndex] = useState(0)
+    const [gameEdit, setGameEdit] = useState(false)
     const [gameModal, setGameModal] = useState(false)
     const [gameDataModal, setGameDataModal] = useState(null)
     const [gameDeleteId, setGameDeleteId] = useState([])
@@ -477,6 +479,8 @@ const Uploads = ({ user }) => {
         setDisplayImage('')
         setPreview(false)
         setOpenImageModal(false)
+        setCurrentGameIndex(0)
+        setGameEdit(false)
     }, [game])
 
     const deleteGameTags = (e) => {
@@ -572,10 +576,46 @@ const Uploads = ({ user }) => {
         }
     }
 
+    const handleGameEdit = () =>{
+        if(!gameForm.featured_image || !gameForm.title || !gameForm.description || !gameForm.download_link) return
+
+        if(!gameSubmitted) {
+            let updatedRecord = {
+                ...gameData[currentGameIndex],
+                featured_image: gameForm.featured_image,
+                title: gameForm.title,
+                description: gameForm.description,
+                strict: gameForm.strict,
+                privacy: gameForm.privacy,
+                tags: gameTags,
+                details: {
+                    latest_version: gameForm.details.latest_version,
+                    censorship: gameForm.details.censorship,
+                    language: gameForm.details.language,
+                    developer: gameForm.details.developer,
+                    upload_date: gameForm.details.upload_date,
+                    platform: gameForm.details.platform
+                },
+                leave_uploader_message: gameForm.leave_uploader_message,
+                gallery: gameForm.gallery,
+                download_link: gameForm.download_link,
+                guide_link: gameForm.guide_link,
+                password: gameForm.password
+            }
+            dispatch(editGame({
+                id: user.result?._id,
+                data: updatedRecord
+            }))
+
+            setGameSubmitted(true)
+        }
+    }
+
     const [showGameRecord, setShowGameRecord] = useState(false)
     const [showVideoRecord, setShowVideoRecord] = useState(false)
 
     const [searchVideo, setSearchVideo] = useState('')
+    const [searchGame, setSearchGame] = useState('')
 
     const handleVideoSearch = (event) => {
         const keyword = event.target.value.toLowerCase();
@@ -590,16 +630,19 @@ const Uploads = ({ user }) => {
         setCurrentPage(1)
         setData(filteredData);
     };
+
+    const handleGameSearch = (event) => {
+        const keyword = event.target.value.toLowerCase();
+        setSearchGame(event.target.value);
     
-    const deleteMultipleGames = () => {
-        if(confirm(`Are you sure you want to delete ${deleteId.length} video${deleteId.length > 1 ? 's' : ''}?`)){
-            // dispatch(bulkRemoveVideo({ 
-            //     id: user.result?._id,
-            //     videos_id: deleteId
-            // }))
-            setGameDeleteId([])
-        }
-    }
+        const filteredData = game.filter((item) =>
+          Object.values(item).some((value) =>
+            String(value).toLowerCase().includes(keyword)
+          )
+        );
+        setGameCurrentPage(1)
+        setGameData(filteredData);
+    };
 
     const addGameDeleteId = (index, id) => {
         const checkId = gameDeleteId.includes(id)
@@ -609,24 +652,96 @@ const Uploads = ({ user }) => {
             setGameDeleteId([...arr])
         }
         else {
-            setGameDeleteId(deleteId.concat(id))
-        }
-    }
-
-    const deleteGame = (index) => {
-        if(confirm(`Are you sure you want to delete video ${gameData[index].title}?`)) {
-            // dispatch(removeVideo({ 
-            //     id: user.result?._id,
-            //     video_id: video[index]._id 
-            // }))
+            setGameDeleteId(gameDeleteId.concat(id))
         }
     }
 
     const openGameDataModal = (index, id) => {
         const gameById = gameData[index]
-        console.log(gameById)
         setGameDataModal(gameById)
         setGameModal(true)
+    }
+
+    const deleteMultipleGames = () => {
+        if(confirm(`Are you sure you want to delete ${gameDeleteId.length} games${gameDeleteId.length > 1 ? 's' : ''}?`)){
+            dispatch(bulkRemoveGame({ 
+                id: user.result?._id,
+                game_id: gameDeleteId
+            }))
+            setGameDeleteId([])
+        }
+    }
+
+    const deleteGame = (index) => {
+        if(confirm(`Are you sure you want to delete game ${gameData[index].title}?`)) {
+            dispatch(removeGame({ 
+                id: user.result?._id,
+                game_id: gameData[index]._id 
+            }))
+        }
+    }
+
+    const editGameMode = (index) =>{
+        window.scrollTo(0, 150)
+        setCurrentGameIndex(index)
+        setForm({
+            title: video[index].title,
+            link: video[index].link,
+            owner: video[index].owner,
+            tags: video[index].tags,
+            strict: video[index].strict,
+            privacy: video[index].privacy,
+            downloadable: video[index].downloadable
+        })
+        setGameForm({
+            featured_image: gameData[index].featured_image,
+            title: gameData[index].title,
+            description: gameData[index].description,
+            strict: gameData[index].strict,
+            privacy: gameData[index].privacy,
+            details: {
+                latest_version: gameData[index].details.latest_version,
+                censorship: gameData[index].details.censorship,
+                language: gameData[index].details.language,
+                developer: gameData[index].details.developer,
+                upload_date: gameData[index].details.upload_date,
+                platform: gameData[index].details.platform
+            },
+            leave_uploader_message: gameData[index].leave_uploader_message,
+            gallery: gameData[index].gallery,
+            download_link: gameData[index].download_link,
+            guide_link: gameData[index].guide_link,
+            password: gameData[index].password
+        })
+        setGameTags(gameData[index].tags)
+        setGameEdit(true)
+    }
+
+    const cancelGameEdit = () => {
+        setGameTags([])
+        setGameForm({
+            featured_image: '',
+            title: '',
+            description: '',
+            strict: false,
+            privacy: false,
+            details: {
+                latest_version: '',
+                censorship: 'Uncensored',
+                language: 'English',
+                developer: '',
+                upload_date: formattedDate,
+                platform: 'Desktop'
+            },
+            leave_uploader_message: '',
+            gallery: [],
+            download_link: [],
+            guide_link: '',
+            password: ''
+        })
+        setInput({ ...input, gameTags: '', gallery: '', storage_name: 'Google Drive', link_list: []})
+        setGameEdit(false)
+        setCurrentGameIndex(0)
     }
 
     return (
@@ -995,19 +1110,7 @@ const Uploads = ({ user }) => {
                                             <div className="lg:w-1/2 md:w-1/2 w-full">
                                                 
                                             </div>
-                                        </div>
-                                        
-                                        {
-                                            deleteId.length > 0 &&
-                                            <div className='grid grid-cols-2  gap-5 place-content-start mb-1 md:mt-0 mt-8'>
-                                                <h2 className='text-3xl font-bold text-gray-800'></h2>
-                                                <div className='flex justify-end'>
-                                                    <button onClick={() => deleteMultipleVideos()} className='w-28 disabled:bg-gray-600 disabled:border-red-700 font-semibold border border-solid border-red-600 bg-red-600 hover:bg-red-700 hover:text-100-800 rounded-sm transition-all text-white p-2'>
-                                                        Delete ({deleteId.length})
-                                                    </button>
-                                                </div>
-                                            </div>  
-                                        }      
+                                        </div>     
                                     </div>
                                 )
                                 :
@@ -1018,7 +1121,13 @@ const Uploads = ({ user }) => {
                                                 Go back
                                             </button>
                                         </div>
-                                        <div className='justify-end mb-2 sm:hidden flex mt-4'>
+                                        <div className='justify-between mb-2 sm:hidden flex mt-4'>
+                                            <div className=''>
+                                                {
+                                                    deleteId.length > 0 &&
+                                                        <FontAwesomeIcon title="delete" onClick={() => deleteMultipleVideos()} icon={faTrash} className="px-[12px] py-[10px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
+                                                }
+                                            </div>  
                                             <div className="relative w-full max-w-md">
                                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3">
                                                     <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -1035,8 +1144,18 @@ const Uploads = ({ user }) => {
                                             </div>
                                         </div>
                                         <div className="overflow-x-auto sm:mt-4">
-                                            <div className='justify-end mb-2 sm:flex hidden'>
-                                                <div className="relative w-full max-w-md">
+                                            <div className='mb-2 sm:flex hidden justify-between'>
+                                                <div className=''>
+                                                    {
+                                                        deleteId.length > 0 &&
+                                                            <div className='flex'>
+                                                                <button onClick={() => deleteMultipleVideos()} className='w-28 disabled:bg-gray-600 disabled:border-red-700 font-semibold border border-solid border-red-600 bg-red-600 hover:bg-red-700 hover:text-100-800 rounded-sm transition-all text-white p-2'>
+                                                                    Delete ({deleteId.length})
+                                                                </button>
+                                                            </div>
+                                                        }
+                                                </div>  
+                                                <div className="relative w-full max-w-md flex justify-end">
                                                     <div className="absolute inset-y-0 left-0 flex items-center pl-3">
                                                         <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fillRule="evenodd" clipRule="evenodd" d="M8.5 1C4.35786 1 1 4.35786 1 8.5C1 12.6421 4.35786 16 8.5 16C10.0983 16 11.5667 15.4201 12.7103 14.4796L16.2929 18.0622C16.6834 18.4527 17.3166 18.4527 17.7071 18.0622C18.0976 17.6717 18.0976 17.0385 17.7071 16.648L14.1245 13.0654C15.04 11.9883 15.5 10.6837 15.5 9.25C15.5 5.41015 12.5899 2.5 8.75 2.5C4.91015 2.5 2 5.41015 2 9.25C2 13.0899 4.91015 16 8.75 16C12.5899 16 15.5 13.0899 15.5 9.25C15.5 7.8163 15.04 6.51169 14.1245 5.4346L10.5419 1.85202C9.60138 1.22149 8.43661 1 7.25 1H8.5ZM8.5 3C11.5376 3 14 5.46243 14 8.5C14 11.5376 11.5376 14 8.5 14C5.46243 14 3 11.5376 3 8.5C3 5.46243 5.46243 3 8.5 3Z"></path>
@@ -1152,7 +1271,7 @@ const Uploads = ({ user }) => {
                                             {
                                                 !(data && data.length > 0) && (
                                                     <div className='p-4 py-8 w-full border border-[#CAD5DF]'>
-                                                        <h2 className='text-[#5A6C7F] text-center text-lg font-semibold'>No Record Found</h2>
+                                                        <h2 className='text-[#5A6C7F] text-center text-lg'>No Record Found</h2>
                                                     </div>
                                                 )
                                             }
@@ -1177,18 +1296,32 @@ const Uploads = ({ user }) => {
                                 ((paramIndex || checkParams('games')) && !showGameRecord) ? (
                                     <div>
                                         {
+                                            gameEdit &&
+                                            <div className='grid grid-cols-1 gap-5 place-content-start mb-4 md:mt-0 mt-8'>
+                                                {/* <h2 className='text-3xl font-bold text-gray-800'>Edit</h2> */}
+                                                <div className='flex justify-end'>
+                                                    <button onClick={() => cancelGameEdit()} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] transition-colors duration-300 ease-in-out'>
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        }  
+                                        {
+                                            !gameEdit &&
+                                            <div className='flex justify-end'>
+                                                <button title="view record" onClick={() => setShowGameRecord(!showGameRecord)} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out'>
+                                                    <FontAwesomeIcon icon={faEye}/>
+                                                </button>
+                                            </div>
+                                        }
+                                        {
                                             alertInfo.alert && alertInfo.variant && showAlert &&
                                                 <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
                                         }
-                                        <div className='flex justify-end'>
-                                            <button title="view record" onClick={() => setShowGameRecord(!showGameRecord)} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out'>
-                                                <FontAwesomeIcon icon={faEye}/>
-                                            </button>
-                                        </div>
                                         <div className="md:flex items-start justify-center mt-4">
                                             <div className="lg:w-1/2 md:w-1/2 w-full">
                                                 <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
-                                                    <h2 className='text-2xl font-bold text-gray-800 my-4'>Upload Game</h2>        
+                                                    <h2 className='text-2xl font-bold text-gray-800 my-4'>{gameEdit ? 'Edit Game' : 'Upload Game'}</h2>        
                                                 </div>
                                                 <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
                                                     <div className='flex flex-col'>
@@ -1332,7 +1465,7 @@ const Uploads = ({ user }) => {
                                                         gameTags && gameTags.length > 0 &&
                                                             gameTags.map((item, index) => {
                                                                 return (
-                                                                    <div key={index} className='flex items-center relative mt-2 bg-gray-100 hover:text-gray-800 text-gray-800 border-2 border-gray-800 px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
+                                                                    <div key={index} className='flex items-center relative mt-2 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF] px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
                                                                         <p>{item}</p>
                                                                         <FontAwesomeIcon onClick={deleteGameTags} id={index} icon={faClose} className="ml-2 cursor-pointer" />
                                                                     </div>
@@ -1407,10 +1540,10 @@ const Uploads = ({ user }) => {
                                                                                 gameForm.download_link[i].links.length > 0 &&
                                                                                     gameForm.download_link[i].links.map((data, id) => {
                                                                                         return(
-                                                                                            <div key={id} className='w-full flex flex-row p-2 py-3 bg-gray-800 mb-1'>
+                                                                                            <div key={i} className='w-full flex flex-row p-2 py-3 mb-1 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF]'>
                                                                                                 <div className='w-1/2 flex flex-col'>
                                                                                                     <div className='w-full flex flex-row items-center'>
-                                                                                                        <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold'>{data}</p>
+                                                                                                        <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold break-all'>{data}</p>
                                                                                                     </div>
                                                                                                 </div> 
                                                                                                 <div className='w-1/2 text-right'>
@@ -1527,7 +1660,7 @@ const Uploads = ({ user }) => {
                                                             gameForm.gallery.length > 0 &&
                                                                 gameForm.gallery.map((item, i) => {
                                                                     return (
-                                                                        <div key={i} className='w-full flex flex-row p-2 py-3 bg-gray-800 mb-1'>
+                                                                        <div key={i} className='w-full flex flex-row p-2 py-3 mb-1 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF]'>
                                                                             <div className='w-1/2 flex flex-row items-center'>
                                                                                 <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold'>{item}</p>
                                                                             </div>
@@ -1542,23 +1675,44 @@ const Uploads = ({ user }) => {
                                                 </div>       
                                             </div>
                                         </div>
-                                        <button onClick={handleGameSubmit} className='float-right font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2 px-6'>
-                                            {
-                                                !gameSubmitted ?
-                                                "Upload Game"
-                                                :
-                                                <div className='flex flex-row justify-center items-center'>
-                                                    Uploading
-                                                    <div role="status">
-                                                        <svg aria-hidden="true" class="w-5 h-5 ml-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                                                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                                                        </svg>
-                                                        <span class="sr-only">Loading...</span>
+                                        {
+                                            gameEdit ?
+                                            <button onClick={handleGameEdit} className='float-right font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2 px-6'>
+                                                {
+                                                    !gameSubmitted ?
+                                                    "Update Changes"
+                                                    :
+                                                    <div className='flex flex-row justify-center items-center'>
+                                                        Updating
+                                                        <div role="status">
+                                                            <svg aria-hidden="true" class="w-5 h-5 ml-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                                            </svg>
+                                                            <span class="sr-only">Loading...</span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            }
-                                        </button>
+                                                }
+                                            </button>
+                                            :
+                                            <button onClick={handleGameSubmit} className='float-right font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2 px-6'>
+                                                {
+                                                    !gameSubmitted ?
+                                                    "Upload Game"
+                                                    :
+                                                    <div className='flex flex-row justify-center items-center'>
+                                                        Uploading
+                                                        <div role="status">
+                                                            <svg aria-hidden="true" class="w-5 h-5 ml-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                                            </svg>
+                                                            <span class="sr-only">Loading...</span>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </button>
+                                        }
                                     </div>
                                 )
                                 :
@@ -1569,7 +1723,13 @@ const Uploads = ({ user }) => {
                                                 Go back
                                             </button>
                                         </div>
-                                        <div className='justify-end mb-2 sm:hidden flex mt-4'>
+                                        <div className='justify-between mb-2 sm:hidden flex mt-4'>
+                                            <div className=''>
+                                                {
+                                                    gameDeleteId.length > 0 &&
+                                                        <FontAwesomeIcon title="delete" onClick={() => deleteMultipleGames()} icon={faTrash} className="px-[12px] py-[10px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
+                                                }
+                                            </div>  
                                             <div className="relative w-full max-w-md">
                                                 <div className="absolute inset-y-0 left-0 flex items-center pl-3">
                                                     <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
@@ -1580,14 +1740,24 @@ const Uploads = ({ user }) => {
                                                     className="block w-full py-2 pl-10 pr-3 leading-5 text-[#5A6C7F] placeholder-gray-500 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
                                                     type="text" 
                                                     placeholder="Search" 
-                                                    value={searchVideo}
-                                                    onChange={handleVideoSearch}
+                                                    value={searchGame}
+                                                    onChange={handleGameSearch}
                                                 />
                                             </div>
                                         </div>
                                         <div className="overflow-x-auto sm:mt-4">
-                                            <div className='justify-end mb-2 sm:flex hidden'>
-                                                <div className="relative w-full max-w-md">
+                                            <div className='mb-2 sm:flex hidden justify-between'>
+                                                <div className=''>
+                                                    {
+                                                        gameDeleteId.length > 0 &&
+                                                            <div className='flex'>
+                                                                <button onClick={() => deleteMultipleGames()} className='w-28 disabled:bg-gray-600 disabled:border-red-700 font-semibold border border-solid border-red-600 bg-red-600 hover:bg-red-700 hover:text-100-800 rounded-sm transition-all text-white p-2'>
+                                                                    Delete ({gameDeleteId.length})
+                                                                </button>
+                                                            </div>
+                                                        }
+                                                </div>  
+                                                <div className="relative w-full max-w-md flex justify-end">
                                                     <div className="absolute inset-y-0 left-0 flex items-center pl-3">
                                                         <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                                                         <path fillRule="evenodd" clipRule="evenodd" d="M8.5 1C4.35786 1 1 4.35786 1 8.5C1 12.6421 4.35786 16 8.5 16C10.0983 16 11.5667 15.4201 12.7103 14.4796L16.2929 18.0622C16.6834 18.4527 17.3166 18.4527 17.7071 18.0622C18.0976 17.6717 18.0976 17.0385 17.7071 16.648L14.1245 13.0654C15.04 11.9883 15.5 10.6837 15.5 9.25C15.5 5.41015 12.5899 2.5 8.75 2.5C4.91015 2.5 2 5.41015 2 9.25C2 13.0899 4.91015 16 8.75 16C12.5899 16 15.5 13.0899 15.5 9.25C15.5 7.8163 15.04 6.51169 14.1245 5.4346L10.5419 1.85202C9.60138 1.22149 8.43661 1 7.25 1H8.5ZM8.5 3C11.5376 3 14 5.46243 14 8.5C14 11.5376 11.5376 14 8.5 14C5.46243 14 3 11.5376 3 8.5C3 5.46243 5.46243 3 8.5 3Z"></path>
@@ -1597,8 +1767,8 @@ const Uploads = ({ user }) => {
                                                         className="block w-full py-2 pl-10 pr-3 leading-5 text-[#5A6C7F] placeholder-gray-500 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
                                                         type="text" 
                                                         placeholder="Search" 
-                                                        value={searchVideo}
-                                                        onChange={handleVideoSearch}
+                                                        value={searchGame}
+                                                        onChange={handleGameSearch}
                                                     />
                                                 </div>
                                             </div>
@@ -1641,7 +1811,7 @@ const Uploads = ({ user }) => {
                                                                                 <td className="pl-4">
                                                                                     <div className="text-sm leading-5 text-gray-900">
                                                                                         <input 
-                                                                                            id={`default-checkbox${10+index}`}
+                                                                                            id={`game-default-checkbox${10+index}`}
                                                                                             type="checkbox" 
                                                                                             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                                                                                             checked={gameDeleteId.includes(item._id)}
@@ -1659,14 +1829,14 @@ const Uploads = ({ user }) => {
                                                                                 </td>
                                                                                 <VideoTableData 
                                                                                     cond={item.privacy}
-                                                                                    api_call={changePrivacyById({
+                                                                                    api_call={changeGamePrivacyById({
                                                                                         id: item._id,
                                                                                         privacy: !item.privacy
                                                                                     })}
                                                                                 />
                                                                                 <VideoTableData 
                                                                                     cond={item.strict}
-                                                                                    api_call={changeStrictById({
+                                                                                    api_call={changeGameStrictById({
                                                                                         id: item._id,
                                                                                         strict: !item.strict
                                                                                     })}
@@ -1680,7 +1850,7 @@ const Uploads = ({ user }) => {
                                                                                 <td className="px-6 py-4 whitespace-no-wrap">
                                                                                     <div className="text-sm leading-5 text-gray-900 flex items-center">
                                                                                         <FontAwesomeIcon title="view" onClick={() => { openGameDataModal(index, item._id) }} icon={faEye} className="px-[10px] py-[7px] bg-green-600 hover:bg-green-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
-                                                                                        <FontAwesomeIcon title="edit" onClick={() => { editMode(index); setShowVideoRecord(false) }} icon={faEdit} className="px-[10px] py-[7px] bg-yellow-600 hover:bg-yellow-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
+                                                                                        <FontAwesomeIcon title="edit" onClick={() => { editGameMode(index); setShowGameRecord(false) }} icon={faEdit} className="px-[10px] py-[7px] bg-yellow-600 hover:bg-yellow-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
                                                                                         <FontAwesomeIcon title="delete" onClick={() => deleteGame(index)} icon={faTrash} className="px-[10px] py-[7px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all" />
                                                                                     </div>
                                                                                 </td>
@@ -1694,7 +1864,7 @@ const Uploads = ({ user }) => {
                                             {
                                                 !(gameData && gameData.length > 0) && (
                                                     <div className='p-4 py-8 w-full border border-[#CAD5DF]'>
-                                                        <h2 className='text-[#5A6C7F] text-center text-lg font-semibold'>No Record Found</h2>
+                                                        <h2 className='text-[#5A6C7F] text-center text-lg'>No Record Found</h2>
                                                     </div>
                                                 )
                                             }
