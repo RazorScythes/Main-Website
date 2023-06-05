@@ -68,7 +68,7 @@ const divideAndScale = (ratings) => {
     const totalRating = ratings.reduce((sum, item) => sum + item.rating, 0);
     const averageRating = totalRating / ratings.length;
 
-    return averageRating.toFixed(2)
+    return averageRating.toFixed(1)
 }
 
 const GamesSingle = ({ user }) => {
