@@ -12,8 +12,25 @@ const initialState = {
     avatar: '',
     strict: false,
     verified: false,
-    verification_status: ''
+    verification_status: '',
+    tokenResult: {}
 }
+
+export const userToken = createAsyncThunk('settings/userToken', async (form, thunkAPI) => {
+    try {
+        const response = await api.userToken(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
 
 export const getProfile = createAsyncThunk('settings/getProfile', async (form, thunkAPI) => {
     try {
@@ -115,6 +132,16 @@ export const settingsSlice = createSlice({
     name: 'settings',
     initialState,
     extraReducers: (builder) => {
+        builder.addCase(userToken.fulfilled, (state, action) => {
+            localStorage.setItem('profile', JSON.stringify({ ...action.payload?.data }));
+            state.tokenResult = {...action.payload?.data}
+        }),
+        builder.addCase(userToken.rejected, (state, action) => {
+            if(action.payload.message === "Token has expired.") {
+                localStorage.removeItem('profile')
+                window.location.href="/login"
+            } 
+        }),
         builder.addCase(sendVerificationEmail.fulfilled, (state, action) => {
             state.alert = action.payload.data.message
             state.variant = action.payload.data.variant

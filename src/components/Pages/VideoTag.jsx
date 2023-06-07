@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getVideoByTag, getVideoByArtist } from "../../actions/video";
+import { getVideoByTag, getVideoByArtist, getVideoBySearchKey } from "../../actions/video";
 import { useParams } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
@@ -42,7 +42,7 @@ const VideoTag = ({ user }) => {
     const [videos, setVideos] = useState([])
     const dispatch = useDispatch()
 
-    const { tag, artist_name } = useParams();
+    const { tag, artist_name, key } = useParams();
 
     const video = useSelector((state) => state.video.videos)
     const message = useSelector((state) => state.video.message)
@@ -81,9 +81,15 @@ const VideoTag = ({ user }) => {
           dispatch(getVideoByArtist({
             id: user ? user.result?._id : '',
             artist: artist_name
-        }))
+          }))
         }
-    }, [tag, artist_name])
+        else if(key){
+          dispatch(getVideoBySearchKey({
+            id: user ? user.result?._id : '',
+            searchKey: key
+          }))
+        }
+    }, [tag, artist_name, key])
 
     useEffect(() => {
       setCurrentPage(pageIndex)
@@ -200,9 +206,14 @@ const VideoTag = ({ user }) => {
                     }
                 </div>
               :
-              <div className='flex flex-wrap items-center sm:px-16 px-4 pt-8 pb-4'>
-                 <h3 className='text-white xs:text-3xl text-2xl font-semibold mr-3'>Artist: {artist_name}</h3>
-              </div>
+              artist_name ?
+                <div className='flex flex-wrap items-center sm:px-16 px-4 pt-8 pb-4'>
+                  <h3 className='text-white xs:text-3xl text-2xl font-semibold mr-3'>Artist: <span className='font-normal'>"{artist_name}"</span></h3>
+                </div>
+              :
+                <div className='flex flex-wrap items-center sm:px-16 px-4 pt-8 pb-4'>
+                  <h3 className='text-white xs:text-3xl text-2xl font-semibold mr-3'>Search: <span className='font-normal'>"{key}"</span></h3>
+                </div>
             }
           
             <div className='sm:px-16 px-4'>

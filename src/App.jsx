@@ -4,7 +4,7 @@ import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom
 import { AccountNavbar, Overview, AccountPortfolio, AccountStore, Uploads, Settings, Manage, Logs } from './components/Account Section/index'
 import { useDispatch, useSelector } from 'react-redux'
 import { ProjectSingle } from './components/Portfolio Section/index';
-import { getProfile } from './actions/settings';
+import { getProfile, userToken } from './actions/settings';
 import { v4 as uuidv4 } from 'uuid';
 import Cookies from 'universal-cookie';
 
@@ -27,7 +27,10 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-      if(user) dispatch(getProfile({id: user.result?._id}))
+      if(user) {
+        dispatch(getProfile({id: user.result?._id}))
+        dispatch(userToken({username: user.result?.username}))
+      }
 
       if(window.location.pathname.includes('/account') && !user){
         window.location.href = "/"
@@ -52,6 +55,7 @@ const App = () => {
               <Route path="videos" element={<><Videos user={user} /> <Footer /></>} />
               <Route path="videos/:id" element={<><VideosSingle user={user} /> <Footer /></>} />
               <Route path="videos/tags/:tag" element={<><VideoTag user={user} /> <Footer /></>} />
+              <Route path="videos/search/:key" element={<><VideoTag user={user} /> <Footer /></>} />
               <Route path="videos/artist/:artist_name" element={<><VideoTag user={user} /> <Footer /></>} />
               <Route path="archive" element={<><Archive /> <Footer /></>} />
 

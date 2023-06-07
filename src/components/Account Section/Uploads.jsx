@@ -684,15 +684,6 @@ const Uploads = ({ user }) => {
     const editGameMode = (index) =>{
         window.scrollTo(0, 150)
         setCurrentGameIndex(index)
-        setForm({
-            title: video[index].title,
-            link: video[index].link,
-            owner: video[index].owner,
-            tags: video[index].tags,
-            strict: video[index].strict,
-            privacy: video[index].privacy,
-            downloadable: video[index].downloadable
-        })
         setGameForm({
             featured_image: gameData[index].featured_image,
             title: gameData[index].title,

@@ -13,13 +13,23 @@ import Avatar from '../../assets/avatar.png'
 const AccountNavbar = ({ path }) => {
   const dispatch = useDispatch()
   const navigate  = useNavigate()
+  
+  const tokenResult = useSelector((state) => state.settings.tokenResult)
+  const settings = useSelector((state) => state.settings.data)
 
   const [isActive, setIsActive] = useState(false)
   const [active, setActive] = useState(null)
   const [toggle, setToggle] = useState(false)
 
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
-  const [avatar, setAvatar] = useState(localStorage.getItem('avatar')?.replaceAll('"', ""))
+  const [avatar, setAvatar] = useState(settings.avatar ? settings.avatar : localStorage.getItem('avatar') ? localStorage.getItem('avatar')?.replaceAll('"', "") : '') //localStorage.getItem('avatar')?.replaceAll('"', "")
+
+  useEffect(() => {
+    if(Object.keys(tokenResult).length !== 0) {
+      setAvatar(localStorage.getItem('avatar')?.replaceAll('"', ""))
+      setUser(JSON.parse(localStorage.getItem('profile')))
+    }
+  }, [tokenResult])
 
   useEffect(() => {
     if(!user) navigate(`/`)

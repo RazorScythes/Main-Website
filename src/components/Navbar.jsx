@@ -1,7 +1,7 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { nav_links, user_navLinks } from "../constants";
 import { faUser, faGear, faRightFromBracket, faFolder , faEnvelope} from "@fortawesome/free-solid-svg-icons";
 import { logout } from "../actions/auth";
@@ -10,15 +10,22 @@ import { useDispatch, useSelector } from 'react-redux'
 import Logo from '../assets/logo.png'
 import Avatar from '../assets/avatar.png'
 
+const capitalizeFirstLetter = (str) => `${str.charAt(0).toUpperCase()}${str.slice(1)}`;
+
 const Navbar = ({ path }) => {
   const dispatch = useDispatch()
   const navigate  = useNavigate()
+
+  const tokenResult = useSelector((state) => state.settings.tokenResult)
+  const settings = useSelector((state) => state.settings.data)
 
   const [isActive, setIsActive] = useState(false);
   const [toggle, setToggle] = useState(false)
 
   const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
-  const [avatar, setAvatar] = useState(localStorage.getItem('avatar')?.replaceAll('"', ""))
+  const [avatar, setAvatar] = useState(settings.avatar ? settings.avatar : localStorage.getItem('avatar') ? localStorage.getItem('avatar')?.replaceAll('"', "") : '') //localStorage.getItem('avatar')?.replaceAll('"', "")
+  const [firstPath, setFirstPath] = useState('')
+  const [searchKey, setSearchKey] = useState('')
 
   const sign_out = () => {
     dispatch(logout())
@@ -26,6 +33,33 @@ const Navbar = ({ path }) => {
     setUser(null)
   }
 
+  useEffect(() => {
+    const url = window.location.href;
+    const pathSegments = url.split("/");
+    setFirstPath(pathSegments[3])
+  }, [window.location.href])
+
+  useEffect(() => {
+    if(Object.keys(tokenResult).length !== 0) {
+      setAvatar(localStorage.getItem('avatar')?.replaceAll('"', ""))
+      setUser(JSON.parse(localStorage.getItem('profile')))
+    }
+  }, [tokenResult])
+
+  useEffect(() => {
+    setTimeout(() => {
+      setAvatar(localStorage.getItem('avatar')?.replaceAll('"', ""))
+      setUser(JSON.parse(localStorage.getItem('profile')))
+    }, 5000);
+  }, [])
+
+  const handleSearch = (e) => {
+    e.preventDefault()
+
+    if(firstPath.includes('videos')) {
+      window.location.href = `/videos/search/${searchKey}`
+    }
+  }
   return (
     <nav className="relative flex items-center justify-between flex-wrap bg-gray-800 p-6 z-10">
       <Link to={`${path}`}>
@@ -100,20 +134,24 @@ const Navbar = ({ path }) => {
           {
             nav_links.map((link, i) => {
                 return (
-                  <Link key={i} to={`${path}/${link.path}`} className="block mt-4 lg:inline-block lg:mt-0 text-blue-200 hover:text-white mr-4" onClick={() => setIsActive(!isActive)}>
+                  // <Link key={i} to={`${path}/${link.path}`} className="block mt-4 lg:inline-block lg:mt-0 text-blue-200 hover:text-white mr-4" onClick={() => setIsActive(!isActive)}>
+                  <a href={`${path}/${link.path}`} className="block mt-4 lg:inline-block lg:mt-0 text-blue-200 hover:text-white mr-4" onClick={() => setIsActive(!isActive)}>
                     <FontAwesomeIcon icon={link.icon} className="mr-2" />
                     {link.name}
-                  </Link>
+                  </a>
+                  // </Link>
                 )
             })
           }
         </div>
-        <div className="relative lg:mt-0 mt-4 font-poppins">
-          <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-            <FontAwesomeIcon icon={faSearch} className="text-gray-500" />
-          </span>
-          <input className="block w-full bg-gray-200 text-sm text-gray-700 rounded-full py-2 px-4 pl-10 leading-tight focus:outline-none focus:bg-white focus:text-gray-900" type="text" placeholder="Search" />
-        </div>
+        <form onSubmit={handleSearch}>
+          <div className="relative lg:mt-0 mt-4 font-poppins">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+              <FontAwesomeIcon icon={faSearch} className="text-gray-500" />
+            </span>
+            <input value={searchKey} onChange={(e) => setSearchKey(e.target.value)} className="block w-full bg-gray-200 text-sm text-gray-700 rounded-full py-2 px-4 pl-10 leading-tight focus:outline-none focus:bg-white focus:text-gray-900" type="text" placeholder={`Search ${capitalizeFirstLetter(firstPath)}`} />
+          </div>
+        </form>
         <div className="hidden lg:block flex">
           {
             user?.result? 

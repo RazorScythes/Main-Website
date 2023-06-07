@@ -15,11 +15,18 @@ else {
 }
 
 User_API.interceptors.request.use((req) => {
-    if(cookies.get('uid')){
-        req.headers.uid = `${cookies.get('uid')}`;
+    if (localStorage.getItem('profile')) {
+        req.headers.authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`;
     }
     return req;
 });
+
+// User_API.interceptors.request.use((req) => {
+//     if(cookies.get('uid')){
+//         req.headers.uid = `${cookies.get('uid')}`;
+//     }
+//     return req;
+// });
 
 const options = {
     headers: {
@@ -60,6 +67,7 @@ export const sendContactUs                              = (formData) => User_API
 /*
     Settings
 */
+export const userToken                                  = (formData) => User_API.post('/settings/userToken', formData)
 export const verifyEmail                                = (formData) => User_API.post('/settings/verifyEmail', formData)
 export const sendVerificationEmail                      = (formData) => User_API.post('/settings/sendVerificationEmail', formData)
 export const getProfile                                 = (formData) => User_API.post('/settings/getProfile', formData)
@@ -101,6 +109,7 @@ export const addOneViews                                = (formData) => User_API
 export const getVideoByID                               = (formData) => User_API.post('/video/getVideoByID', formData)
 export const getVideoByTag                              = (formData) => User_API.post('/video/getVideoByTag', formData)
 export const getVideoByArtist                           = (formData) => User_API.post('/video/getVideoByArtist', formData)
+export const getVideoBySearchKey                        = (formData) => User_API.post('/video/getVideoBySearchKey', formData)
 export const getComments                                = (formData) => User_API.post('/video/getComments', formData)
 export const getRelatedVideos                           = (formData) => User_API.post('/video/getRelatedVideos', formData)
 export const uploadComment                              = (formData) => User_API.post('/video/uploadComment', formData)
