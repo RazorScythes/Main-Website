@@ -16,7 +16,7 @@ else {
 
 User_API.interceptors.request.use((req) => {
     if (localStorage.getItem('profile')) {
-        req.headers.authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`;
+        req.headers.token = `${JSON.parse(localStorage.getItem('profile')).token}`;
     }
     if(cookies.get('uid')){
         req.headers.uid = `${cookies.get('uid')}`;
