@@ -107,7 +107,9 @@ const GamesSingle = ({ user }) => {
     }, [id])
 
     useEffect(() => {
-        dispatch(countTags())
+        dispatch(countTags({
+            id: user ? user.result?._id : ''
+        }))
     }, [])
     
     useEffect(() => {
@@ -207,7 +209,14 @@ const GamesSingle = ({ user }) => {
                                                     <div className='my-2'>
 
                                                         <h2 className='text-3xl font-semibold'>{gameData.game.title}</h2>
-                                                        <p className='whitespace-pre-wrap'><span className='font-semibold'>Developer</span>: {gameData.game.details.developer}</p>
+                                                        <p className='whitespace-pre-wrap'><span className='font-semibold'>Developer</span>:
+                                                            {
+                                                                gameData.game.details?.developer ?
+                                                                    <Link to={`/games/developer/${gameData.game.details.developer}`}> {gameData.game.details.developer}</Link>
+                                                                :
+                                                                    <Link to={`/games/developer/Anonymous`}> Anonymous</Link>
+                                                            }
+                                                        </p>
                                                         <hr className='my-1 mb-2'/>                                   
                                                         
                                                         <div className='grid grid-cols-3 gap-5 place-content-start mt-4'>
@@ -357,7 +366,7 @@ const GamesSingle = ({ user }) => {
                                                             {
                                                                 tagsList.map((item, index) => {
                                                                     return (
-                                                                        <Link to={`/games/tags/${item.tag}`}><li className='capitalize flex justify-between hover:text-[#00FFFF] cursor-pointer hover:ml-3 transition-all mb-2 font-semibold border-b border-solid border-gray-500 pb-2'>{item.tag}<span className='text-white'>({item.count})</span></li></Link>
+                                                                        <Link key={index} to={`/games/tags/${item.tag}`}><li className='capitalize flex justify-between hover:text-[#00FFFF] cursor-pointer hover:ml-3 transition-all mb-2 font-semibold border-b border-solid border-gray-500 pb-2'>{item.tag}<span className='text-white'>({item.count})</span></li></Link>
                                                                     )
                                                                 })
                                                             }

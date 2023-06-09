@@ -18,6 +18,9 @@ User_API.interceptors.request.use((req) => {
     if (localStorage.getItem('profile')) {
         req.headers.authorization = `Bearer ${JSON.parse(localStorage.getItem('profile')).token}`;
     }
+    if(cookies.get('uid')){
+        req.headers.uid = `${cookies.get('uid')}`;
+    }
     return req;
 });
 
@@ -30,7 +33,7 @@ User_API.interceptors.request.use((req) => {
 
 const options = {
     headers: {
-        Authorization: `Bearer ${cookies.get('myCat')}`
+        // Authorization: `Bearer ${cookies.get('myCat')}`
     },
     withCredentials: true,
 };
@@ -125,3 +128,6 @@ export const getGames                                   = (formData) => User_API
 export const getRelatedGames                            = (formData) => User_API.post('/game/getRelatedGames', formData)
 export const addRatings                                 = (formData) => User_API.post('/game/addRatings', formData, options)
 export const countTags                                  = (formData) => User_API.post('/game/countTags', formData, options)
+export const getGameByTag                               = (formData) => User_API.post('/game/getGameByTag', formData)
+export const getGameByDeveloper                         = (formData) => User_API.post('/game/getGameByDeveloper', formData)
+export const getGameBySearchKey                         = (formData) => User_API.post('/game/getGameBySearchKey', formData)

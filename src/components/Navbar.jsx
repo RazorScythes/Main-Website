@@ -59,6 +59,9 @@ const Navbar = ({ path }) => {
     if(firstPath.includes('videos')) {
       window.location.href = `/videos/search/${searchKey}`
     }
+    else if(firstPath.includes('games')) {
+      window.location.href = `/games/search/${searchKey}`
+    }
   }
   return (
     <nav className="relative flex items-center justify-between flex-wrap bg-gray-800 p-6 z-10">

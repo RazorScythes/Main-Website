@@ -238,9 +238,9 @@ const Videos = ({ user }) => {
                 {
                   message.length > 0 ?
                     <div className='h-96 flex flex-col items-center justify-center'> 
-                      <h3 className='text-white xs:text-3xl text-2xl font-semibold text-center'>{message}</h3>
+                      <h3 className='text-white xs:text-3xl text-2xl font-semibold text-center capitalize'>{message}</h3>
                       <a href="/videos">
-                        <button className="mt-6 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                        <button className="mt-6 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
                             Reload Page
                         </button>
                       </a>

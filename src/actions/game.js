@@ -114,6 +114,54 @@ export const countTags = createAsyncThunk('game/countTags', async (form, thunkAP
     }
 })
 
+export const getGameByTag = createAsyncThunk('game/getGameByTag', async (form, thunkAPI) => {
+    try {
+        const response = await api.getGameByTag(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const getGameByDeveloper = createAsyncThunk('game/getGameByDeveloper', async (form, thunkAPI) => {
+    try {
+        const response = await api.getGameByDeveloper(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const getGameBySearchKey = createAsyncThunk('game/getGameBySearchKey', async (form, thunkAPI) => {
+    try {
+        const response = await api.getGameBySearchKey(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const gameSlice = createSlice({
     name: 'game',
     initialState,
@@ -135,6 +183,31 @@ export const gameSlice = createSlice({
             state.variant = action.payload.variant
             state.notFound = action.payload.notFound
             state.isLoading = false
+        }),
+        builder.addCase(getGameByTag.fulfilled, (state, action) => {
+            state.games = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getGameByTag.rejected, (state, action) => {
+            console.log("PK")
+            state.message = action.payload.message
+        }),
+        builder.addCase(getGameByDeveloper.fulfilled, (state, action) => {
+            state.games = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getGameByDeveloper.rejected, (state, action) => {
+            state.message = action.payload.message
+        }),
+        builder.addCase(getGameBySearchKey.fulfilled, (state, action) => {
+            state.games = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getGameBySearchKey.rejected, (state, action) => {
+            state.message = action.payload.message
         }),
         builder.addCase(getRelatedGames.fulfilled, (state, action) => {
             state.relatedGames = action.payload.data.result

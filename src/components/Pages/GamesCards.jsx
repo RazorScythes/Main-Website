@@ -9,7 +9,7 @@ const divideAndScale = (ratings) => {
     const totalRating = ratings.reduce((sum, item) => sum + item.rating, 0);
     const averageRating = totalRating / ratings.length;
 
-    return averageRating.toFixed(1);
+    return averageRating.toFixed(0) > 0 ? averageRating.toFixed(1) : 0;
     // var result = a / b;
     // var scaledResult = result % 5;
   
