@@ -137,6 +137,7 @@ export const settingsSlice = createSlice({
             state.tokenResult = {...action.payload?.data}
         }),
         builder.addCase(userToken.rejected, (state, action) => {
+            console.log(action.payload)
             if(action.payload.message === "Token has expired.") {
                 localStorage.removeItem('profile')
                 window.location.href="/login"
