@@ -267,7 +267,7 @@ const Videos = ({ user }) => {
                         {
                             tagsList && tagsList.length > 0 &&
                                 <div className={`${toggle.tags ? `absolute` : `hidden`}`}>
-                                    <ul className='flex flex-col mb-2 font-semibold text-sm bg-gray-800 text-gray-100  border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>
+                                    <ul className='no-scroll max-h-[183px] overflow-y-auto flex flex-col mb-2 font-semibold text-sm bg-gray-800 text-gray-100  border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>
                                         {
                                             tagsList.map((item, index) => {
                                                 return (
