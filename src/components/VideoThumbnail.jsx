@@ -6,7 +6,7 @@ import { addToWatchLater } from "../actions/video";
 import { Link } from 'react-router-dom';
 import moment from 'moment'
 
-const TextWithEllipsis = ({ text, limit = 30 }) => {
+const TextWithEllipsis = ({ text, limit = 70 }) => {
   if (text.length > limit) {
     return <span>{text.slice(0, limit)}...</span>;
   }
@@ -36,26 +36,28 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
   }
 
   return (
-    <div className='mx-auto w-64 text-white transition-all sm:px-0 xs:px-4 px-2'>
+    <div className='mx-auto xs:w-full w-64 text-white transition-all sm:px-0 xs:px-4 px-2'>
         <Link to={`/videos/${id}`}>
-          <div className='bg-black'>
+          <div className='bg-black rounded-lg overflow-hidden'>
             <img 
               src={`https://drive.google.com/thumbnail?id=${embedLink}`} alt="Video Thumbnail" 
-              className='h-[150px] mx-auto'
-              style={{height: height ? height+"px" : "150px"}}
+              className='h-[150px] mx-auto object-cover'
+              style={{height: height ? height+"px" : "161px"}}
             />
           </div>
         </Link>
         <div className='relative'>
-        <Link to={`/videos/${embedLink}`}><p className='break-words'><TextWithEllipsis text={title} /></p></Link>
-          <div className='flex items-center mt-2 text-gray-400 text-sm'>
+        <Link to={`/videos/${id}`}><p className='break-words mt-1'><TextWithEllipsis text={title} /></p></Link>
+          <div className='flex items-center mt-1 text-gray-400 text-sm'>
             <FontAwesomeIcon icon={faEye} className="mr-1"/>
-            <p>{views.length}</p>
+            <p>{views.length} view{views.length > 1 && "s"} | </p> 
             <p className='text-gray-400 ml-2 break-all'>{moment(timestamp).fromNow()}</p>
-            <FontAwesomeIcon onClick={() => {
-              setActive(index)
-              setIsOpen(!isOpen)
-            }} icon={faEllipsisV} className="absolute bottom-0 right-0 mr-1 cursor-pointer hover:text-gray-500"/>
+            <button onClick={() => {
+                setActive(index)
+                setIsOpen(!isOpen)
+            }}>
+              <FontAwesomeIcon icon={faEllipsisV} className="absolute bottom-0 right-0 mr-1 cursor-pointer hover:text-gray-500"/>
+            </button>
           </div>
           {
             isOpen && (index === active) &&

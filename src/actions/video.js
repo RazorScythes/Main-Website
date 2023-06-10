@@ -14,7 +14,8 @@ const initialState = {
     avatar: '',
     message: '',
     forbiden: '',
-    sideAlert: {}
+    sideAlert: {},
+    tagsCount: []
 }
 
 export const getVideoByID = createAsyncThunk('video/getVideoByID', async (form, thunkAPI) => {
@@ -225,6 +226,22 @@ export const addToWatchLater = createAsyncThunk('video/addToWatchLater', async (
     }
 })
 
+export const countVideoTags = createAsyncThunk('video/countVideoTags', async (form, thunkAPI) => {
+    try {
+        const response = await api.countVideoTags(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const videoSlice = createSlice({
     name: 'video',
     initialState,
@@ -319,6 +336,16 @@ export const videoSlice = createSlice({
         }),
         builder.addCase(addToWatchLater.rejected, (state, action) => {
             state.sideAlert = action.payload.sideAlert
+        }),
+        builder.addCase(countVideoTags.fulfilled, (state, action) => {
+            state.tagsCount = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(countVideoTags.rejected, (state, action) => {
+            console.log(action.payload)
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
         })
     },
     reducers: {

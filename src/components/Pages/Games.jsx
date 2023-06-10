@@ -156,9 +156,6 @@ const Games = ({ user }) => {
             className="relative bg-cover bg-center"
             style={{ backgroundColor: "#111827" }}
         >   
-            <div className={`${styles.flexCenter}`}> 
-
-            </div>
             <div className={`${styles.marginX} ${styles.flexCenter}`}>
                 <div className={`${styles.boxWidthEx}`}>
                     <div className="container mx-auto file:lg:px-8 relative px-0 my-10">
