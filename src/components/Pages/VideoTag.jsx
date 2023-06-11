@@ -212,7 +212,7 @@ const VideoTag = ({ user }) => {
         }
       }
     },[video, searchParams.get('type')])
-    
+
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
         if(tag)
@@ -293,7 +293,7 @@ const VideoTag = ({ user }) => {
                       <button onClick={() => handlePageType("latest")} style={{backgroundColor: checkParams('latest') && 'rgb(243, 244, 246)', color: checkParams('latest') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Latest</button>
                       <button onClick={() => handlePageType("most_viewed")} style={{backgroundColor: checkParams('most_viewed') && 'rgb(243, 244, 246)', color: checkParams('most_viewed') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Most Viewed</button>
                       <button onClick={() => handlePageType("popular")} style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out'>Popular</button>
-                      <div className='relative ml-2 z-50'>
+                      <div className='relative ml-2 z-40'>
                           <button onClick={() => setToggle({...toggle, tags: !toggle.tags})} className='cursor-pointer mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2 flex items-center'>
                               Tags 
                               {toggle.tags ? <FontAwesomeIcon icon={faChevronUp} className='ml-1 font-bold'/> : <FontAwesomeIcon icon={faChevronDown} className='ml-1 font-bold'/> }

@@ -69,7 +69,7 @@ const SideAlert = ({ variants, heading, paragraph, active, setActive }) => {
     },[active])
 
     return (
-        <div>
+        <div className='relative z-50'>
             {
                 variants === 'danger' ?
                     <Danger 
