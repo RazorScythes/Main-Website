@@ -241,6 +241,15 @@ const VideosSingle = ({ user }) => {
         }
     }
 
+    const checkVideoFileSize = (size = "") => {
+        if(!size) return false
+
+        var file_size = size.split(" ")
+
+        if(Number(file_size[0]) <= 100) return true
+        return false
+    }
+
     return (
         <div
             className="relative bg-cover bg-center py-8"
@@ -326,7 +335,29 @@ const VideosSingle = ({ user }) => {
                                             }
                                         </div>
                                         <div className='relative'>
-                                            <iframe 
+                                            {
+                                                checkVideoFileSize(data?.video?.file_size) ?
+                                                <video 
+                                                    src={`https://drive.google.com/u/3/uc?id=${getVideoId(data?.video?.link)}&export=download"`}
+                                                    // src={"https://drive.google.com/u/3/uc?id=1fGNqeCMLV6oz4Kzk6KaFOygjXrYO-J_R&export=download"}
+                                                    controls 
+                                                    controlsList="nodownload" 
+                                                    className='w-full lg:h-[450px] md:h-[400px] sm:h-[450px] xs:h-[400px] h-[225px] bg-black'
+                                                    onPlay={addViews}
+                                                />
+                                                :
+                                                <iframe 
+                                                    ref={iframeRef} 
+                                                    src={data?.video?.link}
+                                                    className='w-full lg:h-[450px] md:h-[400px] sm:h-[450px] xs:h-[400px] h-[225px]'
+                                                    allow="autoplay"
+                                                    onLoad={addViews}
+                                                    sandbox="allow-scripts allow-same-origin"
+                                                    allowFullScreen
+                                                >
+                                                </iframe>
+                                            }
+                                            {/* <iframe 
                                                 ref={iframeRef} 
                                                 src={data && data.video && data.video.link}
                                                 className='w-full lg:h-[450px] md:h-[400px] sm:h-[450px] xs:h-[400px] h-[225px]'
@@ -341,12 +372,12 @@ const VideosSingle = ({ user }) => {
                                                 src={ data ? data.avatar : avatar }
                                                 alt="user profile"
                                             />
-                                            {/* <video 
-                                                src="https://gdurl.com/FEfT"
-                                                //src="https://rr5---sn-hoa7rn7z.c.drive.google.com/videoplayback?expire=1682878776&ei=-HhOZLjiH4_quwLxpZuwDA&ip=120.29.78.136&cp=QVRNVElfV1dVR1hPOkYxcVNWRFFpYnFBNldmWUFNY2NVYUk3QjhnX0VKS3F0WmhtNXE0U3FEdEg&id=0f78930136d2f5d2&itag=18&source=webdrive&requiressl=yes&mh=2B&mm=32&mn=sn-hoa7rn7z&ms=su&mv=m&mvi=5&pl=22&ttl=transient&susc=dr&driveid=12MAcfN7IJJnw808QyuahZ8jowCo1D8hD&app=explorer&mime=video/mp4&vprv=1&prv=1&dur=585.746&lmt=1682842237185129&mt=1682863990&subapp=DRIVE_WEB_FILE_VIEWER&txp=0011224&sparams=expire,ei,ip,cp,id,itag,source,requiressl,ttl,susc,driveid,app,mime,vprv,prv,dur,lmt&sig=AOq0QJ8wRgIhAMSOdLtwcPgUEq9TcZdrz8r2SnV0KtykIgN4n9J8_YgZAiEAhLbF2X_NfR0wW1OtS8xKSXLFhPVVYJ19D738wLYYJDk=&lsparams=mh,mm,mn,ms,mv,mvi,pl&lsig=AG3C_xAwRQIhANUndZYlVXlRwaceYMop7KuczODrzzSX0YxqeGa7el7jAiAvJ-fN-pQmIpTl1jzkcuJwVbKe4RLoZXwGpVg0ugOlCw==&cpn=TUNNpAe6t9-IMI3Q&c=WEB_EMBEDDED_PLAYER&cver=1.20230425.01.00"
+                                            <video 
+                                                src={"https://drive.google.com/u/3/uc?id=1fGNqeCMLV6oz4Kzk6KaFOygjXrYO-J_R&export=download"}
+                                                // src="https://rr5---sn-hoa7rn7z.c.drive.google.com/videoplayback?expire=1682878776&ei=-HhOZLjiH4_quwLxpZuwDA&ip=120.29.78.136&cp=QVRNVElfV1dVR1hPOkYxcVNWRFFpYnFBNldmWUFNY2NVYUk3QjhnX0VKS3F0WmhtNXE0U3FEdEg&id=0f78930136d2f5d2&itag=18&source=webdrive&requiressl=yes&mh=2B&mm=32&mn=sn-hoa7rn7z&ms=su&mv=m&mvi=5&pl=22&ttl=transient&susc=dr&driveid=12MAcfN7IJJnw808QyuahZ8jowCo1D8hD&app=explorer&mime=video/mp4&vprv=1&prv=1&dur=585.746&lmt=1682842237185129&mt=1682863990&subapp=DRIVE_WEB_FILE_VIEWER&txp=0011224&sparams=expire,ei,ip,cp,id,itag,source,requiressl,ttl,susc,driveid,app,mime,vprv,prv,dur,lmt&sig=AOq0QJ8wRgIhAMSOdLtwcPgUEq9TcZdrz8r2SnV0KtykIgN4n9J8_YgZAiEAhLbF2X_NfR0wW1OtS8xKSXLFhPVVYJ19D738wLYYJDk=&lsparams=mh,mm,mn,ms,mv,mvi,pl&lsig=AG3C_xAwRQIhANUndZYlVXlRwaceYMop7KuczODrzzSX0YxqeGa7el7jAiAvJ-fN-pQmIpTl1jzkcuJwVbKe4RLoZXwGpVg0ugOlCw==&cpn=TUNNpAe6t9-IMI3Q&c=WEB_EMBEDDED_PLAYER&cver=1.20230425.01.00"
                                                 controls 
                                                 controlsList="nodownload" 
-                                                className='w-full lg:h-[550px] md:h-[470px] sm:h-[450px] xs:h-[400px] h-[225px]'
+                                                className='w-full lg:h-[450px] md:h-[400px] sm:h-[450px] xs:h-[400px] h-[225px]'
                                                 onPlay={addViews}
                                             /> */}
                                         </div>
@@ -376,13 +407,13 @@ const VideosSingle = ({ user }) => {
                                                 </div>
                                             </div>
                                             <div className='flex items-center sm:justify-end sm:mt-0 mt-2'>
-                                                <div className='sm:w-auto w-full grid grid-cols-3 gap-2 mt-2'>
+                                                <div className='sm:w-auto w-full grid grid-cols-2 gap-2 mt-2'>
                                                     <button onClick={() => watchLater()} className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
                                                         <FontAwesomeIcon icon={faAdd} className="text-white"/> Watch Later
                                                     </button>
-                                                    <button disabled={true} onClick={() => watchLater()} className="disabled:bg-gray-500 disabled:cursor-no-drop sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                    {/* <button disabled={true} onClick={() => watchLater()} className="disabled:bg-gray-500 disabled:cursor-no-drop sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
                                                         <FontAwesomeIcon icon={faExclamationTriangle} className="text-white"/> Report
-                                                    </button>
+                                                    </button> */}
                                                     {
                                                         data && data.video && data.video.downloadable ? 
                                                             <button className="sm:text-base text-sm sm:w-auto w-full bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
@@ -507,14 +538,15 @@ const VideosSingle = ({ user }) => {
                                         </div>
                                     </div>
                                     <div>
-                                        <div className='mb-8 md:p-8 sm:pt-4 pt-0 text-white'>
+                                        <div className='mb-8 sm:pt-4 text-white md:bg-transparent xs:bg-gray-800 bg-transparent  md:rounded-none rounded-md md:p-4 xs:p-8 py-8 mx-auto'>
                                             <h2 className='text-2xl font-semibold mb-6'>Related Videos</h2>
-                                            <div className='md:flex md:flex-col xs:grid xs:grid-cols-2 xs:gap-5 grid-cols-1'>
+                                            <div className='md:flex md:flex-col xs:grid md:grid-cols-2 xs:gap-5 grid-cols-1 lg:pr-16'>
                                                 {
                                                     related && related.length > 0 &&
                                                         related.map((item, index) => {
                                                             return (
                                                                 <div className='mb-2'>
+                                                                    {console.log(item)}
                                                                     <VideoThumbnail 
                                                                         key={index} 
                                                                         id={item._id} 
@@ -527,6 +559,8 @@ const VideosSingle = ({ user }) => {
                                                                         embedLink={getVideoId(item.link)}
                                                                         user={user}
                                                                         setAlertSubActive={setAlertSubActive}
+                                                                        fixed={false}
+                                                                        file_size={item.file_size}
                                                                     />
                                                                 </div>
                                                             )

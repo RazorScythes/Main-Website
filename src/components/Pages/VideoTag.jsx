@@ -107,7 +107,7 @@ const VideoTag = ({ user }) => {
       setCurrentPage(pageIndex)
     }, [pageIndex])
 
-    const itemsPerPage = 50; // Number of items per page
+    const itemsPerPage = 52; // Number of items per page
     const totalPages = Math.ceil(videos?.length / itemsPerPage); // Total number of pages
     const [currentPage, setCurrentPage] = useState(pageIndex);
     // Calculate the start and end indices for the current page
@@ -153,13 +153,74 @@ const VideoTag = ({ user }) => {
       calculateDisplayedPages();
     }, [currentPage, totalPages, pageIndex]);
     
+    useEffect(() => {
+      window.scrollTo(0, 0)
+      if(searchParams.get('type') === null || searchParams.get('type') === '') {
+        setVideos(video)
+      }
+      else if(searchParams.get('type') === 'latest') {
+        // Filter and group the objects by date
+        const groupedData = video.reduce((result, obj) => {
+          const date = obj.createdAt.split('T')[0];
+          if (result[date]) {
+            result[date].push(obj);
+          } else {
+            result[date] = [obj];
+          }
+          return result;
+        }, {});
+
+        // Get the latest date from the groupedData object
+        const latestDate = Object.keys(groupedData).sort().pop();
+
+        // Get the objects related to the latest date
+        const latestVideos = groupedData[latestDate];
+
+        if(latestVideos !== undefined)
+          setVideos(latestVideos)
+      }
+      else if(searchParams.get('type') === 'most_viewed') {
+        // Sort the data based on views in ascending order
+        if(video.length > 0) {
+          var arr = [...video]
+
+          const sortedData = arr.sort((a, b) => b.views.length - a.views.length);
+
+          // Filter out objects where views is 0
+          const filteredData = sortedData.filter(obj => obj.views.length !== 0);
+
+          if(filteredData.length > 0)
+            setVideos(filteredData)
+        }
+      }
+      else if(searchParams.get('type') === 'popular') {
+        // Sort the data based on views in ascending order
+        if(video.length > 0) {
+          var arr = []
+
+          video.forEach(item => {
+            var popularity = ((item.views.length/2) + item.likes.length) - item.dislikes.length
+            if(popularity > 0) { 
+              arr.push({...item, popularity: popularity})
+            }
+          });
+
+          const sortedData = arr.sort((a, b) => b.popularity - a.popularity);
+
+          if(sortedData.length > 0)
+            setVideos(sortedData)
+        }
+      }
+    },[video, searchParams.get('type')])
+    
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
-
         if(tag)
           navigate(`/videos/tags/${tag}?page=${pageNumber}`)
         else if(artist_name)
           navigate(`/videos/artist/${artist_name}?page=${pageNumber}`)
+        else if(key)
+          navigate(`/videos/search/${key}?page=${pageNumber}`)
     };
 
     useEffect(() => {
@@ -186,6 +247,13 @@ const VideoTag = ({ user }) => {
           dispatch(clearAlert())
       }
     }, [sideAlert])
+
+    const handlePageType = (type) => {
+      const urlString = window.location.href.split('?')[0];
+      const baseUrl = window.location.origin;
+      const path = urlString.substring(baseUrl.length);
+      navigate(`${path}?type=${type}&page=${1}`)
+    };
 
     return (
       <div
@@ -221,15 +289,11 @@ const VideoTag = ({ user }) => {
               <div>
                 <div className="flex justify-between items-center">
                   <div className='flex flex-row flex-wrap items-start xs:justify-start justify-center'>
-                      <Link to={`/videos?page=${1}`}>
-                      <p style={{backgroundColor: paramIndex && 'rgb(243, 244, 246)', color: paramIndex && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100  transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All</p></Link>
-                      <Link to={`/videos?type=latest&page=${1}`}>
-                      <p style={{backgroundColor: checkParams('latest') && 'rgb(243, 244, 246)', color: checkParams('latest') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Latest</p></Link>
-                      <Link to={`/videos?type=most_viewed&page=${1}`}>
-                      <p style={{backgroundColor: checkParams('most_viewed') && 'rgb(243, 244, 246)', color: checkParams('most_viewed') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Most Viewed</p></Link>
-                      <Link to={`/videos?type=popular&page=${1}`}>
-                      <p style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out'>Popular</p></Link>
-                      <div className='relative ml-2'>
+                      <button onClick={() => handlePageType("")} style={{backgroundColor: paramIndex && 'rgb(243, 244, 246)', color: paramIndex && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100  transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All</button>
+                      <button onClick={() => handlePageType("latest")} style={{backgroundColor: checkParams('latest') && 'rgb(243, 244, 246)', color: checkParams('latest') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Latest</button>
+                      <button onClick={() => handlePageType("most_viewed")} style={{backgroundColor: checkParams('most_viewed') && 'rgb(243, 244, 246)', color: checkParams('most_viewed') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Most Viewed</button>
+                      <button onClick={() => handlePageType("popular")} style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out'>Popular</button>
+                      <div className='relative ml-2 z-50'>
                           <button onClick={() => setToggle({...toggle, tags: !toggle.tags})} className='cursor-pointer mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2 flex items-center'>
                               Tags 
                               {toggle.tags ? <FontAwesomeIcon icon={faChevronUp} className='ml-1 font-bold'/> : <FontAwesomeIcon icon={faChevronDown} className='ml-1 font-bold'/> }
@@ -283,6 +347,7 @@ const VideoTag = ({ user }) => {
                     {
                       videos.slice(startIndex, endIndex).map((item, index) => {
                         return (
+                          <>
                           <VideoThumbnail 
                             key={index} 
                             id={item._id} 
@@ -295,7 +360,9 @@ const VideoTag = ({ user }) => {
                             embedLink={getVideoId(item.link)}
                             user={user}
                             setAlertSubActive={setAlertSubActive}
+                            file_size={item.file_size}
                           />
+                          </>
                         )
                       })
                     }

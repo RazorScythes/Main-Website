@@ -140,7 +140,7 @@ const Videos = ({ user }) => {
       setCurrentPage(pageIndex)
     }, [pageIndex])
 
-    const itemsPerPage = 50; // Number of items per page
+    const itemsPerPage = 52; // Number of items per page
     const totalPages = Math.ceil(videos?.length / itemsPerPage); // Total number of pages
     const [currentPage, setCurrentPage] = useState(pageIndex);
     // Calculate the start and end indices for the current page
@@ -259,7 +259,7 @@ const Videos = ({ user }) => {
                     <p style={{backgroundColor: checkParams('most_viewed') && 'rgb(243, 244, 246)', color: checkParams('most_viewed') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Most Viewed</p></Link>
                     <Link to={`/videos?type=popular&page=${1}`}>
                     <p style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out'>Popular</p></Link>
-                    <div className='relative ml-2'>
+                    <div className='relative ml-2 z-50'>
                         <button onClick={() => setToggle({...toggle, tags: !toggle.tags})} className='cursor-pointer mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2 flex items-center'>
                             Tags 
                             {toggle.tags ? <FontAwesomeIcon icon={faChevronUp} className='ml-1 font-bold'/> : <FontAwesomeIcon icon={faChevronDown} className='ml-1 font-bold'/> }
@@ -297,6 +297,7 @@ const Videos = ({ user }) => {
                           embedLink={getVideoId(item.link)}
                           user={user}
                           setAlertSubActive={setAlertSubActive}
+                          file_size={item.file_size}
                         />
                       )
                     })

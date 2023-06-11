@@ -236,6 +236,7 @@ const Uploads = ({ user }) => {
     const [bulkTags, setBulkTags] = useState('')
     const [showBulkAlert, setShowBulkAlert] = useState(false)
     const [bulkSubmitted, setBulkSubmitted] = useState(false)
+    const [APIProperties, setAPIProperties] = useState(false)
     const [bulkAlert, setBulkAlert] = useState({
         variant: '',
         message: ''
@@ -294,7 +295,7 @@ const Uploads = ({ user }) => {
           const apiKey = api_key;
   
           // Request URL with API key
-          const url = `https://www.googleapis.com/drive/v3/files?q='${parentFolderId}' in parents and trashed=false&fields=files(id,name)&key=${apiKey}`;
+          const url = `https://www.googleapis.com/drive/v3/files?q='${parentFolderId}' in parents and trashed=false&fields=files(id,name,size)&key=${apiKey}`;
   
           // Make the GET request to the Google Drive API
           const response = await axios.get(url);
@@ -303,7 +304,8 @@ const Uploads = ({ user }) => {
           const filesData = response.data.files;
           const fileDetails = filesData.map(file => ({
             id: file.id,
-            name: file.name
+            name: file.name,
+            size: file.size
           }));
   
           // Set the file details in the state
@@ -365,12 +367,22 @@ const Uploads = ({ user }) => {
                 if(longTitle) num_video_count = num_video_count + 1
 
                 try {
-                    const response = await User_API.post('/uploads/uploadVideo', video_obj)
+                    if(APIProperties) {
+                        const response = await User_API.post('/uploads/updateVideoProperties', { file_id: file.id, size: file.size })
 
-                    setBulkAlert({
-                        variant: 'success',
-                        message: `Video "${video_obj.data.title}" uploaded successfully (files #${file_count})`
-                    })
+                        setBulkAlert({
+                            variant: 'success',
+                            message: `Video "${video_obj.data.title}" properties updated (files #${file_count})`
+                        })
+                    }
+                    else {
+                        const response = await User_API.post('/uploads/uploadVideo', video_obj)
+
+                        setBulkAlert({
+                            variant: 'success',
+                            message: `Video "${video_obj.data.title}" uploaded successfully (files #${file_count})`
+                        })
+                    }
                     setShowBulkAlert(true)
 
                     if(files.length === file_count) setBulkUpload(true)
@@ -379,10 +391,18 @@ const Uploads = ({ user }) => {
                 }
                 catch(err) {
                     console.log(err)
-                    setBulkAlert({
-                        variant: 'danger',
-                        message: `Failed to upload video "${video_obj.data.title}"`
-                    })
+                    if(APIProperties) {
+                        setBulkAlert({
+                            variant: 'danger',
+                            message: `Failed to update video properties "${video_obj.data.title}"`
+                        })
+                    }
+                    else {
+                        setBulkAlert({
+                            variant: 'danger',
+                            message: `Failed to upload video "${video_obj.data.title}"`
+                        })
+                    }
                     setShowBulkAlert(true)
                 }
             
@@ -978,6 +998,16 @@ const Uploads = ({ user }) => {
                                                             bulkAlert.variant && bulkAlert.message && showBulkAlert && 
                                                                 <Alert variants={bulkAlert.variant} text={bulkAlert.message} show={showBulkAlert} setShow={setShowBulkAlert} />
                                                         }
+                                                        <div className="flex items-center mb-4 pt-2">
+                                                            <input 
+                                                                id="api-checkbox" 
+                                                                type="checkbox" 
+                                                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                                checked={APIProperties}
+                                                                onChange={(e) => setAPIProperties(!APIProperties)}
+                                                            />
+                                                            <label htmlFor="api-checkbox" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Update Only API Properties</label>
+                                                        </div>
                                                         <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                                                             <div className='flex flex-col'>
                                                                 <label className='font-semibold'> API Key: </label>

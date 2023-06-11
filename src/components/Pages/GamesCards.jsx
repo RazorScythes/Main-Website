@@ -87,7 +87,7 @@ const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings
     }
 
     return (
-        <div className='bg-gray-800 rounded-sm shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)]'>
+        <div className='xs:w-full w-64 mx-auto bg-gray-800 rounded-sm shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)]'>
             <img
                 className='h-44 w-full object-cover rounded-t-sm'
                 alt="game feature image"
