@@ -16,7 +16,7 @@ const Hero = ({ hero, resultRef }) => {
         resume_link: '',
         social_links: {}
     })
-    console.log(heroData)
+
     useEffect(() => {
         if(hero){
             setHeroData({

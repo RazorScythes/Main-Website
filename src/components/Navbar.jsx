@@ -64,7 +64,7 @@ const Navbar = ({ path }) => {
     }
   }
   return (
-    <nav className="relative flex items-center justify-between flex-wrap bg-gray-800 p-6 z-10">
+    <nav className="relative flex items-center justify-between flex-wrap bg-gray-800 p-6 z-50">
       <Link to={`${path}`}>
         <div className="flex items-center flex-shrink-0 text-white mr-6">
             <img className="h-8 w-8 rounded-full mr-2" src={Logo} alt="Profile" />

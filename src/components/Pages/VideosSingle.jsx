@@ -205,8 +205,7 @@ const VideosSingle = ({ user }) => {
         if(!submitted) {
             dispatch(uploadComment({
                 id: video.video._id,
-                avatar: avatar ? avatar : Avatar,
-                user: user?.result.username,
+                user: user?.result._id,
                 comment: comment
             }))
             setSubmitted(true)
@@ -255,6 +254,7 @@ const VideosSingle = ({ user }) => {
             className="relative bg-cover bg-center py-8"
             style={{ backgroundColor: "#111827" }}
         >   
+        <button onClick={() => captureWebpage()}>Capture Webpage</button>
             <div className={`${styles.marginX} ${styles.flexCenter}`}>
                 <div className={`${styles.boxWidthEx}`}>
                     <div className="container mx-auto file:lg:px-8 relative px-0">
@@ -482,7 +482,7 @@ const VideosSingle = ({ user }) => {
                                                                             </svg>
                                                                             <span class="sr-only">Loading...</span>
                                                                         </div>
-                                                                        Submitting
+                                                                        Commenting
                                                                     </div>
                                                                 )
                                                             }
@@ -546,7 +546,6 @@ const VideosSingle = ({ user }) => {
                                                         related.map((item, index) => {
                                                             return (
                                                                 <div className='mb-2'>
-                                                                    {console.log(item)}
                                                                     <VideoThumbnail 
                                                                         key={index} 
                                                                         id={item._id} 
@@ -603,7 +602,7 @@ const VideosSingle = ({ user }) => {
                                                                         </svg>
                                                                         <span class="sr-only">Loading...</span>
                                                                     </div>
-                                                                    Submitting
+                                                                    Commenting
                                                                 </div>
                                                             )
                                                         }

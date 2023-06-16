@@ -315,6 +315,7 @@ const Uploads = ({ user }) => {
         }
     };
 
+    const [bulkError, setBulkError] = useState([])
     const handleBulkInsert = async () => {
         if(!bulkForm.api_key || !bulkForm.drive_id || !bulkForm.owner) return 
 
@@ -360,15 +361,16 @@ const Uploads = ({ user }) => {
                         privacy: bulkForm.privacy,
                         strict: bulkForm.strict,
                         downloadable: bulkForm.downloadable,
-                        tags: bulkForm.tags
-                    }
+                        tags: bulkForm.tags,
+                    },
+                    size: file.size
                 }
 
                 if(longTitle) num_video_count = num_video_count + 1
 
                 try {
                     if(APIProperties) {
-                        const response = await User_API.post('/uploads/updateVideoProperties', { file_id: file.id, size: file.size })
+                        await User_API.post('/uploads/updateVideoProperties', { file_id: file.id, size: file.size })
 
                         setBulkAlert({
                             variant: 'success',
@@ -376,7 +378,7 @@ const Uploads = ({ user }) => {
                         })
                     }
                     else {
-                        const response = await User_API.post('/uploads/uploadVideo', video_obj)
+                        await User_API.post('/uploads/uploadVideo', video_obj)
 
                         setBulkAlert({
                             variant: 'success',
@@ -402,11 +404,16 @@ const Uploads = ({ user }) => {
                             variant: 'danger',
                             message: `Failed to upload video "${video_obj.data.title}"`
                         })
+                        setBulkError(bulkError.concat(`Failed to upload video "${video_obj.data.title}"`))
                     }
                     setShowBulkAlert(true)
                 }
             
             })
+            if(bulkError.length > 0) {
+                console.log(bulkError)
+                setBulkError([])
+            }
         }
     }
 

@@ -51,7 +51,7 @@ const AccountNavbar = ({ path }) => {
   }
 
   return (
-    <nav className="relative flex flex-row items-center justify-between flex-wrap bg-white lg:px-6 lg:p-0 p-6 lg:pt-2 z-10 shadow-lg">
+    <nav className="relative flex flex-row items-center justify-between flex-wrap bg-white lg:px-6 lg:p-0 p-6 lg:pt-2 z-50 shadow-lg">
       <div className="hidden lg:block text-sm text-gray-800 my-2">
           <div className="flex flex-row items-center justify-between flex-wrap">
             {
