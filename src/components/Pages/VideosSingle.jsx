@@ -254,7 +254,6 @@ const VideosSingle = ({ user }) => {
             className="relative bg-cover bg-center py-8"
             style={{ backgroundColor: "#111827" }}
         >   
-        <button onClick={() => captureWebpage()}>Capture Webpage</button>
             <div className={`${styles.marginX} ${styles.flexCenter}`}>
                 <div className={`${styles.boxWidthEx}`}>
                     <div className="container mx-auto file:lg:px-8 relative px-0">
