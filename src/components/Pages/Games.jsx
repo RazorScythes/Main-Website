@@ -159,6 +159,33 @@ const Games = ({ user }) => {
             <div className={`${styles.marginX} ${styles.flexCenter}`}>
                 <div className={`${styles.boxWidthEx}`}>
                     <div className="container mx-auto file:lg:px-8 relative px-0 my-10">
+                        <div className="flex justify-between items-center">
+                            <div className='flex flex-row flex-wrap items-start xs:justify-start justify-center'>
+                                <Link to={`/games?page=${1}`}><p style={{backgroundColor: paramIndex && 'rgb(243, 244, 246)', color: paramIndex && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100  transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All</p></Link>
+                                <Link to={`/games?type=latest&page=${1}`}><p style={{backgroundColor: checkParams('latest') && 'rgb(243, 244, 246)', color: checkParams('latest') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Latest</p></Link>
+                                <div className='relative'>
+                                    <button onClick={() => setToggle({...toggle, tags: !toggle.tags})} style={{backgroundColor: checkParams('most_viewed') && 'rgb(243, 244, 246)', color: checkParams('most_viewed') && 'rgb(31, 41, 55)'}} className='cursor-pointer mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2 flex items-center'>
+                                        Tags 
+                                        {toggle.tags ? <FontAwesomeIcon icon={faChevronUp} className='ml-1 font-bold'/> : <FontAwesomeIcon icon={faChevronDown} className='ml-1 font-bold'/> }
+                                    </button>
+                                    {
+                                        tagsList && tagsList.length > 0 &&
+                                            <div className={`${toggle.tags ? `absolute` : `hidden`}`}>
+                                                <ul className='no-scroll max-h-[183px] overflow-y-auto flex flex-col mb-2 font-semibold text-sm bg-gray-800 text-gray-100  border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>
+                                                    {
+                                                        tagsList.map((item, index) => {
+                                                            return (
+                                                                <Link key={index} to={`/games/tags/${item.tag}`}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>{item.tag}</li></Link>
+                                                            )
+                                                        })
+                                                    }
+                                                </ul>
+                                            </div>
+                                    }
+                                </div>
+                                <Link to={`/games?type=popular&page=${1}`}><p style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out'>Popular</p></Link>
+                            </div>
+                        </div>
                         {
                             message.length > 0 ?
                                 <div className='h-96 flex flex-col items-center justify-center'> 
@@ -172,33 +199,6 @@ const Games = ({ user }) => {
                             :
                             games && games.length > 0 ?
                             <>
-                            <div className="flex justify-between items-center">
-                                <div className='flex flex-row flex-wrap items-start xs:justify-start justify-center'>
-                                    <Link to={`/games?page=${1}`}><p style={{backgroundColor: paramIndex && 'rgb(243, 244, 246)', color: paramIndex && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100  transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All</p></Link>
-                                    <Link to={`/games?type=latest&page=${1}`}><p style={{backgroundColor: checkParams('latest') && 'rgb(243, 244, 246)', color: checkParams('latest') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Latest</p></Link>
-                                    <div className='relative'>
-                                        <button onClick={() => setToggle({...toggle, tags: !toggle.tags})} style={{backgroundColor: checkParams('most_viewed') && 'rgb(243, 244, 246)', color: checkParams('most_viewed') && 'rgb(31, 41, 55)'}} className='cursor-pointer mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2 flex items-center'>
-                                            Tags 
-                                            {toggle.tags ? <FontAwesomeIcon icon={faChevronUp} className='ml-1 font-bold'/> : <FontAwesomeIcon icon={faChevronDown} className='ml-1 font-bold'/> }
-                                        </button>
-                                        {
-                                            tagsList && tagsList.length > 0 &&
-                                                <div className={`${toggle.tags ? `absolute` : `hidden`}`}>
-                                                    <ul className='no-scroll max-h-[183px] overflow-y-auto flex flex-col mb-2 font-semibold text-sm bg-gray-800 text-gray-100  border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>
-                                                        {
-                                                            tagsList.map((item, index) => {
-                                                                return (
-                                                                    <Link key={index} to={`/games/tags/${item.tag}`}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>{item.tag}</li></Link>
-                                                                )
-                                                            })
-                                                        }
-                                                    </ul>
-                                                </div>
-                                        }
-                                    </div>
-                                    <Link to={`/games?type=popular&page=${1}`}><p style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out'>Popular</p></Link>
-                                </div>
-                            </div>
                             <div className="grid md:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-5 place-content-start mt-4">
                                 {
                                     games.slice(startIndex, endIndex).map((item, index) => {
