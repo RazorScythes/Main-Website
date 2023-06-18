@@ -43,8 +43,8 @@ export const nav_links = [
     icon: faHome
   },
   {
-    path: "forum",
-    name: "Forum",
+    path: "blogs",
+    name: "Blogs",
     icon: faMessage
   },
   {

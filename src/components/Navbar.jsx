@@ -81,7 +81,7 @@ const Navbar = ({ path }) => {
         {
           user?.result?
           <>
-              <img className="h-8 w-8 rounded-full ml-4 cursor-pointer object-cover" src={avatar ? avatar : Avatar} alt="Profile" onClick={() => {
+              <img className="h-8 w-8 rounded-full ml-4 cursor-pointer object-cover border border-gray-400" src={avatar ? avatar : Avatar} alt="Profile" onClick={() => {
                 setToggle(!toggle)
                 setIsActive(false)
               }} />
@@ -159,7 +159,7 @@ const Navbar = ({ path }) => {
           {
             user?.result? 
             <>
-                <img className="h-10 w-10 rounded-full ml-4 cursor-pointer object-cover" src={avatar ? avatar : Avatar} alt="Profile" onClick={() => {
+                <img className="h-10 w-10 rounded-full ml-4 cursor-pointer object-cover border border-gray-400" src={avatar ? avatar : Avatar} alt="Profile" onClick={() => {
                   setToggle(!toggle)
                   setIsActive(false)
                 }} />

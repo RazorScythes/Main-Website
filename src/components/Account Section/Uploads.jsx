@@ -35,6 +35,9 @@ const Uploads = ({ user }) => {
     const gameStartIndex = (gameCurrentPage - 1) * itemsPerPage;
     const gameEndIndex = gameStartIndex + itemsPerPage;
 
+    const [searchVideo, setSearchVideo] = useState('')
+    const [searchGame, setSearchGame] = useState('')
+
     const [searchParams, setSearchParams] = useSearchParams();
     const [openModal, setOpenModal] = useState(false)
     const [recordOpenModal, setRecordOpenModal] = useState(false)
@@ -78,7 +81,18 @@ const Uploads = ({ user }) => {
 
     useEffect(() => {
         if(video && video.length > 0){
-            setData(video)
+            if(searchVideo.length > 0) {
+                const keyword = searchVideo.toLowerCase();
+                const filteredData = video.filter((item) =>
+                    Object.values(item).some((value) =>
+                        String(value).toLowerCase().includes(keyword)
+                    )
+                );
+                setData(filteredData);
+            }
+            else {
+                setData(video)
+            }
         }
         setTags([])
         setForm({
@@ -478,7 +492,18 @@ const Uploads = ({ user }) => {
 
     useEffect(() => {
         if(game && game.length > 0){
-            setGameData(game)
+            if(searchGame.length > 0) {
+                const keyword = searchGame.toLowerCase();
+                const filteredData = game.filter((item) =>
+                    Object.values(item).some((value) =>
+                        String(value).toLowerCase().includes(keyword)
+                    )
+                );
+                setGameData(filteredData);
+            }
+            else {
+                setGameData(game)
+            }
         }
         setGameTags([])
         setGameForm({
@@ -640,9 +665,6 @@ const Uploads = ({ user }) => {
 
     const [showGameRecord, setShowGameRecord] = useState(false)
     const [showVideoRecord, setShowVideoRecord] = useState(false)
-
-    const [searchVideo, setSearchVideo] = useState('')
-    const [searchGame, setSearchGame] = useState('')
 
     const handleVideoSearch = (event) => {
         const keyword = event.target.value.toLowerCase();

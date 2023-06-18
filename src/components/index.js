@@ -20,7 +20,7 @@ import Games from './Pages/Games'
 import GamesSingle from './Pages/GamesSingle'
 import NotFound from './Pages/NotFound'
 import Portfolio from './Pages/Portfolio'
-import Forum from './Pages/Forum'
+import Blogs from './Pages/Blogs'
 import Store from './Pages/Store'
 import Archive from './Pages/Archive'
 import Videos from './Pages/Videos'
@@ -37,7 +37,7 @@ export {
     Videos,
     VideosSingle,
     GamesSingle,
-    Forum,
+    Blogs,
     Store,
     Archive,
     NotFound,

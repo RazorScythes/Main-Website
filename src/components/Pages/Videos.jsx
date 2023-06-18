@@ -44,7 +44,9 @@ const Videos = ({ user }) => {
     const message = useSelector((state) => state.video.message)
     const sideAlert = useSelector((state) => state.video.sideAlert)
     const tagsList = useSelector((state) => state.video.tagsCount)
-
+    const isLoading = useSelector((state) => state.video.isLoading)
+    const notFound = useSelector((state) => state.video.notFound)
+    
     const pageIndex = searchParams.get('page') ? parseInt(searchParams.get('page')) : 1
     const navType = searchParams.get('type') ? searchParams.get('type') : ''
     const filteredType = searchParams.get('filtered') ? searchParams.get('filtered') : ''
@@ -292,8 +294,8 @@ const Videos = ({ user }) => {
 
     return (
       <div
-      className="relative bg-cover bg-center"
-      style={{ backgroundColor: "#111827" }}
+        className="relative bg-cover bg-center"
+        style={{ backgroundColor: "#111827" }}
       >   
       <SideAlert
          variants={alertInfo.variant}
@@ -309,130 +311,141 @@ const Videos = ({ user }) => {
       <div className={`${styles.marginX} ${styles.flexCenter}`}>
       <div className={`${styles.boxWidthEx}`}>
          <div className="container mx-auto file:lg:px-8 relative px-0 my-10">
-            {
-            message.length > 0 ?
-            <div className='h-96 flex flex-col items-center justify-center'>
-               <h3 className='text-white xs:text-3xl text-2xl font-semibold text-center capitalize'>{message}</h3>
-               <a href="/videos">
-               <button className="mt-6 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
-               Reload Page
-               </button>
-               </a>
-            </div>
-            :
-            videos && videos.length >= 0 ?
-            <div>
-              <div className="flex justify-between items-center">
-                <div className='flex flex-row flex-wrap items-start xs:justify-start justify-center'>
-                    <button onClick={() => handlePageType("")} style={{backgroundColor: paramIndex && 'rgb(243, 244, 246)', color: paramIndex && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100  transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All</button>
-                    <button onClick={() => handlePageType("latest")} style={{backgroundColor: checkParams('latest') && 'rgb(243, 244, 246)', color: checkParams('latest') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Latest</button>
-                    <button onClick={() => handlePageType("most_viewed")} style={{backgroundColor: checkParams('most_viewed') && 'rgb(243, 244, 246)', color: checkParams('most_viewed') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Most Viewed</button>
-                    <button onClick={() => handlePageType("popular")} style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out'>Popular</button>
-                    <div className='relative ml-2 z-40'>
-                        <button onClick={() => setToggle({...toggle, tags: !toggle.tags})} className='cursor-pointer mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2 flex items-center'>
-                            Tags 
-                            {toggle.tags ? <FontAwesomeIcon icon={faChevronUp} className='ml-1 font-bold'/> : <FontAwesomeIcon icon={faChevronDown} className='ml-1 font-bold'/> }
-                        </button>
-                        {
-                            tagsList && tagsList.length > 0 &&
-                                <div className={`${toggle.tags ? `absolute` : `hidden`}`}>
-                                    <ul className='no-scroll max-h-[183px] overflow-y-auto flex flex-col mb-2 font-semibold text-sm bg-gray-800 text-gray-100  border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>
-                                        {
-                                            tagsList.map((item, index) => {
-                                                return (
-                                                    <Link key={index} to={`/videos/tags/${item.tag}`}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>{item.tag}</li></Link>
-                                                )
-                                            })
-                                        }
-                                    </ul>
-                                </div>
-                        }
-                    </div>
-                    <div className='relative z-40'>
-                        <button onClick={() => setToggle({...toggle, filtered: !toggle.filtered})} className='cursor-pointer mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2 flex items-center'>
-                            { filteredType ? <span className='capitalize'>{filteredType}</span> : 'Filtered By' } 
-                            {toggle.filtered ? <FontAwesomeIcon icon={faChevronUp} className='ml-1 font-bold'/> : <FontAwesomeIcon icon={faChevronDown} className='ml-1 font-bold'/> }
-                        </button>
-                        <div className={`${toggle.filtered ? `absolute` : `hidden`}`}>
-                            <ul className='no-scroll max-h-[183px] overflow-y-auto flex flex-col mb-2 font-semibold text-sm bg-gray-800 text-gray-100  border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>
-                              <button onClick={() => handleFilteredChange('all')}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>All</li></button>
-                              <button onClick={() => handleFilteredChange('embed')}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>Embed</li></button>
-                              <button onClick={() => handleFilteredChange('video')}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>Videos</li></button>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+            <div className="flex justify-between items-center">
+              <div className='flex flex-row flex-wrap items-start xs:justify-start justify-center'>
+                  <button onClick={() => handlePageType("")} style={{backgroundColor: paramIndex && 'rgb(243, 244, 246)', color: paramIndex && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100  transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All</button>
+                  <button onClick={() => handlePageType("latest")} style={{backgroundColor: checkParams('latest') && 'rgb(243, 244, 246)', color: checkParams('latest') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Latest</button>
+                  <button onClick={() => handlePageType("most_viewed")} style={{backgroundColor: checkParams('most_viewed') && 'rgb(243, 244, 246)', color: checkParams('most_viewed') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Most Viewed</button>
+                  <button onClick={() => handlePageType("popular")} style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out'>Popular</button>
+                  <div className='relative ml-2 z-40'>
+                      <button onClick={() => {setToggle({...toggle, tags: !toggle.tags, filtered: false});}} className='cursor-pointer mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2 flex items-center'>
+                          Tags 
+                          {toggle.tags ? <FontAwesomeIcon icon={faChevronUp} className='ml-1 font-bold'/> : <FontAwesomeIcon icon={faChevronDown} className='ml-1 font-bold'/> }
+                      </button>
+                      {
+                          tagsList && tagsList.length > 0 &&
+                              <div className={`${toggle.tags ? `absolute` : `hidden`}`}>
+                                  <ul className='no-scroll max-h-[183px] overflow-y-auto flex flex-col mb-2 font-semibold text-sm bg-gray-800 text-gray-100  border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>
+                                      {
+                                          tagsList.map((item, index) => {
+                                              return (
+                                                  <Link key={index} to={`/videos/tags/${item.tag}`}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>{item.tag}</li></Link>
+                                              )
+                                          })
+                                      }
+                                  </ul>
+                              </div>
+                      }
+                  </div>
+                  <div className='relative z-40'>
+                      <button onClick={() => setToggle({...toggle, filtered: !toggle.filtered, tags: false})} className='cursor-pointer mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2 flex items-center'>
+                          { filteredType ? <span className='capitalize'>{filteredType}</span> : 'Filtered By' } 
+                          {toggle.filtered ? <FontAwesomeIcon icon={faChevronUp} className='ml-1 font-bold'/> : <FontAwesomeIcon icon={faChevronDown} className='ml-1 font-bold'/> }
+                      </button>
+                      <div className={`${toggle.filtered ? `absolute` : `hidden`}`}>
+                          <ul className='no-scroll max-h-[183px] overflow-y-auto flex flex-col mb-2 font-semibold text-sm bg-gray-800 text-gray-100  border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>
+                            <button onClick={() => handleFilteredChange('all')}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>All</li></button>
+                            <button onClick={() => handleFilteredChange('embed')}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>Embed</li></button>
+                            <button onClick={() => handleFilteredChange('video')}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>Videos</li></button>
+                          </ul>
+                      </div>
+                  </div>
               </div>
-                {
-                   videos && videos.length > 0 ?
-                      <div className='grid lg:grid-cols-4 md:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-5 place-content-start mt-4'>
-                          {
-                            videos.slice(startIndex, endIndex).map((item, index) => {
-                              return (
-                                <VideoThumbnail 
-                                  key={index} 
-                                  id={item._id} 
-                                  index={index} 
-                                  title={item.title} 
-                                  views={item.views} 
-                                  timestamp={item.createdAt} 
-                                  setActive={setActive} 
-                                  active={active} 
-                                  embedLink={getVideoId(item.link)}
-                                  user={user}
-                                  setAlertSubActive={setAlertSubActive}
-                                  file_size={item.file_size}
-                                />
-                              )
-                            })
-                          }
-                      </div>
-                      :
-                      <div className='w-full h-40 flex flex-col items-center justify-center'>
-                        <h3 className='text-white xs:text-3xl text-2xl font-semibold text-center capitalize'>No Result Found</h3>
-                      </div>
-                }
-                {
-                  videos && videos.length > 0 &&
-                    <div className='flex items-center justify-center mt-8'>
-                      <button
-                      disabled={currentPage === 1}
-                      onClick={() => handlePageChange(currentPage - 1)}
-                      className='cursor-pointer mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
-                      >
-                      <span className='xs:block hidden'>Prev</span>
-                      <FontAwesomeIcon icon={faChevronLeft} className='xs:hidden inline-block'/>
-                      </button>
-                      {displayedPages.map((pageNumber) => (
-                      <button
-                        key={pageNumber}
-                        onClick={() => handlePageChange(pageNumber)}
-                      // className={currentPage === index + 1 ? "active" : ""}
-                      style={{backgroundColor: pageIndex === pageNumber ? "rgb(243 244 246)" : "rgb(31 41 55)", color: pageIndex === pageNumber ? "rgb(31 41 55)" : "rgb(243 244 246)"}}
-                      className="cursor-pointer mx-1 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out"
-                      >
-                      {pageNumber}
-                      </button>
-                      ))}
-                      <button
-                      disabled={currentPage === totalPages}
-                      onClick={() => handlePageChange(currentPage + 1)}
-                      className='cursor-pointer ml-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
-                      >
-                      <span className='xs:block hidden'>Next</span>
-                      <FontAwesomeIcon icon={faChevronRight} className='xs:hidden inline-block'/>
-                      </button>
-                    </div>
-                }
             </div>
-            :
-            <div className='h-96 flex items-center justify-center'>
-               <div className='flex md:flex-row flex-col items-center justify-center'>
-               </div>
-            </div>
+            {
+              isLoading ?
+                <div className='h-96 flex items-center justify-center'>
+                  <div className='flex md:flex-row flex-col items-center justify-center'>
+                  </div>
+                </div>
+              :
+              notFound ?
+                <div className='h-96 flex flex-col items-center justify-center'>
+                  <div className="md:col-span-2 bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] sm:p-16 p-8 text-white text-center">
+                    <h3 className='text-white xs:text-3xl text-2xl font-semibold text-center capitalize'>{message}</h3>
+                    <p className="text-white text-lg">Video not available, please come back later</p>
+                    <a href="/videos">
+                      <button className="mx-auto text-center mt-6 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
+                        Reload Page
+                      </button>
+                    </a>
+                  </div>
+                </div>
+              :
+              videos && videos.length > 0 ?
+                <div>
+                  {
+                    videos && videos.length > 0 ?
+                        <div className='grid lg:grid-cols-4 md:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-5 place-content-start mt-4'>
+                            {
+                              videos.slice(startIndex, endIndex).map((item, index) => {
+                                return (
+                                  <VideoThumbnail 
+                                    key={index} 
+                                    id={item._id} 
+                                    index={index} 
+                                    title={item.title} 
+                                    views={item.views} 
+                                    timestamp={item.createdAt} 
+                                    setActive={setActive} 
+                                    active={active} 
+                                    embedLink={getVideoId(item.link)}
+                                    user={user}
+                                    setAlertSubActive={setAlertSubActive}
+                                    file_size={item.file_size}
+                                  />
+                                )
+                              })
+                            }
+                        </div>
+                        :
+                        message !== 'none' ?
+                          <div className='w-full h-40 flex flex-col items-center justify-center'>
+                            <h3 className='text-white xs:text-3xl text-2xl font-semibold text-center capitalize'>No Result Found</h3>
+                          </div>
+                        :
+                        <div className='w-full h-96 flex flex-col items-center justify-center'></div>
+                  }
+                  {
+                    videos && videos.length > 0 &&
+                      <div className='flex items-center justify-center mt-8'>
+                        <button
+                        disabled={currentPage === 1}
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        className='cursor-pointer mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
+                        >
+                        <span className='xs:block hidden'>Prev</span>
+                        <FontAwesomeIcon icon={faChevronLeft} className='xs:hidden inline-block'/>
+                        </button>
+                        {displayedPages.map((pageNumber) => (
+                        <button
+                          key={pageNumber}
+                          onClick={() => handlePageChange(pageNumber)}
+                        // className={currentPage === index + 1 ? "active" : ""}
+                        style={{backgroundColor: pageIndex === pageNumber ? "rgb(243 244 246)" : "rgb(31 41 55)", color: pageIndex === pageNumber ? "rgb(31 41 55)" : "rgb(243 244 246)"}}
+                        className="cursor-pointer mx-1 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out"
+                        >
+                        {pageNumber}
+                        </button>
+                        ))}
+                        <button
+                        disabled={currentPage === totalPages}
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        className='cursor-pointer ml-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
+                        >
+                        <span className='xs:block hidden'>Next</span>
+                        <FontAwesomeIcon icon={faChevronRight} className='xs:hidden inline-block'/>
+                        </button>
+                      </div>
+                  }
+                </div>
+              :
+              <div className='h-96 flex items-center justify-center'>
+                <div className='flex md:flex-row flex-col items-center justify-center'></div>
+              </div>
             }
-         </div>
-      </div>
+          </div>
+        </div>
       </div>
       </div>
     )

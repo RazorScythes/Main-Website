@@ -12,7 +12,7 @@ const initialState = {
     comments: [],
     relatedVideos: [],
     avatar: '',
-    message: '',
+    message: 'none',
     forbiden: '',
     sideAlert: {},
     tagsCount: []
@@ -250,33 +250,57 @@ export const videoSlice = createSlice({
             state.videos = action.payload.data.result
             state.error = ''
             state.isLoading = false
+            state.notFound = false
+        }),
+        builder.addCase(getVideos.pending, (state, action) => {
+            state.isLoading = true
         }),
         builder.addCase(getVideos.rejected, (state, action) => {
             state.message = action.payload.message
+            state.notFound = true;
+            state.isLoading = false
         }),
         builder.addCase(getVideoByTag.fulfilled, (state, action) => {
             state.videos = action.payload.data.result
             state.error = ''
             state.isLoading = false
+            state.notFound = false
+        }),
+        builder.addCase(getVideoByTag.pending, (state, action) => {
+            state.isLoading = true
         }),
         builder.addCase(getVideoByTag.rejected, (state, action) => {
             state.message = action.payload.message
+            state.notFound = true;
+            state.isLoading = false
         }),
         builder.addCase(getVideoByArtist.fulfilled, (state, action) => {
             state.videos = action.payload.data.result
             state.error = ''
             state.isLoading = false
+            state.notFound = false
+        }),
+        builder.addCase(getVideoByArtist.pending, (state, action) => {
+            state.isLoading = true
         }),
         builder.addCase(getVideoByArtist.rejected, (state, action) => {
             state.message = action.payload.message
+            state.notFound = true;
+            state.isLoading = false
         }),
         builder.addCase(getVideoBySearchKey.fulfilled, (state, action) => {
             state.videos = action.payload.data.result
             state.error = ''
             state.isLoading = false
+            state.notFound = false
+        }),
+        builder.addCase(getVideoBySearchKey.pending, (state, action) => {
+            state.isLoading = true
         }),
         builder.addCase(getVideoBySearchKey.rejected, (state, action) => {
             state.message = action.payload.message
+            state.notFound = true;
+            state.isLoading = false
         }),
         builder.addCase(getVideoByID.fulfilled, (state, action) => {
             state.notFound = false
