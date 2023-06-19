@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react'
 import Cropper from 'react-easy-crop'
 import getCroppedImg from './cropImage'
 
-const ImageModal = ({ openModal, setOpenModal, image, setImage, preview, setPreview, header = "" }) => {
+const ImageModal = ({ openModal, setOpenModal, image, setImage, preview, setPreview, header = "", aspects = '' }) => {
     const closeModal = () => {
         setOpenModal(false)
         setPreview(false)
@@ -83,7 +83,7 @@ const ImageModal = ({ openModal, setOpenModal, image, setImage, preview, setPrev
                                             image={image}
                                             crop={crop}
                                             zoom={zoom}
-                                            aspect={2/2}
+                                            aspect={aspects === 'landscape' ? 2/1 : aspects === 'portrait' ? 3/4 : 2/2}
                                             onCropChange={setCrop}
                                             onCropComplete={onCropComplete}
                                             onZoomChange={setZoom}

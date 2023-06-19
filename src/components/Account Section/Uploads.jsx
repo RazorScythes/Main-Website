@@ -11,6 +11,7 @@ import Alert from '../Alert';
 import VideoTableData from './sections/VideoTableData';
 import GameViewModal from './sections/GameViewModal';
 import ImageModal from '../ImageModal';
+import BlogsForm from './BlogsForm';
 import styles from '../../style'
 
 const Uploads = ({ user }) => {
@@ -60,6 +61,7 @@ const Uploads = ({ user }) => {
     const [input, setInput] = useState({
         tags: '',
         gameTags: '',
+        blogTags: '',
         gallery: '',
         storage_name: 'Google Drive',
         link_list: []
@@ -104,7 +106,7 @@ const Uploads = ({ user }) => {
             privacy: false,
             downloadable: false
         })
-        setInput({tags: '', gameTags: '', gallery: '', storage_name: 'Google Drive', link_list: []})
+        setInput({tags: '', gameTags: '', gallery: '', blogTags: '', storage_name: 'Google Drive', link_list: []})
         setSubmitted(false)
         setEdit(false)
         setCurrentIndex(0)
@@ -664,6 +666,7 @@ const Uploads = ({ user }) => {
     }
 
     const [showGameRecord, setShowGameRecord] = useState(false)
+    const [showBlogRecord, setShowBlogRecord] = useState(false)
     const [showVideoRecord, setShowVideoRecord] = useState(false)
 
     const handleVideoSearch = (event) => {
@@ -784,8 +787,98 @@ const Uploads = ({ user }) => {
         setCurrentGameIndex(0)
     }
 
+    /*
+        Blogs Form
+    */
+    const [blogsForm, setBlogsForm] = useState({
+        featured_image: '',
+        post_title: '',
+        content: [],
+        tags: [],
+        categories: []
+    })
+
+    const [blogsImage, setBlogsImage] = useState('')
+    const [blogsImageFile, setBlogsImageFile] = useState('')
+    const [blogsImageModal, setBlogsImageModal] = useState(false)
+    const [removeBlogsImage, setRemoveBlogsImage] = useState([])
+    const [blogsPreview, setBlogsPreview] = useState(false)
+    const [blogsTags, setBlogsTags] = useState([])
+    const [contentSelected, setContentSelected] = useState('')
+
+    const fileToDataUri = (file) => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          resolve(event.target.result)
+        };
+        reader.readAsDataURL(file);
+    })
+
+    const cropImage = (file) => {
+        if(!file) {
+            return;
+        }
+
+        if(blogsImage && blogsImage.includes('https://drive.google.com')) setRemoveBlogsImage(removeBlogsImage.concat(blogsImage))
+
+        fileToDataUri(file)
+            .then(dataUri => {
+                setBlogsImage(dataUri)
+                setBlogsImageModal(true)
+            })
+    }
+
+    const deleteBlogsTags = (e) => {
+        let arr = [...blogsTags]
+        arr.splice(e.currentTarget.id, 1)
+        setBlogsTags([...arr])
+    }
+
+    const addBlogsTags = () => {
+        let duplicate = false
+        if(input.blogTags.length === 0) return;
+        blogsTags.forEach(item => { if(input.blogTags === item) duplicate = true })
+        if(duplicate) { duplicate = false; return;}
+        setBlogsTags(blogsTags.concat(input.blogTags))
+        setInput({...input, blogTags: ''})
+    }
+
+    const addContentElements = () => {
+        if(contentSelected === 'normal_naragraph' || contentSelected === 'quoted_paragraph') {
+            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ element: contentSelected, paragraph: ''})})
+        }
+        else if(contentSelected === 'grid_image') {
+            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ element: contentSelected, grid_image: []})})
+        }
+        else if(contentSelected === 'sub_heading') {
+            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ element: contentSelected, heading: ''})})
+        }
+        else if(contentSelected === 'bullet_list' || contentSelected === 'number_list') {
+            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ element: contentSelected, list: ''})})
+        }
+        else if(contentSelected === 'single_image') {
+            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ element: contentSelected, image: ''})})
+        }
+    }
+
+    const handleBlogsSubmitted = () => {
+        console.log(blogsForm, blogsImage, blogsTags)
+    }
+
+    const handleBlogsEdit = () => {
+        console.log(blogsForm, blogsImage, blogsTags)
+    }
     return (
         <div className="relative bg-white">   
+            <ImageModal
+                openModal={blogsImageModal}
+                setOpenModal={setBlogsImageModal}
+                image={blogsImage}
+                setImage={setBlogsImage}
+                preview={blogsPreview}
+                setPreview={setBlogsPreview}
+                aspects='landscape'
+            />
 
             <VideoModal
                 openModal={openModal}
@@ -826,7 +919,7 @@ const Uploads = ({ user }) => {
                             <div className='flex flex-row flex-wrap items-start justify-start mb-4'>
                                 <Link to={`/account/uploads`}><p style={{backgroundColor: (paramIndex || checkParams('video')) && 'rgb(31, 41, 55)', color: (paramIndex || checkParams('video')) && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Video ({video && video.length > 0 ? video.length : 0})</p></Link>
                                 <Link to={`/account/uploads?type=games`}><p style={{backgroundColor: checkParams('games') && 'rgb(31, 41, 55)', color: checkParams('games') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Games ({gameData && gameData.length > 0 ? gameData.length : 0})</p></Link>
-                                <Link to={`/account/uploads?type=most_viewed`}><p style={{backgroundColor: checkParams('most_viewed') && 'rgb(31, 41, 55)', color: checkParams('most_viewed') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Most Viewed</p></Link>
+                                <Link to={`/account/uploads?type=blogs`}><p style={{backgroundColor: checkParams('blogs') && 'rgb(31, 41, 55)', color: checkParams('blogs') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Blogs</p></Link>
                                 <Link to={`/account/uploads?type=popular`}><p style={{backgroundColor: checkParams('popular') && 'rgb(31, 41, 55)', color: checkParams('popular') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Popular</p></Link>
                             </div>
 
@@ -1766,7 +1859,7 @@ const Uploads = ({ user }) => {
                                     </div>
                                 )
                                 :
-                                ((paramIndex || checkParams('games')) && showGameRecord) && (
+                                ((paramIndex || checkParams('games')) && showGameRecord) ? (
                                     <>
                                         <div className='flex justify-end'>
                                             <button title="return" onClick={() => setShowGameRecord(!showGameRecord)} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] transition-colors duration-300 ease-in-out'>
@@ -1934,6 +2027,201 @@ const Uploads = ({ user }) => {
                                             <button disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameData?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
                                         </div>
                                     </>
+                                )
+                                :
+                                ((paramIndex || checkParams('blogs')) && !showBlogRecord) && (
+                                    <div>
+                                        {
+                                            gameEdit &&
+                                            <div className='grid grid-cols-1 gap-5 place-content-start mb-4 md:mt-0 mt-8'>
+                                                {/* <h2 className='text-3xl font-bold text-gray-800'>Edit</h2> */}
+                                                <div className='flex justify-end'>
+                                                    <button onClick={() => cancelGameEdit()} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] transition-colors duration-300 ease-in-out'>
+                                                        Cancel
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        }  
+                                        {
+                                            !gameEdit &&
+                                            <div className='flex justify-end'>
+                                                <button title="view record" onClick={() => setShowGameRecord(!showGameRecord)} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out'>
+                                                    <FontAwesomeIcon icon={faEye}/>
+                                                </button>
+                                            </div>
+                                        }
+                                        {
+                                            alertInfo.alert && alertInfo.variant && showAlert &&
+                                                <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
+                                        }
+                                        <div className="md:flex items-start justify-center mt-4">
+                                            <div className="lg:w-1/2 md:w-1/2 w-full">
+                                                <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
+                                                    <h2 className='text-2xl font-bold text-gray-800 my-4'>{gameEdit ? 'Edit Post' : 'Upload Post'}</h2>        
+                                                </div>
+                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Featured Image Url: </label>
+                                                        <div className='flex flex-row'>
+                                                            <input 
+                                                                className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                id="file_input" 
+                                                                type="file"
+                                                                accept="image/*" 
+                                                                value={blogsImageFile}
+                                                                onChange={(e) => {
+                                                                    setBlogsImageFile(e.target.value)
+                                                                    cropImage(e.target.files[0] || null)
+                                                                }}
+                                                            />
+                                                            {
+                                                                blogsImage && (
+                                                                    <div className='flex flex-row items-end'>
+                                                                        <button 
+                                                                            onClick={() => {
+                                                                                setBlogsPreview(true)
+                                                                                setBlogsImageModal(true)
+                                                                            }} 
+                                                                            className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2 py-3'><FontAwesomeIcon icon={faEye} className="mx-4"/>
+                                                                        </button>
+                                                                    </div>
+                                                                )
+                                                            }
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Post Title: </label>
+                                                        <input 
+                                                            type="text" 
+                                                            className='p-2 border border-solid border-[#c0c0c0]'
+                                                            value={blogsForm.post_title}
+                                                            onChange={(e) => setBlogsForm({...blogsForm, post_title: e.target.value})}
+                                                        />
+                                                    </div>
+                                                </div>
+                                                
+                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Category: </label>
+                                                        <select
+                                                            className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                            value={gameForm.details.language}
+                                                            onChange={(e) => setGameForm({...gameForm, details: {...gameForm.details, language: e.target.value}})}
+                                                        >
+                                                            <option value="English" className="capitalize">English</option>
+                                                            <option value="Japanese" className="capitalize">Japanese</option>
+                                                            <option value="Chinese" className="capitalize">Chinese</option>
+                                                            <option value="Spanish" className="capitalize">Spanish</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+
+                                                <div className='grid grid-cols-1  gap-5 place-content-start'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Add Tags: </label>
+                                                        <div className='flex flex-row'>
+                                                            <input 
+                                                                type="text" 
+                                                                className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                value={input.blogTags}
+                                                                onChange={(e) => setInput({...input, blogTags: e.target.value})}
+                                                            />
+                                                            <div className='flex flex-row items-end'>
+                                                                <button onClick={addBlogsTags} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>          
+
+                                                <div className='flex flex-wrap items-center mt-2 mb-4 relative'>
+                                                    {
+                                                        blogsTags && blogsTags.length > 0 &&
+                                                            blogsTags.map((item, index) => {
+                                                                return (
+                                                                    <div key={index} className='flex items-center relative mt-2 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF] px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
+                                                                        <p>{item}</p>
+                                                                        <FontAwesomeIcon onClick={deleteBlogsTags} id={index} icon={faClose} className="ml-2 cursor-pointer" />
+                                                                    </div>
+                                                                )
+                                                            })
+                                                    }
+                                                </div>
+                                            </div>
+
+                                            <div className="lg:w-1/2 md:w-1/2 w-full md:pl-8">
+                                                <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
+                                                    <h2 className='text-2xl font-bold text-gray-800 my-4'>Content</h2>        
+                                                </div>
+                                                
+                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                    <div className='flex flex-col'>
+                                                        <label className='font-semibold'> Element Content: </label>
+                                                        <div className='flex flex-row'>
+                                                            <select
+                                                                className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                                default="normal_naragraph"
+                                                                value={contentSelected}
+                                                                onChange={(e) => setContentSelected(e.target.value)}
+                                                            >
+                                                                <option value="" className="capitalize" disabled={true}>Select Element</option>
+                                                                <option value="normal_naragraph" className="capitalize">Normal Paragraph</option>
+                                                                <option value="quoted_paragraph" className="capitalize">Quoted Paragraph</option>
+                                                                <option value="grid_image" className="capitalize">Grid Image</option>
+                                                                <option value="sub_heading" className="capitalize">Sub Heading</option>
+                                                                <option value="bullet_list" className="capitalize">Bullet List</option>
+                                                                <option value="number_list" className="capitalize">Number List</option>
+                                                                <option value="single_image" className="capitalize">Single Image</option>
+                                                            </select>
+                                                            <div className='flex flex-row items-end'>
+                                                                <button onClick={addContentElements} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>     
+                                            </div>
+                                        </div>
+                                        {
+                                            gameEdit ?
+                                            <button onClick={handleBlogsEdit} className='float-right font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2 px-6'>
+                                                {
+                                                    !gameSubmitted ?
+                                                    "Update Changes"
+                                                    :
+                                                    <div className='flex flex-row justify-center items-center'>
+                                                        Updating
+                                                        <div role="status">
+                                                            <svg aria-hidden="true" class="w-5 h-5 ml-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                                            </svg>
+                                                            <span class="sr-only">Loading...</span>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </button>
+                                            :
+                                            <button onClick={handleBlogsSubmitted} className='float-right font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2 px-6'>
+                                                {
+                                                    !gameSubmitted ?
+                                                    "Upload Blog"
+                                                    :
+                                                    <div className='flex flex-row justify-center items-center'>
+                                                        Uploading
+                                                        <div role="status">
+                                                            <svg aria-hidden="true" class="w-5 h-5 ml-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                                            </svg>
+                                                            <span class="sr-only">Loading...</span>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </button>
+                                        }
+                                    </div>
                                 )
                             }
                         </div>
