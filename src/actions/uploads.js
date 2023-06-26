@@ -7,7 +7,8 @@ const initialState = {
     alert: '',
     variant: '',
     video: {},
-    game: {}
+    game: {},
+    blog: {}
 }
 
 export const getUserVideo = createAsyncThunk('uploads/getUserVideo', async (form, thunkAPI) => {
@@ -77,6 +78,22 @@ export const editVideo = createAsyncThunk('uploads/editVideo', async (form, thun
 export const editGame = createAsyncThunk('uploads/editGame', async (form, thunkAPI) => {
     try {
         const response = await api.editGame(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const editBlog = createAsyncThunk('uploads/editBlog', async (form, thunkAPI) => {
+    try {
+        const response = await api.editBlog(form)
         return response
     }
     catch (err) {
@@ -250,6 +267,38 @@ export const bulkRemoveGame = createAsyncThunk('uploads/bulkRemoveGame', async (
     }
 })
 
+export const uploadBlog = createAsyncThunk('uploads/uploadBlog', async (form, thunkAPI) => {
+    try {
+        const response = await api.uploadBlog(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const getUserBlog = createAsyncThunk('uploads/getUserBlog', async (form, thunkAPI) => {
+    try {
+        const response = await api.getUserBlog(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const uploadsSlice = createSlice({
     name: 'uploads',
     initialState,
@@ -269,6 +318,15 @@ export const uploadsSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(getUserGame.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(getUserBlog.fulfilled, (state, action) => {
+            state.blog = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getUserBlog.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         }),
@@ -369,6 +427,17 @@ export const uploadsSlice = createSlice({
             state.alert = action.payload.message
             state.variant = action.payload.variant
         }),
+        builder.addCase(uploadBlog.fulfilled, (state, action) => {
+            state.blog = action.payload.data.result
+            state.alert = action.payload.data.message
+            state.variant = action.payload.data.variant
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(uploadBlog.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
         builder.addCase(editVideo.fulfilled, (state, action) => {
             state.video = action.payload.data.result
             state.alert = action.payload.data.message
@@ -388,6 +457,17 @@ export const uploadsSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(editGame.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(editBlog.fulfilled, (state, action) => {
+            state.blog = action.payload.data.result
+            state.alert = action.payload.data.message
+            state.variant = action.payload.data.variant
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(editBlog.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         }),

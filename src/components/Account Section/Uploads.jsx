@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { Header } from './index'
 import { Link, useSearchParams } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faClose, faEdit, faTrash, faVideoCamera, faChevronLeft, faChevronRight, faAngleDoubleLeft, faAngleDoubleRight, faEye } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faClose, faEdit, faTrash, faVideoCamera, faChevronLeft, faChevronRight, faAngleDoubleLeft, faAngleDoubleRight, faEye, faArrowUp, faArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
-import { changeGamePrivacyById, changeGameStrictById, getUserVideo, getUserGame, uploadVideo, clearAlert, bulkRemoveGame, removeGame, editVideo, editGame, removeVideo, changePrivacyById, changeStrictById, changeDownloadById, bulkRemoveVideo, uploadGame } from "../../actions/uploads";
+import { changeGamePrivacyById, changeGameStrictById, getUserVideo, getUserGame, getUserBlog, uploadVideo, clearAlert, bulkRemoveGame, removeGame, editVideo, editGame, editBlog, removeVideo, changePrivacyById, changeStrictById, changeDownloadById, bulkRemoveVideo, uploadGame, uploadBlog } from "../../actions/uploads";
 import axios from 'axios';
 import VideoModal from '../VideoModal';
 import Alert from '../Alert';
@@ -21,6 +21,7 @@ const Uploads = ({ user }) => {
     const variant = useSelector((state) => state.uploads.variant)
     const video = useSelector((state) => state.uploads.video)
     const game = useSelector((state) => state.uploads.game)
+    const blog = useSelector((state) => state.uploads.blog)
 
     const itemsPerPage = 10; // Number of items per page
 
@@ -38,6 +39,7 @@ const Uploads = ({ user }) => {
 
     const [searchVideo, setSearchVideo] = useState('')
     const [searchGame, setSearchGame] = useState('')
+    const [searchBlog, setSearchBlog] = useState('')
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [openModal, setOpenModal] = useState(false)
@@ -79,6 +81,7 @@ const Uploads = ({ user }) => {
     useEffect(() => {
         dispatch(getUserVideo({ id: user.result?._id }))
         dispatch(getUserGame({ id: user.result?._id }))
+        dispatch(getUserBlog({ id: user.result?._id }))
     }, [])
 
     useEffect(() => {
@@ -696,6 +699,19 @@ const Uploads = ({ user }) => {
         setGameData(filteredData);
     };
 
+    const handleBlogSearch = (event) => {
+        const keyword = event.target.value.toLowerCase();
+        setSearchBlog(event.target.value);
+    
+        const filteredData = blog.filter((item) =>
+          Object.values(item).some((value) =>
+            String(value).toLowerCase().includes(keyword)
+          )
+        );
+        setGameCurrentPage(1)
+        setBlogData(filteredData);
+    };
+
     const addGameDeleteId = (index, id) => {
         const checkId = gameDeleteId.includes(id)
 
@@ -784,6 +800,8 @@ const Uploads = ({ user }) => {
         })
         setInput({ ...input, gameTags: '', gallery: '', storage_name: 'Google Drive', link_list: []})
         setGameEdit(false)
+        setBlogsImage('')
+        setBlogsImageFile('')
         setCurrentGameIndex(0)
     }
 
@@ -795,7 +813,7 @@ const Uploads = ({ user }) => {
         post_title: '',
         content: [],
         tags: [],
-        categories: []
+        categories: ''
     })
 
     const [blogsImage, setBlogsImage] = useState('')
@@ -804,7 +822,73 @@ const Uploads = ({ user }) => {
     const [removeBlogsImage, setRemoveBlogsImage] = useState([])
     const [blogsPreview, setBlogsPreview] = useState(false)
     const [blogsTags, setBlogsTags] = useState([])
+    const [blogEdit, setBlogEdit] = useState(false)
     const [contentSelected, setContentSelected] = useState('')
+    const [blogsSubmitted, setBlogsSubmitted] = useState(false)
+    const [blogData, setBlogData] = useState([])
+    const [currentBlogIndex, setCurrentBlogIndex] = useState(0)
+
+    useEffect(() => {
+        if(blog && blog.length > 0){
+            if(searchBlog.length > 0) {
+                const keyword = searchBlog.toLowerCase();
+                const filteredData = blog.filter((item) =>
+                    Object.values(item).some((value) =>
+                        String(value).toLowerCase().includes(keyword)
+                    )
+                );
+                setBlogData(filteredData);
+            }
+            else {
+                setBlogData(blog)
+            }
+        }
+        setBlogsTags([])
+        setBlogsForm({
+            featured_image: '',
+            post_title: '',
+            content: [],
+            tags: [],
+            categories: ''
+        })
+        setInput({...input, blogTags: ''})
+        setBlogEdit(false)
+        setBlogsImage('')
+        setBlogsImageFile('')
+        setCurrentBlogIndex(0)
+        setBlogsSubmitted(false)
+    }, [blog])
+
+    const cancelBlogEdit = () => {
+        setBlogsTags([])
+        setBlogsForm({
+            featured_image: '',
+            post_title: '',
+            content: [],
+            tags: [],
+            categories: ''
+        })
+        setBlogsImage('')
+        setBlogsImageFile('')
+        setInput({...input, blogTags: ''})
+        setBlogEdit(false)
+        setCurrentBlogIndex(0)
+    }
+
+    const editBlogMode = (index) =>{
+        window.scrollTo(0, 150)
+        setCurrentBlogIndex(index)
+        setBlogsTags(blogData[index].tags)
+        setBlogsForm({
+            featured_image: blogData[index].featured_image,
+            post_title: blogData[index].post_title,
+            content: blogData[index].content,
+            tags: blogData[index].tags,
+            categories: blogData[index].categories,
+        })
+        setBlogsImage(blogData[index].featured_image)
+        setBlogEdit(true)
+    }
 
     const fileToDataUri = (file) => new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -844,29 +928,188 @@ const Uploads = ({ user }) => {
     }
 
     const addContentElements = () => {
-        if(contentSelected === 'normal_naragraph' || contentSelected === 'quoted_paragraph') {
-            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ element: contentSelected, paragraph: ''})})
+        if(contentSelected === 'normal_naragraph') {
+            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ header: 'Normal Paragraph',  element: contentSelected, paragraph: ''})})
+        }
+        else if(contentSelected === 'quoted_paragraph') {
+            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ header: 'Quoted Paragraph',  element: contentSelected, paragraph: ''})})
         }
         else if(contentSelected === 'grid_image') {
-            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ element: contentSelected, grid_image: []})})
+            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ header: 'Grid Image', type: 'boxed', element: contentSelected, input: '', grid_image: []})})
         }
         else if(contentSelected === 'sub_heading') {
-            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ element: contentSelected, heading: ''})})
+            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ header: 'Sub Heading',  element: contentSelected, heading: ''})})
         }
-        else if(contentSelected === 'bullet_list' || contentSelected === 'number_list') {
-            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ element: contentSelected, list: ''})})
+        else if(contentSelected === 'bullet_list') {
+            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ header: 'Bullet List',  element: contentSelected, input: '', list: []})})
+        }
+        else if(contentSelected === 'number_list') {
+            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ header: 'Number List',  element: contentSelected, input: '', list: []})})
         }
         else if(contentSelected === 'single_image') {
-            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ element: contentSelected, image: ''})})
+            setBlogsForm({...blogsForm, content: blogsForm.content.concat({ header: 'Single Image',  type: 'rectangular', element: contentSelected, image: ''})})
         }
+    }
+
+    const moveElementUpwards = (index) => {
+        var array = [...blogsForm.content]
+
+        // Swapping the positions of the first and second elements
+        const temp = array[index];
+        array[index] = array[index-1];
+        array[index-1] = temp;
+
+        setBlogsForm({...blogsForm, content: array})
+    }
+
+    const moveElementsDownwards = (index) => {
+        var array = [...blogsForm.content]
+
+        // Swapping the positions of the second and first elements
+        const temp = array[index];
+        array[index] = array[index+1];
+        array[index+1] = temp;
+
+        setBlogsForm({...blogsForm, content: array})
+    }
+
+    const removeElementsContent = (index) => {
+        var array = [...blogsForm.content]
+
+        array.splice(index, 1)
+
+        setBlogsForm({...blogsForm, content: array})
+    }
+
+    const headerValue = (e, index) => {
+        var array = [...blogsForm.content]
+
+        array[index].header = e.target.value
+
+        setBlogsForm({...blogsForm, content: array})
+    }
+
+    const paragraphValue = (e, index) => {
+        var array = [...blogsForm.content]
+
+        array[index].paragraph = e.target.value
+
+        setBlogsForm({...blogsForm, content: array})
+    }
+
+    const headingValue = (e, index) => {
+        var array = [...blogsForm.content]
+
+        array[index].heading = e.target.value
+
+        setBlogsForm({...blogsForm, content: array})
+    }
+
+    const singleInputValue = (e, index) => {
+        var array = [...blogsForm.content]
+
+        array[index].image = e.target.value
+
+        setBlogsForm({...blogsForm, content: array})
+    }
+
+    const gridInputValue = (e, index) => {
+        var array = [...blogsForm.content]
+
+        array[index].input = e.target.value
+
+        setBlogsForm({...blogsForm, content: array})
+    }
+
+    const listInputValue = (e, index) => {
+        var array = [...blogsForm.content]
+
+        array[index].input = e.target.value
+
+        setBlogsForm({...blogsForm, content: array})
+    }
+    
+    const typeValue = (e, index) => {
+        var array = [...blogsForm.content]
+
+        array[index].type = e.target.value
+
+        setBlogsForm({...blogsForm, content: array})
+    }
+
+    const addGridContentImage = (index) => {       
+        var array = [...blogsForm.content]
+
+        if(!array[index].input) return
+
+        array[index].grid_image.push(array[index].input)
+        array[index].input = ''
+
+        setBlogsForm({...blogsForm, content: array})
+    }
+
+    const addLists = (index) => {       
+        var array = [...blogsForm.content]
+
+        if(!array[index].input) return
+
+        array[index].list.push(array[index].input)
+        array[index].input = ''
+
+        setBlogsForm({...blogsForm, content: array})
+    }
+
+    const removeLists = (parent_index, child_index) => {
+        var array = [...blogsForm.content]
+
+        array[parent_index].list.splice(child_index, 1)
+
+        setBlogsForm({...blogsForm, content: array})
+    }
+
+    const removeGridContentImage = (parent_index, child_index) => {
+        var array = [...blogsForm.content]
+
+        array[parent_index].grid_image.splice(child_index, 1)
+
+        setBlogsForm({...blogsForm, content: array})
     }
 
     const handleBlogsSubmitted = () => {
-        console.log(blogsForm, blogsImage, blogsTags)
-    }
+        if(!blogsImage || !blogsForm.post_title || !blogsForm.categories) return
 
-    const handleBlogsEdit = () => {
-        console.log(blogsForm, blogsImage, blogsTags)
+        const obj = {...blogsForm}
+        obj['tags'] = blogsTags
+        obj['featured_image'] = blogsImage
+
+        if(!blogsSubmitted) {
+            dispatch(uploadBlog({
+                id: user.result?._id,
+                data: obj
+            }))
+            setBlogsSubmitted(true)
+        }
+    }
+    
+    const handleBlogsEdit = () =>{
+        if(!blogsForm.post_title || !blogsForm.categories) return
+
+        if(!blogsSubmitted) {
+            let updatedRecord = {
+                ...blogData[currentBlogIndex],
+                featured_image: blogsImage ? blogsImage : blogsForm.featured_image,
+                post_title: blogsForm.post_title,
+                content: blogsForm.content,
+                tags: blogsTags,
+                categories: blogsForm.categories,
+            }
+            dispatch(editBlog({
+                id: user.result?._id,
+                data: updatedRecord
+            }))
+
+            setBlogsSubmitted(true)
+        }
     }
     return (
         <div className="relative bg-white">   
@@ -877,7 +1120,7 @@ const Uploads = ({ user }) => {
                 setImage={setBlogsImage}
                 preview={blogsPreview}
                 setPreview={setBlogsPreview}
-                aspects='landscape'
+                aspects='portrait'
             />
 
             <VideoModal
@@ -919,7 +1162,7 @@ const Uploads = ({ user }) => {
                             <div className='flex flex-row flex-wrap items-start justify-start mb-4'>
                                 <Link to={`/account/uploads`}><p style={{backgroundColor: (paramIndex || checkParams('video')) && 'rgb(31, 41, 55)', color: (paramIndex || checkParams('video')) && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Video ({video && video.length > 0 ? video.length : 0})</p></Link>
                                 <Link to={`/account/uploads?type=games`}><p style={{backgroundColor: checkParams('games') && 'rgb(31, 41, 55)', color: checkParams('games') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Games ({gameData && gameData.length > 0 ? gameData.length : 0})</p></Link>
-                                <Link to={`/account/uploads?type=blogs`}><p style={{backgroundColor: checkParams('blogs') && 'rgb(31, 41, 55)', color: checkParams('blogs') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Blogs</p></Link>
+                                <Link to={`/account/uploads?type=blogs`}><p style={{backgroundColor: checkParams('blogs') && 'rgb(31, 41, 55)', color: checkParams('blogs') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Blogs ({blogData && blogData.length > 0 ? blogData.length : 0})</p></Link>
                                 <Link to={`/account/uploads?type=popular`}><p style={{backgroundColor: checkParams('popular') && 'rgb(31, 41, 55)', color: checkParams('popular') && 'rgb(243, 244, 246)'}} className='mb-2 font-semibold text-sm bg-gray-100 hover:bg-gray-800 hover:text-gray-100 text-gray-800 py-1 px-4 border-2 border-gray-800 hover:border-gray-800 rounded-full transition-colors duration-300 ease-in-out xs:mr-4 mr-2'>Popular</p></Link>
                             </div>
 
@@ -2029,23 +2272,23 @@ const Uploads = ({ user }) => {
                                     </>
                                 )
                                 :
-                                ((paramIndex || checkParams('blogs')) && !showBlogRecord) && (
+                                ((paramIndex || checkParams('blogs')) && !showBlogRecord) ? (
                                     <div>
                                         {
-                                            gameEdit &&
+                                            blogEdit &&
                                             <div className='grid grid-cols-1 gap-5 place-content-start mb-4 md:mt-0 mt-8'>
                                                 {/* <h2 className='text-3xl font-bold text-gray-800'>Edit</h2> */}
                                                 <div className='flex justify-end'>
-                                                    <button onClick={() => cancelGameEdit()} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] transition-colors duration-300 ease-in-out'>
+                                                    <button onClick={() => cancelBlogEdit()} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] transition-colors duration-300 ease-in-out'>
                                                         Cancel
                                                     </button>
                                                 </div>
                                             </div>
                                         }  
                                         {
-                                            !gameEdit &&
+                                            !blogEdit &&
                                             <div className='flex justify-end'>
-                                                <button title="view record" onClick={() => setShowGameRecord(!showGameRecord)} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out'>
+                                                <button title="view record" onClick={() => setShowBlogRecord(!showBlogRecord)} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out'>
                                                     <FontAwesomeIcon icon={faEye}/>
                                                 </button>
                                             </div>
@@ -2057,7 +2300,7 @@ const Uploads = ({ user }) => {
                                         <div className="md:flex items-start justify-center mt-4">
                                             <div className="lg:w-1/2 md:w-1/2 w-full">
                                                 <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
-                                                    <h2 className='text-2xl font-bold text-gray-800 my-4'>{gameEdit ? 'Edit Post' : 'Upload Post'}</h2>        
+                                                    <h2 className='text-2xl font-bold text-gray-800 my-4'>{blogEdit ? 'Edit Post' : 'Upload Post'}</h2>        
                                                 </div>
                                                 <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
                                                     <div className='flex flex-col'>
@@ -2090,7 +2333,7 @@ const Uploads = ({ user }) => {
                                                         </div>
                                                     </div>
                                                 </div>
-
+                                                
                                                 <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
                                                     <div className='flex flex-col'>
                                                         <label className='font-semibold'> Post Title: </label>
@@ -2108,13 +2351,43 @@ const Uploads = ({ user }) => {
                                                         <label className='font-semibold'> Category: </label>
                                                         <select
                                                             className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                                            value={gameForm.details.language}
-                                                            onChange={(e) => setGameForm({...gameForm, details: {...gameForm.details, language: e.target.value}})}
+                                                            value={blogsForm.categories}
+                                                            onChange={(e) => setBlogsForm({...blogsForm, categories: e.target.value})}
                                                         >
-                                                            <option value="English" className="capitalize">English</option>
-                                                            <option value="Japanese" className="capitalize">Japanese</option>
-                                                            <option value="Chinese" className="capitalize">Chinese</option>
-                                                            <option value="Spanish" className="capitalize">Spanish</option>
+                                                            <option value="Gaming" className="capitalize">Gaming</option>
+                                                            <option value="Fashion" className="capitalize">Fashion</option>
+                                                            <option value="Beauty" className="capitalize">Beauty</option>
+                                                            <option value="Lifestyle" className="capitalize">Lifestyle</option>
+                                                            <option value="Personal" className="capitalize">Personal</option>
+                                                            <option value="Technology" className="capitalize">Technology</option>
+                                                            <option value="Health" className="capitalize">Health</option>
+                                                            <option value="Fitness" className="capitalize">Fitness</option>
+                                                            <option value="Wellness" className="capitalize">Wellness</option>
+                                                            <option value="Business" className="capitalize">Business</option>
+                                                            <option value="Education" className="capitalize">Education</option>
+                                                            <option value="Food and Recipe" className="capitalize">Food and Recipe</option>
+                                                            <option value="Love and Relationships" className="capitalize">Love and Relationships</option>
+                                                            <option value="Alternative topics" className="capitalize">Alternative topics</option>
+                                                            <option value="Green living" className="capitalize">Green living</option>
+                                                            <option value="Music" className="capitalize">Music</option>
+                                                            <option value="Automotive" className="capitalize">Automotive</option>
+                                                            <option value="Marketing" className="capitalize">Marketing</option>
+                                                            <option value="Internet services" className="capitalize">Internet services</option>
+                                                            <option value="Finance" className="capitalize">Finance</option>
+                                                            <option value="Sports" className="capitalize">Sports</option>
+                                                            <option value="Entertainment" className="capitalize">Entertainment</option>
+                                                            <option value="Productivity" className="capitalize">Productivity</option>
+                                                            <option value="Hobbies" className="capitalize">Hobbies</option>
+                                                            <option value="Parenting" className="capitalize">Parenting</option>
+                                                            <option value="Pets" className="capitalize">Pets</option>
+                                                            <option value="Photography" className="capitalize">Photography</option>
+                                                            <option value="Agriculture" className="capitalize">Agriculture</option>
+                                                            <option value="Art" className="capitalize">Art</option>
+                                                            <option value="DIY" className="capitalize">DIY</option>
+                                                            <option value="Science" className="capitalize">Science</option>
+                                                            <option value="History" className="capitalize">History</option>
+                                                            <option value="Self-improvement" className="capitalize">Self-improvement</option>
+                                                            <option value="News and current affairs" className="News and current affairs">Japanese</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -2181,13 +2454,453 @@ const Uploads = ({ user }) => {
                                                         </div>
                                                     </div>
                                                 </div>     
+
+                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                    {
+                                                        blogsForm.content?.length > 0 &&
+                                                            blogsForm.content.map((item, index) => {
+                                                                return (
+                                                                    <>
+                                                                    {
+                                                                        item.element === 'normal_naragraph' ?
+                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                            <div className='flex flex-col'>
+                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className='border-none font-semibold outline-none'
+                                                                                        onChange={(e) => headerValue(e, index)}
+                                                                                        value={ blogsForm.content[index].header }
+                                                                                    />
+                                                                                    {/* <label className='font-semibold'> Normal Paragraph: </label> */}
+                                                                                    <div>
+                                                                                        {
+                                                                                            blogsForm.content.length === 1 ?
+                                                                                                <button onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            :
+                                                                                            index === 0 && blogsForm.content.length !== 1 ?
+                                                                                            <>
+                                                                                                <button title="move downwards" onClick={() => moveElementsDownwards(index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            : index === (blogsForm.content.length - 1) ?
+                                                                                            <>
+                                                                                                <button title="move upwards" onClick={() => moveElementUpwards(index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            :
+                                                                                            <>
+                                                                                                <button title="move upwards" onClick={() => moveElementUpwards(index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="move downwards" onClick={() => moveElementsDownwards(index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className='flex flex-row'>
+                                                                                    <textarea
+                                                                                        name="paragraph"
+                                                                                        id="message"
+                                                                                        cols="30"
+                                                                                        rows="8"
+                                                                                        placeholder="Paragraph"
+                                                                                        className="w-full p-2 border border-solid border-[#c0c0c0]"
+                                                                                        onChange={(e) => paragraphValue(e, index)}
+                                                                                        value={ blogsForm.content[index].paragraph }
+                                                                                    >
+                                                                                    </textarea>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        :
+                                                                        item.element === 'quoted_paragraph' ?
+                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                            <div className='flex flex-col'>
+                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className='border-none font-semibold outline-none'
+                                                                                        onChange={(e) => headerValue(e, index)}
+                                                                                        value={ blogsForm.content[index].header }
+                                                                                    />
+                                                                                    <div>
+                                                                                        {
+                                                                                            blogsForm.content.length === 1 ?
+                                                                                                <button onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            :
+                                                                                            index === 0 && blogsForm.content.length !== 1 ?
+                                                                                            <>
+                                                                                                <button title="move downwards" onClick={() => moveElementsDownwards(index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            : index === (blogsForm.content.length - 1) ?
+                                                                                            <>
+                                                                                                <button title="move upwards" onClick={() => moveElementUpwards(index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            :
+                                                                                            <>
+                                                                                                <button title="move upwards" onClick={() => moveElementUpwards(index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="move downwards" onClick={() => moveElementsDownwards(index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className='flex flex-row'>
+                                                                                    <textarea
+                                                                                        name="quoted"
+                                                                                        id="message"
+                                                                                        cols="30"
+                                                                                        rows="4"
+                                                                                        placeholder="Quoted Paragraph"
+                                                                                        className="w-full p-2 border border-solid border-[#c0c0c0]"
+                                                                                        onChange={(e) => paragraphValue(e, index)}
+                                                                                        value={ blogsForm.content[index].paragraph }
+                                                                                    >
+                                                                                    </textarea>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        :
+                                                                        item.element === 'sub_heading' ?
+                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                            <div className='flex flex-col'>
+                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className='border-none font-semibold outline-none'
+                                                                                        onChange={(e) => headerValue(e, index)}
+                                                                                        value={ blogsForm.content[index].header }
+                                                                                    />
+                                                                                    <div>
+                                                                                        {
+                                                                                            blogsForm.content.length === 1 ?
+                                                                                                <button onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            :
+                                                                                            index === 0 && blogsForm.content.length !== 1 ?
+                                                                                            <>
+                                                                                                <button title="move downwards" onClick={() => moveElementsDownwards(index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            : index === (blogsForm.content.length - 1) ?
+                                                                                            <>
+                                                                                                <button title="move upwards" onClick={() => moveElementUpwards(index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            :
+                                                                                            <>
+                                                                                                <button title="move upwards" onClick={() => moveElementUpwards(index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="move downwards" onClick={() => moveElementsDownwards(index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className='flex flex-row'>
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                        onChange={(e) => headingValue(e, index)}
+                                                                                        value={ blogsForm.content[index].heading }
+                                                                                        placeholder='Sub Heading'
+                                                                                    />
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        :
+                                                                        item.element === 'grid_image' ?
+                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                            <div className='flex flex-col'>
+                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className='border-none font-semibold outline-none'
+                                                                                        onChange={(e) => headerValue(e, index)}
+                                                                                        value={ blogsForm.content[index].header }
+                                                                                    />
+                                                                                    <div>
+                                                                                        {
+                                                                                            blogsForm.content.length === 1 ?
+                                                                                                <button onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            :
+                                                                                            index === 0 && blogsForm.content.length !== 1 ?
+                                                                                            <>
+                                                                                                <button title="move downwards" onClick={() => moveElementsDownwards(index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            : index === (blogsForm.content.length - 1) ?
+                                                                                            <>
+                                                                                                <button title="move upwards" onClick={() => moveElementUpwards(index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            :
+                                                                                            <>
+                                                                                                <button title="move upwards" onClick={() => moveElementUpwards(index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="move downwards" onClick={() => moveElementsDownwards(index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className='flex flex-row'>
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                        onChange={(e) => gridInputValue(e, index)}
+                                                                                        value={ blogsForm.content[index].input }
+                                                                                        placeholder='Image URL'
+                                                                                    />
+                                                                                    <div className='flex flex-row items-end'>
+                                                                                        <button onClick={() => addGridContentImage(index)} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className='flex flex-col'>
+                                                                                    <label className='font-semibold'> Image/s dimension: </label>
+                                                                                    <select
+                                                                                        className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                                                        default="normal_naragraph"
+                                                                                        value={blogsForm.content[index].type}
+                                                                                        onChange={(e) => typeValue(e, index)}
+                                                                                    >
+                                                                                        <option value="boxed" className="capitalize">Boxed</option>
+                                                                                        <option value="boxed_full" className="capitalize">Boxed Full</option>
+                                                                                        <option value="rectangular" className="capitalize">Rectangular</option>
+                                                                                        <option value="auto" className="capitalize">Auto</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                                {
+                                                                                    blogsForm.content[index].grid_image.length > 0 &&
+                                                                                    <>
+                                                                                    <div className={`grid ${(blogsForm.content[index].type === 'boxed') && 'sm:grid-cols-2'} grid-cols-1 gap-5 place-content-start my-4`}>
+                                                                                        {
+                                                                                            blogsForm.content[index].grid_image.map((image, i) => {
+                                                                                                return (
+                                                                                                    <div key={i} className='relative'>
+                                                                                                        <img 
+                                                                                                            src={image}
+                                                                                                            className={`w-full ${blogsForm.content[index].type === 'boxed-full' && 'md:h-[500px] sm:h-[400px] h-[300px]'} ${(blogsForm.content[index].type === 'boxed' || blogsForm.content[index].type === 'rectangular') && 'md:h-60 h-48'} object-cover bg-top rounded-lg border border-[#cococo]`}
+                                                                                                            alt={`Grid Image #${i+1}`}
+                                                                                                        />
+                                                                                                        <button title="remove image" onClick={() => removeGridContentImage(index, i)} className='absolute top-2 right-4'><FontAwesomeIcon icon={faClose} className='cursor-pointer'/></button>
+                                                                                                    </div>
+                                                                                                )
+                                                                                            })
+                                                                                        }
+                                                                                    </div>
+                                                                                    </>
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                        :
+                                                                        item.element === 'single_image' ?
+                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                            <div className='flex flex-col'>
+                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className='border-none font-semibold outline-none'
+                                                                                        onChange={(e) => headerValue(e, index)}
+                                                                                        value={ blogsForm.content[index].header }
+                                                                                    />
+                                                                                    <div>
+                                                                                        {
+                                                                                            blogsForm.content.length === 1 ?
+                                                                                                <button onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            :
+                                                                                            index === 0 && blogsForm.content.length !== 1 ?
+                                                                                            <>
+                                                                                                <button title="move downwards" onClick={() => moveElementsDownwards(index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            : index === (blogsForm.content.length - 1) ?
+                                                                                            <>
+                                                                                                <button title="move upwards" onClick={() => moveElementUpwards(index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            :
+                                                                                            <>
+                                                                                                <button title="move upwards" onClick={() => moveElementUpwards(index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="move downwards" onClick={() => moveElementsDownwards(index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className='flex flex-row'>
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                        onChange={(e) => singleInputValue(e, index)}
+                                                                                        value={ blogsForm.content[index].image }
+                                                                                        placeholder='Image URL'
+                                                                                    />
+                                                                                </div>
+                                                                                <div className='flex flex-col'>
+                                                                                    <label className='font-semibold'> Image/s dimension: </label>
+                                                                                    <select
+                                                                                        className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                                                        default="normal_naragraph"
+                                                                                        value={blogsForm.content[index].type}
+                                                                                        onChange={(e) => typeValue(e, index)}
+                                                                                    >
+                                                                                        <option value="rectangular" className="capitalize">Rectangular</option>
+                                                                                        <option value="boxed_full" className="capitalize">Boxed Full</option>
+                                                                                        <option value="auto" className="capitalize">Auto</option>
+                                                                                    </select>
+                                                                                </div>
+                                                                                {
+                                                                                    blogsForm.content[index].image &&
+                                                                                        <div className='relative mt-2'>
+                                                                                            <img 
+                                                                                                src={blogsForm.content[index].image}
+                                                                                                className={`w-full ${blogsForm.content[index].type === 'boxed-full' && 'md:h-[500px] sm:h-[400px] h-[300px]'} ${(blogsForm.content[index].type === 'rectangular') && 'md:h-60 h-48'} object-cover bg-top rounded-lg border border-[#cococo]`}
+                                                                                                alt={`Grid Image`}
+                                                                                            />
+                                                                                        </div>
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                        :
+                                                                        item.element === 'bullet_list' ?
+                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                            <div className='flex flex-col'>
+                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className='border-none font-semibold outline-none'
+                                                                                        onChange={(e) => headerValue(e, index)}
+                                                                                        value={ blogsForm.content[index].header }
+                                                                                    />
+                                                                                    <div>
+                                                                                        {
+                                                                                            blogsForm.content.length === 1 ?
+                                                                                                <button onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            :
+                                                                                            index === 0 && blogsForm.content.length !== 1 ?
+                                                                                            <>
+                                                                                                <button title="move downwards" onClick={() => moveElementsDownwards(index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            : index === (blogsForm.content.length - 1) ?
+                                                                                            <>
+                                                                                                <button title="move upwards" onClick={() => moveElementUpwards(index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            :
+                                                                                            <>
+                                                                                                <button title="move upwards" onClick={() => moveElementUpwards(index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="move downwards" onClick={() => moveElementsDownwards(index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className='flex flex-row'>
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                        onChange={(e) => listInputValue(e, index)}
+                                                                                        value={ blogsForm.content[index].input }
+                                                                                        placeholder='Lists Items'
+                                                                                    />
+                                                                                    <div className='flex flex-row items-end'>
+                                                                                        <button onClick={() => addLists(index)} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                                                    </div>
+                                                                                </div>
+                                                                                {
+                                                                                    blogsForm.content[index].list.length > 0 &&
+                                                                                        blogsForm.content[index].list.map((list_item, i) => {
+                                                                                            return (
+                                                                                                <div key={i} className='flex items-center relative mt-2 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF] px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
+                                                                                                    <p className='pr-2'>{list_item}</p>
+                                                                                                    <FontAwesomeIcon onClick={() => removeLists(index, i)} id={i} icon={faClose} className="ml-2 cursor-pointer absolute top-2 right-2" />
+                                                                                                </div>
+                                                                                            )
+                                                                                        })
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                        :
+                                                                        item.element === 'number_list' &&
+                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                            <div className='flex flex-col'>
+                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className='border-none font-semibold outline-none'
+                                                                                        onChange={(e) => headerValue(e, index)}
+                                                                                        value={ blogsForm.content[index].header }
+                                                                                    />
+                                                                                    <div>
+                                                                                        {
+                                                                                            blogsForm.content.length === 1 ?
+                                                                                                <button onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            :
+                                                                                            index === 0 && blogsForm.content.length !== 1 ?
+                                                                                            <>
+                                                                                                <button title="move downwards" onClick={() => moveElementsDownwards(index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            : index === (blogsForm.content.length - 1) ?
+                                                                                            <>
+                                                                                                <button title="move upwards" onClick={() => moveElementUpwards(index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            :
+                                                                                            <>
+                                                                                                <button title="move upwards" onClick={() => moveElementUpwards(index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="move downwards" onClick={() => moveElementsDownwards(index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                <button title="remove elements" onClick={() => removeElementsContent(index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                            </>
+                                                                                            
+                                                                                        }
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div className='flex flex-row'>
+                                                                                    <input 
+                                                                                        type="text" 
+                                                                                        className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                        onChange={(e) => listInputValue(e, index)}
+                                                                                        value={ blogsForm.content[index].input }
+                                                                                        placeholder='Lists Items'
+                                                                                    />
+                                                                                    <div className='flex flex-row items-end'>
+                                                                                        <button onClick={() => addLists(index)} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                                                    </div>
+                                                                                </div>
+                                                                                {
+                                                                                    blogsForm.content[index].list.length > 0 &&
+                                                                                        blogsForm.content[index].list.map((list_item, i) => {
+                                                                                            return (
+                                                                                                <div key={i} className='flex items-center relative mt-2 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF] px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
+                                                                                                    <p className='pr-2'>{list_item}</p>
+                                                                                                    <FontAwesomeIcon onClick={() => removeLists(index, i)} id={i} icon={faClose} className="ml-2 cursor-pointer absolute top-2 right-2" />
+                                                                                                </div>
+                                                                                            )
+                                                                                        })
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                    </>
+                                                                )
+                                                            })
+                                                    }
+                                                </div>
                                             </div>
                                         </div>
                                         {
-                                            gameEdit ?
+                                            blogEdit ?
                                             <button onClick={handleBlogsEdit} className='float-right font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2 px-6'>
                                                 {
-                                                    !gameSubmitted ?
+                                                    !blogsSubmitted ?
                                                     "Update Changes"
                                                     :
                                                     <div className='flex flex-row justify-center items-center'>
@@ -2205,7 +2918,7 @@ const Uploads = ({ user }) => {
                                             :
                                             <button onClick={handleBlogsSubmitted} className='float-right font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2 px-6'>
                                                 {
-                                                    !gameSubmitted ?
+                                                    !blogsSubmitted ?
                                                     "Upload Blog"
                                                     :
                                                     <div className='flex flex-row justify-center items-center'>
@@ -2222,6 +2935,170 @@ const Uploads = ({ user }) => {
                                             </button>
                                         }
                                     </div>
+                                )
+                                :
+                                ((paramIndex || checkParams('blogs')) && showBlogRecord) && (
+                                    <>
+                                        <div className='flex justify-end'>
+                                            <button title="return" onClick={() => setShowBlogRecord(!showBlogRecord)} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] transition-colors duration-300 ease-in-out'>
+                                                Go back
+                                            </button>
+                                        </div>
+                                        <div className='justify-between mb-2 sm:hidden flex mt-4'>
+                                            <div className=''>
+                                                {
+                                                    gameDeleteId.length > 0 &&
+                                                        <FontAwesomeIcon title="delete" onClick={() => deleteMultipleGames()} icon={faTrash} className="px-[12px] py-[10px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
+                                                }
+                                            </div>  
+                                            <div className="relative w-full max-w-md">
+                                                <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                                    <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path fillRule="evenodd" clipRule="evenodd" d="M8.5 1C4.35786 1 1 4.35786 1 8.5C1 12.6421 4.35786 16 8.5 16C10.0983 16 11.5667 15.4201 12.7103 14.4796L16.2929 18.0622C16.6834 18.4527 17.3166 18.4527 17.7071 18.0622C18.0976 17.6717 18.0976 17.0385 17.7071 16.648L14.1245 13.0654C15.04 11.9883 15.5 10.6837 15.5 9.25C15.5 5.41015 12.5899 2.5 8.75 2.5C4.91015 2.5 2 5.41015 2 9.25C2 13.0899 4.91015 16 8.75 16C12.5899 16 15.5 13.0899 15.5 9.25C15.5 7.8163 15.04 6.51169 14.1245 5.4346L10.5419 1.85202C9.60138 1.22149 8.43661 1 7.25 1H8.5ZM8.5 3C11.5376 3 14 5.46243 14 8.5C14 11.5376 11.5376 14 8.5 14C5.46243 14 3 11.5376 3 8.5C3 5.46243 5.46243 3 8.5 3Z"></path>
+                                                    </svg>
+                                                </div>
+                                                <input 
+                                                    className="block w-full py-2 pl-10 pr-3 leading-5 text-[#5A6C7F] placeholder-gray-500 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
+                                                    type="text" 
+                                                    placeholder="Search" 
+                                                    value={searchBlog}
+                                                    onChange={handleBlogSearch}
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="overflow-x-auto sm:mt-4">
+                                            <div className='mb-2 sm:flex hidden justify-between'>
+                                                <div className=''>
+                                                    {
+                                                        gameDeleteId.length > 0 &&
+                                                            <div className='flex'>
+                                                                <button onClick={() => deleteMultipleGames()} className='w-28 disabled:bg-gray-600 disabled:border-red-700 font-semibold border border-solid border-red-600 bg-red-600 hover:bg-red-700 hover:text-100-800 rounded-sm transition-all text-white p-2'>
+                                                                    Delete ({gameDeleteId.length})
+                                                                </button>
+                                                            </div>
+                                                        }
+                                                </div>  
+                                                <div className="relative w-full max-w-md flex justify-end">
+                                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3">
+                                                        <svg className="w-5 h-5 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                                        <path fillRule="evenodd" clipRule="evenodd" d="M8.5 1C4.35786 1 1 4.35786 1 8.5C1 12.6421 4.35786 16 8.5 16C10.0983 16 11.5667 15.4201 12.7103 14.4796L16.2929 18.0622C16.6834 18.4527 17.3166 18.4527 17.7071 18.0622C18.0976 17.6717 18.0976 17.0385 17.7071 16.648L14.1245 13.0654C15.04 11.9883 15.5 10.6837 15.5 9.25C15.5 5.41015 12.5899 2.5 8.75 2.5C4.91015 2.5 2 5.41015 2 9.25C2 13.0899 4.91015 16 8.75 16C12.5899 16 15.5 13.0899 15.5 9.25C15.5 7.8163 15.04 6.51169 14.1245 5.4346L10.5419 1.85202C9.60138 1.22149 8.43661 1 7.25 1H8.5ZM8.5 3C11.5376 3 14 5.46243 14 8.5C14 11.5376 11.5376 14 8.5 14C5.46243 14 3 11.5376 3 8.5C3 5.46243 5.46243 3 8.5 3Z"></path>
+                                                        </svg>
+                                                    </div>
+                                                    <input 
+                                                        className="block w-full py-2 pl-10 pr-3 leading-5 text-[#5A6C7F] placeholder-gray-500 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" 
+                                                        type="text" 
+                                                        placeholder="Search" 
+                                                        value={searchBlog}
+                                                        onChange={handleBlogSearch}
+                                                    />
+                                                </div>
+                                            </div>
+                                            <table className="min-w-full divide-y divide-gray-200 transition-all border border-[#CAD5DF]">
+                                                <thead className='bg-[#EAF0F7] text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF]'>
+                                                    <tr>
+                                                        <th className="">
+                                                            
+                                                        </th>
+                                                        <th className="px-6 py-3 sm:w-1/5 w-1/2 text-left text-xs leading-4 font-medium uppercase tracking-wider">
+                                                            Blog Title
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
+                                                            Categories
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
+                                                            Private
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
+                                                            Strict
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
+                                                            Tags
+                                                        </th>
+                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
+                                                            Action
+                                                        </th>
+                                                    </tr>
+                                                </thead>
+                                                {
+                                                    (blogData && blogData.length > 0) &&
+                                                        <tbody className="bg-white divide-y divide-gray-200">
+                                                            {
+                                                                    blogData.slice(startIndex, endIndex).map((item, index) => {
+                                                                        return (
+                                                                            <tr key={index}>
+                                                                                <td className="pl-4">
+                                                                                    <div className="text-sm leading-5 text-gray-900">
+                                                                                        <input 
+                                                                                            id={`blog-default-checkbox${10+index}`}
+                                                                                            type="checkbox" 
+                                                                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                                                            checked={gameDeleteId.includes(item._id)}
+                                                                                            onChange={() => addGameDeleteId(index, item._id)}
+                                                                                        />
+                                                                                    </div>
+                                                                                </td>
+                                                                                <td className="sm:w-1/5 w-1/2 px-6 py-4 whitespace-no-wrap break-keep">
+                                                                                    <div className="text-sm leading-5 text-gray-900">{item.post_title}</div>
+                                                                                </td>
+                                                                                <td className="px-6 py-4 whitespace-no-wrap">
+                                                                                    <div className="text-sm leading-5 text-gray-900">
+                                                                                        {item.categories}
+                                                                                    </div>
+                                                                                </td>
+                                                                                <VideoTableData 
+                                                                                    cond={item.privacy}
+                                                                                    api_call={changeGamePrivacyById({
+                                                                                        id: item._id,
+                                                                                        privacy: !item.privacy
+                                                                                    })}
+                                                                                />
+                                                                                <VideoTableData 
+                                                                                    cond={item.strict}
+                                                                                    api_call={changeGameStrictById({
+                                                                                        id: item._id,
+                                                                                        strict: !item.strict
+                                                                                    })}
+                                                                                />
+                                                                                <td className="px-6 py-4 whitespace-no-wrap">
+                                                                                    <div className="text-sm leading-5 text-gray-900 flex items-center capitalize">{item.tags.join(', ')}</div>
+                                                                                </td>
+                                                                                <td className="px-6 py-4 whitespace-no-wrap">
+                                                                                    <div className="text-sm leading-5 text-gray-900 flex items-center">
+                                                                                        <FontAwesomeIcon title="view" onClick={() => { openGameDataModal(index, item._id) }} icon={faEye} className="px-[10px] py-[7px] bg-green-600 hover:bg-green-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
+                                                                                        <FontAwesomeIcon title="edit" onClick={() => { editBlogMode(index); setShowBlogRecord(false) }} icon={faEdit} className="px-[10px] py-[7px] bg-yellow-600 hover:bg-yellow-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
+                                                                                        <FontAwesomeIcon title="delete" onClick={() => deleteGame(index)} icon={faTrash} className="px-[10px] py-[7px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all" />
+                                                                                    </div>
+                                                                                </td>
+                                                                            </tr>
+                                                                        )
+                                                                    })
+                                                            }
+                                                        </tbody>
+                                                }
+                                            </table>
+                                            {
+                                                !(blogData && blogData.length > 0) && (
+                                                    <div className='p-4 py-8 w-full border border-[#CAD5DF]'>
+                                                        <h2 className='text-[#5A6C7F] text-center text-lg'>No Record Found</h2>
+                                                    </div>
+                                                )
+                                            }
+                                            <div className='md:flex justify-end mt-4 hidden'>
+                                                <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(gameEndIndex >= gameData?.length) ? gameData?.length : endIndex }/{gameData?.length}</p>
+                                                <button disabled={currentPage === 1} onClick={() => goToGamePage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                                <button disabled={currentPage === 1} onClick={() => goToGamePage(gameCurrentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                                <button disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameCurrentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                                <button disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameData?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
+                                            </div>
+                                        </div>
+                                        <div className='md:hidden justify-end mt-4 flex'>
+                                            <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(gameEndIndex >= gameData?.length) ? gameData?.length : endIndex }/{gameData?.length}</p>
+                                            <button disabled={currentPage === 1} onClick={() => goToGamePage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                            <button disabled={currentPage === 1} onClick={() => goToGamePage(gameCurrentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                            <button disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameCurrentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                            <button disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameData?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
+                                        </div>
+                                    </>
                                 )
                             }
                         </div>

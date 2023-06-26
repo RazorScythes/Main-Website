@@ -83,10 +83,13 @@ export const updateOptions                              = (formData) => User_API
 */
 export const getUserVideo                               = (formData) => User_API.post('/uploads/getUserVideo', formData)
 export const getUserGame                                = (formData) => User_API.post('/uploads/getUserGame', formData)
+export const getUserBlog                                = (formData) => User_API.post('/uploads/getUserBlog', formData)
 export const uploadVideo                                = (formData) => User_API.post('/uploads/uploadVideo', formData)
 export const uploadGame                                 = (formData) => User_API.post('/uploads/uploadGame', formData)
+export const uploadBlog                                 = (formData) => User_API.post('/uploads/uploadBlog', formData)
 export const editVideo                                  = (formData) => User_API.post('/uploads/editVideo', formData)
 export const editGame                                   = (formData) => User_API.post('/uploads/editGame', formData)
+export const editBlog                                   = (formData) => User_API.post('/uploads/editBlog', formData)
 export const removeVideo                                = (formData) => User_API.post('/uploads/removeVideo', formData)
 export const bulkRemoveVideo                            = (formData) => User_API.post('/uploads/bulkRemoveVideo', formData)
 export const removeGame                                 = (formData) => User_API.post('/uploads/removeGame', formData)

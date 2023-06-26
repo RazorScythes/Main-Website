@@ -23,7 +23,7 @@ const VideoTableData = ({ cond, api_call, data }) => {
 
     return (
         <td className="px-6 py-4 whitespace-no-wrap">
-            <div className="text-sm leading-5 text-gray-900 text-center">
+            <div className="text-sm leading-5 text-gray-900 text-left">
                 {
                     !submitted ?
                         cond ?
