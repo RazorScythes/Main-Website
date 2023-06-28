@@ -339,7 +339,7 @@ const Uploads = ({ user }) => {
         if(!bulkForm.api_key || !bulkForm.drive_id || !bulkForm.owner) return 
 
         const files = await fetchDriveFiles(bulkForm.api_key, bulkForm.drive_id)
-
+        console.log(files)
         if(files.code && files.message) {
             setBulkAlert({
                 variant: 'danger',
@@ -347,7 +347,14 @@ const Uploads = ({ user }) => {
             })
             setShowBulkAlert(true)
         }
-        else {
+        else if(files.length === 0) {
+            setBulkAlert({
+                variant: 'danger',
+                message: `No data to be insert. Please check if the folder is private or has files.`
+            })
+            setShowBulkAlert(true)
+        }
+        else { 
             if(!setBulkSubmitted) return
 
             setBulkSubmitted(true)
@@ -405,10 +412,6 @@ const Uploads = ({ user }) => {
                         })
                     }
                     setShowBulkAlert(true)
-
-                    if(files.length === file_count) setBulkUpload(true)
-
-                    file_count = file_count + 1
                 }
                 catch(err) {
                     console.log(err)
@@ -427,7 +430,8 @@ const Uploads = ({ user }) => {
                     }
                     setShowBulkAlert(true)
                 }
-            
+                if(files.length === file_count) setBulkUpload(true)
+                file_count = file_count + 1
             })
             if(bulkError.length > 0) {
                 console.log(bulkError)
