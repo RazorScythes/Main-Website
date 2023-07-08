@@ -987,57 +987,43 @@ const Uploads = ({ user }) => {
 
     const headerValue = (e, index) => {
         var array = [...blogsForm.content]
-
-        array[index].header = e.target.value
-
+        array[index] = {...array[index], header: e.target.value};
         setBlogsForm({...blogsForm, content: array})
     }
 
     const paragraphValue = (e, index) => {
-        var array = [...blogsForm.content]
-
-        array[index].paragraph = e.target.value
-
-        setBlogsForm({...blogsForm, content: array})
+        var array = [...blogsForm.content];
+        array[index] = {...array[index], paragraph: e.target.value};
+        setBlogsForm({...blogsForm, content: array});
     }
 
     const headingValue = (e, index) => {
         var array = [...blogsForm.content]
-
-        array[index].heading = e.target.value
-
+        array[index] = {...array[index], heading: e.target.value};
         setBlogsForm({...blogsForm, content: array})
     }
 
     const singleInputValue = (e, index) => {
         var array = [...blogsForm.content]
-
-        array[index].image = e.target.value
-
+        array[index] = {...array[index], image: e.target.value};
         setBlogsForm({...blogsForm, content: array})
     }
 
     const gridInputValue = (e, index) => {
         var array = [...blogsForm.content]
-
-        array[index].input = e.target.value
-
+        array[index] = {...array[index], input: e.target.value};
         setBlogsForm({...blogsForm, content: array})
     }
 
     const listInputValue = (e, index) => {
         var array = [...blogsForm.content]
-
-        array[index].input = e.target.value
-
+        array[index] = {...array[index], input: e.target.value};
         setBlogsForm({...blogsForm, content: array})
     }
     
     const typeValue = (e, index) => {
         var array = [...blogsForm.content]
-
-        array[index].type = e.target.value
-
+        array[index] = {...array[index], type: e.target.value};
         setBlogsForm({...blogsForm, content: array})
     }
 
@@ -1045,9 +1031,11 @@ const Uploads = ({ user }) => {
         var array = [...blogsForm.content]
 
         if(!array[index].input) return
-
-        array[index].grid_image.push(array[index].input)
-        array[index].input = ''
+        array[index] = {
+            ...array[index],
+            grid_image: [...array[index].grid_image, array[index].input],
+            input: ''
+        };
 
         setBlogsForm({...blogsForm, content: array})
     }
@@ -1057,8 +1045,11 @@ const Uploads = ({ user }) => {
 
         if(!array[index].input) return
 
-        array[index].list.push(array[index].input)
-        array[index].input = ''
+        array[index] = {
+            ...array[index],
+            list: [...array[index].list, array[index].input],
+            input: ''
+        };
 
         setBlogsForm({...blogsForm, content: array})
     }

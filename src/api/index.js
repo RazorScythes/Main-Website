@@ -135,3 +135,13 @@ export const countTags                                  = (formData) => User_API
 export const getGameByTag                               = (formData) => User_API.post('/game/getGameByTag', formData)
 export const getGameByDeveloper                         = (formData) => User_API.post('/game/getGameByDeveloper', formData)
 export const getGameBySearchKey                         = (formData) => User_API.post('/game/getGameBySearchKey', formData)
+
+/*
+    Blogs
+*/
+
+export const getBlogs                                   = (formData) => User_API.post('/blogs/getBlogs', formData)
+export const getBlogByID                                = (formData) => User_API.post('/blogs/getBlogByID', formData)
+export const getBlogComments                            = (formData) => User_API.post('/blogs/getBlogComments', formData)
+export const uploadBlogComment                          = (formData) => User_API.post('/blogs/uploadBlogComment', formData)
+export const removeBlogComment                          = (formData) => User_API.post('/blogs/removeBlogComment', formData)

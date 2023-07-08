@@ -167,7 +167,6 @@ export const gameSlice = createSlice({
     initialState,
     extraReducers: (builder) => {
         builder.addCase(getGameByID.fulfilled, (state, action) => {
-            console.log(action.payload.data.result)
             state.notFound = false
             state.data = action.payload.data.result
             state.error = ''

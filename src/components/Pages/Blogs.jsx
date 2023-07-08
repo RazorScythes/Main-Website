@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faArrowRight, faCalendar } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch, useSelector } from 'react-redux'
 import { useSearchParams } from "react-router-dom";
 import { Link, useNavigate } from 'react-router-dom';
+import { getBlogs } from "../../actions/blogs";
+import moment from 'moment';
 import heroImage from '../../assets/hero-image.jpg';
 import styles from "../../style";
 
@@ -14,10 +17,25 @@ const TextWithEllipsis = ({ text, limit = 55 }) => {
     return <span>{text}</span>;
 }
 
-const Blogs = () => {
+const Blogs = ({ user }) => {
     const navigate  = useNavigate()
+    const dispatch = useDispatch()
+
+    const blog = useSelector((state) => state.blogs.blogs)
 
     const [searchParams, setSearchParams] = useSearchParams();
+
+    useEffect(() => {
+        dispatch(getBlogs({
+            id: user ? user.result?._id : ''
+        }))
+    }, [])
+
+    useEffect(() => {
+        if(blog.length > 0) {
+            setBlogs(blog)
+        }
+    }, [blog])
 
     const pageIndex = searchParams.get('page') ? parseInt(searchParams.get('page')) : 1
     const navType = searchParams.get('type') ? searchParams.get('type') : ''
@@ -29,7 +47,7 @@ const Blogs = () => {
         categories: false,
         filtered: false
     })
-    const [blogs, setBlogs] = useState(['test'])
+    const [blogs, setBlogs] = useState([])
     const [displayedPages, setDisplayedPages] = useState([]);
 
     const itemsPerPage = 18; // Number of items per page
@@ -79,6 +97,21 @@ const Blogs = () => {
         calculateDisplayedPages();
     }, [currentPage, totalPages, pageIndex]);
 
+    const convertTimezone = (date) => {
+        const timeZone = 'America/New_York';
+
+        const dateObj = new Date(date);
+        const formattedDate = new Intl.DateTimeFormat('en-US', {
+            timeZone,
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour12: false,
+        }).format(dateObj);
+
+        return formattedDate
+    }
+
     const handlePageType = (type) => {
         const urlString = window.location.href.split('?')[0];
         const baseUrl = window.location.origin;
@@ -113,7 +146,7 @@ const Blogs = () => {
                                     <div>
                                         <p>Home / Blogs</p>
                                         <button className='mt-4 mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 border border-gray-100  transition-colors duration-300 ease-in-out px-8 rounded-full'>
-                                            0 Articles
+                                            {blogs?.length > 0 ? blogs.length : "0" } Articles
                                         </button>
                                         <h1 className='text-4xl font-semibold my-4'>Blogs</h1>
                                         <p>Etiam placerat velit vitae dui blandit sollicitudin. Vestibulum tincidunt sed dolor sit amet volutpat. Nullam egestas sem at mollis sodales. Nunc eget lacinia eros, ut tincidunt nunc. Quisque volutpat, enim id volutpat interdum, purus odio euismod neque, sit amet faucibus justo dolor tincidunt dui.</p>
@@ -163,7 +196,42 @@ const Blogs = () => {
                         </div>
 
                         <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 lg:gap-12 gap-5 place-content-start mt-8'>
-                            <div>
+                            {
+                                blogs && blogs.length > 0 &&
+                                    blogs.slice(startIndex, endIndex).map((item, index) => {
+                                        return (
+                                            <div key={index}>
+                                                <div className='relative'>
+                                                    <img 
+                                                        src={item.featured_image}
+                                                        alt="Featured Image"
+                                                        className='rounded-lg h-[435px] w-full object-cover border border-gray-800'
+                                                    />
+                                                    <label className='absolute top-16 font-semibold  bg-[#CD3242] pl-4 pr-8 py-1 rounded-br-full rounded-tr-full'>{item.categories}</label>
+                                                </div>
+                                                <div className='grid sm:grid-cols-3 grid-cols-1 gap-12 place-content-start p-2 py-3'>
+                                                    <div className='col-span-2 flex flex-wrap items-center'>
+                                                        <img 
+                                                            src={item.user.avatar}
+                                                            className='w-8 h-8 object-cover rounded-full border border-gray-400'
+                                                            alt="avatar"
+                                                        />
+                                                        <p className='ml-2 break-all text-white'>{item.user.username}</p>
+                                                    </div>
+                                                </div>
+                                                <div className='p-2 py-1'>
+                                                    <h2 className='text-3xl font-semibold'><TextWithEllipsis text={item.post_title} limit={60}/></h2>
+                                                    <p className='break-all text-white mt-2'><TextWithEllipsis text={"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."} limit={150}/></p>
+                                                    <div className='flex justify-between items-center mt-4'>
+                                                        <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> {convertTimezone(item.createdAt)}</p>
+                                                        <Link to={`/blogs/${item._id}`} className='flex items-center justify-end text-right hover:text-[#CD3242] transition-all'>Continue Reading <FontAwesomeIcon icon={faArrowRight} className='ml-1 pt-1 font-bold'/></Link>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        )
+                                    })
+                            }
+                            {/* <div>
                                 <div className='relative'>
                                     <img 
                                         src={heroImage}
@@ -246,7 +314,7 @@ const Blogs = () => {
                                         <a href="#" className='flex items-center justify-end text-right hover:text-[#CD3242] transition-all'>Continue Reading <FontAwesomeIcon icon={faArrowRight} className='ml-1 pt-1 font-bold'/></a>
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                         </div>
 
                         {
