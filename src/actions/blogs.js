@@ -15,7 +15,8 @@ const initialState = {
     message: '',
     forbiden: '',
     sideAlert: {},
-    tagsCount: []
+    tagsCount: [],
+    categories: []
 }
 
 export const getBlogByID = createAsyncThunk('blog/getBlogByID', async (form, thunkAPI) => {
@@ -98,6 +99,54 @@ export const removeBlogComment = createAsyncThunk('blog/removeBlogComment', asyn
     }
 })
 
+export const addOneBlogViews = createAsyncThunk('blog/addOneBlogViews', async (form, thunkAPI) => {
+    try {
+        const response = await api.addOneBlogViews(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const countBlogCategories = createAsyncThunk('blog/countBlogCategories', async (form, thunkAPI) => {
+    try {
+        const response = await api.countBlogCategories(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const addOneBlogLikes = createAsyncThunk('blog/addOneBlogLikes', async (form, thunkAPI) => {
+    try {
+        const response = await api.addOneBlogLikes(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const blogsSlice = createSlice({
     name: 'blogs',
     initialState,
@@ -153,6 +202,25 @@ export const blogsSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(getBlogs.pending, (state, action) => {
+            state.notFound = false
+            state.isLoading = true
+        })
+        builder.addCase(countBlogCategories.fulfilled, (state, action) => {
+            state.categories = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(countBlogCategories.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(addOneBlogLikes.fulfilled, (state, action) => {
+            state.notFound = false
+            state.blogs = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(addOneBlogLikes.pending, (state, action) => {
             state.notFound = false
             state.isLoading = true
         })

@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faArrowRight, faCalendar } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faArrowRight, faCalendar, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { useSearchParams } from "react-router-dom";
 import { Link, useNavigate } from 'react-router-dom';
-import { getBlogs } from "../../actions/blogs";
+import { getBlogs, countBlogCategories, addOneBlogLikes } from "../../actions/blogs";
+import Cookies from 'universal-cookie';
 import moment from 'moment';
 import heroImage from '../../assets/hero-image.jpg';
 import styles from "../../style";
 
+const cookies = new Cookies();
 
 const TextWithEllipsis = ({ text, limit = 55 }) => {
     if (text.length > limit) {
@@ -22,24 +24,23 @@ const Blogs = ({ user }) => {
     const dispatch = useDispatch()
 
     const blog = useSelector((state) => state.blogs.blogs)
+    const categories = useSelector((state) => state.blogs.categories)
 
     const [searchParams, setSearchParams] = useSearchParams();
+    const [selectedCategory, setSelectedCategory] = useState('')
 
     useEffect(() => {
         dispatch(getBlogs({
             id: user ? user.result?._id : ''
         }))
+        dispatch(countBlogCategories({
+            id: user ? user.result?._id : ''
+        }))
     }, [])
-
-    useEffect(() => {
-        if(blog.length > 0) {
-            setBlogs(blog)
-        }
-    }, [blog])
 
     const pageIndex = searchParams.get('page') ? parseInt(searchParams.get('page')) : 1
     const navType = searchParams.get('type') ? searchParams.get('type') : ''
-    const filteredType = searchParams.get('filtered') ? searchParams.get('filtered') : ''
+    const filteredType = searchParams.get('category') ? searchParams.get('category') : ''
     const paramIndex = searchParams.get('type') === null || searchParams.get('type') === ''
     const checkParams = (val) => {return searchParams.get('type') === val}
 
@@ -97,6 +98,87 @@ const Blogs = ({ user }) => {
         calculateDisplayedPages();
     }, [currentPage, totalPages, pageIndex]);
 
+    useEffect(() => {
+        if(searchParams.get('type') === null || searchParams.get('type') === '') {
+            var filteredData
+            if(filteredType !== null)
+                filteredData = blog.filter(obj => filteredType === obj.categories || filteredType === '');
+            else 
+                filteredData = blog
+
+            setBlogs(filteredData)
+        }
+        else if(searchParams.get('type') === 'latest') {
+            // Filter and group the objects by date
+            const groupedData = blog.reduce((result, obj) => {
+              const date = obj.createdAt.split('T')[0];
+              if (result[date]) {
+                result[date].push(obj);
+              } else {
+                result[date] = [obj];
+              }
+              return result;
+            }, {});
+    
+            // Get the latest date from the groupedData object
+            const latestDate = Object.keys(groupedData).sort().pop();
+    
+            // Get the objects related to the latest date
+            const latestBlogs = groupedData[latestDate];
+    
+            if(latestBlogs !== undefined) { 
+                var filteredData
+                if(filteredType !== null)
+                    filteredData = latestBlogs.filter(obj => filteredType === obj.categories || filteredType === '');
+                else 
+                    filteredData = latestBlogs
+    
+                setBlogs(filteredData)
+            }
+        }
+        else if(searchParams.get('type') === 'most_viewed') {
+            // Sort the data based on views in ascending order
+            if(blog.length > 0) {
+              var arr = [...blog]
+    
+              const sortedData = arr.sort((a, b) => b.views.length - a.views.length);
+    
+              if(sortedData.length > 0)
+                var filteredData
+                if(filteredType !== null)
+                    filteredData = sortedData.filter(obj => filteredType === obj.categories || filteredType === '');
+                else 
+                    filteredData = sortedData
+    
+                setBlogs(filteredData)
+            }
+        }
+        else if(searchParams.get('type') === 'popular') {
+            // Sort the data based on views in ascending order
+            if(blog.length > 0) {
+                var arr = []
+    
+                blog.forEach(item => {
+                var popularity = ((item.views.length/2) + item.likes.length) - item.dislikes.length
+                    if(popularity > 0) { 
+                        arr.push({...item, popularity: popularity})
+                    }
+                });
+    
+                const sortedData = arr.sort((a, b) => b.popularity - a.popularity);
+    
+                 if(sortedData.length > 0)
+                    var filteredData 
+                    if(filteredType !== null)
+                        filteredData = sortedData.filter(obj => filteredType === obj.categories || filteredType === '');
+                    else 
+                        filteredData = sortedData
+        
+                    setBlogs(filteredData)
+                }
+          }
+    }, [blog, searchParams.get('type'), filteredType])
+
     const convertTimezone = (date) => {
         const timeZone = 'America/New_York';
 
@@ -128,10 +210,65 @@ const Blogs = ({ user }) => {
         const urlString = window.location.href.split('?')[0];
         const baseUrl = window.location.origin;
         const path = urlString.substring(baseUrl.length);
-        navigate(`${path}?type=${navType}&page=${1}&filtered=${filtered}`)
+        navigate(`${path}?type=${navType}&page=${1}&category=${filtered}`)
+        setToggle({tags: false, filtered: false})
+        setSelectedCategory(filtered)
+    };
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+
+        if(filteredType)
+          navigate(`/blogs?type=${(searchParams.get('type') !== null) ? searchParams.get('type') : ''}&page=${pageNumber}&filtered=${filteredType}`)
+        else
+          navigate(`/blogs?type=${(searchParams.get('type') !== null) ? searchParams.get('type') : ''}&page=${pageNumber}`)
+        
         setToggle({tags: false, filtered: false})
     };
 
+    const addLikes = (index, blogId) => {
+        var array = [...blogs]
+        var duplicate = false
+
+        array[index].likes.forEach((item) => { if(item === cookies.get('uid')) duplicate = true })
+        if(!duplicate) {
+            var updatedBlog = { ...array[index] }; 
+
+            updatedBlog.likes = Array.isArray(updatedBlog.likes)
+            ? [...updatedBlog.likes]
+            : [];
+
+            updatedBlog.likes.push(cookies.get('uid'));
+
+            array[index] = updatedBlog;
+
+            setBlogs(array);
+        }
+        else {
+            var updatedBlog = { ...array[index] };
+
+            updatedBlog.likes = Array.isArray(updatedBlog.likes)
+            ? [...updatedBlog.likes]
+            : [];
+
+            updatedBlog.likes = updatedBlog.likes.filter((item) => item !== cookies.get('uid'))
+
+            array[index] = updatedBlog;
+
+            setBlogs(array);
+        }
+
+        dispatch(addOneBlogLikes({
+            id: array[index]._id,
+            likes: array[index].likes,
+            userId: user ? user.result?._id : ''
+        }))
+    }
+
+    const checkedForLikedBLogs = (likes) => {
+        var liked = likes.some((item) => { if(item === cookies.get('uid')) return true })
+        return liked ? liked : false;
+    }
     return (
         <div
             className="relative bg-cover bg-center"
@@ -168,29 +305,24 @@ const Blogs = ({ user }) => {
                                 <button onClick={() => handlePageType("popular")} style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out'>Popular</button>
                                 <div className='relative z-40 ml-2'>
                                     <button onClick={() => setToggle({...toggle, categories: !toggle.categories, filtered: false})} className='cursor-pointer mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2 flex items-center'>
-                                        Categories
+                                        {selectedCategory ? selectedCategory : 'Categories'}
                                         {toggle.categories ? <FontAwesomeIcon icon={faChevronUp} className='ml-1 font-bold'/> : <FontAwesomeIcon icon={faChevronDown} className='ml-1 font-bold'/> }
                                     </button>
-                                    <div className={`${toggle.categories ? `absolute` : `hidden`}`}>
-                                        <ul className='no-scroll max-h-[183px] overflow-y-auto flex flex-col mb-2 font-semibold text-sm bg-gray-800 text-gray-100  border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>
-                                            <button onClick={() => handleFilteredChange('all')}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>All</li></button>
-                                            <button onClick={() => handleFilteredChange('embed')}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>Embed</li></button>
-                                            <button onClick={() => handleFilteredChange('video')}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>Videos</li></button>
-                                        </ul>
-                                    </div>
-                                </div>
-                                <div className='relative z-40'>
-                                    <button onClick={() => setToggle({...toggle, filtered: !toggle.filtered, categories: false})} className='cursor-pointer mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2 flex items-center'>
-                                        { filteredType ? <span className='capitalize'>{filteredType}</span> : 'Filtered By' } 
-                                        {toggle.filtered ? <FontAwesomeIcon icon={faChevronUp} className='ml-1 font-bold'/> : <FontAwesomeIcon icon={faChevronDown} className='ml-1 font-bold'/> }
-                                    </button>
-                                    <div className={`${toggle.filtered ? `absolute` : `hidden`}`}>
-                                        <ul className='no-scroll max-h-[183px] overflow-y-auto flex flex-col mb-2 font-semibold text-sm bg-gray-800 text-gray-100  border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>
-                                            <button onClick={() => handleFilteredChange('all')}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>All</li></button>
-                                            <button onClick={() => handleFilteredChange('embed')}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>Embed</li></button>
-                                            <button onClick={() => handleFilteredChange('video')}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>Videos</li></button>
-                                        </ul>
-                                    </div>
+                                    {
+                                        categories && categories.length > 0 &&
+                                            <div className={`${toggle.categories ? `absolute` : `hidden`}`}>
+                                                <ul className='no-scroll max-h-[183px] overflow-y-auto flex flex-col mb-2 font-semibold text-sm bg-gray-800 text-gray-100  border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>
+                                                <button onClick={() => handleFilteredChange('')}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>All</li></button>
+                                                    {
+                                                        categories.map((item, index) => {
+                                                            return (
+                                                                <button onClick={() => handleFilteredChange(item.category)} key={index}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>{item.category}</li></button>
+                                                            )
+                                                        })
+                                                    }
+                                                </ul>
+                                            </div>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -199,6 +331,7 @@ const Blogs = ({ user }) => {
                             {
                                 blogs && blogs.length > 0 &&
                                     blogs.slice(startIndex, endIndex).map((item, index) => {
+                                        var liked_blogs = checkedForLikedBLogs(item.likes);
                                         return (
                                             <div key={index}>
                                                 <div className='relative'>
@@ -218,6 +351,9 @@ const Blogs = ({ user }) => {
                                                         />
                                                         <p className='ml-2 break-all text-white'>{item.user.username}</p>
                                                     </div>
+                                                    <div className='flex flex-wrap items-center justify-end'>
+                                                        <button className='cursor-pointer' onClick={() => addLikes(index, item._id)}><FontAwesomeIcon icon={faHeart} style={{color: liked_blogs ? '#CD3242' : '#FFF'}} className='mr-1 pt-1 font-bold text-lg'/> {item.likes.length}</button>
+                                                    </div>
                                                 </div>
                                                 <div className='p-2 py-1'>
                                                     <h2 className='text-3xl font-semibold'><TextWithEllipsis text={item.post_title} limit={60}/></h2>
@@ -231,90 +367,6 @@ const Blogs = ({ user }) => {
                                         )
                                     })
                             }
-                            {/* <div>
-                                <div className='relative'>
-                                    <img 
-                                        src={heroImage}
-                                        alt="Featured Image"
-                                        className='rounded-lg h-[435px] w-full object-cover border border-gray-800'
-                                    />
-                                    <label className='absolute top-16 font-semibold  bg-[#CD3242] pl-4 pr-8 py-1 rounded-br-full rounded-tr-full'>Category</label>
-                                </div>
-                                <div className='grid sm:grid-cols-3 grid-cols-1 gap-12 place-content-start p-2 py-3'>
-                                    <div className='col-span-2 flex flex-wrap items-center'>
-                                        <img 
-                                            src={heroImage}
-                                            className='w-8 h-8 object-cover rounded-full border border-gray-400'
-                                            alt="avatar"
-                                        />
-                                        <p className='ml-2 break-all text-white'>RazorScythe</p>
-                                    </div>
-                                </div>
-                                <div className='p-2 py-1'>
-                                    <h2 className='text-3xl font-semibold'>Post Title</h2>
-                                    <p className='break-all text-white mt-2'><TextWithEllipsis text={"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."} limit={150}/></p>
-                                    <div className='flex justify-between items-center mt-4'>
-                                        <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> Jun 18, 2023</p>
-                                        <a href="#" className='flex items-center justify-end text-right hover:text-[#CD3242] transition-all'>Continue Reading <FontAwesomeIcon icon={faArrowRight} className='ml-1 pt-1 font-bold'/></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className='relative'>
-                                    <img 
-                                        src={heroImage}
-                                        alt="Featured Image"
-                                        className='rounded-lg h-[435px] w-full object-cover border border-gray-800'
-                                    />
-                                    <label className='absolute top-16 font-semibold  bg-[#CD3242] pl-4 pr-8 py-1 rounded-br-full rounded-tr-full'>Category</label>
-                                </div>
-                                <div className='grid sm:grid-cols-3 grid-cols-1 gap-12 place-content-start p-2 py-3'>
-                                    <div className='col-span-2 flex flex-wrap items-center'>
-                                        <img 
-                                            src={heroImage}
-                                            className='w-8 h-8 object-cover rounded-full border border-gray-400'
-                                            alt="avatar"
-                                        />
-                                        <p className='ml-2 break-all text-white'>RazorScythe</p>
-                                    </div>
-                                </div>
-                                <div className='p-2 py-1'>
-                                    <h2 className='text-3xl font-semibold'>Post Title</h2>
-                                    <p className='break-all text-white mt-2'><TextWithEllipsis text={"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."} limit={150}/></p>
-                                    <div className='flex justify-between items-center mt-4'>
-                                        <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> Jun 18, 2023</p>
-                                        <a href="#" className='flex items-center justify-end text-right hover:text-[#CD3242] transition-all'>Continue Reading <FontAwesomeIcon icon={faArrowRight} className='ml-1 pt-1 font-bold'/></a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div>
-                                <div className='relative'>
-                                    <img 
-                                        src={heroImage}
-                                        alt="Featured Image"
-                                        className='rounded-lg h-[435px] w-full object-cover border border-gray-800'
-                                    />
-                                    <label className='absolute top-16 font-semibold  bg-[#CD3242] pl-4 pr-8 py-1 rounded-br-full rounded-tr-full'>Category</label>
-                                </div>
-                                <div className='grid sm:grid-cols-3 grid-cols-1 gap-12 place-content-start p-2 py-3'>
-                                    <div className='col-span-2 flex flex-wrap items-center'>
-                                        <img 
-                                            src={heroImage}
-                                            className='w-8 h-8 object-cover rounded-full border border-gray-400'
-                                            alt="avatar"
-                                        />
-                                        <p className='ml-2 break-all text-white'>RazorScythe</p>
-                                    </div>
-                                </div>
-                                <div className='p-2 py-1'>
-                                    <h2 className='text-3xl font-semibold'>Post Title</h2>
-                                    <p className='break-all text-white mt-2'><TextWithEllipsis text={"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."} limit={150}/></p>
-                                    <div className='flex justify-between items-center mt-4'>
-                                        <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> Jun 18, 2023</p>
-                                        <a href="#" className='flex items-center justify-end text-right hover:text-[#CD3242] transition-all'>Continue Reading <FontAwesomeIcon icon={faArrowRight} className='ml-1 pt-1 font-bold'/></a>
-                                    </div>
-                                </div>
-                            </div> */}
                         </div>
 
                         {

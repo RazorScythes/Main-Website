@@ -145,3 +145,6 @@ export const getBlogByID                                = (formData) => User_API
 export const getBlogComments                            = (formData) => User_API.post('/blogs/getBlogComments', formData)
 export const uploadBlogComment                          = (formData) => User_API.post('/blogs/uploadBlogComment', formData)
 export const removeBlogComment                          = (formData) => User_API.post('/blogs/removeBlogComment', formData)
+export const countBlogCategories                        = (formData) => User_API.post('/blogs/countBlogCategories', formData)
+export const addOneBlogViews                            = (formData) => User_API.post('/blogs/addOneBlogViews', formData)
+export const addOneBlogLikes                            = (formData) => User_API.post('/blogs/addOneBlogLikes', formData)

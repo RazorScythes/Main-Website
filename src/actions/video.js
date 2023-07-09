@@ -367,7 +367,6 @@ export const videoSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(countVideoTags.rejected, (state, action) => {
-            console.log(action.payload)
             state.alert = action.payload.message
             state.variant = action.payload.variant
         })
