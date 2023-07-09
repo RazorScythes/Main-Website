@@ -269,6 +269,17 @@ const Blogs = ({ user }) => {
         var liked = likes.some((item) => { if(item === cookies.get('uid')) return true })
         return liked ? liked : false;
     }
+
+    const getFirstParagraph = (content) => {
+        var text = ''
+        content.some((c) => {
+            if(c.element === 'normal_naragraph'){
+                text = c.paragraph
+                return true;
+            }
+        })
+        return text
+    }
     return (
         <div
             className="relative bg-cover bg-center"
@@ -316,7 +327,7 @@ const Blogs = ({ user }) => {
                                                     {
                                                         categories.map((item, index) => {
                                                             return (
-                                                                <button onClick={() => handleFilteredChange(item.category)} key={index}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>{item.category}</li></button>
+                                                                <button onClick={() => handleFilteredChange(item.category)} key={index}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>{item.category} ({item.count})</li></button>
                                                             )
                                                         })
                                                     }
@@ -332,6 +343,7 @@ const Blogs = ({ user }) => {
                                 blogs && blogs.length > 0 &&
                                     blogs.slice(startIndex, endIndex).map((item, index) => {
                                         var liked_blogs = checkedForLikedBLogs(item.likes);
+                                        var first_paragraph = getFirstParagraph(item.content)
                                         return (
                                             <div key={index}>
                                                 <div className='relative'>
@@ -342,7 +354,7 @@ const Blogs = ({ user }) => {
                                                     />
                                                     <label className='absolute top-16 font-semibold  bg-[#CD3242] pl-4 pr-8 py-1 rounded-br-full rounded-tr-full'>{item.categories}</label>
                                                 </div>
-                                                <div className='grid sm:grid-cols-3 grid-cols-1 gap-12 place-content-start p-2 py-3'>
+                                                <div className='grid sm:grid-cols-3 grid-cols-3 gap-12 place-content-start p-2 py-3'>
                                                     <div className='col-span-2 flex flex-wrap items-center'>
                                                         <img 
                                                             src={item.user.avatar}
@@ -357,7 +369,7 @@ const Blogs = ({ user }) => {
                                                 </div>
                                                 <div className='p-2 py-1'>
                                                     <h2 className='text-3xl font-semibold'><TextWithEllipsis text={item.post_title} limit={60}/></h2>
-                                                    <p className='break-all text-white mt-2'><TextWithEllipsis text={"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod."} limit={150}/></p>
+                                                    <p className='break-all text-white mt-2'><TextWithEllipsis text={first_paragraph} limit={150}/></p>
                                                     <div className='flex justify-between items-center mt-4'>
                                                         <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> {convertTimezone(item.createdAt)}</p>
                                                         <Link to={`/blogs/${item._id}`} className='flex items-center justify-end text-right hover:text-[#CD3242] transition-all'>Continue Reading <FontAwesomeIcon icon={faArrowRight} className='ml-1 pt-1 font-bold'/></Link>
