@@ -327,8 +327,9 @@ const GamesSingle = ({ user }) => {
                                                     })
                                                 }
                                                 {
-                                                    !(gameData.game.download_link && gameData.game.download_link[0].links.length > 0) &&
-                                                    <p className='mt-1 whitespace-pre-wrap'>No download link to show</p>
+                                                    !(gameData.game.download_link ) &&
+                                                        gameData.game.download_link[0].links.length > 0 &&
+                                                            <p className='mt-1 whitespace-pre-wrap'>No download link to show</p>
                                                 }
                                                 <hr className='mt-8 mb-4'/>
                     

@@ -16,7 +16,8 @@ const initialState = {
     forbiden: '',
     sideAlert: {},
     tagsCount: [],
-    categories: []
+    categories: [],
+    latestBlogs: []
 }
 
 export const getBlogByID = createAsyncThunk('blog/getBlogByID', async (form, thunkAPI) => {
@@ -147,6 +148,22 @@ export const addOneBlogLikes = createAsyncThunk('blog/addOneBlogLikes', async (f
     }
 })
 
+export const getLatestBlogs = createAsyncThunk('blogs/getLatestBlogs', async (form, thunkAPI) => {
+    try {
+        const response = await api.getLatestBlogs(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const blogsSlice = createSlice({
     name: 'blogs',
     initialState,
@@ -204,7 +221,18 @@ export const blogsSlice = createSlice({
         builder.addCase(getBlogs.pending, (state, action) => {
             state.notFound = false
             state.isLoading = true
-        })
+        }),
+        builder.addCase(getLatestBlogs.fulfilled, (state, action) => {
+            console.log(action.payload.data.result)
+            state.notFound = false
+            state.latestBlogs = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getLatestBlogs.pending, (state, action) => {
+            state.notFound = false
+            state.isLoading = true
+        }),
         builder.addCase(countBlogCategories.fulfilled, (state, action) => {
             state.categories = action.payload.data.result
             state.error = ''

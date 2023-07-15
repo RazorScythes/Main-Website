@@ -4,7 +4,7 @@ import { faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faTrash, faA
 import { useSearchParams, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom';
-import { getBlogByID, getBlogComments, uploadBlogComment, removeBlogComment, addOneBlogViews, clearAlert } from "../../actions/blogs";
+import { getBlogByID, getBlogComments, uploadBlogComment, removeBlogComment, addOneBlogViews, getLatestBlogs, clearAlert } from "../../actions/blogs";
 import Cookies from 'universal-cookie';
 import heroImage from '../../assets/hero-image.jpg';
 import moment from 'moment'
@@ -24,6 +24,7 @@ const BlogsSingle = ({ user }) => {
     const notFound = useSelector((state) => state.blogs.notFound)
     const forbiden = useSelector((state) => state.blogs.forbiden)
     const isLoading = useSelector((state) => state.blogs.isLoading)
+    const latestBlogs = useSelector((state) => state.blogs.latestBlogs)
 
     const [avatar, setAvatar] = useState(localStorage.getItem('avatar')?.replaceAll('"', ""))
     const [searchParams, setSearchParams] = useSearchParams();
@@ -35,10 +36,10 @@ const BlogsSingle = ({ user }) => {
 
     useEffect(() => {
         setBlogData({})
-        // dispatch(getRelatedGames({
-        //     id: user ? user.result?._id : '',
-        //     gameId: id
-        // }))
+        dispatch(getLatestBlogs({
+            id: user ? user.result?._id : '',
+            blogId: id 
+        }))
         dispatch(getBlogComments({ blogId: id }))
         dispatch(getBlogByID({ 
             id: user ? user.result?._id : '', 
@@ -88,6 +89,21 @@ const BlogsSingle = ({ user }) => {
             }
     }
 
+    const convertTimezone = (date) => {
+        const timeZone = 'America/New_York';
+
+        const dateObj = new Date(date);
+        const formattedDate = new Intl.DateTimeFormat('en-US', {
+            timeZone,
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour12: false,
+        }).format(dateObj);
+
+        return formattedDate
+    }
+
     return (
         <div
             className="relative bg-cover bg-center"
@@ -113,9 +129,9 @@ const BlogsSingle = ({ user }) => {
                                         <div className={`${styles.marginX} ${styles.flexCenter}`}>
                                             <div className={`${styles.boxWidthEx}`}>
                                                 <div className="flex flex-col justify-center items-center">
-                                                    <h1 className="text-white text-4xl font-bold mb-4 text-center">Restricted Game</h1>
-                                                    <p className="text-white text-lg mb-8 text-center">You don't have permission to view this games.</p>
-                                                    <a href="/games" className="text-white underline hover:text-gray-200">Go back to games page</a>
+                                                    <h1 className="text-white text-4xl font-bold mb-4 text-center">Restricted Blog</h1>
+                                                    <p className="text-white text-lg mb-8 text-center">You don't have permission to view this blog.</p>
+                                                    <a href="/blog" className="text-white underline hover:text-gray-200">Go back to blog page</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -129,9 +145,9 @@ const BlogsSingle = ({ user }) => {
                                         <div className={`${styles.marginX} ${styles.flexCenter}`}>
                                             <div className={`${styles.boxWidthEx}`}>
                                                 <div className="flex flex-col justify-center items-center">
-                                                    <h1 className="text-white text-4xl font-bold mb-4 text-center">Game is Private</h1>
+                                                    <h1 className="text-white text-4xl font-bold mb-4 text-center">Blog is Private</h1>
                                                     <p className="text-white text-lg mb-8 text-center">Contact the owner to provide information about this.</p>
-                                                    <a href="/games" className="text-white underline hover:text-gray-200">Go back to games page</a>
+                                                    <a href="/blog" className="text-white underline hover:text-gray-200">Go back to blog page</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -145,9 +161,9 @@ const BlogsSingle = ({ user }) => {
                                         <div className={`${styles.marginX} ${styles.flexCenter}`}>
                                             <div className={`${styles.boxWidthEx}`}>
                                                 <div className="flex flex-col justify-center items-center">
-                                                    <h1 className="text-white text-4xl font-bold mb-4 text-center">Game not Found</h1>
-                                                    <p className="text-white text-lg mb-8 text-center">The game you're looking for doesn't exist.</p>
-                                                    <a href="/games" className="text-white underline hover:text-gray-200">Go back to games page</a>
+                                                    <h1 className="text-white text-4xl font-bold mb-4 text-center">Blog not Found</h1>
+                                                    <p className="text-white text-lg mb-8 text-center">The blog you're looking for doesn't exist.</p>
+                                                    <a href="/blog" className="text-white underline hover:text-gray-200">Go back to blog page</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -174,7 +190,7 @@ const BlogsSingle = ({ user }) => {
                                                         <p className='ml-2 break-all text-white'><span className='font-semibold'>By:</span> {blogData.username}</p>
                                                     </div>
                                                 </div>
-                                                <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> Jun 18, 2023</p>
+                                                <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> {convertTimezone(blogData.blog.createdAt)}</p>
                                             </div>
 
                                             {
@@ -357,50 +373,24 @@ const BlogsSingle = ({ user }) => {
                                         </div>
                                         <div className='sm:px-8'>
                                             <h2 className='text-2xl font-semibold mb-4'>Latest Post</h2>
-                                            <div className='mb-4'>
-                                                <img 
-                                                    src={heroImage}
-                                                    className='w-full h-48 object-cover bg-top rounded-lg'
-                                                    alt="Display Image"
-                                                />
-                                                <h2 className='text-xl font-semibold my-2'>Lorem ipsum dolor sit amet</h2>
-                                                <div className='flex items-center'>
-                                                    <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> Jun 18, 2023</p>
-                                                </div>
-                                            </div>
-                                            <div className='mb-4'>
-                                                <img 
-                                                    src={heroImage}
-                                                    className='w-full h-48 object-cover bg-top rounded-lg'
-                                                    alt="Display Image"
-                                                />
-                                                <h2 className='text-xl font-semibold my-2'>Lorem ipsum dolor sit amet</h2>
-                                                <div className='flex items-center'>
-                                                    <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> Jun 18, 2023</p>
-                                                </div>
-                                            </div>
-                                            <div className='mb-4'>
-                                                <img 
-                                                    src={heroImage}
-                                                    className='w-full h-48 object-cover bg-top rounded-lg'
-                                                    alt="Display Image"
-                                                />
-                                                <h2 className='text-xl font-semibold my-2'>Lorem ipsum dolor sit amet</h2>
-                                                <div className='flex items-center'>
-                                                    <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> Jun 18, 2023</p>
-                                                </div>
-                                            </div>
-                                            <div className='mb-4'>
-                                                <img 
-                                                    src={heroImage}
-                                                    className='w-full h-48 object-cover bg-top rounded-lg'
-                                                    alt="Display Image"
-                                                />
-                                                <h2 className='text-xl font-semibold my-2'>Lorem ipsum dolor sit amet</h2>
-                                                <div className='flex items-center'>
-                                                    <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> Jun 18, 2023</p>
-                                                </div>
-                                            </div>
+                                            {
+                                                latestBlogs?.length > 0 &&
+                                                    latestBlogs.map((item, index) => {
+                                                        return (
+                                                            <div className='mb-4' key={index}>
+                                                                <img 
+                                                                    src={item.featured_image}
+                                                                    className='w-full h-48 object-cover bg-top rounded-lg'
+                                                                    alt="Display Image"
+                                                                />
+                                                                <Link to={`/blogs/${item._id}`}><h2 className='text-xl font-semibold my-2'>{item.post_title}</h2></Link>
+                                                                <div className='flex items-center'>
+                                                                    <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> {convertTimezone(item.createdAt)}</p>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })
+                                            }
                                             {
                                                 blogData.blog.tags?.length > 0 &&
                                                 <>
