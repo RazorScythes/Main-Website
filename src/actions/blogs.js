@@ -223,7 +223,6 @@ export const blogsSlice = createSlice({
             state.isLoading = true
         }),
         builder.addCase(getLatestBlogs.fulfilled, (state, action) => {
-            console.log(action.payload.data.result)
             state.notFound = false
             state.latestBlogs = action.payload.data.result
             state.error = ''

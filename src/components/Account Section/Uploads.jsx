@@ -350,7 +350,6 @@ const Uploads = ({ user }) => {
         if(!bulkForm.api_key || !bulkForm.drive_id || !bulkForm.owner) return 
 
         const files = await fetchDriveFiles(bulkForm.api_key, bulkForm.drive_id)
-        console.log(files)
         if(files.code && files.message) {
             setBulkAlert({
                 variant: 'danger',
