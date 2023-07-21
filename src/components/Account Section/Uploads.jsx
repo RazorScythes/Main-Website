@@ -922,7 +922,6 @@ const Uploads = ({ user }) => {
     const openBlogDataModal = (index, id) => {
         const blogById = blogData[index]
         var link = `${window.location.origin}/blogs/${blogById._id}?embed_user_id=${blogById.user}`
-        console.log(link)
         setBlogDataModal(link)
         setBlogModal(true)
     }
