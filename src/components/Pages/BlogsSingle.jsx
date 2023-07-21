@@ -13,7 +13,7 @@ import styles from "../../style";
 const cookies = new Cookies();
 
 const BlogsSingle = ({ user }) => {
-    const { id } = useParams();
+    const { id, embed_user_id } = useParams();
 
     const dispatch = useDispatch()
     const navigate  = useNavigate()

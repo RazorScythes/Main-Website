@@ -99,6 +99,10 @@ export const changeStrictById                           = (formData) => User_API
 export const changeGamePrivacyById                      = (formData) => User_API.post('/uploads/changeGamePrivacyById', formData)
 export const changeGameStrictById                       = (formData) => User_API.post('/uploads/changeGameStrictById', formData)
 export const changeDownloadById                         = (formData) => User_API.post('/uploads/changeDownloadById', formData)
+export const changeBlogPrivacyById                      = (formData) => User_API.post('/uploads/changeBlogPrivacyById', formData)
+export const changeBlogStrictById                       = (formData) => User_API.post('/uploads/changeBlogStrictById', formData)
+export const removeBlog                                 = (formData) => User_API.post('/uploads/removeBlog', formData)
+export const bulkRemoveBlog                             = (formData) => User_API.post('/uploads/bulkRemoveBlog', formData)
 
 /*
     Logs

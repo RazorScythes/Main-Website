@@ -299,6 +299,70 @@ export const getUserBlog = createAsyncThunk('uploads/getUserBlog', async (form, 
     }
 })
 
+export const changeBlogPrivacyById = createAsyncThunk('uploads/changeBlogPrivacyById', async (form, thunkAPI) => {
+    try {
+        const response = await api.changeBlogPrivacyById(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const changeBlogStrictById = createAsyncThunk('uploads/changeBlogStrictById', async (form, thunkAPI) => {
+    try {
+        const response = await api.changeBlogStrictById(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const removeBlog = createAsyncThunk('uploads/removeBlog', async (form, thunkAPI) => {
+    try {
+        const response = await api.removeBlog(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const bulkRemoveBlog = createAsyncThunk('uploads/bulkRemoveBlog', async (form, thunkAPI) => {
+    try {
+        const response = await api.bulkRemoveBlog(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const uploadsSlice = createSlice({
     name: 'uploads',
     initialState,
@@ -366,7 +430,6 @@ export const uploadsSlice = createSlice({
                 if (obj._id === action.payload.data.result._id) {return action.payload.data.result;}
                 return obj;
             });
-            console.log(filteredObjects)
             state.video = filteredObjects
             state.error = ''
             state.isLoading = false
@@ -381,7 +444,6 @@ export const uploadsSlice = createSlice({
                 if (obj._id === action.payload.data.result._id) {return action.payload.data.result;}
                 return obj;
             });
-            console.log(filteredObjects)
             state.game = filteredObjects
             state.error = ''
             state.isLoading = false
@@ -512,6 +574,57 @@ export const uploadsSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(bulkRemoveGame.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(changeBlogPrivacyById.fulfilled, (state, action) => {
+            // Filtering the objects and replacing the matching ones
+            const filteredObjects = state.blog.map(obj => {
+                if (obj._id === action.payload.data.result._id) {return action.payload.data.result;}
+                return obj;
+            });
+
+            state.blog = filteredObjects
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(changeBlogPrivacyById.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(changeBlogStrictById.fulfilled, (state, action) => {
+            // Filtering the objects and replacing the matching ones
+            const filteredObjects = state.blog.map(obj => {
+                if (obj._id === action.payload.data.result._id) {return action.payload.data.result;}
+                return obj;
+            });
+            state.blog = filteredObjects
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(changeBlogStrictById.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(removeBlog.fulfilled, (state, action) => {
+            state.blog = action.payload.data.result
+            state.alert = action.payload.data.message
+            state.variant = action.payload.data.variant
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(removeBlog.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(bulkRemoveBlog.fulfilled, (state, action) => {
+            state.blog = action.payload.data.result
+            state.alert = action.payload.data.message
+            state.variant = action.payload.data.variant
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(bulkRemoveBlog.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         })

@@ -4,8 +4,9 @@ import { Link, useSearchParams } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faClose, faEdit, faTrash, faVideoCamera, faChevronLeft, faChevronRight, faAngleDoubleLeft, faAngleDoubleRight, faEye, faArrowUp, faArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
-import { changeGamePrivacyById, changeGameStrictById, getUserVideo, getUserGame, getUserBlog, uploadVideo, clearAlert, bulkRemoveGame, removeGame, editVideo, editGame, editBlog, removeVideo, changePrivacyById, changeStrictById, changeDownloadById, bulkRemoveVideo, uploadGame, uploadBlog } from "../../actions/uploads";
+import { changeGamePrivacyById, changeGameStrictById, bulkRemoveBlog, removeBlog, getUserVideo, getUserGame, getUserBlog, uploadVideo, clearAlert, bulkRemoveGame, removeGame, editVideo, editGame, editBlog, removeVideo, changePrivacyById, changeStrictById, changeBlogPrivacyById, changeBlogStrictById, changeDownloadById, bulkRemoveVideo, uploadGame, uploadBlog } from "../../actions/uploads";
 import axios from 'axios';
+import EmbedFull from '../EmbedFull'
 import VideoModal from '../VideoModal';
 import Alert from '../Alert';
 import VideoTableData from './sections/VideoTableData';
@@ -36,6 +37,12 @@ const Uploads = ({ user }) => {
     // Calculate the start and end indices for the current page
     const gameStartIndex = (gameCurrentPage - 1) * itemsPerPage;
     const gameEndIndex = gameStartIndex + itemsPerPage;
+    
+    const [blogCurrentPage, setBlogCurrentPage] = useState(1);
+
+    // Calculate the start and end indices for the current page
+    const blogStartIndex = (blogCurrentPage - 1) * itemsPerPage;
+    const blogEndIndex = blogStartIndex + itemsPerPage;
 
     const [searchVideo, setSearchVideo] = useState('')
     const [searchGame, setSearchGame] = useState('')
@@ -132,6 +139,10 @@ const Uploads = ({ user }) => {
 
     const goToGamePage = (page) => {
         setGameCurrentPage(page);
+    };
+
+    const goToBlogPage = (page) => {
+        setBlogCurrentPage(page);
     };
 
     const addTags = () => {
@@ -712,7 +723,7 @@ const Uploads = ({ user }) => {
             String(value).toLowerCase().includes(keyword)
           )
         );
-        setGameCurrentPage(1)
+        setBlogCurrentPage(1)
         setBlogData(filteredData);
     };
 
@@ -817,9 +828,12 @@ const Uploads = ({ user }) => {
         post_title: '',
         content: [],
         tags: [],
-        categories: ''
+        categories: 'Gaming'
     })
 
+    const [blogModal, setBlogModal] = useState(false)
+    const [blogDataModal, setBlogDataModal] = useState(null)
+    const [blogDeleteId, setBlogDeleteId] = useState([])
     const [blogsImage, setBlogsImage] = useState('')
     const [blogsImageFile, setBlogsImageFile] = useState('')
     const [blogsImageModal, setBlogsImageModal] = useState(false)
@@ -853,7 +867,7 @@ const Uploads = ({ user }) => {
             post_title: '',
             content: [],
             tags: [],
-            categories: ''
+            categories: 'Gaming'
         })
         setInput({...input, blogTags: ''})
         setBlogEdit(false)
@@ -870,7 +884,7 @@ const Uploads = ({ user }) => {
             post_title: '',
             content: [],
             tags: [],
-            categories: ''
+            categories: 'Gaming'
         })
         setBlogsImage('')
         setBlogsImageFile('')
@@ -892,6 +906,44 @@ const Uploads = ({ user }) => {
         })
         setBlogsImage(blogData[index].featured_image)
         setBlogEdit(true)
+    }
+
+    const addBlogDeleteId = (index, id) => {
+        const checkId = blogDeleteId.includes(id)
+
+        if(checkId) {
+            var arr = blogDeleteId.filter(item => item !== id);
+            setBlogDeleteId([...arr])
+        }
+        else {
+            setBlogDeleteId(blogDeleteId.concat(id))
+        }
+    }   
+    const openBlogDataModal = (index, id) => {
+        const blogById = blogData[index]
+        var link = `${window.location.origin}/blogs/${blogById._id}?embed_user_id=${blogById.user}`
+        console.log(link)
+        setBlogDataModal(link)
+        setBlogModal(true)
+    }
+
+    const deleteMultipleBlog = () => {
+        if(confirm(`Are you sure you want to delete ${blogDeleteId.length} blog${blogDeleteId.length > 1 ? 's' : ''}?`)){
+            dispatch(bulkRemoveBlog({ 
+                id: user.result?._id,
+                blog_id: blogDeleteId
+            }))
+            setBlogDeleteId([])
+        }
+    }
+
+    const deleteBlog = (index) => {
+        if(confirm(`Are you sure you want to delete blog ${blogData[index].post_title}?`)) {
+            dispatch(removeBlog({ 
+                id: user.result?._id,
+                blog_id: blogData[index]._id 
+            }))
+        }
     }
 
     const fileToDataUri = (file) => new Promise((resolve, reject) => {
@@ -1148,6 +1200,12 @@ const Uploads = ({ user }) => {
                 gameModal={gameModal}
                 setGameModal={setGameModal}
                 data={gameDataModal}
+            />
+
+            <EmbedFull
+                openModal={blogModal}
+                setOpenModal={setBlogModal}
+                link={blogDataModal}
             />
 
             <div className="relative">   
@@ -2942,8 +3000,8 @@ const Uploads = ({ user }) => {
                                         <div className='justify-between mb-2 sm:hidden flex mt-4'>
                                             <div className=''>
                                                 {
-                                                    gameDeleteId.length > 0 &&
-                                                        <FontAwesomeIcon title="delete" onClick={() => deleteMultipleGames()} icon={faTrash} className="px-[12px] py-[10px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
+                                                    blogDeleteId.length > 0 &&
+                                                        <FontAwesomeIcon title="delete" onClick={() => deleteMultipleBlog()} icon={faTrash} className="px-[12px] py-[10px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
                                                 }
                                             </div>  
                                             <div className="relative w-full max-w-md">
@@ -2965,10 +3023,10 @@ const Uploads = ({ user }) => {
                                             <div className='mb-2 sm:flex hidden justify-between'>
                                                 <div className=''>
                                                     {
-                                                        gameDeleteId.length > 0 &&
+                                                        blogDeleteId.length > 0 &&
                                                             <div className='flex'>
-                                                                <button onClick={() => deleteMultipleGames()} className='w-28 disabled:bg-gray-600 disabled:border-red-700 font-semibold border border-solid border-red-600 bg-red-600 hover:bg-red-700 hover:text-100-800 rounded-sm transition-all text-white p-2'>
-                                                                    Delete ({gameDeleteId.length})
+                                                                <button onClick={() => deleteMultipleBlog()} className='w-28 disabled:bg-gray-600 disabled:border-red-700 font-semibold border border-solid border-red-600 bg-red-600 hover:bg-red-700 hover:text-100-800 rounded-sm transition-all text-white p-2'>
+                                                                    Delete ({blogDeleteId.length})
                                                                 </button>
                                                             </div>
                                                         }
@@ -3027,8 +3085,8 @@ const Uploads = ({ user }) => {
                                                                                             id={`blog-default-checkbox${10+index}`}
                                                                                             type="checkbox" 
                                                                                             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                                                                            checked={gameDeleteId.includes(item._id)}
-                                                                                            onChange={() => addGameDeleteId(index, item._id)}
+                                                                                            checked={blogDeleteId.includes(item._id)}
+                                                                                            onChange={() => addBlogDeleteId(index, item._id)}
                                                                                         />
                                                                                     </div>
                                                                                 </td>
@@ -3042,14 +3100,14 @@ const Uploads = ({ user }) => {
                                                                                 </td>
                                                                                 <VideoTableData 
                                                                                     cond={item.privacy}
-                                                                                    api_call={changeGamePrivacyById({
+                                                                                    api_call={changeBlogPrivacyById({
                                                                                         id: item._id,
                                                                                         privacy: !item.privacy
                                                                                     })}
                                                                                 />
                                                                                 <VideoTableData 
                                                                                     cond={item.strict}
-                                                                                    api_call={changeGameStrictById({
+                                                                                    api_call={changeBlogStrictById({
                                                                                         id: item._id,
                                                                                         strict: !item.strict
                                                                                     })}
@@ -3059,9 +3117,9 @@ const Uploads = ({ user }) => {
                                                                                 </td>
                                                                                 <td className="px-6 py-4 whitespace-no-wrap">
                                                                                     <div className="text-sm leading-5 text-gray-900 flex items-center">
-                                                                                        <FontAwesomeIcon title="view" onClick={() => { openGameDataModal(index, item._id) }} icon={faEye} className="px-[10px] py-[7px] bg-green-600 hover:bg-green-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
+                                                                                        <FontAwesomeIcon title="view" onClick={() => { openBlogDataModal(index, item._id) }} icon={faEye} className="px-[10px] py-[7px] bg-green-600 hover:bg-green-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
                                                                                         <FontAwesomeIcon title="edit" onClick={() => { editBlogMode(index); setShowBlogRecord(false) }} icon={faEdit} className="px-[10px] py-[7px] bg-yellow-600 hover:bg-yellow-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
-                                                                                        <FontAwesomeIcon title="delete" onClick={() => deleteGame(index)} icon={faTrash} className="px-[10px] py-[7px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all" />
+                                                                                        <FontAwesomeIcon title="delete" onClick={() => deleteBlog(index)} icon={faTrash} className="px-[10px] py-[7px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all" />
                                                                                     </div>
                                                                                 </td>
                                                                             </tr>
@@ -3079,19 +3137,19 @@ const Uploads = ({ user }) => {
                                                 )
                                             }
                                             <div className='md:flex justify-end mt-4 hidden'>
-                                                <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(gameEndIndex >= gameData?.length) ? gameData?.length : endIndex }/{gameData?.length}</p>
-                                                <button disabled={currentPage === 1} onClick={() => goToGamePage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                                <button disabled={currentPage === 1} onClick={() => goToGamePage(gameCurrentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                                <button disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameCurrentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                                <button disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameData?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
+                                                <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(blogEndIndex >= blogData?.length) ? blogData?.length : blogEndIndex }/{blogData?.length}</p>
+                                                <button disabled={currentPage === 1} onClick={() => goToBlogPage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                                <button disabled={currentPage === 1} onClick={() => goToBlogPage(blogCurrentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                                <button disabled={endIndex >= data?.length} onClick={() => goToBlogPage(blogCurrentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                                <button disabled={endIndex >= data?.length} onClick={() => goToBlogPage(blogData?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
                                             </div>
                                         </div>
                                         <div className='md:hidden justify-end mt-4 flex'>
-                                            <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(gameEndIndex >= gameData?.length) ? gameData?.length : endIndex }/{gameData?.length}</p>
-                                            <button disabled={currentPage === 1} onClick={() => goToGamePage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                            <button disabled={currentPage === 1} onClick={() => goToGamePage(gameCurrentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                            <button disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameCurrentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                            <button disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameData?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
+                                            <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(blogEndIndex >= blogData?.length) ? blogData?.length : blogEndIndex }/{blogData?.length}</p>
+                                            <button disabled={currentPage === 1} onClick={() => goToBlogPage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                            <button disabled={currentPage === 1} onClick={() => goToBlogPage(blogCurrentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                            <button disabled={endIndex >= data?.length} onClick={() => goToBlogPage(blogCurrentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
+                                            <button disabled={endIndex >= data?.length} onClick={() => goToBlogPage(blogData?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
                                         </div>
                                     </>
                                 )
