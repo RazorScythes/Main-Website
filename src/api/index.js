@@ -139,6 +139,8 @@ export const countTags                                  = (formData) => User_API
 export const getGameByTag                               = (formData) => User_API.post('/game/getGameByTag', formData)
 export const getGameByDeveloper                         = (formData) => User_API.post('/game/getGameByDeveloper', formData)
 export const getGameBySearchKey                         = (formData) => User_API.post('/game/getGameBySearchKey', formData)
+export const getRecentGameBlog                          = (formData) => User_API.post('/game/getRecentGameBlog', formData)
+export const addRecentGamingBlogLikes                   = (formData) => User_API.post('/game/addRecentGamingBlogLikes', formData)
 
 /*
     Blogs
@@ -153,3 +155,4 @@ export const removeBlogComment                          = (formData) => User_API
 export const countBlogCategories                        = (formData) => User_API.post('/blogs/countBlogCategories', formData)
 export const addOneBlogViews                            = (formData) => User_API.post('/blogs/addOneBlogViews', formData)
 export const addOneBlogLikes                            = (formData) => User_API.post('/blogs/addOneBlogLikes', formData)
+export const addLatestBlogLikes                         = (formData) => User_API.post('/blogs/addLatestBlogLikes', formData)

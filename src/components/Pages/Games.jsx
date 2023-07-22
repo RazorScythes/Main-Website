@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendar, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faDownload } from "@fortawesome/free-solid-svg-icons";
 import { useSearchParams } from "react-router-dom";
 import { getGames, countTags, clearAlert } from "../../actions/game";
+import { MotionAnimate } from 'react-motion-animate'
 import GamesCards from './GamesCards';
 import image from '../../assets/hero-bg.jpg'
 import avatar from '../../assets/avatar.png'
@@ -203,17 +204,19 @@ const Games = ({ user }) => {
                                 {
                                     games.slice(startIndex, endIndex).map((item, index) => {
                                         return (
-                                            <GamesCards  
-                                                key={index}
-                                                id={item._id}
-                                                heading={item.title} 
-                                                image={item.featured_image} 
-                                                downloads={1}
-                                                category={item.tags.length > 0 ? item.tags[0] : 'No Tag Available'} 
-                                                uploader={item.user.username} 
-                                                ratings={item.ratings}
-                                                download_links={item.download_link}
-                                            />
+                                            <MotionAnimate key={index} animation='fadeInUp'>
+                                                <GamesCards  
+                                                    key={index}
+                                                    id={item._id}
+                                                    heading={item.title} 
+                                                    image={item.featured_image} 
+                                                    downloads={1}
+                                                    category={item.tags.length > 0 ? item.tags[0] : 'No Tag Available'} 
+                                                    uploader={item.user.username} 
+                                                    ratings={item.ratings}
+                                                    download_links={item.download_link}
+                                                />
+                                            </MotionAnimate>
                                         )
                                     })
                                 }

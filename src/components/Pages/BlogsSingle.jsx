@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faTrash, faArrowRight, faCalendar, faQuoteLeft, faQuoteRight, faArrowLeft, faClock, faArrowRightRotate } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faTrash, faArrowRight, faCalendar, faQuoteLeft, faQuoteRight, faArrowLeft, faClock, faArrowRightRotate, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useSearchParams, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom';
-import { getBlogByID, getBlogComments, uploadBlogComment, removeBlogComment, addOneBlogViews, getLatestBlogs, clearAlert } from "../../actions/blogs";
+import { getBlogByID, getBlogComments, uploadBlogComment, removeBlogComment, addOneBlogViews, getLatestBlogs,addLatestBlogLikes, clearAlert } from "../../actions/blogs";
 import Cookies from 'universal-cookie';
 import heroImage from '../../assets/hero-image.jpg';
 import moment from 'moment'
@@ -33,6 +33,7 @@ const BlogsSingle = ({ user }) => {
     const [comment, setComment] = useState('')
     const [deleted, setDeleted] = useState(false)
     const [submitted, setSubmitted] = useState(false)
+    const [latestList, setLatestList] = useState([])
 
     useEffect(() => {
         setBlogData({})
@@ -63,7 +64,10 @@ const BlogsSingle = ({ user }) => {
                 blogId: blog_data.blog._id
             }))
         }
-    }, [blog_data])
+        if(latestBlogs.length > 0) {
+            setLatestList(latestBlogs)
+        }
+    }, [blog_data, latestBlogs])
 
     const submitComment = () => {
         if(comment.length === 0) return
@@ -103,6 +107,52 @@ const BlogsSingle = ({ user }) => {
 
         return formattedDate
     }
+
+    const checkedForLikedBLogs = (likes) => {
+        var liked = likes.some((item) => { if(item === cookies.get('uid')) return true })
+        return liked ? liked : false;
+    }
+
+    const addLikes = (index) => {
+        var array = [...latestList]
+        var duplicate = false
+
+        array[index].likes.forEach((item) => { if(item === cookies.get('uid')) duplicate = true })
+        if(!duplicate) {
+            var updatedBlog = { ...array[index] }; 
+
+            updatedBlog.likes = Array.isArray(updatedBlog.likes)
+            ? [...updatedBlog.likes]
+            : [];
+
+            updatedBlog.likes.push(cookies.get('uid'));
+
+            array[index] = updatedBlog;
+
+            setLatestList(array);
+        }
+        else {
+            var updatedBlog = { ...array[index] };
+
+            updatedBlog.likes = Array.isArray(updatedBlog.likes)
+            ? [...updatedBlog.likes]
+            : [];
+
+            updatedBlog.likes = updatedBlog.likes.filter((item) => item !== cookies.get('uid'))
+
+            array[index] = updatedBlog;
+
+            setLatestList(array);
+        }
+
+        dispatch(addLatestBlogLikes({
+            id: array[index]._id,
+            likes: array[index].likes,
+            userId: user ? user.result?._id : '',
+            blogId: id 
+        }))
+    }
+
 
     return (
         <div
@@ -374,8 +424,9 @@ const BlogsSingle = ({ user }) => {
                                         <div className='sm:px-8'>
                                             <h2 className='text-2xl font-semibold mb-4'>Latest Post</h2>
                                             {
-                                                latestBlogs?.length > 0 &&
-                                                    latestBlogs.map((item, index) => {
+                                                latestList?.length > 0 &&
+                                                    latestList.map((item, index) => {
+                                                        var liked_blogs = checkedForLikedBLogs(item.likes);
                                                         return (
                                                             <div className='mb-4' key={index}>
                                                                 <img 
@@ -383,10 +434,22 @@ const BlogsSingle = ({ user }) => {
                                                                     className='w-full h-48 object-cover bg-top rounded-lg'
                                                                     alt="Display Image"
                                                                 />
-                                                                <Link to={`/blogs/${item._id}`}><h2 className='text-xl font-semibold my-2'>{item.post_title}</h2></Link>
+                                                                <div className='ml-2 relative'>
+                                                                    <Link to={`/blogs/${item._id}`} className='mb-4'><h2 className='text-xl font-semibold my-2'>{item.post_title}</h2></Link>
+                                                                    <div className='flex justify-between'>
+                                                                        <div className='flex flex-wrap items-center justify-end'>
+                                                                            <button className='cursor-pointer' onClick={() => addLikes(index, item._id)}><FontAwesomeIcon icon={faHeart} style={{color: liked_blogs ? '#CD3242' : '#FFF'}} className='mr-1 pt-1 font-bold text-lg'/> {item.likes.length}</button>
+                                                                        </div>
+                                                                        <div className='flex items-center'>
+                                                                            <FontAwesomeIcon icon={faCalendar} className="text-white text-xs"/>
+                                                                            <p className='text-gray-400 xs:text-sm text-xs ml-2 break-all'>{moment(item.createdAt).fromNow()}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                {/* <Link to={`/blogs/${item._id}`}><h2 className='text-xl font-semibold my-2'>{item.post_title}</h2></Link>
                                                                 <div className='flex items-center'>
                                                                     <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> {convertTimezone(item.createdAt)}</p>
-                                                                </div>
+                                                                </div> */}
                                                             </div>
                                                         )
                                                     })

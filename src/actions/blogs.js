@@ -148,6 +148,22 @@ export const addOneBlogLikes = createAsyncThunk('blog/addOneBlogLikes', async (f
     }
 })
 
+export const addLatestBlogLikes = createAsyncThunk('blog/addLatestBlogLikes', async (form, thunkAPI) => {
+    try {
+        const response = await api.addLatestBlogLikes(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const getLatestBlogs = createAsyncThunk('blogs/getLatestBlogs', async (form, thunkAPI) => {
     try {
         const response = await api.getLatestBlogs(form)
@@ -250,6 +266,15 @@ export const blogsSlice = createSlice({
         builder.addCase(addOneBlogLikes.pending, (state, action) => {
             state.notFound = false
             state.isLoading = true
+        }),
+        builder.addCase(addLatestBlogLikes.fulfilled, (state, action) => {
+            state.notFound = false
+            state.latestBlogs = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(addLatestBlogLikes.pending, (state, action) => {
+            state.notFound = false
         })
     },
     reducers: {

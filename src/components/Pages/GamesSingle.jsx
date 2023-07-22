@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from 'react-redux'
-import { faCalendar, faInfoCircle, faImage, faDownload, faMinus, faChevronRight, faChevronLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faInfoCircle, faImage, faDownload, faMinus, faChevronRight, faChevronLeft, faArrowRight, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom'
-import { getRelatedGames, getGameByID, countTags, clearAlert } from "../../actions/game";
+import { getRelatedGames, getGameByID, countTags, getRecentGameBlog, addRecentGamingBlogLikes, clearAlert } from "../../actions/game";
+import { MotionAnimate } from 'react-motion-animate'
 import Carousel from "react-multi-carousel";
+import Cookies from 'universal-cookie';
 import GamesCards from './GamesCards';
 import styles from "../../style";
 import image from '../../assets/hero-bg.jpg'
@@ -13,26 +15,7 @@ import avatar from '../../assets/avatar.png'
 import moment from 'moment';
 import "react-multi-carousel/lib/styles.css";
 
-
-const CustomRight = ({ onClick }) => {
-    return (
-      <FontAwesomeIcon
-        icon={faChevronRight}
-        onClick={onClick}
-        className="absolute right-6 max-w-4 cursor-pointer text-primary-400 text-2xl text-white"
-      />
-    )
-};
-  
-const CustomLeft = ({ onClick }) => {
-    return (
-      <FontAwesomeIcon
-        icon={faChevronLeft}
-        onClick={onClick}
-        className="absolute left-6 max-w-4 cursor-pointer text-primary-400 text-2xl text-white"
-      />
-    )
-};
+const cookies = new Cookies();
 
 const responsive = {
     desktop: {
@@ -84,10 +67,12 @@ const GamesSingle = ({ user }) => {
     const isLoading = useSelector((state) => state.game.isLoading)
     const sideAlert = useSelector((state) => state.game.sideAlert)
     const tagsList = useSelector((state) => state.game.tagsCount)
+    const recentGameBlog = useSelector((state) => state.game.recentGameBlog)
 
     const [active, setActive] = useState(0)
     const [relatedGames, setRelatedGames] = useState([])
     const [gameData, setGameData] = useState({})
+    const [recentBlogs, setRecentBlogs] = useState([])
 
     const [rating, setRating] = useState(0);
     const [fixedRating, setFixedRating] = useState(0)
@@ -102,6 +87,9 @@ const GamesSingle = ({ user }) => {
         dispatch(getGameByID({ 
             id: user ? user.result?._id : '', 
             gameId: id 
+        }))
+        dispatch(getRecentGameBlog({ 
+            id: user ? user.result?._id : '', 
         }))
         window.scrollTo(0, 0)
     }, [id])
@@ -128,7 +116,54 @@ const GamesSingle = ({ user }) => {
             // console.log(filteredObjects)
             setRelatedGames(related_games)
         }
-    }, [related_games])
+        if(recentGameBlog.length > 0) {
+            setRecentBlogs(recentGameBlog)
+        }
+    }, [related_games, recentGameBlog])
+
+    const checkedForLikedBLogs = (likes) => {
+        var liked = likes.some((item) => { if(item === cookies.get('uid')) return true })
+        return liked ? liked : false;
+    }
+
+    const addLikes = (index) => {
+        var array = [...recentBlogs]
+        var duplicate = false
+
+        array[index].likes.forEach((item) => { if(item === cookies.get('uid')) duplicate = true })
+        if(!duplicate) {
+            var updatedBlog = { ...array[index] }; 
+
+            updatedBlog.likes = Array.isArray(updatedBlog.likes)
+            ? [...updatedBlog.likes]
+            : [];
+
+            updatedBlog.likes.push(cookies.get('uid'));
+
+            array[index] = updatedBlog;
+
+            setRecentBlogs(array);
+        }
+        else {
+            var updatedBlog = { ...array[index] };
+
+            updatedBlog.likes = Array.isArray(updatedBlog.likes)
+            ? [...updatedBlog.likes]
+            : [];
+
+            updatedBlog.likes = updatedBlog.likes.filter((item) => item !== cookies.get('uid'))
+
+            array[index] = updatedBlog;
+
+            setRecentBlogs(array);
+        }
+
+        dispatch(addRecentGamingBlogLikes({
+            id: array[index]._id,
+            likes: array[index].likes,
+            userId: user ? user.result?._id : ''
+        }))
+    }
 
     return (
         <div
@@ -367,89 +402,64 @@ const GamesSingle = ({ user }) => {
                                                             {
                                                                 tagsList.map((item, index) => {
                                                                     return (
-                                                                        <Link key={index} to={`/games/tags/${item.tag}`}><li className='capitalize flex justify-between hover:text-[#00FFFF] cursor-pointer hover:ml-3 transition-all mb-2 font-semibold border-b border-solid border-gray-500 pb-2'>{item.tag}<span className='text-white'>({item.count})</span></li></Link>
+                                                                        <MotionAnimate animation='fadeInUp' key={index}>
+                                                                            <Link to={`/games/tags/${item.tag}`}><li className='capitalize flex justify-between hover:text-[#00FFFF] cursor-pointer hover:ml-3 transition-all mb-2 font-semibold border-b border-solid border-gray-500 pb-2'>{item.tag}<span className='text-white'>({item.count})</span></li></Link>
+                                                                        </MotionAnimate>
                                                                     )
                                                                 })
                                                             }
                                                         </ul>
                                                     </div>
                                             }
-                                            
-                                            <div className='bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] mb-8 p-8 text-white'>
-                                                <h2 className='text-xl font-semibold mb-6'>Recent Blogs</h2>
-                                                <div className='flex flex-col'>
-                                                    <div className='flex flex-row mb-4'>
-                                                        <img 
-                                                            src={image}
-                                                            alt="Post Image"
-                                                            className='w-1/3 h-[75px] object-cover'
-                                                        />
-                                                        <div className='flex flex-col ml-2 relative'>
-                                                            <h3 className='xs:text-base text-sm'>装脱騎士ニンフォリア</h3>
-                                                            <div className='flex items-center absolute bottom-0 left-0'>
-                                                                <FontAwesomeIcon icon={faCalendar} className="text-white text-xs"/>
-                                                                <p className='text-gray-400 xs:text-sm text-xs ml-2 break-all'>1 month</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className='flex flex-row mb-4'>
-                                                        <img 
-                                                            src={image}
-                                                            alt="Post Image"
-                                                            className='w-1/3 h-[75px] object-cover'
-                                                        />
-                                                        <div className='flex flex-col ml-2 relative'>
-                                                            <h3 className='xs:text-base text-sm'>密かな性癖を武器に悪の組織と戦う物語である。</h3>
-                                                            <div className='flex items-center absolute bottom-0 left-0'>
-                                                                <FontAwesomeIcon icon={faCalendar} className="text-white text-xs"/>
-                                                                <p className='text-gray-400 xs:text-sm text-xs ml-2 break-all'>1 month</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className='flex flex-row mb-4'>
-                                                        <img 
-                                                            src={image}
-                                                            alt="Post Image"
-                                                            className='w-1/3 h-[75px] object-cover'
-                                                        />
-                                                        <div className='flex flex-col ml-2 relative'>
-                                                            <h3 className='xs:text-base text-sm'>密かな性癖を武器に悪の組織と戦う物語である。</h3>
-                                                            <div className='flex items-center absolute bottom-0 left-0'>
-                                                                <FontAwesomeIcon icon={faCalendar} className="text-white text-xs"/>
-                                                                <p className='text-gray-400 xs:text-sm text-xs ml-2 break-all'>1 month</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className='flex flex-row mb-4'>
-                                                        <img 
-                                                            src={image}
-                                                            alt="Post Image"
-                                                            className='w-1/3 h-[75px] object-cover'
-                                                        />
-                                                        <div className='flex flex-col ml-2 relative'>
-                                                            <h3 className='xs:text-base text-sm'>密かな性癖を武器に悪の組織と戦う物語である。</h3>
-                                                            <div className='flex items-center absolute bottom-0 left-0'>
-                                                                <FontAwesomeIcon icon={faCalendar} className="text-white text-xs"/>
-                                                                <p className='text-gray-400 xs:text-sm text-xs ml-2 break-all'>1 month</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div className='flex flex-row mb-4'>
-                                                        <img 
-                                                            src={image}
-                                                            alt="Post Image"
-                                                            className='w-1/3 h-[75px] object-cover'
-                                                        />
-                                                        <div className='flex flex-col ml-2 relative'>
-                                                            <h3 className='xs:text-base text-sm'>密かな性癖を武器に悪の組織と戦う物語である。</h3>
-                                                            <div className='flex items-center absolute bottom-0 left-0'>
-                                                                <FontAwesomeIcon icon={faCalendar} className="text-white text-xs"/>
-                                                                <p className='text-gray-400 xs:text-sm text-xs ml-2 break-all'>1 month</p>
-                                                            </div>
-                                                        </div>
+                                            {
+                                                recentBlogs?.length > 0 &&
+                                                <div className='bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] mb-8 p-8 text-white'>
+                                                    <h2 className='text-xl font-semibold mb-6'>Recent Gaming Blogs</h2>
+                                                    <div className='flex flex-col'>
+                                                        {
+                                                            recentBlogs.map((item, index) => {
+                                                                var liked_blogs = checkedForLikedBLogs(item.likes);
+                                                                return (
+                                                                    <MotionAnimate key={index} variant={{
+                                                                        hidden: { 
+                                                                            transform: 'scale(0)'
+                                                                        },
+                                                                        show: {
+                                                                            opacity: 1,
+                                                                            transform: 'scale(1)',
+                                                                            transition: {
+                                                                                duration: 0.2,
+                                                                            }
+                                                                        }
+                                                                    }}>
+                                                                        <div className='mb-4'>
+                                                                            <Link to={`/blogs/${item._id}`} >
+                                                                                <img 
+                                                                                    src={item.featured_image}
+                                                                                    alt="Post Image"
+                                                                                    className='w-full md:h-44 h-72 object-cover rounded-lg'
+                                                                                />
+                                                                            </Link>
+                                                                            <div className='ml-2 relative'>
+                                                                                <Link to={`/blogs/${item._id}`} className='mb-4'><h2 className='text-xl font-semibold my-2'>{item.post_title}</h2></Link>
+                                                                                <div className='flex justify-between'>
+                                                                                    <div className='flex flex-wrap items-center justify-end'>
+                                                                                        <button className='cursor-pointer' onClick={() => addLikes(index, item._id)}><FontAwesomeIcon icon={faHeart} style={{color: liked_blogs ? '#CD3242' : '#FFF'}} className='mr-1 pt-1 font-bold text-lg'/> {item.likes.length}</button>
+                                                                                    </div>
+                                                                                    <div className='flex items-center'>
+                                                                                        <FontAwesomeIcon icon={faCalendar} className="text-white text-xs"/>
+                                                                                        <p className='text-gray-400 xs:text-sm text-xs ml-2 break-all'>{moment(item.createdAt).fromNow()}</p>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </MotionAnimate>
+                                                                )
+                                                            })
+                                                        }
                                                     </div>
                                                 </div>
-                                            </div>
+                                            }
                                         </div>
                                     </div>
                                     {
@@ -460,18 +470,19 @@ const GamesSingle = ({ user }) => {
                                                 {
                                                     relatedGames.map((item, index) => {
                                                         return (
-                                                            <GamesCards  
-                                                                key={index}
-                                                                id={item._id}
-                                                                heading={item.title} 
-                                                                image={item.featured_image} 
-                                                                downloads={item.download_count > 0 ? item.download_count : 0}
-                                                                category={item.tags.length > 0 ? item.tags[0] : 'No Tag Available'} 
-                                                                uploader={item.user.username} 
-                                                                ratings={item.ratings}
-                                                                download_links={item.download_link}
-                                                                relatedGames={true}
-                                                            />
+                                                            <MotionAnimate key={index} animation='fadeInUp'>
+                                                                <GamesCards  
+                                                                    id={item._id}
+                                                                    heading={item.title} 
+                                                                    image={item.featured_image} 
+                                                                    downloads={item.download_count > 0 ? item.download_count : 0}
+                                                                    category={item.tags.length > 0 ? item.tags[0] : 'No Tag Available'} 
+                                                                    uploader={item.user.username} 
+                                                                    ratings={item.ratings}
+                                                                    download_links={item.download_link}
+                                                                    relatedGames={true}
+                                                                />
+                                                            </MotionAnimate>
                                                         )
                                                     })
                                                 }

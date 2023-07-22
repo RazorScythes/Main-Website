@@ -1,7 +1,7 @@
 import React from "react";
 import heroBackgroundImage from '../assets/hero-bg.jpg';
 import heroImage from '../assets/hero-image.jpg';
-
+import { MotionAnimate } from 'react-motion-animate'
 import styles from "../style";
 const Hero = () => {
     return (
@@ -15,9 +15,12 @@ const Hero = () => {
                     <div className="container mx-auto file:lg:px-8 relative px-0">
                         <div className="lg:flex md:flex items-center">
                         <div className="lg:w-1/2 md:w-1/2 w-full sm:px-4">
-                            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl font-bold leading-tight text-white mb-8">
-                            Welcome to my Personal and Gaming Website!
-                            </h1>
+                            <MotionAnimate animation='fadeInUp' reset={true}>
+                                <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-6xl font-bold leading-tight text-white mb-8">
+                                    Welcome to my Personal and Gaming Website!
+                                </h1>
+                            </MotionAnimate>
+                            
                             <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-3xl font-bold leading-tight text-white mb-8">
                             Discover a World of Excitement and Entertainment.
                             </h2>

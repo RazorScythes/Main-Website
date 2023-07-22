@@ -15,7 +15,8 @@ const initialState = {
     message: '',
     forbiden: '',
     sideAlert: {},
-    tagsCount: []
+    tagsCount: [],
+    recentGameBlog: []
 }
 
 export const getGameByID = createAsyncThunk('game/getGameByID', async (form, thunkAPI) => {
@@ -162,6 +163,38 @@ export const getGameBySearchKey = createAsyncThunk('game/getGameBySearchKey', as
     }
 })
 
+export const getRecentGameBlog = createAsyncThunk('game/getRecentGameBlog', async (form, thunkAPI) => {
+    try {
+        const response = await api.getRecentGameBlog(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const addRecentGamingBlogLikes = createAsyncThunk('game/addRecentGamingBlogLikes', async (form, thunkAPI) => {
+    try {
+        const response = await api.addRecentGamingBlogLikes(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const gameSlice = createSlice({
     name: 'game',
     initialState,
@@ -189,7 +222,6 @@ export const gameSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(getGameByTag.rejected, (state, action) => {
-            console.log("PK")
             state.message = action.payload.message
         }),
         builder.addCase(getGameByDeveloper.fulfilled, (state, action) => {
@@ -260,6 +292,23 @@ export const gameSlice = createSlice({
         builder.addCase(countTags.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
+        }),
+        builder.addCase(getRecentGameBlog.fulfilled, (state, action) => {
+            state.recentGameBlog = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getRecentGameBlog.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(addRecentGamingBlogLikes.fulfilled, (state, action) => {
+            state.notFound = false
+            state.recentGameBlog = action.payload.data.result
+            state.error = ''
+        }),
+        builder.addCase(addRecentGamingBlogLikes.rejected, (state, action) => {
+            console.log("failed to like blog post")
         })
     },
     reducers: {
