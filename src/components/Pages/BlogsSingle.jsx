@@ -5,6 +5,7 @@ import { useSearchParams, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom';
 import { getBlogByID, getBlogComments, uploadBlogComment, removeBlogComment, addOneBlogViews, getLatestBlogs,addLatestBlogLikes, clearAlert } from "../../actions/blogs";
+import { MotionAnimate } from 'react-motion-animate'
 import Cookies from 'universal-cookie';
 import heroImage from '../../assets/hero-image.jpg';
 import moment from 'moment'
@@ -263,13 +264,27 @@ const BlogsSingle = ({ user }) => {
                                                                         {
                                                                             data.grid_image?.map((image, i) => {
                                                                                 return (
-                                                                                    <div key={i} className='relative'>
-                                                                                        <img 
-                                                                                            src={image}
-                                                                                            className={`w-full ${data.type === 'boxed-full' && 'md:h-[500px] sm:h-[400px] h-[300px]'} ${(data.type === 'boxed' || data.type === 'rectangular') && 'md:h-60 h-48'} object-cover bg-top rounded-lg border border-[#cococo]`}
-                                                                                            alt={`Grid Image #${i+1}`}
-                                                                                        />
-                                                                                    </div>
+                                                                                    <MotionAnimate key={i} variant={{
+                                                                                        hidden: { 
+                                                                                            opacity: 0,
+                                                                                            transform: 'scale(0)'
+                                                                                        },
+                                                                                        show: {
+                                                                                            opacity: 1,
+                                                                                            transform: 'scale(1)',
+                                                                                            transition: {
+                                                                                                duration: 0.4,
+                                                                                            }
+                                                                                        }
+                                                                                    }}>
+                                                                                        <div className='relative'>
+                                                                                            <img 
+                                                                                                src={image}
+                                                                                                className={`w-full ${data.type === 'boxed-full' && 'md:h-[500px] sm:h-[400px] h-[300px]'} ${(data.type === 'boxed' || data.type === 'rectangular') && 'md:h-60 h-48'} object-cover bg-top rounded-lg border border-[#cococo]`}
+                                                                                                alt={`Grid Image #${i+1}`}
+                                                                                            />
+                                                                                        </div>
+                                                                                    </MotionAnimate>
                                                                                 )
                                                                             })
                                                                         }
@@ -301,11 +316,13 @@ const BlogsSingle = ({ user }) => {
                                                                     </ul>
                                                                 :
                                                                 data.element === 'single_image' &&
-                                                                    <img 
-                                                                        src={data.image}
-                                                                        className={`w-full ${data.type === 'boxed-full' && 'md:h-[500px] sm:h-[400px] h-[300px]'} ${(data.type === 'rectangular') && 'md:h-60 h-48'} object-cover bg-top rounded-lg border border-[#cococo] my-4`}
-                                                                        alt={`Grid Image`}
-                                                                    />
+                                                                    <MotionAnimate key={index} animation='fadeInUp'>
+                                                                        <img 
+                                                                            src={data.image}
+                                                                            className={`w-full ${data.type === 'boxed-full' && 'md:h-[500px] sm:h-[400px] h-[300px]'} ${(data.type === 'rectangular') && 'md:h-60 h-48'} object-cover bg-top rounded-lg border border-[#cococo] my-4`}
+                                                                            alt={`Grid Image`}
+                                                                        />
+                                                                    </MotionAnimate>
                                                             }
                                                         </div>
                                                     )
@@ -386,33 +403,35 @@ const BlogsSingle = ({ user }) => {
                                                         commentList && commentList.length > 0 ?
                                                             commentList.map((item, i) => {
                                                                 return (
-                                                                    <div key={i} className='mt-8 border-l-4 border-solid border-gray-300 pl-3 rounded-l-sm py-1'>
-                                                                        <div className='grid grid-cols-2'>
-                                                                            <div className='flex items-center text-gray-400'>
-                                                                                <img
-                                                                                    className='rounded-full xs:w-6 xs:h-6 w-6 h-6'
-                                                                                    src={item.avatar ? item.avatar : avatar}
-                                                                                    alt="user profile"
-                                                                                />
-                                                                                <p className='ml-2 break-all'>
-                                                                                    {item.username}  
-                                                                                    {
-                                                                                        user?.result?.username === item.username && 
-                                                                                            <span> (Me)</span>
-                                                                                    }
-                                                                                </p>
+                                                                    <MotionAnimate key={i} animation='fadeInUp'>
+                                                                        <div className='mt-8 border-l-4 border-solid border-gray-300 pl-3 rounded-l-sm py-1'>
+                                                                            <div className='grid grid-cols-2'>
+                                                                                <div className='flex items-center text-gray-400'>
+                                                                                    <img
+                                                                                        className='rounded-full xs:w-6 xs:h-6 w-6 h-6'
+                                                                                        src={item.avatar ? item.avatar : avatar}
+                                                                                        alt="user profile"
+                                                                                    />
+                                                                                    <p className='ml-2 break-all'>
+                                                                                        {item.username}  
+                                                                                        {
+                                                                                            user?.result?.username === item.username && 
+                                                                                                <span> (Me)</span>
+                                                                                        }
+                                                                                    </p>
+                                                                                </div>
+                                                                                <div className='flex items-center justify-end text-gray-400'>
+                                                                                    <FontAwesomeIcon icon={faClock} className="text-white"/>
+                                                                                    <p className='ml-2 break-all text-sm'>{moment(item.date).fromNow()}</p>
+                                                                                </div>
                                                                             </div>
-                                                                            <div className='flex items-center justify-end text-gray-400'>
-                                                                                <FontAwesomeIcon icon={faClock} className="text-white"/>
-                                                                                <p className='ml-2 break-all text-sm'>{moment(item.date).fromNow()}</p>
-                                                                            </div>
+                                                                            <p className='mt-4 text-gray-300 whitespace-pre-wrap'>{item.comments}</p>
+                                                                            {
+                                                                                user?.result?.username === item.username && 
+                                                                                    <p onClick={() => deleteComment(blog_data.blog._id, item.id)} id={item.id} className='flex justify-end items-center text-gray-300 hover:text-gray-400 text-sm cursor-pointer'><FontAwesomeIcon icon={faTrash} className="mr-2"/> Delete</p>
+                                                                            }
                                                                         </div>
-                                                                        <p className='mt-4 text-gray-300 whitespace-pre-wrap'>{item.comments}</p>
-                                                                        {
-                                                                            user?.result?.username === item.username && 
-                                                                                <p onClick={() => deleteComment(blog_data.blog._id, item.id)} id={item.id} className='flex justify-end items-center text-gray-300 hover:text-gray-400 text-sm cursor-pointer'><FontAwesomeIcon icon={faTrash} className="mr-2"/> Delete</p>
-                                                                        }
-                                                                    </div>
+                                                                    </MotionAnimate>
                                                                 )
                                                             })
                                                             :
@@ -428,29 +447,42 @@ const BlogsSingle = ({ user }) => {
                                                     latestList.map((item, index) => {
                                                         var liked_blogs = checkedForLikedBLogs(item.likes);
                                                         return (
-                                                            <div className='mb-4' key={index}>
-                                                                <img 
-                                                                    src={item.featured_image}
-                                                                    className='w-full h-48 object-cover bg-top rounded-lg'
-                                                                    alt="Display Image"
-                                                                />
-                                                                <div className='ml-2 relative'>
-                                                                    <Link to={`/blogs/${item._id}`} className='mb-4'><h2 className='text-xl font-semibold my-2'>{item.post_title}</h2></Link>
-                                                                    <div className='flex justify-between'>
-                                                                        <div className='flex flex-wrap items-center justify-end'>
-                                                                            <button className='cursor-pointer' onClick={() => addLikes(index, item._id)}><FontAwesomeIcon icon={faHeart} style={{color: liked_blogs ? '#CD3242' : '#FFF'}} className='mr-1 pt-1 font-bold text-lg'/> {item.likes.length}</button>
-                                                                        </div>
-                                                                        <div className='flex items-center'>
-                                                                            <FontAwesomeIcon icon={faCalendar} className="text-white text-xs"/>
-                                                                            <p className='text-gray-400 xs:text-sm text-xs ml-2 break-all'>{moment(item.createdAt).fromNow()}</p>
+                                                            <MotionAnimate key={index} variant={{
+                                                                hidden: { 
+                                                                    transform: 'scale(0)'
+                                                                },
+                                                                show: {
+                                                                    opacity: 1,
+                                                                    transform: 'scale(1)',
+                                                                    transition: {
+                                                                        duration: 0.2,
+                                                                    }
+                                                                }
+                                                            }}>
+                                                                <div className='mb-4'>
+                                                                    <img 
+                                                                        src={item.featured_image}
+                                                                        className='w-full h-48 object-cover bg-top rounded-lg'
+                                                                        alt="Display Image"
+                                                                    />
+                                                                    <div className='ml-2 relative'>
+                                                                        <Link to={`/blogs/${item._id}`} className='mb-4'><h2 className='text-xl font-semibold my-2'>{item.post_title}</h2></Link>
+                                                                        <div className='flex justify-between'>
+                                                                            <div className='flex flex-wrap items-center justify-end'>
+                                                                                <button className='cursor-pointer' onClick={() => addLikes(index, item._id)}><FontAwesomeIcon icon={faHeart} style={{color: liked_blogs ? '#CD3242' : '#FFF'}} className='mr-1 pt-1 font-bold text-lg'/> {item.likes.length}</button>
+                                                                            </div>
+                                                                            <div className='flex items-center'>
+                                                                                <FontAwesomeIcon icon={faCalendar} className="text-white text-xs"/>
+                                                                                <p className='text-gray-400 xs:text-sm text-xs ml-2 break-all'>{moment(item.createdAt).fromNow()}</p>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
+                                                                    {/* <Link to={`/blogs/${item._id}`}><h2 className='text-xl font-semibold my-2'>{item.post_title}</h2></Link>
+                                                                    <div className='flex items-center'>
+                                                                        <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> {convertTimezone(item.createdAt)}</p>
+                                                                    </div> */}
                                                                 </div>
-                                                                {/* <Link to={`/blogs/${item._id}`}><h2 className='text-xl font-semibold my-2'>{item.post_title}</h2></Link>
-                                                                <div className='flex items-center'>
-                                                                    <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> {convertTimezone(item.createdAt)}</p>
-                                                                </div> */}
-                                                            </div>
+                                                            </MotionAnimate>
                                                         )
                                                     })
                                             }
@@ -527,33 +559,35 @@ const BlogsSingle = ({ user }) => {
                                                     commentList && commentList.length > 0 ?
                                                         commentList.map((item, i) => {
                                                             return (
-                                                                <div key={i} className='mt-8 border-l-4 border-solid border-gray-300 pl-3 rounded-l-sm py-1'>
-                                                                    <div className='grid grid-cols-2'>
-                                                                        <div className='flex items-center text-gray-400'>
-                                                                            <img
-                                                                                className='rounded-full xs:w-6 xs:h-6 w-6 h-6'
-                                                                                src={item.avatar ? item.avatar : avatar}
-                                                                                alt="user profile"
-                                                                            />
-                                                                            <p className='ml-2 break-all'>
-                                                                                {item.username}  
-                                                                                {
-                                                                                    user?.result?.username === item.username && 
-                                                                                        <span> (Me)</span>
-                                                                                }
-                                                                            </p>
+                                                                <MotionAnimate key={i} animation='fadeInUp'>
+                                                                    <div className='mt-8 border-l-4 border-solid border-gray-300 pl-3 rounded-l-sm py-1'>
+                                                                        <div className='grid grid-cols-2'>
+                                                                            <div className='flex items-center text-gray-400'>
+                                                                                <img
+                                                                                    className='rounded-full xs:w-6 xs:h-6 w-6 h-6'
+                                                                                    src={item.avatar ? item.avatar : avatar}
+                                                                                    alt="user profile"
+                                                                                />
+                                                                                <p className='ml-2 break-all'>
+                                                                                    {item.username}  
+                                                                                    {
+                                                                                        user?.result?.username === item.username && 
+                                                                                            <span> (Me)</span>
+                                                                                    }
+                                                                                </p>
+                                                                            </div>
+                                                                            <div className='flex items-center justify-end text-gray-400'>
+                                                                                <FontAwesomeIcon icon={faClock} className="text-white"/>
+                                                                                <p className='ml-2 break-all text-sm'>{moment(item.date).fromNow()}</p>
+                                                                            </div>
                                                                         </div>
-                                                                        <div className='flex items-center justify-end text-gray-400'>
-                                                                            <FontAwesomeIcon icon={faClock} className="text-white"/>
-                                                                            <p className='ml-2 break-all text-sm'>{moment(item.date).fromNow()}</p>
-                                                                        </div>
+                                                                        <p className='mt-4 text-gray-300 whitespace-pre-wrap'>{item.comments}</p>
+                                                                        {
+                                                                            user?.result?.username === item.username && 
+                                                                                <p onClick={() => deleteComment(blog_data.blog._id, item.id)} id={item.id} className='flex justify-end items-center text-gray-300 hover:text-gray-400 text-sm cursor-pointer'><FontAwesomeIcon icon={faTrash} className="mr-2"/> Delete</p>
+                                                                        }
                                                                     </div>
-                                                                    <p className='mt-4 text-gray-300 whitespace-pre-wrap'>{item.comments}</p>
-                                                                    {
-                                                                        user?.result?.username === item.username && 
-                                                                            <p onClick={() => deleteComment(blog_data.blog._id, item.id)} id={item.id} className='flex justify-end items-center text-gray-300 hover:text-gray-400 text-sm cursor-pointer'><FontAwesomeIcon icon={faTrash} className="mr-2"/> Delete</p>
-                                                                    }
-                                                                </div>
+                                                                </MotionAnimate>
                                                             )
                                                         })
                                                         :

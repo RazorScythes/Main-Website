@@ -5,6 +5,7 @@ import { faEye, faEllipsisV, faThumbsUp, faThumbsDown, faAdd, faDownload, faArro
 import { useDispatch, useSelector } from 'react-redux'
 import { addOneLikes, addOneDislikes, addOneViews, getVideoByID, getComments, getRelatedVideos, uploadComment, removeComment, addToWatchLater, clearAlert } from "../../actions/video";
 import { useParams } from 'react-router-dom'
+import { MotionAnimate } from 'react-motion-animate'
 import { Page_not_found } from '../../assets';
 import moment from 'moment'
 import styles from "../../style";
@@ -501,33 +502,35 @@ const VideosSingle = ({ user }) => {
                                                     commentList && commentList.length > 0 ?
                                                         commentList.map((item, i) => {
                                                             return (
-                                                                <div key={i} className='mt-8 border-l-4 border-solid border-gray-300 pl-3 rounded-l-sm py-1'>
-                                                                    <div className='grid grid-cols-2'>
-                                                                        <div className='flex items-center text-gray-400'>
-                                                                            <img
-                                                                                className='rounded-full xs:w-6 xs:h-6 w-6 h-6'
-                                                                                src={item.avatar ? item.avatar : avatar}
-                                                                                alt="user profile"
-                                                                            />
-                                                                            <p className='ml-2 break-all'>
-                                                                                {item.username}  
-                                                                                {
-                                                                                    user?.result?.username === item.username && 
-                                                                                        <span> (Me)</span>
-                                                                                }
-                                                                            </p>
+                                                                <MotionAnimate key={i} animation='fadeInUp'>
+                                                                    <div className='mt-8 border-l-4 border-solid border-gray-300 pl-3 rounded-l-sm py-1'>
+                                                                        <div className='grid grid-cols-2'>
+                                                                            <div className='flex items-center text-gray-400'>
+                                                                                <img
+                                                                                    className='rounded-full xs:w-6 xs:h-6 w-6 h-6'
+                                                                                    src={item.avatar ? item.avatar : avatar}
+                                                                                    alt="user profile"
+                                                                                />
+                                                                                <p className='ml-2 break-all'>
+                                                                                    {item.username}  
+                                                                                    {
+                                                                                        user?.result?.username === item.username && 
+                                                                                            <span> (Me)</span>
+                                                                                    }
+                                                                                </p>
+                                                                            </div>
+                                                                            <div className='flex items-center justify-end text-gray-400'>
+                                                                                <FontAwesomeIcon icon={faClock} className="text-white"/>
+                                                                                <p className='ml-2 break-all text-sm'>{moment(item.date).fromNow()}</p>
+                                                                            </div>
                                                                         </div>
-                                                                        <div className='flex items-center justify-end text-gray-400'>
-                                                                            <FontAwesomeIcon icon={faClock} className="text-white"/>
-                                                                            <p className='ml-2 break-all text-sm'>{moment(item.date).fromNow()}</p>
-                                                                        </div>
+                                                                        <p className='mt-4 text-gray-300 whitespace-pre-wrap'>{item.comments}</p>
+                                                                        {
+                                                                            user?.result?.username === item.username && 
+                                                                                <p onClick={() => deleteComment(video.video._id, item.id)} id={item.id} className='flex justify-end items-center text-gray-300 hover:text-gray-400 text-sm cursor-pointer'><FontAwesomeIcon icon={faTrash} className="mr-2"/> Delete</p>
+                                                                        }
                                                                     </div>
-                                                                    <p className='mt-4 text-gray-300 whitespace-pre-wrap'>{item.comments}</p>
-                                                                    {
-                                                                        user?.result?.username === item.username && 
-                                                                            <p onClick={() => deleteComment(video.video._id, item.id)} id={item.id} className='flex justify-end items-center text-gray-300 hover:text-gray-400 text-sm cursor-pointer'><FontAwesomeIcon icon={faTrash} className="mr-2"/> Delete</p>
-                                                                    }
-                                                                </div>
+                                                                </MotionAnimate>
                                                             )
                                                         })
                                                         :
@@ -545,21 +548,23 @@ const VideosSingle = ({ user }) => {
                                                         related.map((item, index) => {
                                                             return (
                                                                 <div className='mb-2'>
-                                                                    <VideoThumbnail 
-                                                                        key={index} 
-                                                                        id={item._id} 
-                                                                        index={index} 
-                                                                        title={item.title} 
-                                                                        views={item.views} 
-                                                                        timestamp={item.createdAt} 
-                                                                        setActive={setActive} 
-                                                                        active={active} 
-                                                                        embedLink={getVideoId(item.link)}
-                                                                        user={user}
-                                                                        setAlertSubActive={setAlertSubActive}
-                                                                        fixed={false}
-                                                                        file_size={item.file_size}
-                                                                    />
+                                                                    <MotionAnimate key={index} animation='fadeInUp'>
+                                                                        <VideoThumbnail 
+                                                                            key={index} 
+                                                                            id={item._id} 
+                                                                            index={index} 
+                                                                            title={item.title} 
+                                                                            views={item.views} 
+                                                                            timestamp={item.createdAt} 
+                                                                            setActive={setActive} 
+                                                                            active={active} 
+                                                                            embedLink={getVideoId(item.link)}
+                                                                            user={user}
+                                                                            setAlertSubActive={setAlertSubActive}
+                                                                            fixed={false}
+                                                                            file_size={item.file_size}
+                                                                        />
+                                                                    </MotionAnimate>
                                                                 </div>
                                                             )
                                                         })
@@ -621,33 +626,35 @@ const VideosSingle = ({ user }) => {
                                                 commentList && commentList.length > 0 ?
                                                     commentList.map((item, i) => {
                                                         return (
-                                                            <div key={i} className='mt-8 border-l-4 border-solid border-gray-300 pl-3 rounded-l-sm py-1'>
-                                                                <div className='grid grid-cols-2'>
-                                                                    <div className='flex items-center text-gray-400'>
-                                                                        <img
-                                                                            className='rounded-full xs:w-6 xs:h-6 w-6 h-6'
-                                                                            src={item.avatar ? item.avatar : avatar}
-                                                                            alt="user profile"
-                                                                        />
-                                                                        <p className='ml-2 break-all'>
-                                                                            {item.username}  
-                                                                            {
-                                                                                user?.result?.username === item.username && 
-                                                                                    <span> (Me)</span>
-                                                                            }
-                                                                        </p>
+                                                            <MotionAnimate key={i} animation='fadeInUp'>
+                                                                <div className='mt-8 border-l-4 border-solid border-gray-300 pl-3 rounded-l-sm py-1'>
+                                                                    <div className='grid grid-cols-2'>
+                                                                        <div className='flex items-center text-gray-400'>
+                                                                            <img
+                                                                                className='rounded-full xs:w-6 xs:h-6 w-6 h-6'
+                                                                                src={item.avatar ? item.avatar : avatar}
+                                                                                alt="user profile"
+                                                                            />
+                                                                            <p className='ml-2 break-all'>
+                                                                                {item.username}  
+                                                                                {
+                                                                                    user?.result?.username === item.username && 
+                                                                                        <span> (Me)</span>
+                                                                                }
+                                                                            </p>
+                                                                        </div>
+                                                                        <div className='flex items-center justify-end text-gray-400'>
+                                                                            <FontAwesomeIcon icon={faClock} className="text-white"/>
+                                                                            <p className='ml-2 break-all text-sm'>{moment(item.date).fromNow()}</p>
+                                                                        </div>
                                                                     </div>
-                                                                    <div className='flex items-center justify-end text-gray-400'>
-                                                                        <FontAwesomeIcon icon={faClock} className="text-white"/>
-                                                                        <p className='ml-2 break-all text-sm'>{moment(item.date).fromNow()}</p>
-                                                                    </div>
+                                                                    <p className='mt-4 text-gray-300 whitespace-pre-wrap'>{item.comments}</p>
+                                                                    {
+                                                                        user?.result?.username === item.username && 
+                                                                            <p onClick={() => deleteComment(video.video._id, item.id)} id={item.id} className='flex justify-end items-center text-gray-300 hover:text-gray-400 text-sm cursor-pointer'><FontAwesomeIcon icon={faTrash} className="mr-2"/> Delete</p>
+                                                                    }
                                                                 </div>
-                                                                <p className='mt-4 text-gray-300 whitespace-pre-wrap'>{item.comments}</p>
-                                                                {
-                                                                    user?.result?.username === item.username && 
-                                                                        <p onClick={() => deleteComment(video.video._id, item.id)} id={item.id} className='flex justify-end items-center text-gray-300 hover:text-gray-400 text-sm cursor-pointer'><FontAwesomeIcon icon={faTrash} className="mr-2"/> Delete</p>
-                                                                }
-                                                            </div>
+                                                            </MotionAnimate>
                                                         )
                                                     })
                                                     :

@@ -317,11 +317,25 @@ const GamesSingle = ({ user }) => {
                                                             gameData.game.gallery.map((item, index) => {
                                                                 return (
                                                                     <div key={index} className='md:w-1/3 sm:w-1/2 w-full h-[200px] overflow-hidden'>
-                                                                        <img 
-                                                                            src={item}
-                                                                            alt={`gallery #${index+1}`}
-                                                                            className='w-full h-[200px] object-cover border border-gray-900 transition duration-500 ease-in-out transform hover:scale-105'
-                                                                        />
+                                                                        <MotionAnimate variant={{
+                                                                            hidden: { 
+                                                                                opacity: 0,
+                                                                                transform: 'scale(0)'
+                                                                            },
+                                                                            show: {
+                                                                                opacity: 1,
+                                                                                transform: 'scale(1)',
+                                                                                transition: {
+                                                                                    duration: 0.4,
+                                                                                }
+                                                                            }
+                                                                        }}>
+                                                                            <img 
+                                                                                src={item}
+                                                                                alt={`gallery #${index+1}`}
+                                                                                className='w-full h-[200px] object-cover border border-gray-900 transition duration-500 ease-in-out transform hover:scale-105'
+                                                                            />
+                                                                        </MotionAnimate>
                                                                     </div>  
                                                                 )
                                                         })

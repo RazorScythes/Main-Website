@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useSearchParams } from "react-router-dom";
 import { Link, useNavigate } from 'react-router-dom';
 import { getBlogs, countBlogCategories, addOneBlogLikes } from "../../actions/blogs";
+import { MotionAnimate } from 'react-motion-animate'
 import Cookies from 'universal-cookie';
 import moment from 'moment';
 import heroImage from '../../assets/hero-image.jpg';
@@ -345,7 +346,8 @@ const Blogs = ({ user }) => {
                                         var liked_blogs = checkedForLikedBLogs(item.likes);
                                         var first_paragraph = getFirstParagraph(item.content)
                                         return (
-                                            <div key={index}>
+                                            <MotionAnimate key={index} animation='fadeInUp'>
+                                            <div>
                                                 <div className='relative'>
                                                     <img 
                                                         src={item.featured_image}
@@ -376,6 +378,7 @@ const Blogs = ({ user }) => {
                                                     </div>
                                                 </div>
                                             </div>
+                                            </MotionAnimate>
                                         )
                                     })
                             }

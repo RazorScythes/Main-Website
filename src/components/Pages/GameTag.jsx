@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight, faChevronUp, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from 'react-router-dom';
 import { useSearchParams } from "react-router-dom";
+import { MotionAnimate } from 'react-motion-animate'
 import { clearAlert } from "../../actions/game";
 import GamesCards from './GamesCards';
 import styles from "../../style";
@@ -241,8 +242,8 @@ const GameTag = ({ user }) => {
                               {
                                   games.slice(startIndex, endIndex).map((item, index) => {
                                       return (
+                                        <MotionAnimate key={index} animation='fadeInUp'>
                                           <GamesCards  
-                                              key={index}
                                               id={item._id}
                                               heading={item.title} 
                                               image={item.featured_image} 
@@ -252,6 +253,7 @@ const GameTag = ({ user }) => {
                                               ratings={item.ratings}
                                               download_links={item.download_link}
                                           />
+                                        </MotionAnimate>
                                       )
                                   })
                               }

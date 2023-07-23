@@ -7,6 +7,7 @@ import { faChevronLeft, faChevronRight, faChevronUp, faChevronDown } from "@fort
 import { Link, useNavigate } from 'react-router-dom';
 import { useSearchParams } from "react-router-dom";
 import { clearAlert } from "../../actions/video";
+import { MotionAnimate } from 'react-motion-animate'
 import Loading from './Loading';
 import styles from "../../style";
 import VideoThumbnail from '../VideoThumbnail';
@@ -446,20 +447,22 @@ const VideoTag = ({ user }) => {
                           videos.slice(startIndex, endIndex).map((item, index) => {
                             return (
                               <>
-                              <VideoThumbnail 
-                                key={index} 
-                                id={item._id} 
-                                index={index} 
-                                title={item.title} 
-                                views={item.views} 
-                                timestamp={item.createdAt} 
-                                setActive={setActive} 
-                                active={active} 
-                                embedLink={getVideoId(item.link)}
-                                user={user}
-                                setAlertSubActive={setAlertSubActive}
-                                file_size={item.file_size}
-                              />
+                              <MotionAnimate key={index} animation='fadeInUp'>
+                                <VideoThumbnail 
+                                  key={index} 
+                                  id={item._id} 
+                                  index={index} 
+                                  title={item.title} 
+                                  views={item.views} 
+                                  timestamp={item.createdAt} 
+                                  setActive={setActive} 
+                                  active={active} 
+                                  embedLink={getVideoId(item.link)}
+                                  user={user}
+                                  setAlertSubActive={setAlertSubActive}
+                                  file_size={item.file_size}
+                                />
+                              </MotionAnimate>
                               </>
                             )
                           })
