@@ -180,6 +180,54 @@ export const getLatestBlogs = createAsyncThunk('blogs/getLatestBlogs', async (fo
     }
 })
 
+export const getBlogsBySearchKey = createAsyncThunk('blog/getBlogsBySearchKey', async (form, thunkAPI) => {
+    try {
+        const response = await api.getBlogsBySearchKey(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const countBlogCategoriesBySearchKey = createAsyncThunk('blog/countBlogCategoriesBySearchKey', async (form, thunkAPI) => {
+    try {
+        const response = await api.countBlogCategoriesBySearchKey(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const addOneBlogLikesBySearchKey = createAsyncThunk('blog/addOneBlogLikesBySearchKey', async (form, thunkAPI) => {
+    try {
+        const response = await api.addOneBlogLikesBySearchKey(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const blogsSlice = createSlice({
     name: 'blogs',
     initialState,
@@ -257,6 +305,15 @@ export const blogsSlice = createSlice({
             state.alert = action.payload.message
             state.variant = action.payload.variant
         }),
+        builder.addCase(countBlogCategoriesBySearchKey.fulfilled, (state, action) => {
+            state.categories = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(countBlogCategoriesBySearchKey.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
         builder.addCase(addOneBlogLikes.fulfilled, (state, action) => {
             state.notFound = false
             state.blogs = action.payload.data.result
@@ -264,6 +321,16 @@ export const blogsSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(addOneBlogLikes.pending, (state, action) => {
+            state.notFound = false
+            state.isLoading = true
+        }),
+        builder.addCase(addOneBlogLikesBySearchKey.fulfilled, (state, action) => {
+            state.notFound = false
+            state.blogs = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(addOneBlogLikesBySearchKey.pending, (state, action) => {
             state.notFound = false
             state.isLoading = true
         }),
@@ -275,6 +342,14 @@ export const blogsSlice = createSlice({
         }),
         builder.addCase(addLatestBlogLikes.pending, (state, action) => {
             state.notFound = false
+        }),
+        builder.addCase(getBlogsBySearchKey.fulfilled, (state, action) => {
+            state.blogs = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getBlogsBySearchKey.rejected, (state, action) => {
+            state.message = action.payload.message
         })
     },
     reducers: {

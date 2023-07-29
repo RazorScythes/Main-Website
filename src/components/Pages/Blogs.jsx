@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faArrowRight, faCalendar, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useParams } from "react-router-dom";
 import { Link, useNavigate } from 'react-router-dom';
-import { getBlogs, countBlogCategories, addOneBlogLikes } from "../../actions/blogs";
+import { getBlogs, countBlogCategories, addOneBlogLikes, getBlogsBySearchKey, countBlogCategoriesBySearchKey, addOneBlogLikesBySearchKey } from "../../actions/blogs";
 import { MotionAnimate } from 'react-motion-animate'
 import Cookies from 'universal-cookie';
 import moment from 'moment';
@@ -21,6 +21,8 @@ const TextWithEllipsis = ({ text, limit = 55 }) => {
 }
 
 const Blogs = ({ user }) => {
+    const { key } = useParams();
+
     const navigate  = useNavigate()
     const dispatch = useDispatch()
 
@@ -31,12 +33,24 @@ const Blogs = ({ user }) => {
     const [selectedCategory, setSelectedCategory] = useState('')
 
     useEffect(() => {
-        dispatch(getBlogs({
-            id: user ? user.result?._id : ''
-        }))
-        dispatch(countBlogCategories({
-            id: user ? user.result?._id : ''
-        }))
+        if(key) {
+            dispatch(getBlogsBySearchKey({
+                id: user ? user.result?._id : '',
+                searchKey: key
+            }))
+            dispatch(countBlogCategoriesBySearchKey({
+                id: user ? user.result?._id : '',
+                searchKey: key
+            }))
+        }
+        else {
+            dispatch(getBlogs({
+                id: user ? user.result?._id : ''
+            }))
+            dispatch(countBlogCategories({
+                id: user ? user.result?._id : ''
+            }))
+        }
     }, [])
 
     const pageIndex = searchParams.get('page') ? parseInt(searchParams.get('page')) : 1
@@ -259,11 +273,21 @@ const Blogs = ({ user }) => {
             setBlogs(array);
         }
 
-        dispatch(addOneBlogLikes({
-            id: array[index]._id,
-            likes: array[index].likes,
-            userId: user ? user.result?._id : ''
-        }))
+        if(key) {
+            dispatch(addOneBlogLikesBySearchKey({
+                id: array[index]._id,
+                likes: array[index].likes,
+                userId: user ? user.result?._id : '',
+                searchKey: key
+            }))
+        }
+        else {
+            dispatch(addOneBlogLikes({
+                id: array[index]._id,
+                likes: array[index].likes,
+                userId: user ? user.result?._id : ''
+            }))
+        }
     }
 
     const checkedForLikedBLogs = (likes) => {
@@ -293,7 +317,7 @@ const Blogs = ({ user }) => {
                             <div className="container mx-auto py-12 xs:px-6 text-white">
                                 <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start'>
                                     <div>
-                                        <p>Home / Blogs</p>
+                                        <p>Home / <Link to={`/blogs`}>Blogs</Link> {key && `/ search`}</p>
                                         <button className='mt-4 mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 border border-gray-100  transition-colors duration-300 ease-in-out px-8 rounded-full'>
                                             {blogs?.length > 0 ? blogs.length : "0" } Articles
                                         </button>

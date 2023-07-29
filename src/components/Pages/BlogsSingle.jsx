@@ -110,6 +110,7 @@ const BlogsSingle = ({ user }) => {
     }
 
     const checkedForLikedBLogs = (likes) => {
+        if(!likes) return false
         var liked = likes.some((item) => { if(item === cookies.get('uid')) return true })
         return liked ? liked : false;
     }
@@ -117,8 +118,8 @@ const BlogsSingle = ({ user }) => {
     const addLikes = (index) => {
         var array = [...latestList]
         var duplicate = false
-
-        array[index].likes.forEach((item) => { if(item === cookies.get('uid')) duplicate = true })
+    
+        array[index].likes.map((item) => { if(item === cookies.get('uid')) duplicate = true })
         if(!duplicate) {
             var updatedBlog = { ...array[index] }; 
 
@@ -469,7 +470,7 @@ const BlogsSingle = ({ user }) => {
                                                                         <Link to={`/blogs/${item._id}`} className='mb-4'><h2 className='text-xl font-semibold my-2'>{item.post_title}</h2></Link>
                                                                         <div className='flex justify-between'>
                                                                             <div className='flex flex-wrap items-center justify-end'>
-                                                                                <button className='cursor-pointer' onClick={() => addLikes(index, item._id)}><FontAwesomeIcon icon={faHeart} style={{color: liked_blogs ? '#CD3242' : '#FFF'}} className='mr-1 pt-1 font-bold text-lg'/> {item.likes.length}</button>
+                                                                                <button className='cursor-pointer' onClick={() => addLikes(index, item._id)}><FontAwesomeIcon icon={faHeart} style={{color: liked_blogs ? '#CD3242' : '#FFF'}} className='mr-1 pt-1 font-bold text-lg'/> {item.likes?.length > 0 ? item.likes.length : 0}</button>
                                                                             </div>
                                                                             <div className='flex items-center'>
                                                                                 <FontAwesomeIcon icon={faCalendar} className="text-white text-xs"/>
