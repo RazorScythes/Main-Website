@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEllipsisV, faCode, faVideo, faFileVideo, faPhotoVideo, faVideoSlash, faVideoCamera } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEllipsisV, faCode, faVideo, faFileVideo, faPhotoVideo, faVideoSlash, faVideoCamera, faChevronRight, faMinus, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from 'react-redux'
 import { addToWatchLater } from "../actions/video";
 import { Link } from 'react-router-dom';
@@ -26,6 +26,7 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
   const dispatch = useDispatch()
 
   const [isOpen, setIsOpen] = useState(false)
+  const [openDirectory, setOpenDirectory] = useState(false)
 
   useEffect(() => { 
     if(index !== active) setIsOpen(false)
@@ -74,12 +75,22 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
                 </button>
               </div>
               {
-                isOpen && (index === active) &&
-                  <div className='absolute bottom-[-95px] z-10 right-0 flex flex-col bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] w-32'>
-                    <Link onClick={() => watchLater()} to="" className='px-4 py-2 hover:bg-gray-900'>Watch Later</Link>
-                    <Link to="" className='px-4 py-2 hover:bg-gray-900'>Report</Link>
-                  </div>
-              }
+                  isOpen && (index === active) &&
+                    <div className='absolute top-[55px] z-10 right-0 flex flex-col bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] w-40'>
+                      <button onClick={() => setOpenDirectory(!openDirectory)} className='px-4 py-2 hover:bg-gray-900 text-left flex justify-between items-center'>
+                        Watch Later
+                        <FontAwesomeIcon icon={openDirectory ? faChevronUp: faChevronDown} className="text-sm ml-2"/>
+                      </button>
+                      {
+                        openDirectory && 
+                        <>
+                          <Link onClick={() => watchLater()} to="" className='text-sm px-4 py-1 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> Default</Link>
+                          <Link onClick={() => watchLater()} to="" className='text-sm px-4 py-1 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> Favorite</Link>
+                        </>
+                      }
+                      <button className='px-4 py-2 hover:bg-gray-900 text-left'>Report</button>
+                    </div>
+                }
             </div>
         </div>
       :
@@ -112,9 +123,19 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
                 </div>
                 {
                   isOpen && (index === active) &&
-                    <div className='absolute bottom-[-95px] z-10 right-0 flex flex-col bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] w-32'>
-                      <Link onClick={() => watchLater()} to="" className='px-4 py-2 hover:bg-gray-900'>Watch Later</Link>
-                      <Link to="" className='px-4 py-2 hover:bg-gray-900'>Report</Link>
+                    <div className='absolute top-[55px] z-10 right-0 flex flex-col bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] w-40'>
+                      <button onClick={() => setOpenDirectory(!openDirectory)} className='px-4 py-2 hover:bg-gray-900 text-left flex justify-between items-center'>
+                        Watch Later
+                        <FontAwesomeIcon icon={openDirectory ? faChevronUp: faChevronDown} className="text-sm ml-2"/>
+                      </button>
+                      {
+                        openDirectory && 
+                        <>
+                          <Link onClick={() => watchLater()} to="" className='text-sm px-4 py-1 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> Default</Link>
+                          <Link onClick={() => watchLater()} to="" className='text-sm px-4 py-1 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> Favorite</Link>
+                        </>
+                      }
+                      <button className='px-4 py-2 hover:bg-gray-900 text-left'>Report</button>
                     </div>
                 }
               </div>

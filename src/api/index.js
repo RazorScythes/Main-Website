@@ -159,3 +159,11 @@ export const addOneBlogLikes                            = (formData) => User_API
 export const addOneBlogLikesBySearchKey                 = (formData) => User_API.post('/blogs/addOneBlogLikesBySearchKey', formData)
 export const addLatestBlogLikes                         = (formData) => User_API.post('/blogs/addLatestBlogLikes', formData)
 export const getBlogsBySearchKey                        = (formData) => User_API.post('/blogs/getBlogsBySearchKey', formData)
+
+/*
+    Archive
+*/
+
+export const getArchiveNameById                         = (formData) => User_API.post('/archive/getArchiveNameById', formData)
+export const newArchiveList                             = (formData) => User_API.post('/archive/newArchiveList', formData)
+export const removeArchiveList                          = (formData) => User_API.post('/archive/removeArchiveList', formData)
