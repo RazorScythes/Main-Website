@@ -51,6 +51,7 @@ const VideosSingle = ({ user }) => {
     const forbiden = useSelector((state) => state.video.forbiden)
     const isLoading = useSelector((state) => state.video.isLoading)
     const sideAlert = useSelector((state) => state.video.sideAlert)
+    const archiveList = useSelector((state) => state.video.archiveList)
 
     const [avatar, setAvatar] = useState(localStorage.getItem('avatar')?.replaceAll('"', ""))
     const [active, setActive] = useState(0)
@@ -563,6 +564,7 @@ const VideosSingle = ({ user }) => {
                                                                             setAlertSubActive={setAlertSubActive}
                                                                             fixed={false}
                                                                             file_size={item.file_size}
+                                                                            archiveList={archiveList ? archiveList : {}}
                                                                         />
                                                                     </MotionAnimate>
                                                                 </div>

@@ -15,7 +15,8 @@ const initialState = {
     message: 'none',
     forbiden: '',
     sideAlert: {},
-    tagsCount: []
+    tagsCount: [],
+    archiveList: {}
 }
 
 export const getVideoByID = createAsyncThunk('video/getVideoByID', async (form, thunkAPI) => {
@@ -248,6 +249,7 @@ export const videoSlice = createSlice({
     extraReducers: (builder) => {
         builder.addCase(getVideos.fulfilled, (state, action) => {
             state.videos = action.payload.data.result
+            state.archiveList = action.payload.data.archiveList
             state.error = ''
             state.isLoading = false
             state.notFound = false
@@ -262,6 +264,7 @@ export const videoSlice = createSlice({
         }),
         builder.addCase(getVideoByTag.fulfilled, (state, action) => {
             state.videos = action.payload.data.result
+            state.archiveList = action.payload.data.archiveList
             state.error = ''
             state.isLoading = false
             state.notFound = false
@@ -276,6 +279,7 @@ export const videoSlice = createSlice({
         }),
         builder.addCase(getVideoByArtist.fulfilled, (state, action) => {
             state.videos = action.payload.data.result
+            state.archiveList = action.payload.data.archiveList
             state.error = ''
             state.isLoading = false
             state.notFound = false
@@ -290,6 +294,7 @@ export const videoSlice = createSlice({
         }),
         builder.addCase(getVideoBySearchKey.fulfilled, (state, action) => {
             state.videos = action.payload.data.result
+            state.archiveList = action.payload.data.archiveList
             state.error = ''
             state.isLoading = false
             state.notFound = false
@@ -303,6 +308,7 @@ export const videoSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(getVideoByID.fulfilled, (state, action) => {
+            state.archiveList = action.payload.data.archiveList
             state.notFound = false
             state.data = action.payload.data.result
             state.error = ''

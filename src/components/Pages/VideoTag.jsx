@@ -51,6 +51,7 @@ const VideoTag = ({ user }) => {
     const tagsList = useSelector((state) => state.video.tagsCount)
     const isLoading = useSelector((state) => state.video.isLoading)
     const notFound = useSelector((state) => state.video.notFound)
+    const archiveList = useSelector((state) => state.video.archiveList)
 
     const pageIndex = searchParams.get('page') ? parseInt(searchParams.get('page')) : 1
     const navType = searchParams.get('type') ? searchParams.get('type') : ''
@@ -461,6 +462,7 @@ const VideoTag = ({ user }) => {
                                   user={user}
                                   setAlertSubActive={setAlertSubActive}
                                   file_size={item.file_size}
+                                  archiveList={archiveList ? archiveList : {}}
                                 />
                               </MotionAnimate>
                               </>

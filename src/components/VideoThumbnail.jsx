@@ -22,7 +22,7 @@ const checkVideoFileSize = (size = "") => {
   return false
 }
 
-const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp, setActive, height, user, setAlertSubActive, fixed = true, file_size }) => {
+const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp, setActive, height, user, setAlertSubActive, fixed = true, file_size, archiveList }) => {
   const dispatch = useDispatch()
 
   const [isOpen, setIsOpen] = useState(false)
@@ -32,14 +32,16 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
     if(index !== active) setIsOpen(false)
   }, [active])
 
-  const watchLater = () => {
+  const watchLater = (archiveId, directory = 'Default Archive') => {
     if(!user) {
         setAlertSubActive('no user')
     }
     else {
         dispatch(addToWatchLater({
             id: user?.result._id,
-            videoId: id
+            videoId: id,
+            archiveId: archiveId,
+            directory: directory,
         }))
     }
   }
@@ -77,16 +79,30 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
               {
                   isOpen && (index === active) &&
                     <div className='absolute top-[55px] z-10 right-0 flex flex-col bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] w-40'>
-                      <button onClick={() => setOpenDirectory(!openDirectory)} className='px-4 py-2 hover:bg-gray-900 text-left flex justify-between items-center'>
-                        Watch Later
-                        <FontAwesomeIcon icon={openDirectory ? faChevronUp: faChevronDown} className="text-sm ml-2"/>
-                      </button>
                       {
-                        openDirectory && 
+                        Object.keys(archiveList).length !== 0 ? 
                         <>
-                          <Link onClick={() => watchLater()} to="" className='text-sm px-4 py-1 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> Default</Link>
-                          <Link onClick={() => watchLater()} to="" className='text-sm px-4 py-1 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> Favorite</Link>
+                        <button onClick={() => setOpenDirectory(!openDirectory)} className='px-4 py-2 hover:bg-gray-900 text-left flex justify-between items-center'>
+                          Watch Later
+                          <FontAwesomeIcon icon={openDirectory ? faChevronUp: faChevronDown} className="text-sm ml-2"/>
+                        </button>
+                        {
+                          openDirectory && 
+                          <>
+                            {
+                              archiveList.archive_list.map((item, index) => {
+                                return (
+                                  <Link onClick={() => watchLater(archiveList._id, item)} key={index} to="" className='text-sm px-4 py-1 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> {item}</Link>
+                                )
+                              })
+                            }
+                          </>
+                        }
                         </>
+                        :
+                        <button onClick={() => watchLater()} className='px-4 py-2 hover:bg-gray-900 text-left flex justify-between items-center'>
+                          Watch Later
+                        </button>
                       }
                       <button className='px-4 py-2 hover:bg-gray-900 text-left'>Report</button>
                     </div>
@@ -124,16 +140,30 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
                 {
                   isOpen && (index === active) &&
                     <div className='absolute top-[55px] z-10 right-0 flex flex-col bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] w-40'>
-                      <button onClick={() => setOpenDirectory(!openDirectory)} className='px-4 py-2 hover:bg-gray-900 text-left flex justify-between items-center'>
-                        Watch Later
-                        <FontAwesomeIcon icon={openDirectory ? faChevronUp: faChevronDown} className="text-sm ml-2"/>
-                      </button>
                       {
-                        openDirectory && 
+                        Object.keys(archiveList).length !== 0 ? 
                         <>
-                          <Link onClick={() => watchLater()} to="" className='text-sm px-4 py-1 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> Default</Link>
-                          <Link onClick={() => watchLater()} to="" className='text-sm px-4 py-1 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> Favorite</Link>
+                        <button onClick={() => setOpenDirectory(!openDirectory)} className='px-4 py-2 hover:bg-gray-900 text-left flex justify-between items-center'>
+                          Watch Later
+                          <FontAwesomeIcon icon={openDirectory ? faChevronUp: faChevronDown} className="text-sm ml-2"/>
+                        </button>
+                        {
+                          openDirectory && 
+                          <>
+                            {
+                              archiveList.archive_list.map((item, index) => {
+                                return (
+                                  <Link onClick={() => watchLater(archiveList._id, item)} key={index} to="" className='text-sm px-4 py-1 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> {item}</Link>
+                                )
+                              })
+                            }
+                          </>
+                        }
                         </>
+                        :
+                        <button onClick={() => watchLater()} className='px-4 py-2 hover:bg-gray-900 text-left flex justify-between items-center'>
+                          Watch Later
+                        </button>
                       }
                       <button className='px-4 py-2 hover:bg-gray-900 text-left'>Report</button>
                     </div>
