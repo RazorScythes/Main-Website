@@ -322,7 +322,7 @@ const Blogs = ({ user }) => {
                                             {blogs?.length > 0 ? blogs.length : "0" } Articles
                                         </button>
                                         <h1 className='text-4xl font-semibold my-4'>Blogs</h1>
-                                        <p>Etiam placerat velit vitae dui blandit sollicitudin. Vestibulum tincidunt sed dolor sit amet volutpat. Nullam egestas sem at mollis sodales. Nunc eget lacinia eros, ut tincidunt nunc. Quisque volutpat, enim id volutpat interdum, purus odio euismod neque, sit amet faucibus justo dolor tincidunt dui.</p>
+                                        <p>Welcome to my personal website! Here, I blend my passions for gaming, insightful guides, personal reflections, and creative narratives, offering a unique digital space where stories, strategies, and virtual adventures come to life. Join me on this dynamic journey of exploration and entertainment.</p>
                                     </div>
                                 </div>
                             </div>

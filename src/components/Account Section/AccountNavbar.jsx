@@ -142,12 +142,6 @@ const AccountNavbar = ({ path }) => {
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
                       >
-                        <FontAwesomeIcon icon={faNoteSticky} className="mr-2" />
-                        <a href={`${path}/account/logs`}>Logs</a>
-                      </li>
-                      <li
-                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
-                      >
                         <FontAwesomeIcon icon={faGear} className="mr-2" />
                         <a href={`${path}/account/settings`}>Settings</a>
                       </li>
@@ -227,12 +221,6 @@ const AccountNavbar = ({ path }) => {
                       >
                         <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
                         <a href={`${path}/${user.result.username}`}>Inbox</a>
-                      </li>
-                      <li
-                        className={`cursor-pointer text-white hover:text-blue-200 mb-4`}
-                      >
-                        <FontAwesomeIcon icon={faNoteSticky} className="mr-2" />
-                        <a href={`${path}/account/logs`}>Logs</a>
                       </li>
                       <li
                         className={`cursor-pointer text-white hover:text-blue-200 mb-4`}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef  } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; 
-import { faEye, faEllipsisV, faThumbsUp, faThumbsDown, faAdd, faDownload, faArrowRightRotate, faClock, faCalendar, faTrash, faLinkSlash, faExclamationTriangle } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEllipsisV, faThumbsUp, faThumbsDown, faAdd, faDownload, faArrowRightRotate, faClock, faCalendar, faTrash, faLinkSlash, faExclamationTriangle, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { addOneLikes, addOneDislikes, addOneViews, getVideoByID, getComments, getRelatedVideos, uploadComment, removeComment, addToWatchLater, clearAlert } from "../../actions/video";
 import { useParams } from 'react-router-dom'
@@ -66,6 +66,7 @@ const VideosSingle = ({ user }) => {
     const [playing, setPlaying] = useState(false)
     const [isAnimatingTU, setIsAnimatingTU] = useState(false)
     const [isAnimatingTD, setIsAnimatingTD] = useState(false)
+    const [openDirectory, setOpenDirectory] = useState(false)
 
     useEffect(() => {
         dispatch(getVideoByID({ id: user ? user.result?._id : '', videoId: id }))
@@ -225,7 +226,7 @@ const VideosSingle = ({ user }) => {
             }
     }
 
-    const watchLater = () => {
+    const watchLater = (archiveId, directory = 'Default Archive') => {
         if(!user) {
             setAlertInfo({
                 variant: 'info',
@@ -237,7 +238,9 @@ const VideosSingle = ({ user }) => {
         else {
             dispatch(addToWatchLater({
                 id: user?.result._id,
-                videoId: id
+                videoId: id,
+                archiveId: archiveId,
+                directory: directory,
             }))
         }
     }
@@ -393,15 +396,15 @@ const VideosSingle = ({ user }) => {
                                                     <p className='ml-2 break-all text-white'>{ data ? data.username : "Anonymous" }</p>
                                                 </Link>
                                                 <div className='flex xs:mt-0 mt-2'>
-                                                    <div className='flex items-center xs:ml-8 ml-0'>
+                                                    <div className='flex items-center xs:ml-8 ml-0' title="Views">
                                                         <FontAwesomeIcon icon={faEye} className="text-white mr-2"/>
                                                         <p>{ data && data.video ? data.video.views.length : 0 } <span className='xs:hidden inline-block'>view{data && data.video && data.video.views.length > 0 && 's'}</span></p>
                                                     </div>
-                                                    <div className='flex items-center ml-8'>
+                                                    <div className='flex items-center ml-8' title="Likes">
                                                         <FontAwesomeIcon onClick={addLikes} style={{color: isAnimatingTU ? '#CD3242' : '#FFF'}} icon={faThumbsUp} className="mr-2 cursor-pointer"/>
                                                         <p>{ likes && likes.length }</p>
                                                     </div>
-                                                    <div className='flex items-center ml-4'>
+                                                    <div className='flex items-center ml-4' title="Dislikes">
                                                         <FontAwesomeIcon onClick={addDislikes} style={{color: isAnimatingTD ? '#CD3242' : '#FFF'}} icon={faThumbsDown} className="text-white mr-2 hover:text-[#CD3242] cursor-pointer"/>
                                                         <p>{ dislikes && dislikes.length }</p>
                                                     </div>
@@ -409,9 +412,23 @@ const VideosSingle = ({ user }) => {
                                             </div>
                                             <div className='flex items-center sm:justify-end sm:mt-0 mt-2'>
                                                 <div className='sm:w-auto w-full grid grid-cols-2 gap-2 mt-2'>
-                                                    <button onClick={() => watchLater()} className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
-                                                        <FontAwesomeIcon icon={faAdd} className="text-white"/> Watch Later
-                                                    </button>
+                                                    <div className='relative'>
+                                                        <button onClick={() => setOpenDirectory(!openDirectory)} className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                            <FontAwesomeIcon icon={faAdd} className="text-white"/> Watch Later
+                                                        </button>
+                                                        {
+                                                            openDirectory && 
+                                                            <div className='absolute top-[45px] z-10 right-0 flex flex-col bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] w-40'>
+                                                                {
+                                                                    archiveList.archive_list.map((item, index) => {
+                                                                        return (
+                                                                        <Link onClick={() => watchLater(archiveList._id, item)} key={index} to="" className='text-sm px-4 py-2 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> {item}</Link>
+                                                                        )
+                                                                    })
+                                                                }
+                                                            </div>
+                                                        }
+                                                    </div>
                                                     {/* <button disabled={true} onClick={() => watchLater()} className="disabled:bg-gray-500 disabled:cursor-no-drop sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
                                                         <FontAwesomeIcon icon={faExclamationTriangle} className="text-white"/> Report
                                                     </button> */}

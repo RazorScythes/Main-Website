@@ -58,7 +58,7 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
                   className='h-[150px] mx-auto object-cover'
                   style={{height: height ? height+"px" : "161px"}}
                 />
-                <div className='absolute top-0 right-0 bg-gray-800'>
+                <div className='absolute top-0 right-0 bg-gray-800' title={checkVideoFileSize(file_size) ? 'Video' : 'Embed'}>
                   <p className='font-semibold p-1 px-2'><FontAwesomeIcon icon={checkVideoFileSize(file_size) ? faVideoCamera : faCode} /></p>
                 </div>
               </div>
@@ -73,7 +73,7 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
                     setActive(index)
                     setIsOpen(!isOpen)
                 }}>
-                  <FontAwesomeIcon icon={faEllipsisV} className="absolute bottom-0 right-0 mr-1 cursor-pointer hover:text-gray-500"/>
+                  <FontAwesomeIcon icon={faEllipsisV} className="text-lg px-2 absolute bottom-0 right-0 mr-1 cursor-pointer hover:text-gray-500"/>
                 </button>
               </div>
               {
@@ -119,7 +119,7 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
                     className='mx-auto object-cover md:h-[161px] xs:h-[100px] h-[161px]'
                     // style={{height: height ? height+"px" : "100px"}}
                   />
-                  <div className='absolute top-0 right-0 bg-gray-800'>
+                  <div className='absolute top-0 right-0 bg-gray-800' title={checkVideoFileSize(file_size) ? 'Video' : 'Embed'}>
                     <p className='font-semibold p-1 px-2'><FontAwesomeIcon title={checkVideoFileSize(file_size) ? 'Video' : 'Embed'} icon={checkVideoFileSize(file_size) ? faVideoCamera : faCode} /></p>
                   </div>
                 </div>
@@ -134,7 +134,7 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
                       setActive(index)
                       setIsOpen(!isOpen)
                   }}>
-                    <FontAwesomeIcon icon={faEllipsisV} className="absolute bottom-0 right-0 mr-1 cursor-pointer hover:text-gray-500"/>
+                    <FontAwesomeIcon icon={faEllipsisV} className="text-lg px-2 absolute bottom-0 right-0 mr-1 cursor-pointer hover:text-gray-500"/>
                   </button>
                 </div>
                 {

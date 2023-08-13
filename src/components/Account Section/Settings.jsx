@@ -62,6 +62,19 @@ const Index = ({ user, settings, submitted, setSubmitted }) => {
                     </Link>
                 </div>
             </div>
+            <div className='mb-6 grid xs:grid-cols-2 grid-cols-1 px-8 py-4 border border-solid border-[#CAD5DF]'>
+                <div>
+                    <h2 className='text-2xl font-bold text-gray-800 mb-4'>Activity Logs</h2>
+                    <p className='text-gray-700 text-base mb-2 font-semibold'>View your activity logs.</p>
+                </div>
+                <div className='xs:flex xs:items-center xs:justify-end'>
+                    <Link to="/account/logs">
+                        <button className="w-full bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-8 border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out">
+                            View
+                        </button>
+                    </Link>
+                </div>
+            </div>
             {
                 (settings?.verified) ?
                     <div className='mb-6 grid xs:grid-cols-2 grid-cols-1 px-8 py-4 border border-solid border-[#CAD5DF]'>
@@ -502,6 +515,9 @@ const Settings = ({ user, settings }) => {
                                         <Change_Password user={user} alert={alert}/>
                                     :
                                     options === 'options' ?
+                                        <Options user={user} settings={settings} alert={alert}/>
+                                    :
+                                    options === 'logs' ?
                                         <Options user={user} settings={settings} alert={alert}/>
                                     :
                                     options === '' ?
