@@ -422,7 +422,7 @@ const VideosSingle = ({ user }) => {
                                                                 {
                                                                     archiveList.archive_list.map((item, index) => {
                                                                         return (
-                                                                        <Link onClick={() => watchLater(archiveList._id, item)} key={index} to="" className='text-sm px-4 py-2 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> {item}</Link>
+                                                                        <Link onClick={() => watchLater(archiveList._id, item.name)} key={index} to="" className='text-sm px-4 py-2 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> {item.name}</Link>
                                                                         )
                                                                     })
                                                                 }

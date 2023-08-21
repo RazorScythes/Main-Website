@@ -4,6 +4,7 @@ import { faEye, faEllipsisV, faCode, faVideo, faFileVideo, faPhotoVideo, faVideo
 import { useDispatch } from 'react-redux'
 import { addToWatchLater } from "../actions/video";
 import { Link } from 'react-router-dom';
+import { MotionAnimate } from 'react-motion-animate'
 import moment from 'moment'
 
 const TextWithEllipsis = ({ text, limit = 70 }) => {
@@ -76,8 +77,10 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
                   <FontAwesomeIcon icon={faEllipsisV} className="text-lg px-2 absolute bottom-0 right-0 mr-1 cursor-pointer hover:text-gray-500"/>
                 </button>
               </div>
+              
               {
                   isOpen && (index === active) &&
+                  <MotionAnimate delay={0} speed={0.2}>
                     <div className='absolute top-[55px] z-10 right-0 flex flex-col bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] w-40'>
                       {
                         Object.keys(archiveList).length !== 0 ? 
@@ -92,7 +95,7 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
                             {
                               archiveList.archive_list.map((item, index) => {
                                 return (
-                                  <Link onClick={() => watchLater(archiveList._id, item)} key={index} to="" className='text-sm px-4 py-1 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> {item}</Link>
+                                  <Link onClick={() => watchLater(archiveList._id, item.name)} key={index} to="" className='text-sm px-4 py-1 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> {item.name}</Link>
                                 )
                               })
                             }
@@ -106,6 +109,7 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
                       }
                       <button className='px-4 py-2 hover:bg-gray-900 text-left'>Report</button>
                     </div>
+                  </MotionAnimate>
                 }
             </div>
         </div>
@@ -153,7 +157,7 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
                             {
                               archiveList.archive_list.map((item, index) => {
                                 return (
-                                  <Link onClick={() => watchLater(archiveList._id, item)} key={index} to="" className='text-sm px-4 py-1 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> {item}</Link>
+                                  <Link onClick={() => watchLater(archiveList._id, item.name)} key={index} to="" className='text-sm px-4 py-1 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> {item.name}</Link>
                                 )
                               })
                             }

@@ -24,12 +24,14 @@ import Blogs from './Pages/Blogs'
 import BlogsSingle from './Pages/BlogsSingle'
 import Store from './Pages/Store'
 import Archive from './Pages/Archive'
+import ArchiveDirectory from './Pages/ArchiveDirectory'
 import Videos from './Pages/Videos'
 import VideosSingle from './Pages/VideosSingle'
 import Verify from './Pages/Verify'
 import VideoTag from './Pages/VideoTag'
 import GameTag from './Pages/GameTag'
 export {
+    ArchiveDirectory,
     Verify,
     VideoTag,
     GameTag,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Navbar, Home, Games, Login, NotFound, Portfolio, Footer, Blogs, BlogsSingle, Store, Archive, GamesSingle, Videos, VideosSingle, Verify, VideoTag, GameTag } from './components/index'
+import { Navbar, Home, Games, Login, NotFound, Portfolio, Footer, Blogs, BlogsSingle, Store, Archive, ArchiveDirectory, GamesSingle, Videos, VideosSingle, Verify, VideoTag, GameTag } from './components/index'
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { AccountNavbar, Overview, AccountPortfolio, AccountStore, Uploads, Settings, Manage, Logs } from './components/Account Section/index'
 import { useDispatch, useSelector } from 'react-redux'
@@ -66,6 +66,7 @@ const App = () => {
               <Route path="videos/artist/:artist_name" element={<><VideoTag user={user} /> <Footer /></>} />
 
               <Route path="archive" element={<><Archive user={user} /> <Footer /></>} />
+              <Route path="archive/:archive" element={<><ArchiveDirectory user={user} /> <Footer /></>} />
 
               <Route path="/:username/portfolio" element={<><Portfolio /> <Footer /></>} />
               <Route path="/:username/project/:project_name" element={<><ProjectSingle/> <Footer /></>} />
