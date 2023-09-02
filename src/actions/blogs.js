@@ -348,12 +348,11 @@ export const blogsSlice = createSlice({
             state.error = ''
             state.isLoading = false
         }),
-        builder.addCase(getBlogsBySearchKey.pending, (state, action) => {
-            state.message = action.payload.message
-            state.isLoading = true
-        }),
         builder.addCase(getBlogsBySearchKey.rejected, (state, action) => {
             state.isLoading = false
+        }),
+        builder.addCase(getBlogsBySearchKey.pending, (state, action) => {
+            state.isLoading = true
         })
     },
     reducers: {
