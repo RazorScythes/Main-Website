@@ -16,7 +16,6 @@ import Error_forbiden from './Error-403-Prohibido.png'
 import blogs from './blogs.png'
 import application from './application.png'
 import game from './game.png'
-
 export {
     toram_online,
     genshin_impact,

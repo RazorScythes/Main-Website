@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getBlogs, countBlogCategories, addOneBlogLikes, getBlogsBySearchKey, countBlogCategoriesBySearchKey, addOneBlogLikesBySearchKey } from "../../actions/blogs";
 import { MotionAnimate } from 'react-motion-animate'
 import Cookies from 'universal-cookie';
+import loading from '../../assets/loading.gif'
 import moment from 'moment';
 import heroImage from '../../assets/hero-image.jpg';
 import styles from "../../style";
@@ -28,6 +29,7 @@ const Blogs = ({ user }) => {
 
     const blog = useSelector((state) => state.blogs.blogs)
     const categories = useSelector((state) => state.blogs.categories)
+    const isLoading = useSelector((state) => state.blogs.isLoading)
 
     const [searchParams, setSearchParams] = useSearchParams();
     const [selectedCategory, setSelectedCategory] = useState('')
@@ -362,83 +364,94 @@ const Blogs = ({ user }) => {
                                 </div>
                             </div>
                         </div>
+                        {
+                            isLoading ?
+                            <div className='h-96 flex items-center justify-center'>
+                                <div className='flex flex-col items-center justify-center'>
+                                    <img className="w-16" src={loading} />
+                                    <p className='text-white font-semibold text-lg mt-2'>Loading Data</p>
+                                </div>
+                                </div>
+                            :
+                            <>
+                            <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 lg:gap-12 gap-5 place-content-start mt-8'>
+                                {
+                                    blogs && blogs.length > 0 &&
+                                        blogs.slice(startIndex, endIndex).map((item, index) => {
+                                            var liked_blogs = checkedForLikedBLogs(item.likes);
+                                            var first_paragraph = getFirstParagraph(item.content)
+                                            return (
+                                                <MotionAnimate key={index} animation='fadeInUp'>
+                                                <div>
+                                                    <div className='relative'>
+                                                        <img 
+                                                            src={item.featured_image}
+                                                            alt="Featured Image"
+                                                            className='rounded-lg h-[435px] w-full object-cover border border-gray-800'
+                                                        />
+                                                        <label className='absolute top-16 font-semibold  bg-[#CD3242] pl-4 pr-8 py-1 rounded-br-full rounded-tr-full'>{item.categories}</label>
+                                                    </div>
+                                                    <div className='grid sm:grid-cols-3 grid-cols-3 gap-12 place-content-start p-2 py-3'>
+                                                        <div className='col-span-2 flex flex-wrap items-center'>
+                                                            <img 
+                                                                src={item.user.avatar}
+                                                                className='w-8 h-8 object-cover rounded-full border border-gray-400'
+                                                                alt="avatar"
+                                                            />
+                                                            <p className='ml-2 break-all text-white'>{item.user.username}</p>
+                                                        </div>
+                                                        <div className='flex flex-wrap items-center justify-end'>
+                                                            <button className='cursor-pointer' onClick={() => addLikes(index, item._id)}><FontAwesomeIcon icon={faHeart} style={{color: liked_blogs ? '#CD3242' : '#FFF'}} className='mr-1 pt-1 font-bold text-lg'/> {item.likes.length}</button>
+                                                        </div>
+                                                    </div>
+                                                    <div className='p-2 py-1'>
+                                                        <h2 className='text-3xl font-semibold'><TextWithEllipsis text={item.post_title} limit={60}/></h2>
+                                                        <p className='break-all text-white mt-2'><TextWithEllipsis text={first_paragraph} limit={150}/></p>
+                                                        <div className='flex justify-between items-center mt-4'>
+                                                            <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> {convertTimezone(item.createdAt)}</p>
+                                                            <Link to={`/blogs/${item._id}`} className='flex items-center justify-end text-right hover:text-[#CD3242] transition-all'>Continue Reading <FontAwesomeIcon icon={faArrowRight} className='ml-1 pt-1 font-bold'/></Link>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                </MotionAnimate>
+                                            )
+                                        })
+                                }
+                            </div>
 
-                        <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 lg:gap-12 gap-5 place-content-start mt-8'>
                             {
                                 blogs && blogs.length > 0 &&
-                                    blogs.slice(startIndex, endIndex).map((item, index) => {
-                                        var liked_blogs = checkedForLikedBLogs(item.likes);
-                                        var first_paragraph = getFirstParagraph(item.content)
-                                        return (
-                                            <MotionAnimate key={index} animation='fadeInUp'>
-                                            <div>
-                                                <div className='relative'>
-                                                    <img 
-                                                        src={item.featured_image}
-                                                        alt="Featured Image"
-                                                        className='rounded-lg h-[435px] w-full object-cover border border-gray-800'
-                                                    />
-                                                    <label className='absolute top-16 font-semibold  bg-[#CD3242] pl-4 pr-8 py-1 rounded-br-full rounded-tr-full'>{item.categories}</label>
-                                                </div>
-                                                <div className='grid sm:grid-cols-3 grid-cols-3 gap-12 place-content-start p-2 py-3'>
-                                                    <div className='col-span-2 flex flex-wrap items-center'>
-                                                        <img 
-                                                            src={item.user.avatar}
-                                                            className='w-8 h-8 object-cover rounded-full border border-gray-400'
-                                                            alt="avatar"
-                                                        />
-                                                        <p className='ml-2 break-all text-white'>{item.user.username}</p>
-                                                    </div>
-                                                    <div className='flex flex-wrap items-center justify-end'>
-                                                        <button className='cursor-pointer' onClick={() => addLikes(index, item._id)}><FontAwesomeIcon icon={faHeart} style={{color: liked_blogs ? '#CD3242' : '#FFF'}} className='mr-1 pt-1 font-bold text-lg'/> {item.likes.length}</button>
-                                                    </div>
-                                                </div>
-                                                <div className='p-2 py-1'>
-                                                    <h2 className='text-3xl font-semibold'><TextWithEllipsis text={item.post_title} limit={60}/></h2>
-                                                    <p className='break-all text-white mt-2'><TextWithEllipsis text={first_paragraph} limit={150}/></p>
-                                                    <div className='flex justify-between items-center mt-4'>
-                                                        <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> {convertTimezone(item.createdAt)}</p>
-                                                        <Link to={`/blogs/${item._id}`} className='flex items-center justify-end text-right hover:text-[#CD3242] transition-all'>Continue Reading <FontAwesomeIcon icon={faArrowRight} className='ml-1 pt-1 font-bold'/></Link>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </MotionAnimate>
-                                        )
-                                    })
+                                <div className='flex items-center justify-center mt-12'>
+                                    <button
+                                    disabled={currentPage === 1}
+                                    onClick={() => handlePageChange(currentPage - 1)}
+                                    className='cursor-pointer mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
+                                    >
+                                    <span className='xs:block hidden'>Prev</span>
+                                    <FontAwesomeIcon icon={faChevronLeft} className='xs:hidden inline-block'/>
+                                    </button>
+                                    {displayedPages.map((pageNumber) => (
+                                    <button
+                                    key={pageNumber}
+                                    onClick={() => handlePageChange(pageNumber)}
+                                    // className={currentPage === index + 1 ? "active" : ""}
+                                    style={{backgroundColor: pageIndex === pageNumber ? "rgb(243 244 246)" : "rgb(31 41 55)", color: pageIndex === pageNumber ? "rgb(31 41 55)" : "rgb(243 244 246)"}}
+                                    className="cursor-pointer mx-1 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out"
+                                    >
+                                    {pageNumber}
+                                    </button>
+                                    ))}
+                                    <button
+                                    disabled={currentPage === totalPages}
+                                    onClick={() => handlePageChange(currentPage + 1)}
+                                    className='cursor-pointer ml-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
+                                    >
+                                    <span className='xs:block hidden'>Next</span>
+                                    <FontAwesomeIcon icon={faChevronRight} className='xs:hidden inline-block'/>
+                                    </button>
+                                </div>
                             }
-                        </div>
-
-                        {
-                            blogs && blogs.length > 0 &&
-                            <div className='flex items-center justify-center mt-12'>
-                                <button
-                                disabled={currentPage === 1}
-                                onClick={() => handlePageChange(currentPage - 1)}
-                                className='cursor-pointer mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
-                                >
-                                <span className='xs:block hidden'>Prev</span>
-                                <FontAwesomeIcon icon={faChevronLeft} className='xs:hidden inline-block'/>
-                                </button>
-                                {displayedPages.map((pageNumber) => (
-                                <button
-                                key={pageNumber}
-                                onClick={() => handlePageChange(pageNumber)}
-                                // className={currentPage === index + 1 ? "active" : ""}
-                                style={{backgroundColor: pageIndex === pageNumber ? "rgb(243 244 246)" : "rgb(31 41 55)", color: pageIndex === pageNumber ? "rgb(31 41 55)" : "rgb(243 244 246)"}}
-                                className="cursor-pointer mx-1 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out"
-                                >
-                                {pageNumber}
-                                </button>
-                                ))}
-                                <button
-                                disabled={currentPage === totalPages}
-                                onClick={() => handlePageChange(currentPage + 1)}
-                                className='cursor-pointer ml-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
-                                >
-                                <span className='xs:block hidden'>Next</span>
-                                <FontAwesomeIcon icon={faChevronRight} className='xs:hidden inline-block'/>
-                                </button>
-                            </div>
+                            </>
                         }
                     </div>
                 </div>

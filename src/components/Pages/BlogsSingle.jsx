@@ -7,6 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { getBlogByID, getBlogComments, uploadBlogComment, removeBlogComment, addOneBlogViews, getLatestBlogs,addLatestBlogLikes, clearAlert } from "../../actions/blogs";
 import { MotionAnimate } from 'react-motion-animate'
 import Cookies from 'universal-cookie';
+import loading from '../../assets/loading.gif'
 import heroImage from '../../assets/hero-image.jpg';
 import moment from 'moment'
 import styles from "../../style";
@@ -168,8 +169,9 @@ const BlogsSingle = ({ user }) => {
                             {
                                 isLoading ?
                                     <div className='h-96 flex items-center justify-center'>
-                                        <div className='flex md:flex-row flex-col items-center justify-center'>
-                                        
+                                        <div className='flex flex-col items-center justify-center'>
+                                            <img className="w-16" src={loading} />
+                                            <p className='text-white font-semibold text-lg mt-2'>Loading Data</p>
                                         </div>
                                     </div>
                                 :

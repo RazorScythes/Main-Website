@@ -7,10 +7,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useSearchParams } from "react-router-dom";
 import { clearAlert } from "../../actions/video";
 import { MotionAnimate } from 'react-motion-animate'
+import loading from '../../assets/loading.gif'
 import Loading from './Loading';
 import styles from "../../style";
 import VideoThumbnail from '../VideoThumbnail';
 import SideAlert from '../SideAlert'
+import Cookies from 'universal-cookie';
+import { useQuery } from 'react-query';
+
+const cookies = new Cookies();
 
 const getVideoId = (url) => {
     let videoId;
@@ -82,7 +87,16 @@ const Videos = ({ user }) => {
       if(Number(file_size[0]) <= 100) return true
       return false
     }
-
+    // const { videoz, loading, isError } = useQuery({
+    //   enabled: user.result?._id !== null && true,
+    //   queryKey: ['video', user.result?._id],
+    //   queryFn: () => [
+    //     { id: 1, name: 'Alice' },
+    //     { id: 2, name: 'Bob' },
+    //     { id: 3, name: 'Charlie' },
+    //   ]
+    // })
+    // console.log(videoz)
     useEffect(() => {
       window.scrollTo(0, 0)
       if(searchParams.get('type') === null || searchParams.get('type') === '') {
@@ -357,7 +371,9 @@ const Videos = ({ user }) => {
             {
               isLoading ?
                 <div className='h-96 flex items-center justify-center'>
-                  <div className='flex md:flex-row flex-col items-center justify-center'>
+                  <div className='flex flex-col items-center justify-center'>
+                    <img className="w-16" src={loading} />
+                    <p className='text-white font-semibold text-lg mt-2'>Loading Data</p>
                   </div>
                 </div>
               :

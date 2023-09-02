@@ -9,6 +9,7 @@ import { useSearchParams } from "react-router-dom";
 import { clearAlert } from "../../actions/video";
 import { MotionAnimate } from 'react-motion-animate'
 import Loading from './Loading';
+import loading from '../../assets/loading.gif'
 import styles from "../../style";
 import VideoThumbnail from '../VideoThumbnail';
 import SideAlert from '../SideAlert'
@@ -422,7 +423,9 @@ const VideoTag = ({ user }) => {
             {
               isLoading ?
                 <div className='h-96 flex items-center justify-center'>
-                  <div className='flex md:flex-row flex-col items-center justify-center'>
+                  <div className='flex flex-col items-center justify-center'>
+                      <img className="w-16" src={loading} />
+                      <p className='text-white font-semibold text-lg mt-2'>Loading Data</p>
                   </div>
                 </div>
               :

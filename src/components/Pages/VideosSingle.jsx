@@ -7,6 +7,7 @@ import { addOneLikes, addOneDislikes, addOneViews, getVideoByID, getComments, ge
 import { useParams } from 'react-router-dom'
 import { MotionAnimate } from 'react-motion-animate'
 import { Page_not_found } from '../../assets';
+import loading from '../../assets/loading.gif'
 import moment from 'moment'
 import styles from "../../style";
 import VideoThumbnail from '../VideoThumbnail';
@@ -272,8 +273,9 @@ const VideosSingle = ({ user }) => {
                         {
                             isLoading ?
                                 <div className='h-96 flex items-center justify-center'>
-                                    <div className='flex md:flex-row flex-col items-center justify-center'>
-                                      
+                                    <div className='flex flex-col items-center justify-center'>
+                                        <img className="w-16" src={loading} />
+                                        <p className='text-white font-semibold text-lg mt-2'>Loading Data</p>
                                     </div>
                                 </div>
                             :

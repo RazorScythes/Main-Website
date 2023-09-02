@@ -37,9 +37,9 @@ const Directory = ({ data, parentData }) => {
                 </div>
             }
             <div className='col-span-2'>
-                <p className='text-gray-800 font-semibold text-lg'>{data.name}</p>
-                <Link to={`/archive/${parentData.archive_name}`}><p style={{color: parentData.bg_color}} className='[text-shadow:_0_2px_0_rgb(0_0_0_/_30%)] text-2xl my-2 font-semibold'>{data.items} {data.items > 1 ? "Items" : "Item"}</p></Link>
-                <p className='text-gray-800 text-sm'>Updated {moment(data.updatedAt).fromNow()}</p>
+                <p className='text-gray-800 font-semibold text-lg relative'>{data.name}<span className='relative top-[-7px] text-xs ml-1 capitalize'> {data.privacy}</span></p>
+                <Link to={`/archive/${parentData.archive_name}`}><p style={{color: parentData.bg_color}} className='[text-shadow:_0_2px_0_rgb(0_0_0_/_30%)] text-2xl my-2 font-semibold'>{data.items ? data.items : 0} {data.items > 1 ? "Items" : "Item"}</p></Link>
+                <p className='text-gray-800 text-sm'>Updated {moment(data.updated).fromNow()}</p>
             </div>
             <div className='flex items-center justify-end'>
                 <FontAwesomeIcon icon={['fas', parentData.icon]} title={data.archive_name} style={{color: parentData.icon_color, background: parentData.icon_bg_color, borderColor: parentData.icon_bg_color}}  className='text-xl transition-all p-4 border rounded-full'/>
