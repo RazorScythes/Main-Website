@@ -371,7 +371,7 @@ const Blogs = ({ user }) => {
                                     <img className="w-16" src={loading} />
                                     <p className='text-white font-semibold text-lg mt-2'>Loading Data</p>
                                 </div>
-                                </div>
+                            </div>
                             :
                             <>
                             <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 lg:gap-12 gap-5 place-content-start mt-8'>

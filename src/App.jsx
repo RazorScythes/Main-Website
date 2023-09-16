@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Navbar, Home, Games, Login, NotFound, Portfolio, Footer, Blogs, BlogsSingle, Store, Archive, ArchiveDirectory, GamesSingle, Videos, VideosSingle, Verify, VideoTag, GameTag } from './components/index'
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { AccountNavbar, Overview, AccountPortfolio, AccountStore, Uploads, Settings, Manage, Logs } from './components/Account Section/index'
+import { AdminOverview, AdminPortfolio, AdminUploads } from './components/Admin/index';
 import { useDispatch, useSelector } from 'react-redux'
 import { ProjectSingle } from './components/Portfolio Section/index';
 import { getProfile, userToken } from './actions/settings';
@@ -46,7 +47,14 @@ const App = () => {
       <BrowserRouter>
         <Routes>
 
+          <Route path='/account' element={<><Outlet/></>}>
+              <Route index element={<><AdminOverview user={user} path={URI_PATH_HOME}/></>} />
+              <Route path="portfolio" element={<><AdminPortfolio user={user} path={URI_PATH_HOME}/></>} />
+              <Route path="uploads" element={<><AdminUploads user={user} path={URI_PATH_HOME}/></>} />
+          </Route>
+
           <Route path='/' element={<><Navbar path={URI_PATH_HOME} /> <Outlet/></>}>
+
               <Route index element={<Home path={URI_PATH_HOME}/>} />
               <Route path="games" element={<><Games user={user}/> <Footer /></>} />
               <Route path="games/:id" element={<><GamesSingle user={user}/> <Footer /></>} />
@@ -83,7 +91,7 @@ const App = () => {
               <Route path={`*`} element={<> <NotFound/> <Footer /></>} />
           </Route>   */}
 
-          <Route path='/account' element={<><AccountNavbar path={URI_PATH_HOME} /> <Outlet/></>}>
+          {/* <Route path='/account' element={<><AccountNavbar path={URI_PATH_HOME} /> <Outlet/></>}>
             <Route index element={<><Overview /></>} />
             <Route path="portfolio" element={<><AccountPortfolio user={user}/></>} />
             <Route path="uploads" element={<><Uploads user={user}/></>} />
@@ -92,7 +100,7 @@ const App = () => {
             <Route path="settings" element={<><Settings user={user} settings={settings}/></>} />
             <Route path="settings/:options" element={<><Settings user={user} settings={settings}/></>} />
             <Route path="manage" element={<><Manage user={user}/></>} />
-          </Route>  
+          </Route>   */}
 
           <Route path={`${URI_PATH_HOME}/login`} element={<Login path={URI_PATH_HOME} setUser={setUser} />} />
           <Route path={`*`} element={<NotFound/>} />

@@ -91,6 +91,23 @@
   }
 }
 
+@keyframes slide-to-right {
+  from {
+    left: -400px;
+  }
+  to {
+    left: 0px;
+  }
+}
+
+@keyframes slide-out-left {
+  from {
+    left: 0px;
+  }
+  to {
+    left: -400px;
+  }
+}
 
 .star {
   font-size: 24px;

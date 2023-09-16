@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookF, faInstagram, faTwitter, faGithub, faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
+import { TypeAnimation } from 'react-type-animation';
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import styles from "../../style";
 
@@ -17,6 +18,8 @@ const Hero = ({ hero, resultRef }) => {
         social_links: {}
     })
 
+    const [professionTA, setProfessionTA] = useState([])
+
     useEffect(() => {
         if(hero){
             setHeroData({
@@ -31,6 +34,18 @@ const Hero = ({ hero, resultRef }) => {
             })
         }
     }, [hero])
+
+    useEffect(() => {
+        if(heroData.profession.length > 0) {
+            var arr = []
+            heroData.profession.forEach((item) => {
+                arr.push(item)
+                arr.push(2000)
+            })
+            setProfessionTA(arr)
+            console.log(arr)
+        }
+    }, [heroData.profession])
 
     const [index, setIndex] = useState(0)
 
@@ -111,7 +126,18 @@ const Hero = ({ hero, resultRef }) => {
                                 <h1 style={{lineHeight: "1.2em"}} className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tighter text-white mb-4 capitalize">
                                     <span style={{color: "#CD3242"}}>Hello I'm</span>, <br/><span className="text-5xl md:text-6xl">{ heroData.full_name }</span>
                                 </h1>
-                                <TypingText texts={ heroData.profession } index={index} setIndex={setIndex} />
+                                {/* <TypingText texts={ heroData.profession } index={index} setIndex={setIndex} /> */}
+                                <h2 className="flex text-2xl sm:text-3xl md:text-3xl lg:text-4xl font-semibold text-white mb-8 tracking-tighter">
+                                    {
+                                        professionTA.length > 0 &&
+                                        <TypeAnimation
+                                            sequence={professionTA}
+                                            wrapper="span"
+                                            speed={50}
+                                            repeat={Infinity}
+                                        />
+                                    }
+                                </h2>
                                 <p className="text-white text-lg sm:text-xl md:text-lg leading-relaxed mb-4">
                                     { heroData.description }
                                 </p>
