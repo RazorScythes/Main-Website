@@ -16,6 +16,13 @@ const AdminSidebar = ({ isOpen, setIsOpen, open, setOpen, path }) => {
     const checkParams = (val) => {return searchParams.get('type') === val}
 
     useEffect(() => {
+        const screenWidth = window.innerWidth;
+        if (screenWidth <= 1060) {
+            setIsOpen(true)
+        }
+    }, [])
+
+    useEffect(() => {
         const checkDeviceType = () => {
             const screenWidth = window.innerWidth;
             if (screenWidth >= 1060) {
