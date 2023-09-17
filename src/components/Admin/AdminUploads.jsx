@@ -2407,95 +2407,6 @@ const AdminUploads = ({ user, path }) => {
                                                                     />
                                                                 </div>
                                                             </div>
-                                                            {/* <table className="min-w-full divide-y divide-gray-200 transition-all border border-[#CAD5DF]">
-                                                                <thead className='bg-[#EAF0F7] text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF]'>
-                                                                    <tr>
-                                                                        <th className="">
-                                                                            
-                                                                        </th>
-                                                                        <th className="px-6 py-3 sm:w-1/5 w-1/2 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                                            Game Title
-                                                                        </th>
-                                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                                            Developer
-                                                                        </th>
-                                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                                            Private
-                                                                        </th>
-                                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                                            Strict
-                                                                        </th>
-                                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                                            Version
-                                                                        </th>
-                                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                                            Platform
-                                                                        </th>
-                                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                                            Action
-                                                                        </th>
-                                                                    </tr>
-                                                                </thead>
-                                                                {
-                                                                    (gameData && gameData.length > 0) &&
-                                                                        <tbody className="bg-white divide-y divide-gray-200">
-                                                                            {
-                                                                                    gameData.slice(startIndex, endIndex).map((item, index) => {
-                                                                                        return (
-                                                                                            <tr key={index}>
-                                                                                                <td className="pl-4">
-                                                                                                    <div className="text-sm leading-5 text-gray-900">
-                                                                                                        <input 
-                                                                                                            id={`game-default-checkbox${10+index}`}
-                                                                                                            type="checkbox" 
-                                                                                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                                                                                            checked={gameDeleteId.includes(item._id)}
-                                                                                                            onChange={() => addGameDeleteId(index, item._id)}
-                                                                                                        />
-                                                                                                    </div>
-                                                                                                </td>
-                                                                                                <td className="sm:w-1/5 w-1/2 px-6 py-4 whitespace-no-wrap break-keep">
-                                                                                                    <div className="text-sm leading-5 text-gray-900">{item.title}</div>
-                                                                                                </td>
-                                                                                                <td className="px-6 py-4 whitespace-no-wrap">
-                                                                                                    <div className="text-sm leading-5 text-gray-900">
-                                                                                                        {item.details.developer}
-                                                                                                    </div>
-                                                                                                </td>
-                                                                                                <VideoTableData 
-                                                                                                    cond={item.privacy}
-                                                                                                    api_call={changeGamePrivacyById({
-                                                                                                        id: item._id,
-                                                                                                        privacy: !item.privacy
-                                                                                                    })}
-                                                                                                />
-                                                                                                <VideoTableData 
-                                                                                                    cond={item.strict}
-                                                                                                    api_call={changeGameStrictById({
-                                                                                                        id: item._id,
-                                                                                                        strict: !item.strict
-                                                                                                    })}
-                                                                                                />
-                                                                                                <td className="px-6 py-4 whitespace-no-wrap">
-                                                                                                    <div className="text-sm leading-5 text-gray-900">{item.details.latest_version}</div>
-                                                                                                </td>
-                                                                                                <td className="px-6 py-4 whitespace-no-wrap">
-                                                                                                    <div className="text-sm leading-5 text-gray-900">{item.details.platform}</div>
-                                                                                                </td>
-                                                                                                <td className="px-6 py-4 whitespace-no-wrap">
-                                                                                                    <div className="text-sm leading-5 text-gray-900 flex items-center">
-                                                                                                        <FontAwesomeIcon title="view" onClick={() => { openGameDataModal(index, item._id) }} icon={faEye} className="px-[10px] py-[7px] bg-green-600 hover:bg-green-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
-                                                                                                        <FontAwesomeIcon title="edit" onClick={() => { editGameMode(index); setShowGameRecord(false) }} icon={faEdit} className="px-[10px] py-[7px] bg-yellow-600 hover:bg-yellow-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
-                                                                                                        <FontAwesomeIcon title="delete" onClick={() => deleteGame(index)} icon={faTrash} className="px-[10px] py-[7px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all" />
-                                                                                                    </div>
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                        )
-                                                                                    })
-                                                                            }
-                                                                        </tbody>
-                                                                }
-                                                            </table> */}
 
                                                             <div class="xs:w-full overflow-hidden rounded-lg shadow-xs">
                                                                 <div class="w-full overflow-x-auto">
@@ -2694,13 +2605,6 @@ const AdminUploads = ({ user, path }) => {
                                                                     </span>
                                                                 </div>
                                                             </div>
-                                                            {/* {
-                                                                !(gameData && gameData.length > 0) && (
-                                                                    <div className='p-4 py-8 w-full border border-[#CAD5DF]'>
-                                                                        <h2 className='text-[#5A6C7F] text-center text-lg'>No Record Found</h2>
-                                                                    </div>
-                                                                )
-                                                            } */}
                                                         </div>
                                                         <div
                                                             class="md:hidden px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
