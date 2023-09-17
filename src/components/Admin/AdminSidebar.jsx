@@ -58,11 +58,18 @@ const AdminSidebar = ({ isOpen, setIsOpen, open, setOpen, path }) => {
         }
     }, [deviceType, prevDeviceType]);
 
+    const checkScreenToggle = () => {
+        const screenWidth = window.innerWidth;
+        if (screenWidth <= 1060) {
+            setIsOpen(true)
+        }
+    }
+
     return (
         <aside style={{animation: !isOpen ? "slide-to-right 0.2s" : "slide-out-left 0.2s", left: !isOpen ? '0px' : '-400px'}} className={`absolute md:relative scrollbar-hide z-20 w-full xs:w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0 transition-all`}>
             <div className="py-4 text-gray-500 dark:text-gray-400">
                 <div className='flex justify-between items-start'>
-                    <Link className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" href="#">
+                    <Link className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" to="/">
                         RazorScythe
                     </Link>
                     <button
@@ -164,22 +171,22 @@ const AdminSidebar = ({ isOpen, setIsOpen, open, setOpen, path }) => {
                                 aria-label="submenu"
                                 >
                                 <li style={{color: (portfolioPage === 'hero' || (portfolioPage === '' || portfolioPage === null)) && 'rgb(31 41 55)'}} className="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
-                                    <Link className="w-full" to="/account/portfolio?navigation=hero">Hero</Link>
+                                    <Link onClick={() => checkScreenToggle()} className="w-full" to="/account/portfolio?navigation=hero">Hero</Link>
                                 </li>
                                 <li style={{color: (portfolioPage === 'skillset') && 'rgb(31 41 55)'}} className="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
-                                    <Link className="w-full" to="/account/portfolio?navigation=skillset">Skillset</Link>
+                                    <Link onClick={() => checkScreenToggle()} className="w-full" to="/account/portfolio?navigation=skillset">Skillset</Link>
                                 </li>
                                 <li style={{color: (portfolioPage === 'services') && 'rgb(31 41 55)'}} className="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
-                                    <Link className="w-full" to="/account/portfolio?navigation=services">Services</Link>
+                                    <Link onClick={() => checkScreenToggle()} className="w-full" to="/account/portfolio?navigation=services">Services</Link>
                                 </li>
                                 <li style={{color: (portfolioPage === 'work experience') && 'rgb(31 41 55)'}} className="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
-                                    <Link className="w-full" to="/account/portfolio?navigation=work experience">Work Experience</Link>
+                                    <Link onClick={() => checkScreenToggle()} className="w-full" to="/account/portfolio?navigation=work experience">Work Experience</Link>
                                 </li>
                                 <li style={{color: (portfolioPage === 'projects') && 'rgb(31 41 55)'}} className="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
-                                    <Link className="w-full" to="/account/portfolio?navigation=projects">Projects</Link>
+                                    <Link onClick={() => checkScreenToggle()} className="w-full" to="/account/portfolio?navigation=projects">Projects</Link>
                                 </li>
                                 <li style={{color: (portfolioPage === 'contact') && 'rgb(31 41 55)'}} className="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
-                                    <Link className="w-full" to="/account/portfolio?navigation=contact">Contacts</Link>
+                                    <Link onClick={() => checkScreenToggle()} className="w-full" to="/account/portfolio?navigation=contact">Contacts</Link>
                                 </li>
                             </ul>  
                         }
@@ -236,13 +243,13 @@ const AdminSidebar = ({ isOpen, setIsOpen, open, setOpen, path }) => {
                                 aria-label="submenu"
                                 >
                                 <li style={{color: (paramIndex || checkParams('video')) && 'rgb(31 41 55)'}} className="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
-                                    <Link className="w-full" to="/account/uploads?type=video">Videos</Link>
+                                    <Link onClick={() => checkScreenToggle()} className="w-full" to="/account/uploads?type=video">Videos</Link>
                                 </li>
                                 <li style={{color: checkParams('games') && 'rgb(31 41 55)'}} className="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
-                                    <Link className="w-full" to="/account/uploads?type=games">Games</Link>
+                                    <Link onClick={() => checkScreenToggle()} className="w-full" to="/account/uploads?type=games">Games</Link>
                                 </li>
                                 <li style={{color: checkParams('blogs') && 'rgb(31 41 55)'}} className="px-2 py-1 transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200">
-                                    <Link className="w-full" to="/account/uploads?type=blogs">Blogs</Link>
+                                    <Link onClick={() => checkScreenToggle()} className="w-full" to="/account/uploads?type=blogs">Blogs</Link>
                                 </li>
                             </ul>  
                         }
@@ -252,44 +259,23 @@ const AdminSidebar = ({ isOpen, setIsOpen, open, setOpen, path }) => {
                         className="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
                         href="../charts.html"
                         >
-                        <svg
-                            className="w-5 h-5"
-                            aria-hidden="true"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                            d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"
-                            ></path>
-                            <path d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-bag" viewBox="0 0 16 16">
+                            <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z"/>
                         </svg>
-                        <span className="ml-4">Charts</span>
+                        <span className="ml-4">Store</span>
                         </Link>
                     </li>
                     <li className="relative px-6 py-3">
+                        { firstPath === 'settings' && <span className="absolute inset-y-0 left-0 w-1 h-12 bg-blue-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span> }
                         <Link
+                        style={{color: (firstPath === 'settings') && 'rgb(31 41 55)'}}
                         className="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-                        href="../buttons.html"
+                        to="/account/settings"
                         >
-                        <svg
-                            className="w-5 h-5"
-                            aria-hidden="true"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                            d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"
-                            ></path>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-gear-fill" viewBox="0 0 16 16">
+                            <path d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"/>
                         </svg>
-                        <span className="ml-4">Buttons</span>
+                        <span className="ml-4">Settings</span>
                         </Link>
                     </li>
                     <li className="relative px-6 py-3">
@@ -297,41 +283,10 @@ const AdminSidebar = ({ isOpen, setIsOpen, open, setOpen, path }) => {
                         className="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
                         href="../modals.html"
                         >
-                        <svg
-                            className="w-5 h-5"
-                            aria-hidden="true"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path
-                                d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                            ></path>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-people-fill" viewBox="0 0 16 16">
+                            <path d="M7 14s-1 0-1-1 1-4 5-4 5 3 5 4-1 1-1 1H7Zm4-6a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.784 6A2.238 2.238 0 0 1 5 13c0-1.355.68-2.75 1.936-3.72A6.325 6.325 0 0 0 5 9c-4 0-5 3-5 4s1 1 1 1h4.216ZM4.5 8a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/>
                         </svg>
-                        <span className="ml-4">Modals</span>
-                        </Link>
-                    </li>
-                    <li className="relative px-6 py-3">
-                        <Link
-                        className="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-                        href="../tables.html"
-                        >
-                        <svg
-                            className="w-5 h-5"
-                            aria-hidden="true"
-                            fill="none"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth="2"
-                            viewBox="0 0 24 24"
-                            stroke="currentColor"
-                        >
-                            <path d="M4 6h16M4 10h16M4 14h16M4 18h16"></path>
-                        </svg>
-                        <span className="ml-4">Tables</span>
+                        <span className="ml-4">Users</span>
                         </Link>
                     </li>
                     <li className="relative px-6 py-3">

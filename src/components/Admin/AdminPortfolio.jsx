@@ -36,7 +36,7 @@ const AdminPortfolio = ({ user, path }) => {
     const [open, setOpen] = useState({
         portfolio: false,
         pages: false,
-        uploads: false
+        uploads: false,
     })
     const [isOpen, setIsOpen] = useState(false)
 

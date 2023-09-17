@@ -1714,16 +1714,18 @@ const AdminUploads = ({ user, path }) => {
                                                                                                         })}
                                                                                                     />
                                                                                                     <td class="px-4 py-3 text-xs flex flex-wrap">
-                                                                                                        {
-                                                                                                            item.tags?.length > 0 &&
-                                                                                                            item.tags.map((tag, i) => {
-                                                                                                                return (
-                                                                                                                    <span key={i} class="px-2 ml-1 py-1 font-semibold text-blue-700 bg-blue-100 rounded-full dark:bg-blue-700 dark:text-blue-100">
-                                                                                                                        {tag}
-                                                                                                                    </span>
-                                                                                                                )
-                                                                                                            })
-                                                                                                        }
+                                                                                                        <div className="flex sm:flex-wrap items-center">
+                                                                                                            {
+                                                                                                                item.tags?.length > 0 &&
+                                                                                                                item.tags.map((tag, i) => {
+                                                                                                                    return (
+                                                                                                                        <span key={i} class="px-2 ml-1 py-1 font-semibold text-blue-700 bg-blue-100 rounded-full dark:bg-blue-700 dark:text-blue-100">
+                                                                                                                            {tag}
+                                                                                                                        </span>
+                                                                                                                    )
+                                                                                                                })
+                                                                                                            }
+                                                                                                        </div>
                                                                                                     </td>
                                                                                                     <td class="px-4 py-3">
                                                                                                         <div class="flex items-center space-x-4 text-sm">
@@ -1850,7 +1852,7 @@ const AdminUploads = ({ user, path }) => {
                                                             </div>
                                                         </div>
                                                         <div
-                                                            class="md:hidden xs:flex xs:flex-row flex-col xs:justify-between mt-4 flex px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
+                                                            class="md:hidden flex justify-between items-center px-2 mt-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
                                                             >
                                                             <span class="flex items-center col-span-3">
                                                                 Showing {(endIndex >= data?.length) ? data?.length : endIndex } of {data?.length}
@@ -2428,7 +2430,7 @@ const AdminUploads = ({ user, path }) => {
                                                                             (gameData && gameData.length > 0) &&
                                                                                 <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
                                                                                     {
-                                                                                        gameData.slice(startIndex, endIndex).map((item, index) => {
+                                                                                        gameData.slice(gameStartIndex, gameEndIndex).map((item, index) => {
                                                                                             return (
                                                                                                     <tr key={index} class="text-gray-700 dark:text-gray-400">
                                                                                                     <td className='pl-4 py-3'>
@@ -2532,7 +2534,7 @@ const AdminUploads = ({ user, path }) => {
                                                                     class="md:block hidden px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
                                                                     >
                                                                     <span class="flex items-center col-span-3">
-                                                                        Showing {(gameEndIndex >= gameData?.length) ? gameData?.length : endIndex } of {gameData?.length}
+                                                                        Showing {(gameEndIndex >= gameData?.length) ? gameData?.length : gameEndIndex } of {gameData?.length}
                                                                     </span>
                                                                     <span class="col-span-2"></span>
                                                                     <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
@@ -2540,7 +2542,7 @@ const AdminUploads = ({ user, path }) => {
                                                                             <ul class="inline-flex items-center">
                                                                                 <li>
                                                                                     <button
-                                                                                        disabled={currentPage === 1} onClick={() => goToGamePage(1)}
+                                                                                        disabled={gameCurrentPage === 1} onClick={() => goToGamePage(1)}
                                                                                         class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
                                                                                         aria-label="Previous"
                                                                                         >
@@ -2552,7 +2554,7 @@ const AdminUploads = ({ user, path }) => {
                                                                                 </li>
                                                                                 <li>
                                                                                     <button
-                                                                                        disabled={currentPage === 1} onClick={() => goToGamePage(gameCurrentPage - 1)}
+                                                                                        disabled={gameCurrentPage === 1} onClick={() => goToGamePage(gameCurrentPage - 1)}
                                                                                         class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
                                                                                         aria-label="Previous"
                                                                                         >
@@ -2571,7 +2573,7 @@ const AdminUploads = ({ user, path }) => {
                                                                                 </li>
                                                                                 <li>
                                                                                     <button
-                                                                                        disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameCurrentPage + 1)}
+                                                                                        disabled={gameEndIndex >= gameData?.length} onClick={() => goToGamePage(gameCurrentPage + 1)}
                                                                                         class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
                                                                                         aria-label="Next"
                                                                                         >
@@ -2590,7 +2592,7 @@ const AdminUploads = ({ user, path }) => {
                                                                                 </li>
                                                                                 <li>
                                                                                     <button
-                                                                                        disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameData?.length / itemsPerPage)} 
+                                                                                        disabled={gameEndIndex >= gameData?.length} onClick={() => goToGamePage(gameData?.length / itemsPerPage)} 
                                                                                         class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
                                                                                         aria-label="Next"
                                                                                         >
@@ -2607,10 +2609,10 @@ const AdminUploads = ({ user, path }) => {
                                                             </div>
                                                         </div>
                                                         <div
-                                                            class="md:hidden px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
+                                                            class="md:hidden flex justify-between items-center px-2 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
                                                             >
                                                             <span class="flex items-center col-span-3">
-                                                                Showing {(gameEndIndex >= gameData?.length) ? gameData?.length : endIndex } of {gameData?.length}
+                                                                Showing {(gameEndIndex >= gameData?.length) ? gameData?.length : gameEndIndex } of {gameData?.length}
                                                             </span>
                                                             <span class="col-span-2"></span>
                                                             <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
@@ -2618,7 +2620,7 @@ const AdminUploads = ({ user, path }) => {
                                                                     <ul class="inline-flex items-center">
                                                                         <li>
                                                                             <button
-                                                                                disabled={currentPage === 1} onClick={() => goToGamePage(1)}
+                                                                                disabled={gameCurrentPage === 1} onClick={() => goToGamePage(1)}
                                                                                 class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
                                                                                 aria-label="Previous"
                                                                                 >
@@ -2630,7 +2632,7 @@ const AdminUploads = ({ user, path }) => {
                                                                         </li>
                                                                         <li>
                                                                             <button
-                                                                                disabled={currentPage === 1} onClick={() => goToGamePage(gameCurrentPage - 1)}
+                                                                                disabled={gameCurrentPage === 1} onClick={() => goToGamePage(gameCurrentPage - 1)}
                                                                                 class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
                                                                                 aria-label="Previous"
                                                                                 >
@@ -2649,7 +2651,7 @@ const AdminUploads = ({ user, path }) => {
                                                                         </li>
                                                                         <li>
                                                                             <button
-                                                                                disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameCurrentPage + 1)}
+                                                                                disabled={gameEndIndex >= gameData?.length} onClick={() => goToGamePage(gameCurrentPage + 1)}
                                                                                 class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
                                                                                 aria-label="Next"
                                                                                 >
@@ -2668,7 +2670,7 @@ const AdminUploads = ({ user, path }) => {
                                                                         </li>
                                                                         <li>
                                                                             <button
-                                                                                disabled={endIndex >= data?.length} onClick={() => goToGamePage(gameData?.length / itemsPerPage)} 
+                                                                                disabled={gameEndIndex >= gameData?.length} onClick={() => goToGamePage(gameData?.length / itemsPerPage)} 
                                                                                 class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
                                                                                 aria-label="Next"
                                                                                 >
@@ -3351,7 +3353,7 @@ const AdminUploads = ({ user, path }) => {
                                                 )
                                                 :
                                                 ((paramIndex || checkParams('blogs')) && showBlogRecord) && (
-                                                    <>
+                                                    <div className='min-w-full xs:w-auto w-72'>
                                                         <div className='flex justify-end'>
                                                             <button title="return" onClick={() => setShowBlogRecord(!showBlogRecord)} className='bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] transition-colors duration-300 ease-in-out'>
                                                                 Go back
@@ -3406,112 +3408,293 @@ const AdminUploads = ({ user, path }) => {
                                                                     />
                                                                 </div>
                                                             </div>
-                                                            <table className="min-w-full divide-y divide-gray-200 transition-all border border-[#CAD5DF]">
-                                                                <thead className='bg-[#EAF0F7] text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF]'>
-                                                                    <tr>
-                                                                        <th className="">
-                                                                            
-                                                                        </th>
-                                                                        <th className="px-6 py-3 sm:w-1/5 w-1/2 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                                            Blog Title
-                                                                        </th>
-                                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                                            Categories
-                                                                        </th>
-                                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                                            Private
-                                                                        </th>
-                                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                                            Strict
-                                                                        </th>
-                                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                                            Tags
-                                                                        </th>
-                                                                        <th className="px-6 py-3 text-left text-xs leading-4 font-medium uppercase tracking-wider">
-                                                                            Action
-                                                                        </th>
-                                                                    </tr>
-                                                                </thead>
-                                                                {
-                                                                    (blogData && blogData.length > 0) &&
-                                                                        <tbody className="bg-white divide-y divide-gray-200">
-                                                                            {
-                                                                                    blogData.slice(startIndex, endIndex).map((item, index) => {
-                                                                                        return (
-                                                                                            <tr key={index}>
-                                                                                                <td className="pl-4">
-                                                                                                    <div className="text-sm leading-5 text-gray-900">
-                                                                                                        <input 
-                                                                                                            id={`blog-default-checkbox${10+index}`}
-                                                                                                            type="checkbox" 
-                                                                                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                                                                                            checked={blogDeleteId.includes(item._id)}
-                                                                                                            onChange={() => addBlogDeleteId(index, item._id)}
-                                                                                                        />
-                                                                                                    </div>
-                                                                                                </td>
-                                                                                                <td className="sm:w-1/5 w-1/2 px-6 py-4 whitespace-no-wrap break-keep">
-                                                                                                    <div className="text-sm leading-5 text-gray-900">{item.post_title}</div>
-                                                                                                </td>
-                                                                                                <td className="px-6 py-4 whitespace-no-wrap">
-                                                                                                    <div className="text-sm leading-5 text-gray-900">
+                                            
+                                                            <div class="xs:w-full overflow-hidden rounded-lg shadow-xs">
+                                                                <div class="w-full overflow-x-auto">
+                                                                    <table class="min-w-full overflow-x-auto whitespace-no-wrap">
+                                                                        <thead>
+                                                                            <tr
+                                                                                class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border border-solid dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
+                                                                            >
+                                                                                <th class="pl-4 py-3"></th>
+                                                                                <th class="px-4 py-3">Blog Title</th>
+                                                                                <th class="px-4 py-3">Categories</th>
+                                                                                <th class="px-4 py-3">Private</th>
+                                                                                <th class="px-4 py-3">Strict</th>
+                                                                                <th class="px-4 py-3">Tags</th>
+                                                                                <th class="px-4 py-3">Action</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        {
+                                                                            (blogData && blogData.length > 0) &&
+                                                                                <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                                                                                    {
+                                                                                        blogData.slice(blogStartIndex, blogEndIndex).map((item, index) => {
+                                                                                            return (
+                                                                                                    <tr key={index} class="text-gray-700 dark:text-gray-400">
+                                                                                                    <td className='pl-4 py-3'>
+                                                                                                        <div className="text-sm leading-5 text-gray-900">
+                                                                                                            <input 
+                                                                                                                id={`blog-default-checkbox${10+index}`}
+                                                                                                                type="checkbox" 
+                                                                                                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                                                                                checked={blogDeleteId.includes(item._id)}
+                                                                                                                onChange={() => addBlogDeleteId(index, item._id)}
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                    </td>
+                                                                                                    <td class="px-4 py-3">
+                                                                                                        <div class="flex items-center text-sm">
+                                                                                                            <div>
+                                                                                                                <p class="font-semibold">{item.post_title}</p>
+                                                                                                                {/* <p class="text-xs text-gray-600 dark:text-gray-400">
+                                                                                                                {item.details.developer}
+                                                                                                                </p> */}
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                    </td>
+                                                                                                    <td class="px-4 py-3 text-xs">
                                                                                                         {item.categories}
-                                                                                                    </div>
-                                                                                                </td>
-                                                                                                <VideoTableData 
-                                                                                                    cond={item.privacy}
-                                                                                                    api_call={changeBlogPrivacyById({
-                                                                                                        id: item._id,
-                                                                                                        privacy: !item.privacy
-                                                                                                    })}
-                                                                                                />
-                                                                                                <VideoTableData 
-                                                                                                    cond={item.strict}
-                                                                                                    api_call={changeBlogStrictById({
-                                                                                                        id: item._id,
-                                                                                                        strict: !item.strict
-                                                                                                    })}
-                                                                                                />
-                                                                                                <td className="px-6 py-4 whitespace-no-wrap">
-                                                                                                    <div className="text-sm leading-5 text-gray-900 flex items-center capitalize">{item.tags.join(', ')}</div>
-                                                                                                </td>
-                                                                                                <td className="px-6 py-4 whitespace-no-wrap">
-                                                                                                    <div className="text-sm leading-5 text-gray-900 flex items-center">
-                                                                                                        <FontAwesomeIcon title="view" onClick={() => { openBlogDataModal(index, item._id) }} icon={faEye} className="px-[10px] py-[7px] bg-green-600 hover:bg-green-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
-                                                                                                        <FontAwesomeIcon title="edit" onClick={() => { editBlogMode(index); setShowBlogRecord(false) }} icon={faEdit} className="px-[10px] py-[7px] bg-yellow-600 hover:bg-yellow-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" />
-                                                                                                        <FontAwesomeIcon title="delete" onClick={() => deleteBlog(index)} icon={faTrash} className="px-[10px] py-[7px] bg-red-600 hover:bg-red-700 text-gray-100 rounded-md cursor-pointer transition-all" />
-                                                                                                    </div>
-                                                                                                </td>
-                                                                                            </tr>
-                                                                                        )
-                                                                                    })
-                                                                            }
-                                                                        </tbody>
-                                                                }
-                                                            </table>
-                                                            {
-                                                                !(blogData && blogData.length > 0) && (
-                                                                    <div className='p-4 py-8 w-full border border-[#CAD5DF]'>
-                                                                        <h2 className='text-[#5A6C7F] text-center text-lg'>No Record Found</h2>
-                                                                    </div>
-                                                                )
-                                                            }
-                                                            <div className='md:flex justify-end mt-4 hidden'>
-                                                                <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(blogEndIndex >= blogData?.length) ? blogData?.length : blogEndIndex }/{blogData?.length}</p>
-                                                                <button disabled={currentPage === 1} onClick={() => goToBlogPage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                                                <button disabled={currentPage === 1} onClick={() => goToBlogPage(blogCurrentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                                                <button disabled={endIndex >= data?.length} onClick={() => goToBlogPage(blogCurrentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                                                <button disabled={endIndex >= data?.length} onClick={() => goToBlogPage(blogData?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
+                                                                                                    </td>
+                                                                                                    <VideoTableData 
+                                                                                                        cond={item.privacy}
+                                                                                                        api_call={changeBlogPrivacyById({
+                                                                                                            id: item._id,
+                                                                                                            privacy: !item.privacy
+                                                                                                        })}
+                                                                                                    />
+                                                                                                    <VideoTableData 
+                                                                                                        cond={item.strict}
+                                                                                                        api_call={changeBlogStrictById({
+                                                                                                            id: item._id,
+                                                                                                            strict: !item.strict
+                                                                                                        })}
+                                                                                                    />
+                                                                                                    <td class="px-4 py-3 text-xs">
+                                                                                                        <div className="flex sm:flex-wrap items-center">
+                                                                                                        {
+                                                                                                            item.tags?.length > 0 &&
+                                                                                                            item.tags.map((tag, i) => {
+                                                                                                                return (
+                                                                                                                    <span key={i} class="px-2 ml-1 py-1 font-semibold text-blue-700 bg-blue-100 rounded-full dark:bg-blue-700 dark:text-blue-100">
+                                                                                                                        {tag}
+                                                                                                                    </span>
+                                                                                                                )
+                                                                                                            })
+                                                                                                        }
+                                                                                                        </div>
+                                                                                                    </td>
+                                                                                                    <td class="px-4 py-3">
+                                                                                                        <div class="flex items-center space-x-4 text-sm">
+                                                                                                            <button
+                                                                                                                onClick={() => { openBlogDataModal(index, item._id) }} 
+                                                                                                                class="flex items-center justify-between px-0 py-2 text-sm font-medium leading-5 text-blue-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
+                                                                                                                aria-label="Edit"
+                                                                                                                >
+                                                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-eye-fill" viewBox="0 0 16 16">
+                                                                                                                    <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                                                                                                                    <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+                                                                                                                </svg>
+                                                                                                            </button>
+                                                                                                            <button
+                                                                                                                onClick={() => { editBlogMode(index); setShowBlogRecord(false) }}
+                                                                                                                class="flex items-center justify-between px-0 py-2 text-sm font-medium leading-5 text-blue-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
+                                                                                                                aria-label="Edit"
+                                                                                                                >
+                                                                                                                <svg
+                                                                                                                class="w-5 h-5"
+                                                                                                                aria-hidden="true"
+                                                                                                                fill="currentColor"
+                                                                                                                viewBox="0 0 20 20"
+                                                                                                                >
+                                                                                                                <path
+                                                                                                                    d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"
+                                                                                                                    ></path>
+                                                                                                                </svg>
+                                                                                                            </button>
+                                                                                                            <button
+                                                                                                                onClick={() => deleteBlog(index)} 
+                                                                                                                class="flex items-center justify-between px-0 py-2 text-sm font-medium leading-5 text-blue-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
+                                                                                                                aria-label="Delete"
+                                                                                                                >
+                                                                                                                <svg
+                                                                                                                class="w-5 h-5"
+                                                                                                                aria-hidden="true"
+                                                                                                                fill="currentColor"
+                                                                                                                viewBox="0 0 20 20"
+                                                                                                                >
+                                                                                                                <path
+                                                                                                                    fill-rule="evenodd"
+                                                                                                                    d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z"
+                                                                                                                    clip-rule="evenodd"
+                                                                                                                    ></path>
+                                                                                                                </svg>
+                                                                                                            </button>
+                                                                                                        </div>
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            )
+                                                                                        })
+                                                                                    }
+                                                                                </tbody>
+                                                                        }
+                                                                    </table>
+                                                                </div>
+                                                                <div
+                                                                    class="md:block hidden px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
+                                                                    >
+                                                                    <span class="flex items-center col-span-3">
+                                                                        Showing {(blogEndIndex >= blogData?.length) ? blogData?.length : blogEndIndex } of {blogData?.length}
+                                                                    </span>
+                                                                    <span class="col-span-2"></span>
+                                                                    <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
+                                                                        <nav aria-label="Table navigation">
+                                                                            <ul class="inline-flex items-center">
+                                                                                <li>
+                                                                                    <button
+                                                                                        disabled={blogCurrentPage === 1} onClick={() => goToBlogPage(1)}
+                                                                                        class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+                                                                                        aria-label="Previous"
+                                                                                        >
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-left" viewBox="0 0 16 16">
+                                                                                            <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                                                                            <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                                                                        </svg>
+                                                                                    </button>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <button
+                                                                                        disabled={blogCurrentPage === 1} onClick={() => goToBlogPage(blogCurrentPage - 1)}
+                                                                                        class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+                                                                                        aria-label="Previous"
+                                                                                        >
+                                                                                        <svg
+                                                                                            class="w-4 h-4 fill-current"
+                                                                                            aria-hidden="true"
+                                                                                            viewBox="0 0 20 20"
+                                                                                            >
+                                                                                            <path
+                                                                                            d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                                                                            clip-rule="evenodd"
+                                                                                            fill-rule="evenodd"
+                                                                                            ></path>
+                                                                                        </svg>
+                                                                                    </button>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <button
+                                                                                        disabled={blogEndIndex >= blogData?.length} onClick={() => goToBlogPage(blogCurrentPage + 1)}
+                                                                                        class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+                                                                                        aria-label="Next"
+                                                                                        >
+                                                                                        <svg
+                                                                                            class="w-4 h-4 fill-current"
+                                                                                            aria-hidden="true"
+                                                                                            viewBox="0 0 20 20"
+                                                                                            >
+                                                                                            <path
+                                                                                            d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                                                            clip-rule="evenodd"
+                                                                                            fill-rule="evenodd"
+                                                                                            ></path>
+                                                                                        </svg>
+                                                                                    </button>
+                                                                                </li>
+                                                                                <li>
+                                                                                    <button
+                                                                                        disabled={blogEndIndex >= blogData?.length} onClick={() => goToBlogPage(blogData?.length / itemsPerPage)} 
+                                                                                        class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+                                                                                        aria-label="Next"
+                                                                                        >
+                                                                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
+                                                                                            <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                                                                            <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                                                                        </svg>
+                                                                                    </button>
+                                                                                </li>
+                                                                            </ul>
+                                                                        </nav>
+                                                                    </span>
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div className='md:hidden justify-end mt-4 flex'>
-                                                            <p className='mr-4 text-sm text-gray-500 py-2'>Showing Record {(blogEndIndex >= blogData?.length) ? blogData?.length : blogEndIndex }/{blogData?.length}</p>
-                                                            <button disabled={currentPage === 1} onClick={() => goToBlogPage(1)}><FontAwesomeIcon icon={faAngleDoubleLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                                            <button disabled={currentPage === 1} onClick={() => goToBlogPage(blogCurrentPage - 1)}><FontAwesomeIcon icon={faChevronLeft} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                                            <button disabled={endIndex >= data?.length} onClick={() => goToBlogPage(blogCurrentPage + 1)} ><FontAwesomeIcon icon={faChevronRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all mr-2" /></button>
-                                                            <button disabled={endIndex >= data?.length} onClick={() => goToBlogPage(blogData?.length / itemsPerPage)} ><FontAwesomeIcon icon={faAngleDoubleRight} className="px-[10px] py-[7px] bg-gray-800 hover:bg-gray-700 text-gray-100 rounded-md cursor-pointer transition-all" /></button>
+                                                        <div
+                                                            class="md:hidden flex justify-between items-center px-2 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
+                                                            >
+                                                            <span class="flex items-center col-span-3">
+                                                                Showing {(blogEndIndex >= blogData?.length) ? blogData?.length : blogEndIndex } of {blogData?.length}
+                                                            </span>
+                                                            <span class="col-span-2"></span>
+                                                            <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
+                                                                <nav aria-label="Table navigation">
+                                                                    <ul class="inline-flex items-center">
+                                                                        <li>
+                                                                            <button
+                                                                                disabled={blogCurrentPage === 1} onClick={() => goToBlogPage(1)}
+                                                                                class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+                                                                                aria-label="Previous"
+                                                                                >
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-left" viewBox="0 0 16 16">
+                                                                                    <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                                                                    <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                                                                </svg>
+                                                                            </button>
+                                                                        </li>
+                                                                        <li>
+                                                                            <button
+                                                                                disabled={blogCurrentPage === 1} onClick={() => goToBlogPage(blogCurrentPage - 1)}
+                                                                                class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+                                                                                aria-label="Previous"
+                                                                                >
+                                                                                <svg
+                                                                                    class="w-4 h-4 fill-current"
+                                                                                    aria-hidden="true"
+                                                                                    viewBox="0 0 20 20"
+                                                                                    >
+                                                                                    <path
+                                                                                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                                                                    clip-rule="evenodd"
+                                                                                    fill-rule="evenodd"
+                                                                                    ></path>
+                                                                                </svg>
+                                                                            </button>
+                                                                        </li>
+                                                                        <li>
+                                                                            <button
+                                                                                disabled={blogEndIndex >= blogData?.length} onClick={() => goToBlogPage(blogCurrentPage + 1)}
+                                                                                class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+                                                                                aria-label="Next"
+                                                                                >
+                                                                                <svg
+                                                                                    class="w-4 h-4 fill-current"
+                                                                                    aria-hidden="true"
+                                                                                    viewBox="0 0 20 20"
+                                                                                    >
+                                                                                    <path
+                                                                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                                                    clip-rule="evenodd"
+                                                                                    fill-rule="evenodd"
+                                                                                    ></path>
+                                                                                </svg>
+                                                                            </button>
+                                                                        </li>
+                                                                        <li>
+                                                                            <button
+                                                                                disabled={blogEndIndex >= blogData?.length} onClick={() => goToBlogPage(blogData?.length / itemsPerPage)} 
+                                                                                class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+                                                                                aria-label="Next"
+                                                                                >
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
+                                                                                    <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                                                                    <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                                                                </svg>
+                                                                            </button>
+                                                                        </li>
+                                                                    </ul>
+                                                                </nav>
+                                                            </span>
                                                         </div>
-                                                    </>
+                                                    </div>
                                                 )
                                             }
                                         </div>
