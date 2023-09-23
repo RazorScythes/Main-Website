@@ -1,5 +1,6 @@
 import { Card, TextWithLines } from './index'
 import { game_list } from '../constants';
+import { MotionAnimate } from 'react-motion-animate';
 
 import styles from "../style";
 
@@ -13,12 +14,26 @@ const GameList = () => {
                 {
                     game_list.map((game, index) => {
                         return (
-                            <Card
-                                key={index}
-                                image={game.image}
-                                title={game.title}
-                                link={game.link}
-                            />
+                            <MotionAnimate variant={{
+                                hidden: { 
+                                    opacity: 0,
+                                    transform: 'scale(0)'
+                                },
+                                show: {
+                                    opacity: 1,
+                                    transform: 'scale(1)',
+                                    transition: {
+                                        duration: 0.4,
+                                    }
+                                }
+                            }}>
+                                <Card
+                                    key={index}
+                                    image={game.image}
+                                    title={game.title}
+                                    link={game.link}
+                                />
+                            </MotionAnimate>
                         )
                     })
                 }

@@ -19,7 +19,7 @@ const service_single_image = [
   { src: watching_video, alt: 'Video' }
 ]
 
-const Home = ({ path }) => {
+const Home = ({ path, user }) => {
     // const count = useSelector((state) => state.counter)
     const cookies = new Cookies();
 
@@ -42,7 +42,7 @@ const Home = ({ path }) => {
             <div className={`${styles.paddingX} ${styles.flexStart}`}>
                 <div className={`${styles.boxWidth}`}>
                     <GameList />
-                    <News />
+                    <News user={user}/>
                 </div>
             </div>
 
@@ -52,7 +52,7 @@ const Home = ({ path }) => {
                     heading2 = "Games hidden from the internet"
                     description = "Hidden games on the internet can be a treasure trove for gamers looking for new challenges."
                     button_text = "View Games"
-                    button_link = "#"
+                    button_link = "/games"
                     data = {service_multiple_image}
                     reverse = {false}
                     icon_reverse = {false}
@@ -61,8 +61,8 @@ const Home = ({ path }) => {
                     heading3 = "Awesome Videos"
                     heading2 = "Watch video without interruptions"
                     description = "Hidden games on the internet can be a treasure trove for gamers looking for new challenges."
-                    button_text = "View More"
-                    button_link = "#"
+                    button_text = "View Videos"
+                    button_link = "/videos"
                     data = {service_single_image}
                     reverse = {true}
                     icon_reverse = {true}

@@ -58,7 +58,7 @@ const App = () => {
 
           <Route path='/' element={<><Navbar path={URI_PATH_HOME} /> <Outlet/></>}>
 
-              <Route index element={<Home path={URI_PATH_HOME}/>} />
+              <Route index element={<Home user={user} ath={URI_PATH_HOME}/>} />
               <Route path="games" element={<><Games user={user}/> <Footer /></>} />
               <Route path="games/:id" element={<><GamesSingle user={user}/> <Footer /></>} />
               <Route path="games/tags/:tag" element={<><GameTag user={user} /> <Footer /></>} />

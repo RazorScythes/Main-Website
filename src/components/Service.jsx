@@ -3,7 +3,6 @@ import styles from "../style";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { TextWithLines } from './index'
-
 import { toram_online, genshin_impact, minecraft, tower_of_fantasy, watching_video, image_not_found } from '../assets';
 
 const Service = ({ heading3 = "Heading 3", heading2 = "Heading 2", description = "description", button_text = "View More", button_link = "#", data = [], reverse = false, icon_reverse = false }) => {
@@ -26,13 +25,13 @@ const Service = ({ heading3 = "Heading 3", heading2 = "Heading 2", description =
                                             <>
                                                 <div className="flex items-center flex-wrap justify-center">
                                                     {data.map((image, index) => (
-                                                        <div key={index} className="relative md:w-3/6 md:h-52 sm:w-1/2 sm:h-[250px] xs:h-full w-full h-full transition duration-500 ease-in-out transform hover:scale-105">
-                                                        <img
-                                                            className="object-cover w-full h-full"
-                                                            src={image.src}
-                                                            alt={image.alt}
-                                                        />
-                                                        <div className="absolute inset-0 border-2 border-gray-900"></div>
+                                                        <div className="relative md:w-3/6 md:h-52 sm:w-1/2 sm:h-[250px] xs:h-full w-full h-full transition duration-500 ease-in-out transform hover:scale-105">
+                                                            <img
+                                                                className="object-cover w-full h-full"
+                                                                src={image.src}
+                                                                alt={image.alt}
+                                                            />
+                                                            <div className="absolute inset-0 border-2 border-gray-900"></div>
                                                         </div>
                                                     ))}
                                                 </div>
@@ -90,12 +89,12 @@ const Service = ({ heading3 = "Heading 3", heading2 = "Heading 2", description =
                                                 <div className="flex justify-center items-center flex-wrap">
                                                     {data.map((image, index) => (
                                                         <div key={index} className="relative md:w-3/6 md:h-52 sm:w-1/2 sm:h-[250px] xs:h-full w-full h-full transition duration-500 ease-in-out transform hover:scale-105">
-                                                        <img
-                                                            className="object-cover w-full h-full"
-                                                            src={image.src}
-                                                            alt={image.alt}
-                                                        />
-                                                        <div className="absolute inset-0 border-2 border-gray-900"></div>
+                                                            <img
+                                                                className="object-cover w-full h-full"
+                                                                src={image.src}
+                                                                alt={image.alt}
+                                                            />
+                                                            <div className="absolute inset-0 border-2 border-gray-900"></div>
                                                         </div>
                                                     ))}
                                                 </div>
