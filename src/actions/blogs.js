@@ -322,7 +322,7 @@ export const blogsSlice = createSlice({
         }),
         builder.addCase(addOneBlogLikes.pending, (state, action) => {
             state.notFound = false
-            state.isLoading = true
+            // state.isLoading = true
         }),
         builder.addCase(addOneBlogLikesBySearchKey.fulfilled, (state, action) => {
             state.notFound = false
@@ -332,7 +332,7 @@ export const blogsSlice = createSlice({
         }),
         builder.addCase(addOneBlogLikesBySearchKey.pending, (state, action) => {
             state.notFound = false
-            state.isLoading = true
+            // state.isLoading = true
         }),
         builder.addCase(addLatestBlogLikes.fulfilled, (state, action) => {
             state.notFound = false
