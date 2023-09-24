@@ -1,6 +1,9 @@
 import Navbar from './Navbar'
 import Hero from './Hero'
 import Login from './Login'
+import NewLogin from './NewLogin'
+import CreateAccount from './CreateAccount'
+import ForgotPassword from './ForgotPassword'
 import Register from './Register'
 import Feature from './Feature'
 import Card from './Card'
@@ -49,6 +52,9 @@ export {
     Navbar,
     Hero,
     Login,
+    NewLogin,
+    CreateAccount,
+    ForgotPassword,
     Register,
     Feature,
     Card,

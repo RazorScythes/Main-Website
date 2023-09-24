@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Navbar, Home, Games, Login, NotFound, Portfolio, Footer, Blogs, BlogsSingle, Store, Archive, ArchiveDirectory, GamesSingle, Videos, VideosSingle, Verify, VideoTag, GameTag } from './components/index'
+import { Navbar, Home, Games, Login, NewLogin, CreateAccount, ForgotPassword, NotFound, Portfolio, Footer, Blogs, BlogsSingle, Store, Archive, ArchiveDirectory, GamesSingle, Videos, VideosSingle, Verify, VideoTag, GameTag } from './components/index'
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { AccountNavbar, Overview, AccountPortfolio, AccountStore, Uploads, Settings, Manage, Logs } from './components/Account Section/index'
 import { AdminOverview, AdminPortfolio, AdminUploads, AdminSettings, AdminLogs } from './components/Admin/index';
@@ -104,8 +104,10 @@ const App = () => {
             <Route path="settings/:options" element={<><Settings user={user} settings={settings}/></>} />
             <Route path="manage" element={<><Manage user={user}/></>} />
           </Route>   */}
-
-          <Route path={`${URI_PATH_HOME}/login`} element={<Login path={URI_PATH_HOME} setUser={setUser} />} />
+          <Route path={`${URI_PATH_HOME}/oldLogin`} element={<Login path={URI_PATH_HOME} setUser={setUser} />} />
+          <Route path={`${URI_PATH_HOME}/login`} element={<NewLogin path={URI_PATH_HOME} setUser={setUser} />} />
+          <Route path={`${URI_PATH_HOME}/register`} element={<CreateAccount path={URI_PATH_HOME} setUser={setUser} />} />
+          <Route path={`${URI_PATH_HOME}/forgot_password`} element={<ForgotPassword path={URI_PATH_HOME} setUser={setUser} />} />
           <Route path={`*`} element={<NotFound/>} />
         </Routes>
       </BrowserRouter>

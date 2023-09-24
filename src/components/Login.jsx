@@ -111,7 +111,7 @@ function LoginForm({ path, setUser }) {
               </div>
     
               <div className="text-sm">
-                <a href="#" className="font-medium text-gray-800 hover:text-gray-700">
+                <a href="/forgot_password" className="font-medium text-gray-800 hover:text-gray-700">
                   Forgot your password?
                 </a>
               </div>
