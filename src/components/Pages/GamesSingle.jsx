@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { faCalendar, faInfoCircle, faImage, faDownload, faMinus, faChevronRight, faChevronLeft, faArrowRight, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
 import { useParams } from 'react-router-dom'
-import { getRelatedGames, getGameByID, countTags, getRecentGameBlog, addRecentGamingBlogLikes, clearAlert } from "../../actions/game";
+import { addOneDownload, getRelatedGames, getGameByID, countTags, getRecentGameBlog, addRecentGamingBlogLikes, clearAlert } from "../../actions/game";
 import { MotionAnimate } from 'react-motion-animate'
 import Carousel from "react-multi-carousel";
 import Cookies from 'universal-cookie';
@@ -166,6 +166,32 @@ const GamesSingle = ({ user }) => {
         }))
     }
 
+    const addDownloadCount = () => {
+        console.log("OK")
+        var duplicate = false
+        gameData?.game?.download_count.forEach(item => { if(cookies.get('uid') === item) duplicate = true })
+        if(!duplicate) {
+            dispatch(addOneDownload({
+                id: cookies.get('uid'),
+                gameId: id
+            }))
+        }
+    }
+
+    const checkDownloadLinks = () => {
+        var default_link = ''
+        var find_link = gameData?.game?.download_link.some((link) => {
+            if(link.links.length > 0) {
+                default_link = link.links[0]
+                console.log(link.links[0])
+                return true
+            }
+        })
+
+        if(find_link) { return false }
+        else { return true }
+    }
+    
     return (
         <div
             className="relative bg-cover bg-center xs:py-14 py-4"
@@ -272,7 +298,7 @@ const GamesSingle = ({ user }) => {
                                                             <p className='whitespace-pre-wrap font-bold'>Censorhip</p><span className='col-span-2'>: {gameData.game.details.censorship}</span>
                                                         </div>
                                                         <div className='grid grid-cols-3 gap-5 place-content-start mt-1'>
-                                                            <p className='whitespace-pre-wrap font-bold'>Downloaded</p><span className='col-span-2'>: {gameData.game.download_count ? gameData.game.download_count : 0}</span>
+                                                            <p className='whitespace-pre-wrap font-bold'>Downloaded</p><span className='col-span-2'>: {gameData.game.download_count.length > 0 ? gameData.game.download_count.length : 0}</span>
                                                         </div>
                                                         <div className='grid grid-cols-3 gap-5 place-content-start mt-1'>
                                                             <p className='whitespace-pre-wrap font-bold'>Ratings:</p>
@@ -363,7 +389,7 @@ const GamesSingle = ({ user }) => {
                                                                                     item.links.map((link, i) => {
                                                                                         return (
                                                                                             <>  
-                                                                                                <a href={link} target="_blank" className="text-center font-semibold text-base sm:w-1/3 xs:w-1/2 w-full mr-2 mt-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                                                                <a href={link} onClick={() => addDownloadCount()}  target="_blank" className="text-center font-semibold text-base sm:w-1/3 xs:w-1/2 w-full mr-2 mt-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
                                                                                                     <FontAwesomeIcon icon={faDownload} className="text-white mr-1"/> Link #{i+1}
                                                                                                 </a>
                                                                                             </>
@@ -378,9 +404,8 @@ const GamesSingle = ({ user }) => {
                                                     })
                                                 }
                                                 {
-                                                    !(gameData.game.download_link ) &&
-                                                        gameData.game.download_link[0].links.length > 0 &&
-                                                            <p className='mt-1 whitespace-pre-wrap'>No download link to show</p>
+                                                    checkDownloadLinks() &&
+                                                        <p className='mt-1 whitespace-pre-wrap'>No download link to show</p>
                                                 }
                                                 <hr className='mt-8 mb-4'/>
                     

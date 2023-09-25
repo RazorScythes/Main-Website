@@ -99,6 +99,22 @@ export const addRatingsRelated = createAsyncThunk('game/addRatingsRelated', asyn
     }
 })
 
+export const addOneDownload = createAsyncThunk('game/addOneDownload', async (form, thunkAPI) => {
+    try {
+        const response = await api.addOneDownload(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const countTags = createAsyncThunk('game/countTags', async (form, thunkAPI) => {
     try {
         const response = await api.countTags(form)

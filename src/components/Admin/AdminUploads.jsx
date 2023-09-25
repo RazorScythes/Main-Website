@@ -632,9 +632,17 @@ const AdminUploads = ({ user, path }) => {
     }
 
     const deleteDownloadLinkItem = (e, id, parent_id) => {
-        let arr = [...gameForm.download_link]
-        arr[parent_id].links.splice(id, 1)
-        setGameForm({...gameForm, download_link: [...arr]})
+        const updatedDownloadLinks = gameForm.download_link.map((item, index) => {
+            if (index === parent_id) {
+                return {
+                    ...item,
+                    links: item.links.filter((link, linkIndex) => linkIndex !== id)
+                };
+            }
+            return item;
+        });
+    
+        setGameForm({ ...gameForm, download_link: updatedDownloadLinks });
     }
 
     const handleDownloadLinkItemChange = (e) => {
@@ -2144,7 +2152,7 @@ const AdminUploads = ({ user, path }) => {
                                                                                 gameForm.download_link.map((item, i) => {
                                                                                     return (
                                                                                         <div key={i} className='w-full border-2 border-dashed border-gray-700 p-2 mb-2'>
-                                                                                            <div key={i} className='w-full flex flex-row p-2 py-3 bg-gray-800 mb-1'>
+                                                                                            <div className='w-full flex flex-row p-2 py-3 bg-gray-800 mb-1'>
                                                                                                 <div className='w-1/2 flex flex-col'>
                                                                                                     <div className='w-full flex flex-row items-center'>
                                                                                                         <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold'>{item.storage_name}</p>
@@ -2177,10 +2185,10 @@ const AdminUploads = ({ user, path }) => {
                                                                                                 gameForm.download_link[i].links.length > 0 &&
                                                                                                     gameForm.download_link[i].links.map((data, id) => {
                                                                                                         return(
-                                                                                                            <div key={i} className='w-full flex flex-row p-2 py-3 mb-1 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF]'>
+                                                                                                            <div key={id} className='w-full flex flex-row p-2 py-3 mb-1 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF]'>
                                                                                                                 <div className='w-1/2 flex flex-col'>
                                                                                                                     <div className='w-full flex flex-row items-center'>
-                                                                                                                        <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold break-all'>{data}</p>
+                                                                                                                        <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='text-sm font-semibold break-all'>{data}</p>
                                                                                                                     </div>
                                                                                                                 </div> 
                                                                                                                 <div className='w-1/2 text-right'>

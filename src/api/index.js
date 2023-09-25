@@ -141,6 +141,7 @@ export const getGameByDeveloper                         = (formData) => User_API
 export const getGameBySearchKey                         = (formData) => User_API.post('/game/getGameBySearchKey', formData)
 export const getRecentGameBlog                          = (formData) => User_API.post('/game/getRecentGameBlog', formData)
 export const addRecentGamingBlogLikes                   = (formData) => User_API.post('/game/addRecentGamingBlogLikes', formData)
+export const addOneDownload                             = (formData) => User_API.post('/game/addOneDownload', formData)
 
 /*
     Blogs

@@ -3,7 +3,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addRatings, addRatingsRelated } from "../../actions/game";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faDownload, faLinkSlash } from "@fortawesome/free-solid-svg-icons";
+import { addOneDownload } from "../../actions/game";
 import { Link } from 'react-router-dom';
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies();
 
 const divideAndScale = (ratings) => {
     const totalRating = ratings.reduce((sum, item) => sum + item.rating, 0);
@@ -86,6 +90,17 @@ const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings
         return <span>{text}</span>;
     }
 
+    const addDownloadCount = () => {
+        var duplicate = false
+        downloads.forEach(item => { if(cookies.get('uid') === item) duplicate = true })
+        if(!duplicate) {
+            dispatch(addOneDownload({
+                id: cookies.get('uid'),
+                gameId: id
+            }))
+        }
+    }
+
     return (
         <div className='xs:w-full w-64 mx-auto bg-gray-800 rounded-sm shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)]'>
             <img
@@ -116,7 +131,7 @@ const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings
                     <span className='ml-1'>({ratingNumber})</span>
                 </div>
                 <div className='grid grid-cols-2 gap-2 mt-2'>
-                    <p className='flex items-center text-sm'>{downloads} Download{downloads > 1 && 's'}</p>
+                    <p className='flex items-center text-sm'>{downloads.length > 0 ? downloads.length : 0} Download{downloads.length > 1 && 's'}</p>
                 </div>
                 <div className='grid grid-cols-3 gap-2 mt-2'>
                     <Link to={`/games/${id}`} className='col-span-2 '>
@@ -131,7 +146,7 @@ const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings
                             </button>
                         :
                             <a href={downloadLink ? downloadLink : "#"} target='_blank'>
-                                <button className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
+                                <button onClick={() => addDownloadCount()} className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
                                     <FontAwesomeIcon icon={faDownload} className="text-white"/>
                                 </button>
                             </a>
