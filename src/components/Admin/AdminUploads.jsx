@@ -819,7 +819,6 @@ const AdminUploads = ({ user, path }) => {
     }
 
     const editGameMode = (index) =>{
-        console.log(gameData[index])
         window.scrollTo(0, 150)
         setCurrentGameIndex(index)
         setGameForm({
@@ -2259,7 +2258,6 @@ const AdminUploads = ({ user, path }) => {
                                                                 {
                                                                     gameForm.access_key?.length > 0 &&
                                                                         gameForm.access_key.map((item, i) => {
-                                                                            console.log(item)
                                                                             return(
                                                                                 <div key={i} className='grid grid-cols-1 items-center gap-4 place-content-start mb-1'>
                                                                                     <div class="flex justify-between relative mt-2 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF] px-4 py-2 mr-2 xs:text-sm text-sm font-semibold transition-all">
