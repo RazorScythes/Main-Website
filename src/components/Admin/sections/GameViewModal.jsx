@@ -89,7 +89,7 @@ const GameViewModal = ({ gameModal, setGameModal, data }) => {
                                                 <p className='whitespace-pre-wrap font-bold'>Censorhip</p><span className='col-span-2'>: {data.details.censorship}</span>
                                             </div>
                                             <div className='grid grid-cols-3 gap-5 place-content-start mt-1'>
-                                                <p className='whitespace-pre-wrap font-bold'>Downloaded</p><span className='col-span-2'>: {data.download_count ? data.download_count : 0}</span>
+                                                <p className='whitespace-pre-wrap font-bold'>Downloaded</p><span className='col-span-2'>: {data.download_count?.length > 0 ? data.download_count.length : 0}</span>
                                             </div>
                                             <div className='grid grid-cols-3 gap-5 place-content-start mt-1'>
                                                 <p className='whitespace-pre-wrap font-bold'>Ratings:</p>

@@ -17,6 +17,19 @@ import styles from '../../style'
 
 import AdminNavbar from './AdminNavbar';
 import AdminSidebar from './AdminSidebar';
+import { faCopy } from '@fortawesome/free-regular-svg-icons';
+
+function generateRandomID(length = 20) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+  
+    for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      result += characters.charAt(randomIndex);
+    }
+  
+    return result;
+}
 
 const AdminUploads = ({ user, path }) => {
     const dispatch = useDispatch()
@@ -497,6 +510,7 @@ const AdminUploads = ({ user, path }) => {
     const [gameSubmitted, setGameSubmitted] = useState(false)
     const [gameData, setGameData] = useState([])
     const [gameForm, setGameForm] = useState({
+        _id: '',
         featured_image: '',
         title: '',
         description: '',
@@ -512,6 +526,7 @@ const AdminUploads = ({ user, path }) => {
         },
         leave_uploader_message: '',
         gallery: [],
+        access_key: [],
         download_link: [],
         guide_link: '',
         password: ''
@@ -537,6 +552,7 @@ const AdminUploads = ({ user, path }) => {
         }
         setGameTags([])
         setGameForm({
+            _id: '',
             featured_image: '',
             title: '',
             description: '',
@@ -552,6 +568,7 @@ const AdminUploads = ({ user, path }) => {
             },
             leave_uploader_message: '',
             gallery: [],
+            access_key: [],
             download_link: [],
             guide_link: '',
             password: ''
@@ -608,6 +625,24 @@ const AdminUploads = ({ user, path }) => {
         setInput({ ...input, storage_name: 'Google Drive'})
     }
     
+    const addPrivateKey = () => {
+        setGameForm({ ...gameForm, access_key: gameForm.access_key.concat({key: generateRandomID(), download_limit: 1, user_downloaded: []})})
+    }
+
+    const handlePrivateKeyValueChange = (e, index) => {
+        let arr = [...gameForm.access_key];
+        arr[index] = { ...arr[index], download_limit: e.target.value };
+        setGameForm({ ...gameForm, access_key: arr });
+    }
+
+    const deletePrivateKey = (e) => {
+        if(confirm("Do you want to remove this access key?")) {
+            let arr = [...gameForm.access_key]
+            arr.splice(e.currentTarget.id, 1)
+            setGameForm({...gameForm, access_key: [...arr]})
+        }
+    }
+
     const deleteDownloadLink = (e) => {
         let arr = [...gameForm.download_link]
         arr.splice(e.currentTarget.id, 1)
@@ -686,6 +721,7 @@ const AdminUploads = ({ user, path }) => {
                     upload_date: gameForm.details.upload_date,
                     platform: gameForm.details.platform
                 },
+                access_key: gameForm.access_key,
                 leave_uploader_message: gameForm.leave_uploader_message,
                 gallery: gameForm.gallery,
                 download_link: gameForm.download_link,
@@ -783,9 +819,11 @@ const AdminUploads = ({ user, path }) => {
     }
 
     const editGameMode = (index) =>{
+        console.log(gameData[index])
         window.scrollTo(0, 150)
         setCurrentGameIndex(index)
         setGameForm({
+            _id: gameData[index]._id,
             featured_image: gameData[index].featured_image,
             title: gameData[index].title,
             description: gameData[index].description,
@@ -799,6 +837,7 @@ const AdminUploads = ({ user, path }) => {
                 upload_date: gameData[index].details.upload_date,
                 platform: gameData[index].details.platform
             },
+            access_key: gameData[index].access_key,
             leave_uploader_message: gameData[index].leave_uploader_message,
             gallery: gameData[index].gallery,
             download_link: gameData[index].download_link,
@@ -825,6 +864,7 @@ const AdminUploads = ({ user, path }) => {
                 upload_date: formattedDate,
                 platform: 'Desktop'
             },
+            access_key: [],
             leave_uploader_message: '',
             gallery: [],
             download_link: [],
@@ -2204,6 +2244,38 @@ const AdminUploads = ({ user, path }) => {
                                                                             }
                                                                     </div>
                                                                 </div>
+                                                                
+                                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                                    <div className='flex flex-col'>
+                                                                        <label className='font-semibold'> Private Access Key: </label>
+                                                                        <div className='flex flex-row mt-2'>
+                                                                            <div className='flex flex-row items-end'>
+                                                                                <button onClick={addPrivateKey} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Generate Key</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                
+                                                                {
+                                                                    gameForm.access_key?.length > 0 &&
+                                                                        gameForm.access_key.map((item, i) => {
+                                                                            console.log(item)
+                                                                            return(
+                                                                                <div key={i} className='grid grid-cols-1 items-center gap-4 place-content-start mb-1'>
+                                                                                    <div class="flex justify-between relative mt-2 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF] px-4 py-2 mr-2 xs:text-sm text-sm font-semibold transition-all">
+                                                                                        <div>
+                                                                                            <FontAwesomeIcon onClick={() => {navigator.clipboard.writeText(`${window.location.origin}/games/${gameForm._id}?access_key=${item.key}`)}} icon={faCopy} className="mr-2 w-4 h-4 cursor-pointer"/>
+                                                                                            Access Key #{i+1}: {item.key}
+                                                                                        </div>
+                                                                                        <div className="">
+                                                                                            Limit: <input className="w-12" type="number" value={item.download_limit} onChange={(e) => handlePrivateKeyValueChange(e, i)}/>
+                                                                                            <FontAwesomeIcon id={i} onClick={deletePrivateKey} icon={faTrash} className="ml-2 w-4 h-4 cursor-pointer"/>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                </div>
+                                                                            )
+                                                                        })
+                                                                }
 
                                                                 <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
                                                                     <h2 className='text-2xl font-bold text-gray-800 my-4'>Game Details</h2>        
@@ -2429,6 +2501,7 @@ const AdminUploads = ({ user, path }) => {
                                                                                 <th class="px-4 py-3">Game Title</th>
                                                                                 <th class="px-4 py-3">Private</th>
                                                                                 <th class="px-4 py-3">Strict</th>
+                                                                                <th class="px-4 py-3">Key Generated</th>
                                                                                 <th class="px-4 py-3">Version</th>
                                                                                 <th class="px-4 py-3">Platform</th>
                                                                                 <th class="px-4 py-3">Action</th>
@@ -2476,6 +2549,9 @@ const AdminUploads = ({ user, path }) => {
                                                                                                             strict: !item.strict
                                                                                                         })}
                                                                                                     />
+                                                                                                    <td class="px-4 py-3 text-xs">
+                                                                                                        {item.access_key?.length ? item.access_key.length : 0}
+                                                                                                    </td>
                                                                                                     <td class="px-4 py-3 text-xs">
                                                                                                         {item.details.latest_version}
                                                                                                     </td>
