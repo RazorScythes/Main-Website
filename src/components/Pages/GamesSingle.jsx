@@ -3,8 +3,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from 'react-redux'
 import { faCalendar, faInfoCircle, faImage, faDownload, faMinus, faChevronRight, faChevronLeft, faArrowRight, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
-import { useParams } from 'react-router-dom'
-import { addOneDownload, getRelatedGames, getGameByID, countTags, getRecentGameBlog, addRecentGamingBlogLikes, clearAlert } from "../../actions/game";
+import { useParams, useSearchParams } from 'react-router-dom'
+import { addOneDownload, getRelatedGames, updateGameAccessKey, getGameByID, countTags, getRecentGameBlog, addRecentGamingBlogLikes, clearAlert } from "../../actions/game";
 import { MotionAnimate } from 'react-motion-animate'
 import Carousel from "react-multi-carousel";
 import Cookies from 'universal-cookie';
@@ -70,6 +70,8 @@ const GamesSingle = ({ user }) => {
     const tagsList = useSelector((state) => state.game.tagsCount)
     const recentGameBlog = useSelector((state) => state.game.recentGameBlog)
 
+    const [searchParams, setSearchParams] = useSearchParams();
+
     const [active, setActive] = useState(0)
     const [relatedGames, setRelatedGames] = useState([])
     const [gameData, setGameData] = useState({})
@@ -79,6 +81,19 @@ const GamesSingle = ({ user }) => {
     const [fixedRating, setFixedRating] = useState(0)
     const [ratingNumber, setRatingNumber] = useState(0)
 
+    const access_key = searchParams.get('access_key')
+
+    useEffect(() => {
+        if(forbiden === 'access_granted') {
+            dispatch(updateGameAccessKey({ 
+                id: user ? user.result?._id : '', 
+                gameId: id,
+                access_key: access_key,
+                cookie_id: cookies.get('uid')
+            }))
+        }
+    }, [forbiden])
+
     useEffect(() => {
         setGameData({})
         dispatch(getRelatedGames({
@@ -87,7 +102,9 @@ const GamesSingle = ({ user }) => {
         }))
         dispatch(getGameByID({ 
             id: user ? user.result?._id : '', 
-            gameId: id 
+            gameId: id,
+            access_key: access_key,
+            cookie_id: cookies.get('uid')
         }))
         dispatch(getRecentGameBlog({ 
             id: user ? user.result?._id : '', 
@@ -219,6 +236,38 @@ const GamesSingle = ({ user }) => {
                                                 <div className="flex flex-col justify-center items-center">
                                                     <h1 className="text-white text-4xl font-bold mb-4 text-center">Restricted Game</h1>
                                                     <p className="text-white text-lg mb-8 text-center">You don't have permission to view this games.</p>
+                                                    <a href="/games" className="text-white underline hover:text-gray-200">Go back to games page</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                :
+                                forbiden === 'access_limit' ?
+                                    <div
+                                        className="relative bg-cover bg-center py-20"
+                                        style={{ backgroundColor: "#111827" }}
+                                    >   
+                                        <div className={`${styles.marginX} ${styles.flexCenter}`}>
+                                            <div className={`${styles.boxWidthEx}`}>
+                                                <div className="flex flex-col justify-center items-center">
+                                                    <h1 className="text-white text-4xl font-bold mb-4 text-center">Access Key Unavailable</h1>
+                                                    <p className="text-white text-lg mb-8 text-center">Access key has been expired or has reach limit.</p>
+                                                    <a href="/games" className="text-white underline hover:text-gray-200">Go back to games page</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                :
+                                forbiden === 'access_invalid' ?
+                                    <div
+                                        className="relative bg-cover bg-center py-20"
+                                        style={{ backgroundColor: "#111827" }}
+                                    >   
+                                        <div className={`${styles.marginX} ${styles.flexCenter}`}>
+                                            <div className={`${styles.boxWidthEx}`}>
+                                                <div className="flex flex-col justify-center items-center">
+                                                    <h1 className="text-white text-4xl font-bold mb-4 text-center">Invalid Access Key</h1>
+                                                    <p className="text-white text-lg mb-8 text-center">Please contact the owner if this is a misunderstanding.</p>
                                                     <a href="/games" className="text-white underline hover:text-gray-200">Go back to games page</a>
                                                 </div>
                                             </div>

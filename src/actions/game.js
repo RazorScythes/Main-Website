@@ -115,6 +115,22 @@ export const addOneDownload = createAsyncThunk('game/addOneDownload', async (for
     }
 })
 
+export const updateGameAccessKey = createAsyncThunk('game/updateGameAccessKey', async (form, thunkAPI) => {
+    try {
+        const response = await api.updateGameAccessKey(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const countTags = createAsyncThunk('game/countTags', async (form, thunkAPI) => {
     try {
         const response = await api.countTags(form)
@@ -220,6 +236,7 @@ export const gameSlice = createSlice({
             state.data = action.payload.data.result
             state.error = ''
             state.isLoading = false
+            state.forbiden = action.payload.data.forbiden
         }),
         builder.addCase(getGameByID.pending, (state, action) => {
             state.notFound = false
