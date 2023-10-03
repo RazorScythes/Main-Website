@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faClose } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faClose, faCopy } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from 'react-redux'
 
-const VideoTableData = ({ cond, api_call, data }) => {
+const VideoTableData = ({ cond, api_call, id = '', access_key = '', type = '' }) => {
     const dispatch = useDispatch()
 
     const [submitted, setSubmitted] = useState(false)
@@ -27,7 +27,12 @@ const VideoTableData = ({ cond, api_call, data }) => {
                 {
                     !submitted ?
                         cond ?
+                        <div className='flex items-center'>
                             <FontAwesomeIcon onClick={() => handleChange()} icon={faCheck} className="cursor-pointer px-[10px] py-[7px] text-base text-green-700 rounded-md transition-all" />
+                            {
+                               type && <FontAwesomeIcon className="text-blue-600 mr-2 w-4 h-4 cursor-pointer" title="Copy link" onClick={() => {navigator.clipboard.writeText(`${window.location.origin}/${type}/${id}?access_key=${access_key}`)}} icon={faCopy}/>
+                            }
+                        </div>
                         :
                             <FontAwesomeIcon onClick={() => handleChange()} icon={faClose} className="cursor-pointer px-[10px] py-[7px] text-base text-red-700 rounded-md transition-all" />
                     :

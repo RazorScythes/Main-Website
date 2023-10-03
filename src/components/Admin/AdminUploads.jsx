@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Header } from './index'
 import { Link, useSearchParams } from 'react-router-dom'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck, faClose, faEdit, faTrash, faVideoCamera, faChevronLeft, faChevronRight, faAngleDoubleLeft, faAngleDoubleRight, faEye, faArrowUp, faArrowDown } from "@fortawesome/free-solid-svg-icons";
+import { faCheck, faClose, faEdit, faTrash, faVideoCamera, faChevronLeft, faChevronRight, faAngleDoubleLeft, faAngleDoubleRight, faEye, faArrowUp, faArrowDown, faChevronDown } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { changeGamePrivacyById, changeGameStrictById, bulkRemoveBlog, removeBlog, getUserVideo, getUserGame, getUserBlog, uploadVideo, clearAlert, bulkRemoveGame, removeGame, editVideo, editGame, editBlog, removeVideo, changePrivacyById, changeStrictById, changeBlogPrivacyById, changeBlogStrictById, changeDownloadById, bulkRemoveVideo, uploadGame, uploadBlog } from "../../actions/uploads";
 import axios from 'axios';
@@ -1699,7 +1699,9 @@ const AdminUploads = ({ user, path }) => {
                                                                                 <th class="pl-4 py-3"></th>
                                                                                 <th class="px-4 py-3">Title</th>
                                                                                 <th class="px-4 py-3">Preview</th>
-                                                                                <th class="px-4 py-3">Private</th>
+                                                                                <th class="px-4 py-3">Private 
+                                                                                    {/* <FontAwesomeIcon onClick={() => { setVideoRecord(item.link); setRecordOpenModal(true) }} icon={faChevronDown} className="mr-2" /> */}
+                                                                                </th>
                                                                                 <th class="px-4 py-3">Strict</th>
                                                                                 <th class="px-4 py-3">Download</th>
                                                                                 <th class="px-4 py-3">Tags</th>
@@ -1745,6 +1747,9 @@ const AdminUploads = ({ user, path }) => {
                                                                                                             id: item._id,
                                                                                                             privacy: !item.privacy
                                                                                                         })}
+                                                                                                        type="videos"
+                                                                                                        id={item._id}
+                                                                                                        access_key={item.access_key}
                                                                                                     />
                                                                                                     <VideoTableData 
                                                                                                         cond={item.strict}

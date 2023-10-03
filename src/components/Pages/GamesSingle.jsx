@@ -84,7 +84,6 @@ const GamesSingle = ({ user }) => {
     const access_key = searchParams.get('access_key')
 
     useEffect(() => {
-        console.log(forbiden)
         if(forbiden === 'access_granted') {
             dispatch(updateGameAccessKey({ 
                 id: user ? user.result?._id : '', 

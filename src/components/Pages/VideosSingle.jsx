@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEllipsisV, faThumbsUp, faThumbsDown, faAdd, faDownload, faArrowRightRotate, faClock, faCalendar, faTrash, faLinkSlash, faExclamationTriangle, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { addOneLikes, addOneDislikes, addOneViews, getVideoByID, getComments, getRelatedVideos, uploadComment, removeComment, addToWatchLater, clearAlert } from "../../actions/video";
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { MotionAnimate } from 'react-motion-animate'
 import { Page_not_found } from '../../assets';
 import loading from '../../assets/loading.gif'
@@ -69,8 +69,11 @@ const VideosSingle = ({ user }) => {
     const [isAnimatingTD, setIsAnimatingTD] = useState(false)
     const [openDirectory, setOpenDirectory] = useState(false)
 
+    const [searchParams, setSearchParams] = useSearchParams();
+    const access_key = searchParams.get('access_key')
+
     useEffect(() => {
-        dispatch(getVideoByID({ id: user ? user.result?._id : '', videoId: id }))
+        dispatch(getVideoByID({ id: user ? user.result?._id : '', videoId: id, access_key: access_key, }))
         dispatch(getComments({ videoId: id }))
         dispatch(getRelatedVideos({ videoId: id, id: user ? user.result?._id : '' }))
         setData({})
@@ -311,6 +314,22 @@ const VideosSingle = ({ user }) => {
                                     </div>
                                 </div>
                             :
+                            forbiden === 'access_invalid' ?
+                                    <div
+                                        className="relative bg-cover bg-center py-20"
+                                        style={{ backgroundColor: "#111827" }}
+                                    >   
+                                        <div className={`${styles.marginX} ${styles.flexCenter}`}>
+                                            <div className={`${styles.boxWidthEx}`}>
+                                                <div className="flex flex-col justify-center items-center">
+                                                    <h1 className="text-white text-4xl font-bold mb-4 text-center">Invalid Access Key</h1>
+                                                    <p className="text-white text-lg mb-8 text-center">Please contact the owner if this is a misunderstanding.</p>
+                                                    <a href="/videos" className="text-white underline hover:text-gray-200">Go back to videos page</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                            :
                             notFound ?
                                 <div
                                     className="relative bg-cover bg-center py-20"
@@ -327,6 +346,7 @@ const VideosSingle = ({ user }) => {
                                     </div>
                                 </div>
                             :
+                            Object.keys(video).length !== 0 ?
                                 <div className="grid md:grid-cols-3 grid-cols-1 gap-4">
                                     <div className="w-full md:col-span-2 text-white">
                                         <p className='mb-4 font-semibold xs:text-3xl text-2xl break-all'>{ data && data.video ? data.video.title : '' }</p>
@@ -684,6 +704,21 @@ const VideosSingle = ({ user }) => {
                                         </div>
                                     </div>
                                 </div>
+                            :
+                            <div
+                                    className="relative bg-cover bg-center py-20"
+                                    style={{ backgroundColor: "#111827" }}
+                                >   
+                                <div className={`${styles.marginX} ${styles.flexCenter}`}>
+                                    <div className={`${styles.boxWidthEx}`}>
+                                        <div className="flex flex-col justify-center items-center">
+                                            <h1 className="text-white text-4xl font-bold mb-4 text-center opacity-0">Video</h1>
+                                            <p className="text-white text-lg mb-8 text-center opacity-0">video</p>
+                                            <a href="/videos" className="text-white underline hover:text-gray-200 opacity-0">video</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         }
                         
                     </div>
