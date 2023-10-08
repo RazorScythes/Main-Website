@@ -462,6 +462,7 @@ const AdminSettings = ({ user, settings, path }) => {
         portfolio: false,
         pages: false,
         uploads: false,
+        manage: false,
     })
     const [isOpen, setIsOpen] = useState(false)
 

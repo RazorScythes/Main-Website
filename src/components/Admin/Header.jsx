@@ -1,6 +1,7 @@
 import React from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
+import CountUp from 'react-countup';
 import styles from '../../style'
 const Header = ({ heading, description, button_text, show_button = true, button_secondary_text, button_link, api_call, setSubmitted, submitted, data = [], grid_type = 'half' }) => {
 
@@ -34,7 +35,7 @@ const Header = ({ heading, description, button_text, show_button = true, button_
                                         </div>
                                         <div>
                                             <p class="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">User Visits</p>
-                                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">{item.value}</p>
+                                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200"><CountUp end={item.value} duation={5}/></p>
                                         </div>
                                     </div>
                                     :
@@ -47,7 +48,7 @@ const Header = ({ heading, description, button_text, show_button = true, button_
                                         </div>
                                         <div>
                                             <p class="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">Form Submitted</p>
-                                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">{item.value}</p>
+                                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200"><CountUp end={item.value} duation={5}/></p>
                                         </div>
                                     </div>
                                     :
@@ -60,7 +61,7 @@ const Header = ({ heading, description, button_text, show_button = true, button_
                                         </div>
                                         <div>
                                             <p class="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">Uploaded Videos</p>
-                                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">{item.value}</p>
+                                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200"><CountUp end={item.value} duation={5}/></p>
                                         </div>
                                     </div>
                                     :
@@ -74,7 +75,7 @@ const Header = ({ heading, description, button_text, show_button = true, button_
                                         </div>
                                         <div>
                                             <p class="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">Uploaded Games</p>
-                                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">{item.value}</p>
+                                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200"><CountUp end={item.value} duation={5}/></p>
                                         </div>
                                     </div>
                                     :
@@ -88,7 +89,7 @@ const Header = ({ heading, description, button_text, show_button = true, button_
                                         </div>
                                         <div>
                                             <p class="mb-1 text-sm font-medium text-gray-600 dark:text-gray-400">Uploaded Blogs</p>
-                                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200">{item.value}</p>
+                                            <p class="text-lg font-semibold text-gray-700 dark:text-gray-200"><CountUp end={item.value} duation={5}/></p>
                                         </div>
                                     </div>
                                 }
