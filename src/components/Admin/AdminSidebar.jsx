@@ -66,7 +66,7 @@ const AdminSidebar = ({ isOpen, setIsOpen, open, setOpen, path }) => {
     }
 
     return (
-        <aside style={{animation: !isOpen ? "slide-to-right 0.2s" : "slide-out-left 0.2s", left: !isOpen ? '0px' : '-400px'}} className={`absolute md:relative scrollbar-hide z-20 w-full xs:w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0 transition-all`}>
+        <aside style={{animation: !isOpen ? "slide-to-right 0.2s" : "slide-out-left 0.2s", left: !isOpen ? '0px' : '-400px'}} className={`absolute md:relative scrollbar-hide z-20 w-full xs:w-64 overflow-y-auto bg-white dark:bg-gray-800 md:block flex-shrink-0 transition-all h-screen`}>
             <div className="py-4 text-gray-500 dark:text-gray-400">
                 <div className='flex justify-between items-start'>
                     <Link className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" to="/">

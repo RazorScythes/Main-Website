@@ -13,7 +13,8 @@ const initialState = {
     strict: false,
     verified: false,
     verification_status: '',
-    tokenResult: {}
+    tokenResult: {},
+    users: []
 }
 
 export const userToken = createAsyncThunk('settings/userToken', async (form, thunkAPI) => {
@@ -128,10 +129,40 @@ export const verifyEmail = createAsyncThunk('settings/verifyEmail', async (form,
     }
 })
 
+export const getAllUsers = createAsyncThunk('settings/getAllUsers', async (form, thunkAPI) => {
+    try {
+        const response = await api.getAllUsers(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const settingsSlice = createSlice({
     name: 'settings',
     initialState,
     extraReducers: (builder) => {
+        builder.addCase(getAllUsers.fulfilled, (state, action) => {
+            state.users = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+            state.notFound = false
+        }),
+        builder.addCase(getAllUsers.pending, (state, action) => {
+            state.isLoading = true
+        }),
+        builder.addCase(getAllUsers.rejected, (state, action) => {
+            state.message = action.payload.message
+            state.notFound = true;
+            state.isLoading = false
+        }),
         builder.addCase(userToken.fulfilled, (state, action) => {
             localStorage.setItem('profile', JSON.stringify({ ...action.payload?.data }));
             state.tokenResult = {...action.payload?.data}

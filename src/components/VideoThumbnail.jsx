@@ -28,7 +28,7 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
 
   const [isOpen, setIsOpen] = useState(false)
   const [openDirectory, setOpenDirectory] = useState(false)
-
+ 
   useEffect(() => { 
     if(index !== active) setIsOpen(false)
   }, [active])

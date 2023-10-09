@@ -4,8 +4,10 @@ import { faCheck, faClose, faEdit, faTrash, faVideoCamera, faChevronLeft, faChev
 import { Header } from './index'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from "react-router-dom";
+import { getAllUsers } from '../../actions/settings';
+import TableMenu from './TableMenu';
 import styles from '../../style'
-
+import Avatar from '../../assets/avatar.png'
 import AdminNavbar from './AdminNavbar';
 import AdminSidebar from './AdminSidebar';
 
@@ -13,6 +15,12 @@ const AdminManage = ({ path, user }) => {
 
     const dispatch = useDispatch()
     const navigate  = useNavigate()
+
+    const profiles = useSelector((state) => state.settings.users)
+    const [deleteId, setDeleteId] = useState([])
+    const [searchUser, setSearchUser] = useState('')
+    const [users, setUsers] = useState([])
+    const [menu, setMenu] = useState(0)
 
     const [open, setOpen] = useState({
         portfolio: false,
@@ -23,14 +31,30 @@ const AdminManage = ({ path, user }) => {
     const [isOpen, setIsOpen] = useState(false)
 
     useEffect(() => {
+        if(profiles && profiles.length > 0){
+            if(searchUser.length > 0) {
+                const keyword = searchUser.toLowerCase();
+                const filteredData = profiles.filter((item) =>
+                    Object.values(item).some((value) =>
+                        String(value).toLowerCase().includes(keyword)
+                    )
+                );
+                setUsers(filteredData);
+            }
+            else {
+                setUsers(profiles)
+            }
+        }
+    }, [profiles])
+
+    useEffect(() => {
         if(!user) navigate(`/`)
         // setOpen({...open, manage: true})
+        dispatch(getAllUsers( {
+            id: user ? user.result?._id : '',
+            role: user ? user.result?.role : '',
+        }))
     }, [])
-
-    const [deleteId, setDeleteId] = useState([])
-    const [searchUser, setSearchUser] = useState('')
-    const [users, setUsers] = useState([{test: 'x'}, {test: 'x'}])
-    const [menu, setMenu] = useState(0)
 
     const itemsPerPage = 10; // Number of items per page
 
@@ -65,13 +89,13 @@ const AdminManage = ({ path, user }) => {
     const handleUserSearch = (event) => {
         const keyword = event.target.value.toLowerCase();
         setSearchUser(event.target.value);
-    
-        const filteredData = users.filter((item) =>
-          Object.values(item).some((value) =>
-            String(value).toLowerCase().includes(keyword)
-          )
-        );
 
+        const filteredData = profiles.filter((item) =>
+            Object.values(item).some((value) =>
+                String(value).toLowerCase().includes(keyword)
+            )
+        );
+   
         setCurrentPage(1)
         setUsers(filteredData);
     };
@@ -79,41 +103,6 @@ const AdminManage = ({ path, user }) => {
     const goToPage = (page) => {
         setCurrentPage(page);
     };
-
-    const TableMenu = ({ index, menu, setMenu }) => {
-        const [open, setOpen] = useState(false)
-
-        useEffect(() => { 
-            if(index !== menu) setOpen(false)
-            else setOpen(true)
-          }, [menu])
-        
-        return (
-            <div className='relative '>
-                <div class="flex items-center space-x-4 text-sm">
-                    <button
-                        onClick={() => { setOpen(!open); setMenu(index) }}
-                        class="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-blue-600 rounded-md dark:text-gray-400 focus:outline-none focus:shadow-outline-gray"
-                        aria-label="Edit"
-                        >
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-three-dots-vertical" viewBox="0 0 16 16">
-                            <path d="M9.5 13a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0zm0-5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z"/>
-                        </svg>
-                    </button>
-                </div>
-                {
-                    open && (index === menu) &&
-                    <div className='absolute z-20 lg:right-24 right-10 bottom-[-105px] border border-solid border-gray-300 w-24 bg-[#F9FAFB]'>
-                        <ul className='font-semibold'>
-                            <li className='px-4 py-2 cursor-pointer'>Edit</li>
-                            <li className='px-4 py-2 cursor-pointer'>Delete</li>
-                            <li className='px-4 py-2 cursor-pointer'>Manage</li>
-                        </ul>
-                    </div>
-                }
-            </div>
-        )
-    }
 
     return (
         <div className="flex h-screen bg-gray-50 dark:bg-gray-900 relative">
@@ -195,10 +184,8 @@ const AdminManage = ({ path, user }) => {
                                                                             <tr
                                                                                 class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border border-solid dark:border-gray-700 bg-gray-50 dark:text-gray-400 dark:bg-gray-800"
                                                                             >
-                                                                                <th class="pl-4 py-3"></th>
                                                                                 <th class="px-4 py-3">Name</th>
                                                                                 <th class="px-4 py-3">Username</th>
-                                                                                <th class="px-4 py-3">Role</th>
                                                                                 <th class="px-4 py-3">Verified</th>
                                                                                 <th class="px-4 py-3">Contribution</th>
                                                                                 <th class="px-4 py-3">Action</th>
@@ -211,42 +198,45 @@ const AdminManage = ({ path, user }) => {
                                                                                         users.slice(startIndex, endIndex).map((item, index) => {
                                                                                             return (
                                                                                                     <tr key={index} class="text-gray-700 dark:text-gray-400">
-                                                                                                    <td className='pl-4 py-3'>
-                                                                                                        <div className="text-sm leading-5 text-gray-900">
-                                                                                                            <input 
-                                                                                                                id={`user-checkbox${10+index}`}
-                                                                                                                type="checkbox" 
-                                                                                                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
-                                                                                                                checked={deleteId.includes(item._id)}
-                                                                                                                onChange={() => addDeleteId(index, item._id)}
-                                                                                                            />
+                                                                                                    <td class="px-4 py-3">
+                                                                                                        <div class="flex items-center text-sm">
+                                                                                                            <div
+                                                                                                                className="relative hidden w-8 h-8 mr-3 rounded-full md:block"
+                                                                                                            >
+                                                                                                                <img
+                                                                                                                className="object-cover w-full h-full rounded-full"
+                                                                                                                src={item.avatar ? item.avatar : Avatar}
+                                                                                                                alt=""
+                                                                                                                loading="lazy"
+                                                                                                                />
+                                                                                                                <div
+                                                                                                                className="absolute inset-0 rounded-full shadow-inner"
+                                                                                                                aria-hidden="true"
+                                                                                                                ></div>
+                                                                                                            </div>
+                                                                                                            <div>
+                                                                                                                <p className="font-semibold">{item.full_name ? item.full_name : 'n/a'}</p>
+                                                                                                                {
+                                                                                                                    item.role === 'Admin' ? <p className="text-xs font-semibold text-[#DC2626]">Admin</p> :
+                                                                                                                    item.role === 'Moderator' ? <p className="text-xs font-semibold text-[#FFAA33]">Moderator</p> 
+                                                                                                                    : <p class="text-xs font-semibold text-[#2563EB]">User</p>
+                                                                                                                }
+                                                                                                            </div>
                                                                                                         </div>
                                                                                                     </td>
-                                                                                                    <td class="px-4 py-3">
-                                                                                                        <p class="font-semibold">James Arvie Maderas</p>
+                                                                                                    <td class="px-4 py-3 text-sm">
+                                                                                                        <p class="font-semibold">{item.username}</p>
                                                                                                     </td>
                                                                                                     <td class="px-4 py-3 text-sm">
-                                                                                                        <p class="font-semibold">RazorScythe</p>
-                                                                                                    </td>
-                                                                                                    <td class="px-4 py-3 text-sm">
-                                                                                                        {/* {
-                                                                                                            user.role === 'Admin' ? <p class="font-semibold text-[#DC2626]">Admin</p> ?
-                                                                                                            user.role === 'Moderator' ? <p class="font-semibold text-[#FFAA33]">Moderator</p> 
-                                                                                                            : <p class="font-semibold text-[#2563EB]">User</p>
-                                                                                                        } */}
-                                                                                                        <p class="font-semibold text-[#DC2626]">Admin</p>
-                                                                                                    </td>
-                                                                                                    <td class="px-4 py-3 text-sm">
-                                                                                                        {/* {
-                                                                                                            u.verified ?
+                                                                                                        {
+                                                                                                            item.verification?.verified ?
                                                                                                                 <FontAwesomeIcon icon={faCheck} className="cursor-pointer px-[10px] py-[7px] text-base text-green-700 rounded-md transition-all" />
                                                                                                             :
                                                                                                                 <FontAwesomeIcon icon={faClose} className="cursor-pointer px-[10px] py-[7px] text-base text-red-700 rounded-md transition-all" />
-                                                                                                        } */}
-                                                                                                        <FontAwesomeIcon icon={faCheck} className="cursor-pointer px-[10px] py-[7px] text-base text-green-700 rounded-md transition-all" />
+                                                                                                        }
                                                                                                     </td>
                                                                                                     <td class="px-4 py-3 text-sm">
-                                                                                                        <p class="font-semibold">0</p>
+                                                                                                        <p class="font-semibold">{item.contribution ? item.contribution : 0}</p>
                                                                                                     </td>
                                                                                                     <td class="px-4 py-3">
                                                                                                         <TableMenu 
@@ -340,6 +330,82 @@ const AdminManage = ({ path, user }) => {
                                                                     </span>
                                                                 </div>
                                                             </div>
+                                                        </div>
+                                                        <div
+                                                            class="md:hidden flex justify-between items-center px-2 mt-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
+                                                            >
+                                                            <span class="flex items-center col-span-3">
+                                                                Showing {(endIndex >= users?.length) ? users?.length : endIndex } of {users?.length}
+                                                            </span>
+                                                            <span class="col-span-2"></span>
+                                                            <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
+                                                                <nav aria-label="Table navigation">
+                                                                    <ul class="inline-flex items-center">
+                                                                        <li>
+                                                                            <button
+                                                                                disabled={currentPage === 1} onClick={() => goToPage(1)}
+                                                                                class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+                                                                                aria-label="Previous"
+                                                                                >
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-left" viewBox="0 0 16 16">
+                                                                                    <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                                                                    <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
+                                                                                </svg>
+                                                                            </button>
+                                                                        </li>
+                                                                        <li>
+                                                                            <button
+                                                                                disabled={currentPage === 1} onClick={() => goToPage(currentPage - 1)}
+                                                                                class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
+                                                                                aria-label="Previous"
+                                                                                >
+                                                                                <svg
+                                                                                    class="w-4 h-4 fill-current"
+                                                                                    aria-hidden="true"
+                                                                                    viewBox="0 0 20 20"
+                                                                                    >
+                                                                                    <path
+                                                                                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                                                                                    clip-rule="evenodd"
+                                                                                    fill-rule="evenodd"
+                                                                                    ></path>
+                                                                                </svg>
+                                                                            </button>
+                                                                        </li>
+                                                                        <li>
+                                                                            <button
+                                                                                disabled={endIndex >= users?.length} onClick={() => goToPage(currentPage + 1)}
+                                                                                class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+                                                                                aria-label="Next"
+                                                                                >
+                                                                                <svg
+                                                                                    class="w-4 h-4 fill-current"
+                                                                                    aria-hidden="true"
+                                                                                    viewBox="0 0 20 20"
+                                                                                    >
+                                                                                    <path
+                                                                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                                                                                    clip-rule="evenodd"
+                                                                                    fill-rule="evenodd"
+                                                                                    ></path>
+                                                                                </svg>
+                                                                            </button>
+                                                                        </li>
+                                                                        <li>
+                                                                            <button
+                                                                                disabled={endIndex >= users?.length} onClick={() => goToPage(users?.length / itemsPerPage)} 
+                                                                                class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
+                                                                                aria-label="Next"
+                                                                                >
+                                                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
+                                                                                    <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                                                                    <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
+                                                                                </svg>
+                                                                            </button>
+                                                                        </li>
+                                                                    </ul>
+                                                                </nav>
+                                                            </span>
                                                         </div>
                                                     </div>
                                                 </div>
