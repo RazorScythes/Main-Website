@@ -517,6 +517,8 @@ const AdminUploads = ({ user, path }) => {
         description: '',
         strict: false,
         privacy: false,
+        landscape: false,
+        carousel: false,
         details: {
             latest_version: '',
             censorship: 'Uncensored',
@@ -559,6 +561,8 @@ const AdminUploads = ({ user, path }) => {
             description: '',
             strict: false,
             privacy: false,
+            landscape: false,
+            carousel: false,
             details: {
                 latest_version: '',
                 censorship: 'Uncensored',
@@ -599,7 +603,7 @@ const AdminUploads = ({ user, path }) => {
     }
 
     function checkWebsiteUrl(url) {
-        return url.startsWith("https://") && url.includes(".") ? true : false
+        return (url.startsWith("https://") || url.startsWith("[img]")) && url.includes(".") ? true : false
     }
 
     const addImageURL = () => {
@@ -607,7 +611,9 @@ const AdminUploads = ({ user, path }) => {
         if(input.gallery.length === 0 || !checkWebsiteUrl(input.gallery)) return;
         gameForm.gallery.forEach(item => { if(input.gallery === item) duplicate = true })
         if(duplicate) { duplicate = false; return;}
-        setGameForm({ ...gameForm, gallery: gameForm.gallery.concat(input.gallery)})
+        let trimString = input.gallery.replace("[img]", "");
+        trimString = trimString.replace("[/img]", "");
+        setGameForm({ ...gameForm, gallery: gameForm.gallery.concat(trimString)})
         setInput({ ...input, gallery: ''})
     }
 
@@ -713,6 +719,8 @@ const AdminUploads = ({ user, path }) => {
                 description: gameForm.description,
                 strict: gameForm.strict,
                 privacy: gameForm.privacy,
+                landscape: gameForm.landscape,
+                carousel: gameForm.carousel,
                 tags: gameTags,
                 details: {
                     latest_version: gameForm.details.latest_version,
@@ -829,6 +837,8 @@ const AdminUploads = ({ user, path }) => {
             description: gameData[index].description,
             strict: gameData[index].strict,
             privacy: gameData[index].privacy,
+            landscape: gameData[index].landscape,
+            carousel: gameData[index].carousel,
             details: {
                 latest_version: gameData[index].details.latest_version,
                 censorship: gameData[index].details.censorship,
@@ -856,6 +866,8 @@ const AdminUploads = ({ user, path }) => {
             description: '',
             strict: false,
             privacy: false,
+            landscape: false,
+            carousel: false,
             details: {
                 latest_version: '',
                 censorship: 'Uncensored',
@@ -2037,6 +2049,17 @@ const AdminUploads = ({ user, path }) => {
                                                                     </div>
                                                                 </div>
 
+                                                                <div className="flex items-center mb-4">
+                                                                    <input 
+                                                                        id="default-checkbox2f" 
+                                                                        type="checkbox" 
+                                                                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                                        checked={gameForm.landscape}
+                                                                        onChange={(e) => setGameForm({...gameForm, landscape: !gameForm.landscape})}
+                                                                    />
+                                                                    <label htmlFor="default-checkbox2f" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Featured Image is Landscape?</label>
+                                                                </div>
+
                                                                 <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
                                                                     <div className='flex flex-col'>
                                                                         <label className='font-semibold'> Game Title: </label>
@@ -2374,7 +2397,18 @@ const AdminUploads = ({ user, path }) => {
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                                
+
+                                                                <div className="flex items-center mb-4">
+                                                                    <input 
+                                                                        id="default-checkbox2ff" 
+                                                                        type="checkbox" 
+                                                                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                                                                        checked={gameForm.carousel}
+                                                                        onChange={(e) => setGameForm({...gameForm, carousel: !gameForm.carousel})}
+                                                                    />
+                                                                    <label htmlFor="default-checkbox2ff" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Image Carousel</label>
+                                                                </div>
+
                                                                 <div className='grid grid-cols-1 gap-5 place-content-start text-white mb-2'>
                                                                     <div className='flex flex-row flex-wrap'>
                                                                         {

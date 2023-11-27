@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { useParams, useSearchParams } from 'react-router-dom'
 import { addOneDownload, getRelatedGames, updateGameAccessKey, getGameByID, countTags, getRecentGameBlog, addRecentGamingBlogLikes, clearAlert } from "../../actions/game";
 import { MotionAnimate } from 'react-motion-animate'
+import ModalImage from "react-modal-image";
 import Carousel from "react-multi-carousel";
 import Cookies from 'universal-cookie';
 import GamesCards from './GamesCards';
@@ -312,7 +313,7 @@ const GamesSingle = ({ user }) => {
                                             {
                                                 Object.keys(gameData).length !== 0  &&
                                                 <>
-                                                <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
+                                                <div className={`grid ${gameData.game.landscape ? 'sm:grid-cols-1' : 'sm:grid-cols-2'} grid-cols-1 gap-5 place-content-start mb-4`}>
                                                     <img
                                                         src={gameData.game.featured_image}
                                                         alt="Featured Image"
@@ -394,25 +395,12 @@ const GamesSingle = ({ user }) => {
                                                             gameData.game.gallery.map((item, index) => {
                                                                 return (
                                                                     <div key={index} className='md:w-1/3 sm:w-1/2 w-full h-[200px] overflow-hidden'>
-                                                                        <MotionAnimate variant={{
-                                                                            hidden: { 
-                                                                                opacity: 0,
-                                                                                transform: 'scale(0)'
-                                                                            },
-                                                                            show: {
-                                                                                opacity: 1,
-                                                                                transform: 'scale(1)',
-                                                                                transition: {
-                                                                                    duration: 0.4,
-                                                                                }
-                                                                            }
-                                                                        }}>
-                                                                            <img 
-                                                                                src={item}
-                                                                                alt={`gallery #${index+1}`}
-                                                                                className='w-full h-[200px] object-cover border border-gray-900 transition duration-500 ease-in-out transform hover:scale-105'
-                                                                            />
-                                                                        </MotionAnimate>
+                                                                        <ModalImage 
+                                                                            small={item}
+                                                                            large={item}
+                                                                            alt={`gallery #${index+1}`}
+                                                                            className='w-full h-[200px] object-cover border border-gray-900 transition duration-500 ease-in-out transform hover:scale-105'
+                                                                        />
                                                                     </div>  
                                                                 )
                                                         })

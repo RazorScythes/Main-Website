@@ -9,6 +9,12 @@ const Hero = () => {
           className="relative bg-cover bg-center py-14"
           style={{ backgroundImage: `url(${heroBackgroundImage})` }}
         >
+            <div class="bubbles-wrapper">
+                <div><span class="dot"></span></div>
+                <div><span class="dot"></span></div>
+                <div><span class="dot"></span></div>
+                <div><span class="dot"></span></div>
+            </div>
             <div className={`${styles.paddingX} ${styles.flexCenter}`}>
                 <div className={`${styles.boxWidth}`}>
                     <div className="absolute inset-0 bg-black opacity-75"></div>
@@ -32,9 +38,9 @@ const Hero = () => {
                             </MotionAnimate>
                         </div>
                         <div className="lg:w-1/3 md:w-1/3 md:block hidden ml-32">
-                            <MotionAnimate >
+                            {/* <MotionAnimate >
                                 <img src={heroImage} alt="Hero Image" className="rounded-lg shadow-lg lg:w-[400px]"/>
-                            </MotionAnimate>
+                            </MotionAnimate> */}
                         </div>
                         </div>
                     </div>
