@@ -17,7 +17,7 @@ import blogs from './blogs.png'
 import application from './application.png'
 import game from './game.png'
 import seaplant from './seabedplants.png'
-
+import video from './video.png'
 export {
     toram_online,
     genshin_impact,
@@ -37,5 +37,6 @@ export {
     blogs,
     application,
     game,
-    seaplant
+    seaplant,
+    video
 }

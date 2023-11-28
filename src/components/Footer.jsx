@@ -48,7 +48,7 @@ const Footer = ({ path }) => {
     }
 
     return (
-            <footer className="bg-gray-800 text-white px-8 font-poppins">
+            <footer className="bg-gray-800 text-white px-8 font-poppins relative z-50">
                 <SideAlert
                     variants='success'
                     heading='Success'

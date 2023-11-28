@@ -15,7 +15,7 @@ const Service = ({ heading3 = "Heading 3", heading2 = "Heading 2", description =
         </div>
         <div className={`${styles.paddingX} ${styles.flexStart} relative z-10`}>
             <div className={`${styles.boxWidth}`}>
-                <section className={`container mx-auto py-8 md:px-9 h-full`}>
+                <section className={`container mx-auto py-8 h-full`}>
                     <div className="flex flex-col md:flex-row">
                     {
                             reverse === true &&

@@ -126,10 +126,10 @@ const News = ({ user }) => {
 
     return (
         <div className='sm:mb-8 mb-32'>
-            <div className='container mx-auto flex-wrap md:px-10 px-2'>
+            <div className='container mx-auto flex-wrap'>
                 <TextWithLines text="Latest Blogs"/>
             </div>
-            <section className={`container mx-auto py-8 md:px-9`}>
+            <section className={`container mx-auto py-8`}>
                 <div className="flex flex-col md:flex-row">
                     <div className="w-full md:w-1/2">
                         {
