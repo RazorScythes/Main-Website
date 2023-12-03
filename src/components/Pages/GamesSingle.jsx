@@ -19,6 +19,26 @@ import "react-multi-carousel/lib/styles.css";
 
 const cookies = new Cookies();
 
+const CustomRight = ({ onClick }) => {
+    return (
+      <FontAwesomeIcon
+        icon={faChevronRight}
+        onClick={onClick}
+        className="absolute sm:right-0 right-4 max-w-4 cursor-pointer text-primary-400 text-2xl font-bold text-white"
+      />
+    )
+};
+  
+const CustomLeft = ({ onClick }) => {
+    return (
+      <FontAwesomeIcon
+        icon={faChevronLeft}
+        onClick={onClick}
+        className="absolute sm:left-0 left-4 max-w-4 cursor-pointer text-primary-400 text-2xl font-bold text-white"
+      />
+    )
+};
+
 const responsive = {
     desktop: {
       breakpoint: { max: 3000, min: 1224 },
@@ -185,7 +205,6 @@ const GamesSingle = ({ user }) => {
     }
 
     const addDownloadCount = () => {
-        console.log("OK")
         var duplicate = false
         gameData?.game?.download_count.forEach(item => { if(cookies.get('uid') === item) duplicate = true })
         if(!duplicate) {
@@ -364,7 +383,7 @@ const GamesSingle = ({ user }) => {
                                                                     &#9733;
                                                                 </span>
                                                             ))}
-                                                            <span className='ml-1'>({ratingNumber})</span>
+                                                            <span className='ml-1'>({!isNaN(ratingNumber) ? ratingNumber : 0})</span>
                                                         </div>
                                                         <p className='mt-1 whitespace-pre-wrap'><span className='font-bold'>Tags</span>:</p>
                                                         <div className='flex flex-wrap items-center mt-2 mb-4 relative'>
@@ -389,23 +408,55 @@ const GamesSingle = ({ user }) => {
                                                 <p className='whitespace-pre-wrap'>{gameData.game.description}</p>
                                                 
                                                 <p className='whitespace-pre-wrap font-bold text-2xl mt-4 mb-2'>Gallery</p>
-                                                <div className='flex flex-wrap'>
-                                                    {
-                                                        gameData.game.gallery && gameData.game.gallery.length > 0 &&
-                                                            gameData.game.gallery.map((item, index) => {
-                                                                return (
-                                                                    <div key={index} className='md:w-1/3 sm:w-1/2 w-full h-[200px] overflow-hidden'>
-                                                                        <ModalImage 
-                                                                            small={item}
-                                                                            large={item}
-                                                                            alt={`gallery #${index+1}`}
-                                                                            className='w-full h-[200px] object-cover border border-gray-900 transition duration-500 ease-in-out transform hover:scale-105'
-                                                                        />
-                                                                    </div>  
-                                                                )
-                                                        })
-                                                    }
-                                                </div>
+                                                {
+                                                    (gameData.game.carousel && gameData.game.gallery && gameData.game.gallery.length > 0) ?
+                                                    <Carousel 
+                                                        showDots={true}
+                                                        responsive={responsive} className="relative"
+                                                        customLeftArrow={<CustomLeft />}
+                                                        customRightArrow={<CustomRight />}
+                                                        slidesToSlide={1}
+                                                        swipeable
+                                                        autoPlay={true}
+                                                        infinite={true}
+                                                    >
+                                                
+                                                        {
+                                                            gameData.game.gallery && gameData.game.gallery.length > 0 &&
+                                                                gameData.game.gallery.map((item, index) => {
+                                                                    return (
+                                                                        <div key={index} className='md:px-8 md:py-4 w-full md:h-[400px] h-[200px] overflow-hidden'>
+                                                                            <img
+                                                                                src={item}
+                                                                                alt={`gallery #${index+1}`}
+                                                                                className='w-full md:h-[400px] h-[200px] object-cover border border-gray-900 transition duration-500 ease-in-out transform hover:scale-105'
+                                                                            />
+                                                                        </div>  
+                                                                    )
+                                                                })
+                                                            }
+                                                
+                                                    </Carousel>
+                                                    :
+                                                    <div className='flex flex-wrap'>
+                                                        {
+                                                            gameData.game.gallery && gameData.game.gallery.length > 0 &&
+                                                                gameData.game.gallery.map((item, index) => {
+                                                                    return (
+                                                                        <div key={index} className='md:w-1/3 sm:w-1/2 w-full h-[200px] overflow-hidden'>
+                                                                            <ModalImage 
+                                                                                small={item}
+                                                                                large={item}
+                                                                                alt={`gallery #${index+1}`}
+                                                                                className='w-full h-[200px] object-cover border border-gray-900 transition duration-500 ease-in-out transform hover:scale-105'
+                                                                            />
+                                                                        </div>  
+                                                                    )
+                                                            })
+                                                        }
+                                                    </div>
+                                                }
+
                                                 {
                                                     !(gameData.game.gallery && gameData.game.gallery.length > 0) &&
                                                     <p className='mt-1 whitespace-pre-wrap'>No image to show</p>
@@ -474,7 +525,7 @@ const GamesSingle = ({ user }) => {
 
                                             {
                                                 tagsList && tagsList.length > 0 &&
-                                                    <div className='bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] mb-4 p-8 text-white'>
+                                                    <div className='bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] mb-4 p-8 text-white h-[370px] overflow-auto scrollbar-hide'>
                                                         <h2 className='text-xl font-semibold mb-6'>Tags</h2>
                                                         <ul className='sm:text-base text-sm'>
                                                             {
