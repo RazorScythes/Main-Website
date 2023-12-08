@@ -1,3 +1,5 @@
+import { faProjectDiagram } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSearchParams } from "react-router-dom";
@@ -253,6 +255,17 @@ const AdminSidebar = ({ isOpen, setIsOpen, open, setOpen, path }) => {
                                 </li>
                             </ul>  
                         }
+                    </li>
+                    <li className="relative px-6 py-3">
+                        { firstPath === 'projects' && <span className="absolute inset-y-0 left-0 w-1 h-12 bg-blue-600 rounded-tr-lg rounded-br-lg" aria-hidden="true"></span> }
+                        <Link
+                        style={{color: (firstPath === 'projects') && 'rgb(31 41 55)'}}
+                        className="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
+                        to="/account/projects"
+                        >
+                        <FontAwesomeIcon icon={faProjectDiagram} className="" />
+                        <span className="ml-4">Projects</span>
+                        </Link>
                     </li>
                     <li className="relative px-6 py-3">
                         <Link

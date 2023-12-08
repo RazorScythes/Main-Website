@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { Navbar, Home, Games, Login, NewLogin, CreateAccount, ForgotPassword, NotFound, Portfolio, Footer, Blogs, BlogsSingle, Store, Archive, ArchiveDirectory, GamesSingle, Videos, VideosSingle, Verify, VideoTag, GameTag } from './components/index'
+import { Navbar, Projects, Home, Games, Login, NewLogin, CreateAccount, ForgotPassword, NotFound, Portfolio, Footer, Blogs, BlogsSingle, Store, Archive, ArchiveDirectory, GamesSingle, Videos, VideosSingle, Verify, VideoTag, GameTag } from './components/index'
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { AccountNavbar, Overview, AccountPortfolio, AccountStore, Uploads, Settings, Manage, Logs } from './components/Account Section/index'
-import { AdminOverview, AdminPortfolio, AdminUploads, AdminSettings, AdminLogs, AdminManage } from './components/Admin/index';
+import { AdminOverview, AdminPortfolio, AdminUploads, AdminSettings, AdminLogs, AdminManage, AdminProjects } from './components/Admin/index';
 import { useDispatch, useSelector } from 'react-redux'
 import { ProjectSingle } from './components/Portfolio Section/index';
 import { getProfile, userToken } from './actions/settings';
@@ -55,6 +55,7 @@ const App = () => {
               <Route path="settings/:options" element={<><AdminSettings user={user} path={URI_PATH_HOME} settings={settings}/></>} />
               <Route path="logs" element={<><AdminLogs path={URI_PATH_HOME}/></>} />
               <Route path="manage" element={<><AdminManage path={URI_PATH_HOME} user={user}/></>} />
+              <Route path="projects" element={<><AdminProjects path={URI_PATH_HOME} user={user}/></>} />
           </Route>
 
           <Route path='/' element={<><Navbar path={URI_PATH_HOME} /> <Outlet/></>}>
@@ -76,6 +77,8 @@ const App = () => {
               <Route path="videos/tags/:tag" element={<><VideoTag user={user} /> <Footer /></>} />
               <Route path="videos/search/:key" element={<><VideoTag user={user} /> <Footer /></>} />
               <Route path="videos/artist/:artist_name" element={<><VideoTag user={user} /> <Footer /></>} />
+
+              <Route path="projects" element={<><Projects user={user} /> <Footer /></>} />
 
               <Route path="archive" element={<><Archive user={user} /> <Footer /></>} />
               <Route path="archive/:archive" element={<><ArchiveDirectory user={user} /> <Footer /></>} />

@@ -1,5 +1,5 @@
 import { toram_online, genshin_impact, aqw, tower_of_fantasy, mobile_legends, crossfire, league_of_legends, minecraft } from  "../assets"
-import { faHome, faUser, faGamepad, faMessage, faStore, faBoxArchive, faGear, faRightFromBracket, faVideo } from "@fortawesome/free-solid-svg-icons";
+import { faHome, faUser, faGamepad, faMessage, faStore, faBoxArchive, faGear, faRightFromBracket, faVideo, faProjectDiagram } from "@fortawesome/free-solid-svg-icons";
 export const account_links = [
   {
     path: "",
@@ -58,10 +58,15 @@ export const nav_links = [
     icon: faVideo
   },
   {
-    path: "store",
-    name: "Store",
-    icon: faStore
+    path: "projects",
+    name: "Projects",
+    icon: faProjectDiagram
   },
+  // {
+  //   path: "store",
+  //   name: "Store",
+  //   icon: faStore
+  // },
   {
     path: "archive",
     name: "Archive",

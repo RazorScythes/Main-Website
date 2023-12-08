@@ -33,6 +33,8 @@ import VideosSingle from './Pages/VideosSingle'
 import Verify from './Pages/Verify'
 import VideoTag from './Pages/VideoTag'
 import GameTag from './Pages/GameTag'
+import Projects from './Pages/Projects'
+
 export {
     ArchiveDirectory,
     Verify,
@@ -51,6 +53,7 @@ export {
     Portfolio,
     Navbar,
     Hero,
+    Projects,
     Login,
     NewLogin,
     CreateAccount,

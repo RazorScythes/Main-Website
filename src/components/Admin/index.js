@@ -5,7 +5,7 @@ import AdminUploads from "./AdminUploads"
 import AdminSettings from "./AdminSettings"
 import AdminLogs from "./AdminLogs"
 import AdminManage from "./AdminManage"
-
+import AdminProjects from "./AdminProjects"
 export {
     Header,
     AdminPortfolio,
@@ -13,5 +13,6 @@ export {
     AdminUploads,
     AdminSettings,
     AdminLogs,
-    AdminManage
+    AdminManage,
+    AdminProjects
 }
