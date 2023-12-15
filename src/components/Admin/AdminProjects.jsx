@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faPlus, faCalendar, faClose, faTrash, faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faPlus, faCalendar, faClose, faTrash, faArrowDown, faArrowUp, faShare, faShareAltSquare, faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from 'react-router-dom'
 import { Header } from './index'
 import { Link } from 'react-router-dom'
@@ -56,7 +56,12 @@ const AdminProjects = ({ user, path }) => {
     const [form, setForm] = useState({
         featured_image: '',
         post_title: '',
-        content: [],
+        content: [
+            { 
+                header: '',
+                container: []
+            }
+        ],
         tags: [],
         categories: 'Gaming'
     })
@@ -144,6 +149,9 @@ const AdminProjects = ({ user, path }) => {
         else if(contentSelected === 'single_image') {
             array[parent].container.push({ header: 'Single Image',  type: 'rectangular', element: contentSelected, image: ''})
         }
+        else if(contentSelected === 'list_image') {
+            array[parent].container.push({ header: 'List Image',  element: contentSelected, image_input: '', heading_input: '', sub_input: '', link_input: '', list: []})
+        }
         setForm({...form, content: array})
     }
 
@@ -216,6 +224,17 @@ const AdminProjects = ({ user, path }) => {
         array[parent].container[index] = {...array[parent].container[index], input: e.target.value};
         setForm({...form, content: array})
     }
+
+    const listInputValueMulti = (e, index, parent, type) => {
+        var array = [...form.content]
+
+        if(type === 'image') array[parent].container[index] = {...array[parent].container[index], image_input: e.target.value};
+        else if(type === 'link') array[parent].container[index] = {...array[parent].container[index], link_input: e.target.value};
+        else if(type === 'heading') array[parent].container[index] = {...array[parent].container[index], heading_input: e.target.value};
+        else if(type == 'sub_heading') array[parent].container[index] = {...array[parent].container[index], sub_input: e.target.value};
+        
+        setForm({...form, content: array})
+    }
     
     const typeValue = (e, index, parent) => {
         var array = [...form.content]
@@ -245,6 +264,31 @@ const AdminProjects = ({ user, path }) => {
             ...array[parent].container[index],
             list: [...array[parent].container[index].list, array[parent].container[index].input],
             input: ''
+        };
+
+        setForm({...form, content: array})
+    }
+
+    const addListsMulti = (index, parent) => {       
+        var array = [...form.content]
+
+        if(!array[parent].container[index].heading_input) return
+
+        array[parent].container[index] = {
+            ...array[parent].container[index],
+            list: [
+                ...array[parent].container[index].list,
+                {
+                    image: array[parent].container[index].image_input,
+                    link: array[parent].container[index].link_input,
+                    heading: array[parent].container[index].heading_input,
+                    sub_heading: array[parent].container[index].sub_input,
+                }
+            ],
+            image_input: '',
+            link_input: '',
+            heading_input: '',
+            sub_input: '',
         };
 
         setForm({...form, content: array})
@@ -330,7 +374,7 @@ const AdminProjects = ({ user, path }) => {
                                                 </div> */}
 
                                                 <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 mb-8">
-                                                    <h2 className='text-3xl font-semibold my-4'>New Project</h2>        
+                                                    <h2 className='text-3xl font-bold my-4 text-gray-800'>New Project</h2>        
                                                 </div>
 
                                                 <div className="md:flex items-start justify-center mt-4">
@@ -493,6 +537,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                         <option value="bullet_list" className="capitalize">Bullet List</option>
                                                                                         <option value="number_list" className="capitalize">Number List</option>
                                                                                         <option value="single_image" className="capitalize">Single Image</option>
+                                                                                        <option value="list_image" className="capitalize">List Image</option>
                                                                                     </select>
                                                                                     <div className='flex flex-row items-end'>
                                                                                         <button onClick={() => addContentElements(box_index)} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
@@ -849,7 +894,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                 }
                                                                                                             </div>
                                                                                                         </div>
-                                                                                                        <div className='flex flex-row'>
+                                                                                                        <div className='flex flex-row mb-2'>
                                                                                                             <input 
                                                                                                                 type="text" 
                                                                                                                 className='w-full p-2 border border-solid border-[#c0c0c0]'
@@ -865,12 +910,136 @@ const AdminProjects = ({ user, path }) => {
                                                                                                             form.content[box_index].container[index].list.length > 0 &&
                                                                                                                 form.content[box_index].container[index].list.map((list_item, i) => {
                                                                                                                     return (
-                                                                                                                        <div key={i} className='flex items-center relative mt-2 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF] px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
-                                                                                                                            <p className='pr-2'>{list_item}</p>
-                                                                                                                            <FontAwesomeIcon onClick={() => removeLists(index, i, box_index)} id={i} icon={faClose} className="ml-2 cursor-pointer absolute top-2 right-2" />
-                                                                                                                        </div>
+                                                                                                                        <button
+                                                                                                                            key={i}
+                                                                                                                            className="mb-1 flex items-center justify-between px-2 py-1 text-xs font-medium leading-5 text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-md active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-purple"
+                                                                                                                        >
+                                                                                                                            {list_item}
+                                                                                                                            <FontAwesomeIcon onClick={() => removeLists(index, i, box_index)} id={i} icon={faClose} className="ml-2 cursor-pointer" />
+                                                                                                                        </button>
                                                                                                                     )
                                                                                                                 })
+                                                                                                        }
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                :
+                                                                                                item.element === 'list_image' ?
+                                                                                                <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                                                    <div className='flex flex-col'>
+                                                                                                        <div className='flex flex-row justify-between py-2'>
+                                                                                                            <input 
+                                                                                                                type="text" 
+                                                                                                                className='border-none font-semibold outline-none'
+                                                                                                                onChange={(e) => headerValue(e, index, box_index)}
+                                                                                                                value={ form.content[box_index].container[index].header }
+                                                                                                            />
+                                                                                                            <div className='flex'>
+                                                                                                                {
+                                                                                                                    form.content[box_index].container.length === 1 ?
+                                                                                                                        <button onClick={() => removeElementsContent(index, box_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                    :
+                                                                                                                    index === 0 && form.content[box_index].container.length !== 1 ?
+                                                                                                                    <>
+                                                                                                                        <button title="move downwards" onClick={() => moveElementsDownwards(index, box_index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                        <button title="remove elements" onClick={() => removeElementsContent(index, box_index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                    </>
+                                                                                                                    : index === (form.content[box_index].container.length - 1) ?
+                                                                                                                    <>
+                                                                                                                        <button title="move upwards" onClick={() => moveElementUpwards(index, box_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                        <button title="remove elements" onClick={() => removeElementsContent(index, box_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                    </>
+                                                                                                                    :
+                                                                                                                    <>
+                                                                                                                        <button title="move upwards" onClick={() => moveElementUpwards(index, box_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                        <button title="move downwards" onClick={() => moveElementsDownwards(index, box_index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                        <button title="remove elements" onClick={() => removeElementsContent(index, box_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                    </>
+                                                                                                                    
+                                                                                                                }
+                                                                                                                <div className='flex flex-row items-end ml-4'>
+                                                                                                                    <button onClick={() => addListsMulti(index, box_index)} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add List</button>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start'>
+                                                                                                            <div className='flex flex-col'>
+                                                                                                                <label className='font-semibold text-sm'> Image URL </label>
+                                                                                                                <input 
+                                                                                                                    type="text" 
+                                                                                                                    className='p-2 border border-solid border-[#c0c0c0]'
+                                                                                                                    onChange={(e) => listInputValueMulti(e, index, box_index, 'image')}
+                                                                                                                    value={ form.content[box_index].container[index].image_input }
+                                                                                                                />
+                                                                                                            </div>
+                                                                                                            <div className='flex flex-col'>
+                                                                                                                <label className='font-semibold text-sm'> Link URL </label>
+                                                                                                                <input 
+                                                                                                                    type="text" 
+                                                                                                                    className='p-2 border border-solid border-[#c0c0c0]'
+                                                                                                                    onChange={(e) => listInputValueMulti(e, index, box_index, 'link')}
+                                                                                                                    value={ form.content[box_index].container[index].link_input }
+                                                                                                                />
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start'>
+                                                                                                            <div className='flex flex-col'>
+                                                                                                                <label className='font-semibold text-sm'> Heading </label>
+                                                                                                                <textarea
+                                                                                                                    name="message"
+                                                                                                                    id="message"
+                                                                                                                    cols="30"
+                                                                                                                    rows="3"
+                                                                                                                    placeholder="Heading"
+                                                                                                                    className="w-full p-2 border border-solid border-[#c0c0c0]"
+                                                                                                                    onChange={(e) => listInputValueMulti(e, index, box_index, 'heading')}
+                                                                                                                    value={ form.content[box_index].container[index].heading_input }
+                                                                                                                >
+                                                                                                                </textarea>
+                                                                                                            </div>
+                                                                                                            <div className='flex flex-col'>
+                                                                                                                <label className='font-semibold text-sm'> Sub Heading </label>
+                                                                                                                <textarea
+                                                                                                                    name="message"
+                                                                                                                    id="message"
+                                                                                                                    cols="30"
+                                                                                                                    rows="3"
+                                                                                                                    placeholder="Sub heading"
+                                                                                                                    className="w-full p-2 border border-solid border-[#c0c0c0]"
+                                                                                                                    onChange={(e) => listInputValueMulti(e, index, box_index, 'sub_heading')}
+                                                                                                                    value={ form.content[box_index].container[index].sub_input }
+                                                                                                                >
+                                                                                                                </textarea>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        {
+                                                                                                            form.content[box_index].container[index].list.length > 0 &&
+                                                                                                                <div className='mt-4'>
+                                                                                                                {
+                                                                                                                    form.content[box_index].container[index].list.map((list_item, i) => {
+                                                                                                                        return (
+                                                                                                                            <div className='relative my-1 flex font-poppins items-center'>
+                                                                                                                                <img 
+                                                                                                                                    className='w-16 h-16 border border-solid border-gray-500 rounded-md'
+                                                                                                                                    src={list_item.image}
+                                                                                                                                />
+                                                                                                                                <div className='flex flex-col ml-2'>
+                                                                                                                                    <h2 className='font-semibold text-base'>{list_item.heading}</h2>
+                                                                                                                                    <p className='text-xs font-semibold text-[#FB2736] drop-shadow-sm'>{list_item.sub_heading}</p>
+                                                                                                                                    <a href={list_item.link} target='_blank'><FontAwesomeIcon icon={faExternalLink} className='absolute right-8 top-1/2 transform -translate-y-1/2'/></a>
+                                                                                                                                    <FontAwesomeIcon onClick={() => removeLists(index, i, box_index)} id={i} icon={faTrash} className='cursor-pointer absolute right-0 top-1/2 transform -translate-y-1/2'/>
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                            // <button
+                                                                                                                            //     key={i}
+                                                                                                                            //     className="mb-1 flex items-center justify-between px-2 py-1 text-xs font-medium leading-5 text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-md active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-purple"
+                                                                                                                            // >
+                                                                                                                            //     {list_item}
+                                                                                                                            //     <FontAwesomeIcon onClick={() => removeLists(index, i, box_index)} id={i} icon={faClose} className="ml-2 cursor-pointer" />
+                                                                                                                            // </button>
+                                                                                                                        )
+                                                                                                                    })
+                                                                                                                }
+                                                                                                                </div>
                                                                                                         }
                                                                                                     </div>
                                                                                                 </div>
