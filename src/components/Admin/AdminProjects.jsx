@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faPlus, faCalendar, faClose, faTrash, faArrowDown, faArrowUp, faShare, faShareAltSquare, faExternalLink } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faPlus, faCalendar, faClose, faTrash, faArrowDown, faArrowUp, faShare, faShareAltSquare, faExternalLink, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from 'react-router-dom'
 import { Header } from './index'
 import { Link } from 'react-router-dom'
@@ -12,9 +12,10 @@ import styles from '../../style'
 import AdminNavbar from './AdminNavbar';
 import AdminSidebar from './AdminSidebar';
 import ImageModal from '../ImageModal';
-
 import heroBackgroundImage from '../../assets/1696333975880.jpg';
 
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import * as hljsStyles from 'react-syntax-highlighter/dist/esm/styles/hljs';
 const AdminProjects = ({ user, path }) => {
     const dispatch = useDispatch()
 
@@ -37,7 +38,8 @@ const AdminProjects = ({ user, path }) => {
     const [displayImage, setDisplayImage] = useState('')
     const [removeImage, setRemoveImage] = useState([])
     const [preview, setPreview] = useState(false)
-
+    const [codePreview, setCodePreview] = useState(false)
+    
     const [submitted, setSubmitted] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
     const [alertInfo, setAlertInfo] = useState({
@@ -152,6 +154,9 @@ const AdminProjects = ({ user, path }) => {
         else if(contentSelected === 'list_image') {
             array[parent].container.push({ header: 'List Image',  element: contentSelected, image_input: '', heading_input: '', sub_input: '', link_input: '', list: []})
         }
+        else if(contentSelected === 'code_highlights') {
+            array[parent].container.push({ header: 'Code',  element: contentSelected, input: '', language: 'javascript', theme: 'docco', paragraph: ''})
+        }
         setForm({...form, content: array})
     }
 
@@ -192,6 +197,13 @@ const AdminProjects = ({ user, path }) => {
     const headerValue = (e, index, parent) => {
         var array = [...form.content]
         array[parent].container[index] = {...array[parent].container[index], header: e.target.value};
+        setForm({...form, content: array})
+    }
+
+    const selectValue = (e, index, parent, type) => {
+        var array = [...form.content]
+        if(type === 'language') array[parent].container[index] = {...array[parent].container[index], language: e.target.value};
+        else if(type === 'theme') array[parent].container[index] = {...array[parent].container[index], theme: e.target.value};
         setForm({...form, content: array})
     }
 
@@ -525,19 +537,23 @@ const AdminProjects = ({ user, path }) => {
                                                                                 <div className='flex flex-row'>
                                                                                     <select
                                                                                         className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                                                                        default="normal_naragraph"
+                                                                                        default={`normal_naragraph-${box_index}`}
                                                                                         value={contentSelected}
                                                                                         onChange={(e) => setContentSelected(e.target.value)}
                                                                                     >
                                                                                         <option value="" className="capitalize" disabled={true}>Select Element</option>
+                                                                                        <option disabled={true} className='text-sm'>-----Text</option>
+                                                                                        <option value="sub_heading" className="capitalize">Sub Heading</option>
                                                                                         <option value="normal_naragraph" className="capitalize">Normal Paragraph</option>
                                                                                         <option value="quoted_paragraph" className="capitalize">Quoted Paragraph</option>
-                                                                                        <option value="grid_image" className="capitalize">Grid Image</option>
-                                                                                        <option value="sub_heading" className="capitalize">Sub Heading</option>
+                                                                                        <option value="code_highlights" className="capitalize">Code Highlights</option>
+                                                                                        <option disabled={true} className='text-sm'>-----List</option>
                                                                                         <option value="bullet_list" className="capitalize">Bullet List</option>
                                                                                         <option value="number_list" className="capitalize">Number List</option>
-                                                                                        <option value="single_image" className="capitalize">Single Image</option>
                                                                                         <option value="list_image" className="capitalize">List Image</option>
+                                                                                        <option disabled={true} className='text-sm'>-----Image</option>
+                                                                                        <option value="grid_image" className="capitalize">Grid Image</option>
+                                                                                        <option value="single_image" className="capitalize">Single Image</option>
                                                                                     </select>
                                                                                     <div className='flex flex-row items-end'>
                                                                                         <button onClick={() => addContentElements(box_index)} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
@@ -1029,18 +1045,384 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                     <FontAwesomeIcon onClick={() => removeLists(index, i, box_index)} id={i} icon={faTrash} className='cursor-pointer absolute right-0 top-1/2 transform -translate-y-1/2'/>
                                                                                                                                 </div>
                                                                                                                             </div>
-                                                                                                                            // <button
-                                                                                                                            //     key={i}
-                                                                                                                            //     className="mb-1 flex items-center justify-between px-2 py-1 text-xs font-medium leading-5 text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-md active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-purple"
-                                                                                                                            // >
-                                                                                                                            //     {list_item}
-                                                                                                                            //     <FontAwesomeIcon onClick={() => removeLists(index, i, box_index)} id={i} icon={faClose} className="ml-2 cursor-pointer" />
-                                                                                                                            // </button>
                                                                                                                         )
                                                                                                                     })
                                                                                                                 }
                                                                                                                 </div>
                                                                                                         }
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                :
+                                                                                                item.element === 'code_highlights' ?
+                                                                                                <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                                                    <div className='flex flex-col'>
+                                                                                                        <div className='flex flex-row justify-between py-2'>
+                                                                                                            <input 
+                                                                                                                type="text" 
+                                                                                                                className='border-none font-semibold outline-none'
+                                                                                                                onChange={(e) => headerValue(e, index, box_index)}
+                                                                                                                value={ form.content[box_index].container[index].header }
+                                                                                                            />
+                                                                                                            <div>
+                                                                                                                {
+                                                                                                                    form.content[box_index].container.length === 1 ?
+                                                                                                                        <button onClick={() => removeElementsContent(index, box_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                    :
+                                                                                                                    index === 0 && form.content[box_index].container.length !== 1 ?
+                                                                                                                    <>
+                                                                                                                        <button title="move downwards" onClick={() => moveElementsDownwards(index, box_index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                        <button title="remove elements" onClick={() => removeElementsContent(index, box_index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                    </>
+                                                                                                                    : index === (form.content[box_index].container.length - 1) ?
+                                                                                                                    <>
+                                                                                                                        <button title="move upwards" onClick={() => moveElementUpwards(index, box_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                        <button title="remove elements" onClick={() => removeElementsContent(index, box_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                    </>
+                                                                                                                    :
+                                                                                                                    <>
+                                                                                                                        <button title="move upwards" onClick={() => moveElementUpwards(index, box_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                        <button title="move downwards" onClick={() => moveElementsDownwards(index, box_index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                        <button title="remove elements" onClick={() => removeElementsContent(index, box_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                    </>
+                                                                                                                    
+                                                                                                                }
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start'>
+                                                                                                            <div className='flex flex-col'>
+                                                                                                                <label className='font-semibold text-sm'> Language: </label>
+                                                                                                                <select
+                                                                                                                    className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                                                                                    default="code_highlights"
+                                                                                                                    onChange={(e) => selectValue(e, index, box_index, 'language')}
+                                                                                                                    value={ form.content[box_index].container[index].language }
+                                                                                                                >
+                                                                                                                    <option value="1c">1c</option>
+                                                                                                                    <option value="abnf">abnf</option>
+                                                                                                                    <option value="accesslog">accesslog</option>
+                                                                                                                    <option value="actionscript">actionscript</option>
+                                                                                                                    <option value="ada">ada</option>
+                                                                                                                    <option value="angelscript">angelscript</option>
+                                                                                                                    <option value="apache">apache</option>
+                                                                                                                    <option value="applescript">applescript</option>
+                                                                                                                    <option value="arcade">arcade</option>
+                                                                                                                    <option value="arduino">arduino</option>
+                                                                                                                    <option value="armasm">armasm</option>
+                                                                                                                    <option value="asciidoc">asciidoc</option>
+                                                                                                                    <option value="aspectj">aspectj</option>
+                                                                                                                    <option value="autohotkey">autohotkey</option>
+                                                                                                                    <option value="autoit">autoit</option>
+                                                                                                                    <option value="avrasm">avrasm</option>
+                                                                                                                    <option value="awk">awk</option>
+                                                                                                                    <option value="axapta">axapta</option>
+                                                                                                                    <option value="bash">bash</option>
+                                                                                                                    <option value="basic">basic</option>
+                                                                                                                    <option value="bnf">bnf</option>
+                                                                                                                    <option value="brainfuck">brainfuck</option>
+                                                                                                                    <option value="c-like">c-like</option>
+                                                                                                                    <option value="c">c</option>
+                                                                                                                    <option value="cal">cal</option>
+                                                                                                                    <option value="capnproto">capnproto</option>
+                                                                                                                    <option value="ceylon">ceylon</option>
+                                                                                                                    <option value="clean">clean</option>
+                                                                                                                    <option value="clojure-repl">clojure-repl</option>
+                                                                                                                    <option value="clojure">clojure</option>
+                                                                                                                    <option value="cmake">cmake</option>
+                                                                                                                    <option value="coffeescript">coffeescript</option>
+                                                                                                                    <option value="coq">coq</option>
+                                                                                                                    <option value="cos">cos</option>
+                                                                                                                    <option value="cpp">cpp</option>
+                                                                                                                    <option value="crmsh">crmsh</option>
+                                                                                                                    <option value="crystal">crystal</option>
+                                                                                                                    <option value="csharp">csharp</option>
+                                                                                                                    <option value="csp">csp</option>
+                                                                                                                    <option value="css">css</option>
+                                                                                                                    <option value="d">d</option>
+                                                                                                                    <option value="dart">dart</option>
+                                                                                                                    <option value="delphi">delphi</option>
+                                                                                                                    <option value="diff">diff</option>
+                                                                                                                    <option value="django">django</option>
+                                                                                                                    <option value="dns">dns</option>
+                                                                                                                    <option value="dockerfile">dockerfile</option>
+                                                                                                                    <option value="dos">dos</option>
+                                                                                                                    <option value="dsconfig">dsconfig</option>
+                                                                                                                    <option value="dts">dts</option>
+                                                                                                                    <option value="dust">dust</option>
+                                                                                                                    <option value="ebnf">ebnf</option>
+                                                                                                                    <option value="elixir">elixir</option>
+                                                                                                                    <option value="elm">elm</option>
+                                                                                                                    <option value="erb">erb</option>
+                                                                                                                    <option value="erlang-repl">erlang-repl</option>
+                                                                                                                    <option value="erlang">erlang</option>
+                                                                                                                    <option value="excel">excel</option>
+                                                                                                                    <option value="fix">fix</option>
+                                                                                                                    <option value="flix">flix</option>
+                                                                                                                    <option value="fortran">fortran</option>
+                                                                                                                    <option value="fsharp">fsharp</option>
+                                                                                                                    <option value="gams">gams</option>
+                                                                                                                    <option value="gauss">gauss</option>
+                                                                                                                    <option value="gcode">gcode</option>
+                                                                                                                    <option value="gherkin">gherkin</option>
+                                                                                                                    <option value="glsl">glsl</option>
+                                                                                                                    <option value="gml">gml</option>
+                                                                                                                    <option value="go">go</option>
+                                                                                                                    <option value="golo">golo</option>
+                                                                                                                    <option value="gradle">gradle</option>
+                                                                                                                    <option value="groovy">groovy</option>
+                                                                                                                    <option value="haml">haml</option>
+                                                                                                                    <option value="handlebars">handlebars</option>
+                                                                                                                    <option value="haskell">haskell</option>
+                                                                                                                    <option value="haxe">haxe</option>
+                                                                                                                    <option value="hsp">hsp</option>
+                                                                                                                    <option value="htmlbars">htmlbars</option>
+                                                                                                                    <option value="http">http</option>
+                                                                                                                    <option value="hy">hy</option>
+                                                                                                                    <option value="inform7">inform7</option>
+                                                                                                                    <option value="ini">ini</option>
+                                                                                                                    <option value="irpf90">irpf90</option>
+                                                                                                                    <option value="isbl">isbl</option>
+                                                                                                                    <option value="java">java</option>
+                                                                                                                    <option value="javascript">javascript</option>
+                                                                                                                    <option value="jboss-cli">jboss-cli</option>
+                                                                                                                    <option value="json">json</option>
+                                                                                                                    <option value="julia-repl">julia-repl</option>
+                                                                                                                    <option value="julia">julia</option>
+                                                                                                                    <option value="kotlin">kotlin</option>
+                                                                                                                    <option value="lasso">lasso</option>
+                                                                                                                    <option value="latex">latex</option>
+                                                                                                                    <option value="ldif">ldif</option>
+                                                                                                                    <option value="leaf">leaf</option>
+                                                                                                                    <option value="less">less</option>
+                                                                                                                    <option value="lisp">lisp</option>
+                                                                                                                    <option value="livecodeserver">livecodeserver</option>
+                                                                                                                    <option value="livescript">livescript</option>
+                                                                                                                    <option value="llvm">llvm</option>
+                                                                                                                    <option value="lsl">lsl</option>
+                                                                                                                    <option value="lua">lua</option>
+                                                                                                                    <option value="makefile">makefile</option>
+                                                                                                                    <option value="markdown">markdown</option>
+                                                                                                                    <option value="mathematica">mathematica</option>
+                                                                                                                    <option value="matlab">matlab</option>
+                                                                                                                    <option value="maxima">maxima</option>
+                                                                                                                    <option value="mel">mel</option>
+                                                                                                                    <option value="mercury">mercury</option>
+                                                                                                                    <option value="mipsasm">mipsasm</option>
+                                                                                                                    <option value="mizar">mizar</option>
+                                                                                                                    <option value="mojolicious">mojolicious</option>
+                                                                                                                    <option value="monkey">monkey</option>
+                                                                                                                    <option value="moonscript">moonscript</option>
+                                                                                                                    <option value="n1ql">n1ql</option>
+                                                                                                                    <option value="nginx">nginx</option>
+                                                                                                                    <option value="nim">nim</option>
+                                                                                                                    <option value="nix">nix</option>
+                                                                                                                    <option value="node-repl">node-repl</option>
+                                                                                                                    <option value="nsis">nsis</option>
+                                                                                                                    <option value="objectivec">objectivec</option>
+                                                                                                                    <option value="ocaml">ocaml</option>
+                                                                                                                    <option value="openscad">openscad</option>
+                                                                                                                    <option value="oxygene">oxygene</option>
+                                                                                                                    <option value="parser3">parser3</option>
+                                                                                                                    <option value="perl">perl</option>
+                                                                                                                    <option value="pf">pf</option>
+                                                                                                                    <option value="pgsql">pgsql</option>
+                                                                                                                    <option value="php-template">php-template</option>
+                                                                                                                    <option value="php">php</option>
+                                                                                                                    <option value="plaintext">plaintext</option>
+                                                                                                                    <option value="pony">pony</option>
+                                                                                                                    <option value="powershell">powershell</option>
+                                                                                                                    <option value="processing">processing</option>
+                                                                                                                    <option value="profile">profile</option>
+                                                                                                                    <option value="prolog">prolog</option>
+                                                                                                                    <option value="properties">properties</option>
+                                                                                                                    <option value="protobuf">protobuf</option>
+                                                                                                                    <option value="puppet">puppet</option>
+                                                                                                                    <option value="purebasic">purebasic</option>
+                                                                                                                    <option value="python-repl">python-repl</option>
+                                                                                                                    <option value="python">python</option>
+                                                                                                                    <option value="q">q</option>
+                                                                                                                    <option value="qml">qml</option>
+                                                                                                                    <option value="r">r</option>
+                                                                                                                    <option value="reasonml">reasonml</option>
+                                                                                                                    <option value="rib">rib</option>
+                                                                                                                    <option value="roboconf">roboconf</option>
+                                                                                                                    <option value="routeros">routeros</option>
+                                                                                                                    <option value="rsl">rsl</option>
+                                                                                                                    <option value="ruby">ruby</option>
+                                                                                                                    <option value="ruleslanguage">ruleslanguage</option>
+                                                                                                                    <option value="rust">rust</option>
+                                                                                                                    <option value="sas">sas</option>
+                                                                                                                    <option value="scala">scala</option>
+                                                                                                                    <option value="scheme">scheme</option>
+                                                                                                                    <option value="scilab">scilab</option>
+                                                                                                                    <option value="scss">scss</option>
+                                                                                                                    <option value="shell">shell</option>
+                                                                                                                    <option value="smali">smali</option>
+                                                                                                                    <option value="smalltalk">smalltalk</option>
+                                                                                                                    <option value="sml">sml</option>
+                                                                                                                    <option value="sqf">sqf</option>
+                                                                                                                    <option value="sql">sql</option>
+                                                                                                                    <option value="sql_more">sql_more</option>
+                                                                                                                    <option value="stan">stan</option>
+                                                                                                                    <option value="stata">stata</option>
+                                                                                                                    <option value="step21">step21</option>
+                                                                                                                    <option value="stylus">stylus</option>
+                                                                                                                    <option value="subunit">subunit</option>
+                                                                                                                    <option value="swift">swift</option>
+                                                                                                                    <option value="taggerscript">taggerscript</option>
+                                                                                                                    <option value="tap">tap</option>
+                                                                                                                    <option value="tcl">tcl</option>
+                                                                                                                    <option value="thrift">thrift</option>
+                                                                                                                    <option value="tp">tp</option>
+                                                                                                                    <option value="twig">twig</option>
+                                                                                                                    <option value="typescript">typescript</option>
+                                                                                                                    <option value="vala">vala</option>
+                                                                                                                    <option value="vbnet">vbnet</option>
+                                                                                                                    <option value="vbscript-html">vbscript-html</option>
+                                                                                                                    <option value="vbscript">vbscript</option>
+                                                                                                                    <option value="verilog">verilog</option>
+                                                                                                                    <option value="vhdl">vhdl</option>
+                                                                                                                    <option value="vim">vim</option>
+                                                                                                                    <option value="x86asm">x86asm</option>
+                                                                                                                    <option value="xl">xl</option>
+                                                                                                                    <option value="xml">xml</option>
+                                                                                                                    <option value="xquery">xquery</option>
+                                                                                                                    <option value="yaml">yaml</option>
+                                                                                                                    <option value="zephir">zephir</option>
+                                                                                                                </select>
+                                                                                                            </div>
+                                                                                                            <div className='flex flex-col'>
+                                                                                                                <label className='font-semibold text-sm'> Theme: </label>
+                                                                                                                <select
+                                                                                                                    className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                                                                                    default="normal_naragraph"
+                                                                                                                    onChange={(e) => selectValue(e, index, box_index, 'theme')}
+                                                                                                                    value={ form.content[box_index].container[index].theme }
+                                                                                                                >
+                                                                                                                    <option value="a11y-dark">a11y-dark</option>
+                                                                                                                    <option value="a11y-light">a11y-light</option>
+                                                                                                                    <option value="agate">agate</option>
+                                                                                                                    <option value="an-old-hope">an-old-hope</option>
+                                                                                                                    <option value="androidstudio">androidstudio</option>
+                                                                                                                    <option value="arduino-light">arduino-light</option>
+                                                                                                                    <option value="arta">arta</option>
+                                                                                                                    <option value="ascetic">ascetic</option>
+                                                                                                                    <option value="atelier-cave-dark">atelier-cave-dark</option>
+                                                                                                                    <option value="atelier-cave-light">atelier-cave-light</option>
+                                                                                                                    <option value="atelier-dune-dark">atelier-dune-dark</option>
+                                                                                                                    <option value="atelier-dune-light">atelier-dune-light</option>
+                                                                                                                    <option value="atelier-estuary-dark">atelier-estuary-dark</option>
+                                                                                                                    <option value="atelier-estuary-light">atelier-estuary-light</option>
+                                                                                                                    <option value="atelier-forest-dark">atelier-forest-dark</option>
+                                                                                                                    <option value="atelier-forest-light">atelier-forest-light</option>
+                                                                                                                    <option value="atelier-heath-dark">atelier-heath-dark</option>
+                                                                                                                    <option value="atelier-heath-light">atelier-heath-light</option>
+                                                                                                                    <option value="atelier-lakeside-dark">atelier-lakeside-dark</option>
+                                                                                                                    <option value="atelier-lakeside-light">atelier-lakeside-light</option>
+                                                                                                                    <option value="atelier-plateau-dark">atelier-plateau-dark</option>
+                                                                                                                    <option value="atelier-plateau-light">atelier-plateau-light</option>
+                                                                                                                    <option value="atelier-savanna-dark">atelier-savanna-dark</option>
+                                                                                                                    <option value="atelier-savanna-light">atelier-savanna-light</option>
+                                                                                                                    <option value="atelier-seaside-dark">atelier-seaside-dark</option>
+                                                                                                                    <option value="atelier-seaside-light">atelier-seaside-light</option>
+                                                                                                                    <option value="atelier-sulphurpool-dark">atelier-sulphurpool-dark</option>
+                                                                                                                    <option value="atelier-sulphurpool-light">atelier-sulphurpool-light</option>
+                                                                                                                    <option value="atom-one-dark">atom-one-dark</option>
+                                                                                                                    <option value="atom-one-dark-reasonable">atom-one-dark-reasonable</option>
+                                                                                                                    <option value="atom-one-light">atom-one-light</option>
+                                                                                                                    <option value="brown-paper">brown-paper</option>
+                                                                                                                    <option value="codepen-embed">codepen-embed</option>
+                                                                                                                    <option value="color-brewer">color-brewer</option>
+                                                                                                                    <option value="darcula">darcula</option>
+                                                                                                                    <option value="dark">dark</option>
+                                                                                                                    <option value="default-style">default-style</option>
+                                                                                                                    <option value="docco">docco</option>
+                                                                                                                    <option value="dracula">dracula</option>
+                                                                                                                    <option value="far">far</option>
+                                                                                                                    <option value="foundation">foundation</option>
+                                                                                                                    <option value="github">github</option>
+                                                                                                                    <option value="github-gist">github-gist</option>
+                                                                                                                    <option value="gml">gml</option>
+                                                                                                                    <option value="googlecode">googlecode</option>
+                                                                                                                    <option value="gradient-dark">gradient-dark</option>
+                                                                                                                    <option value="gradient-light">gradient-light</option>
+                                                                                                                    <option value="grayscale">grayscale</option>
+                                                                                                                    <option value="gruvbox-dark">gruvbox-dark</option>
+                                                                                                                    <option value="gruvbox-light">gruvbox-light</option>
+                                                                                                                    <option value="hopscotch">hopscotch</option>
+                                                                                                                    <option value="hybrid">hybrid</option>
+                                                                                                                    <option value="idea">idea</option>
+                                                                                                                    <option value="ir-black">ir-black</option>
+                                                                                                                    <option value="isbl-editor-dark">isbl-editor-dark</option>
+                                                                                                                    <option value="isbl-editor-light">isbl-editor-light</option>
+                                                                                                                    <option value="kimbie.dark">kimbie.dark</option>
+                                                                                                                    <option value="kimbie.light">kimbie.light</option>
+                                                                                                                    <option value="lightfair">lightfair</option>
+                                                                                                                    <option value="lioshi">lioshi</option>
+                                                                                                                    <option value="magula">magula</option>
+                                                                                                                    <option value="mono-blue">mono-blue</option>
+                                                                                                                    <option value="monokai">monokai</option>
+                                                                                                                    <option value="monokai-sublime">monokai-sublime</option>
+                                                                                                                    <option value="night-owl">night-owl</option>
+                                                                                                                    <option value="nnfx">nnfx</option>
+                                                                                                                    <option value="nnfx-dark">nnfx-dark</option>
+                                                                                                                    <option value="nord">nord</option>
+                                                                                                                    <option value="obsidian">obsidian</option>
+                                                                                                                    <option value="ocean">ocean</option>
+                                                                                                                    <option value="paraiso-dark">paraiso-dark</option>
+                                                                                                                    <option value="paraiso-light">paraiso-light</option>
+                                                                                                                    <option value="pojoaque">pojoaque</option>
+                                                                                                                    <option value="purebasic">purebasic</option>
+                                                                                                                    <option value="qtcreator_dark">qtcreator_dark</option>
+                                                                                                                    <option value="qtcreator_light">qtcreator_light</option>
+                                                                                                                    <option value="railscasts">railscasts</option>
+                                                                                                                    <option value="rainbow">rainbow</option>
+                                                                                                                    <option value="routeros">routeros</option>
+                                                                                                                    <option value="school-book">school-book</option>
+                                                                                                                    <option value="shades-of-purple">shades-of-purple</option>
+                                                                                                                    <option value="solarized-dark">solarized-dark</option>
+                                                                                                                    <option value="solarized-light">solarized-light</option>
+                                                                                                                    <option value="srcery">srcery</option>
+                                                                                                                    <option value="stackoverflow-dark">stackoverflow-dark</option>
+                                                                                                                    <option value="stackoverflow-light">stackoverflow-light</option>
+                                                                                                                    <option value="sunburst">sunburst</option>
+                                                                                                                    <option value="tomorrow">tomorrow</option>
+                                                                                                                    <option value="tomorrow-night">tomorrow-night</option>
+                                                                                                                    <option value="tomorrow-night-blue">tomorrow-night-blue</option>
+                                                                                                                    <option value="tomorrow-night-bright">tomorrow-night-bright</option>
+                                                                                                                    <option value="tomorrow-night-eighties">tomorrow-night-eighties</option>
+                                                                                                                    <option value="vs">vs</option>
+                                                                                                                    <option value="vs2015">vs2015</option>
+                                                                                                                    <option value="xcode">xcode</option>
+                                                                                                                    <option value="xt256">xt256</option>
+                                                                                                                    <option value="zenburn">zenburn</option>
+                                                                                                                </select>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div className='grid sm:grid-cols-1 grid-cols-1 gap-5 place-content-start mt-2'>
+                                                                                                            <div className='flex flex-col'>
+                                                                                                                <label className='font-semibold text-sm'> Code: <FontAwesomeIcon onClick={() => setCodePreview(!codePreview)} icon={codePreview ? faEyeSlash : faEye} className='cursor-pointer'/></label>
+                                                                                                                {
+                                                                                                                    !codePreview &&
+                                                                                                                    <textarea
+                                                                                                                        name="message"
+                                                                                                                        id="message"
+                                                                                                                        cols="30"
+                                                                                                                        rows="8"
+                                                                                                                        placeholder="code"
+                                                                                                                        className="w-full p-2 border border-solid border-[#c0c0c0]"
+                                                                                                                        onChange={(e) => paragraphValue(e, index, box_index)}
+                                                                                                                        value={ form.content[box_index].container[index].paragraph }
+                                                                                                                    >
+                                                                                                                    </textarea>
+                                                                                                                }
+                                                                                                            </div>
+                                                                                                            {
+                                                                                                                codePreview &&
+                                                                                                                <SyntaxHighlighter language={form.content[box_index].container[index].language} style={hljsStyles[form.content[box_index].container[index].theme]} showLineNumbers={true}>
+                                                                                                                    {`${form.content[box_index].container[index].paragraph}`}
+                                                                                                                </SyntaxHighlighter>
+                                                                                                            }
+                                                                                                        </div>
                                                                                                     </div>
                                                                                                 </div>
                                                                                                 :
