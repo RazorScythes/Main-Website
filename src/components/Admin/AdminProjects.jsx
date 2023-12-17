@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faPlus, faCalendar, faClose, faTrash, faArrowDown, faArrowUp, faShare, faShareAltSquare, faExternalLink, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faPlus, faCalendar, faClose, faTrash, faArrowDown, faArrowUp, faShare, faShareAltSquare, faExternalLink, faEyeSlash, faFile } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from 'react-router-dom'
 import { Header } from './index'
 import { Link } from 'react-router-dom'
+import { library, findIconDefinition  } from '@fortawesome/fontawesome-svg-core';
+import { fas } from '@fortawesome/free-solid-svg-icons';
+import { far } from '@fortawesome/free-regular-svg-icons';
+import { fab } from '@fortawesome/free-brands-svg-icons';
+
 import Alert from '../Alert';
 import SideAlert from '../SideAlert';
 import styles from '../../style'
@@ -16,6 +21,9 @@ import heroBackgroundImage from '../../assets/1696333975880.jpg';
 
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import * as hljsStyles from 'react-syntax-highlighter/dist/esm/styles/hljs';
+
+library.add(fas, far, fab);
+
 const AdminProjects = ({ user, path }) => {
     const dispatch = useDispatch()
 
@@ -155,7 +163,10 @@ const AdminProjects = ({ user, path }) => {
             array[parent].container.push({ header: 'List Image',  element: contentSelected, image_input: '', heading_input: '', sub_input: '', link_input: '', list: []})
         }
         else if(contentSelected === 'code_highlights') {
-            array[parent].container.push({ header: 'Code',  element: contentSelected, input: '', language: 'javascript', theme: 'docco', paragraph: ''})
+            array[parent].container.push({ header: 'Code Highlights',  element: contentSelected, input: '', language: 'javascript', theme: 'docco', name: '', paragraph: ''})
+        }
+        else if(contentSelected === 'download_list') {
+            array[parent].container.push({ header: 'Download List',  element: contentSelected, input: '', icon: 'fa-file-download', link: '', list: []})
         }
         setForm({...form, content: array})
     }
@@ -204,7 +215,20 @@ const AdminProjects = ({ user, path }) => {
         var array = [...form.content]
         if(type === 'language') array[parent].container[index] = {...array[parent].container[index], language: e.target.value};
         else if(type === 'theme') array[parent].container[index] = {...array[parent].container[index], theme: e.target.value};
+        else if(type === 'icon') array[parent].container[index] = {...array[parent].container[index], icon: e.target.value};
         setForm({...form, content: array})
+    }
+
+    const nameValue = (e, index, parent) => {
+        var array = [...form.content];
+        array[parent].container[index] = {...array[parent].container[index], name: e.target.value};
+        setForm({...form, content: array});
+    }
+
+    const linkValue = (e, index, parent) => {
+        var array = [...form.content];
+        array[parent].container[index] = {...array[parent].container[index], link: e.target.value};
+        setForm({...form, content: array});
     }
 
     const paragraphValue = (e, index, parent) => {
@@ -306,6 +330,29 @@ const AdminProjects = ({ user, path }) => {
         setForm({...form, content: array})
     }
 
+    const addListsDownloads = (index, parent) => {       
+        var array = [...form.content]
+
+        if(!array[parent].container[index].input || !array[parent].container[index].link) return
+
+        array[parent].container[index] = {
+            ...array[parent].container[index],
+            list: [
+                ...array[parent].container[index].list,
+                {
+                    name: array[parent].container[index].input,
+                    link: array[parent].container[index].link,
+                    icon: array[parent].container[index].icon,
+                }
+            ],
+            icon: 'fa-file-download',
+            input: '',
+            link: '',
+        };
+
+        setForm({...form, content: array})
+    }
+
     const removeLists = (parent_index, child_index, parent) => {
         var array = [...form.content]
 
@@ -322,8 +369,12 @@ const AdminProjects = ({ user, path }) => {
         setForm({...form, content: array})
     }
 
+    const handleSubmit = () => {
+
+    }
+
     return (
-        <div className="flex h-screen bg-gray-50 dark:bg-gray-900 relative">
+        <div className="flex h-screen bg-gray-50 dark:bg-gray-900 relative text-sm">
             <AdminSidebar isOpen={isOpen} setIsOpen={setIsOpen} open={open} setOpen={setOpen} path={path}/>
             <div class="flex flex-col flex-1">
                 <AdminNavbar isOpen={isOpen} setIsOpen={setIsOpen} path={path}/>
@@ -521,6 +572,25 @@ const AdminProjects = ({ user, path }) => {
                                                                 }
                                                                 </div>
                                                         }
+                                                        <div className='grid grid-cols-1 gap-5 place-content-start mt-4 text-sm'>
+                                                            <button onClick={handleSubmit} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
+                                                                {
+                                                                    !submitted ?
+                                                                    "Upload"
+                                                                    :
+                                                                    <div className='flex flex-row justify-center items-center'>
+                                                                        Saving
+                                                                        <div role="status">
+                                                                            <svg aria-hidden="true" class="w-5 h-5 ml-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                                                            </svg>
+                                                                            <span class="sr-only">Loading...</span>
+                                                                        </div>
+                                                                    </div>
+                                                                }
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                     <div className="lg:w-3/4 md:w-3/4 w-full md:pl-8">
                                                         <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
@@ -550,6 +620,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                         <option disabled={true} className='text-sm'>-----List</option>
                                                                                         <option value="bullet_list" className="capitalize">Bullet List</option>
                                                                                         <option value="number_list" className="capitalize">Number List</option>
+                                                                                        <option value="download_list" className="capitalize">Download List</option>
                                                                                         <option value="list_image" className="capitalize">List Image</option>
                                                                                         <option disabled={true} className='text-sm'>-----Image</option>
                                                                                         <option value="grid_image" className="capitalize">Grid Image</option>
@@ -973,11 +1044,11 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                     
                                                                                                                 }
                                                                                                                 <div className='flex flex-row items-end ml-4'>
-                                                                                                                    <button onClick={() => addListsMulti(index, box_index)} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add List</button>
+                                                                                                                    <button onClick={() => addListsMulti(index, box_index)} className='float-left text-sm font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add List</button>
                                                                                                                 </div>
                                                                                                             </div>
                                                                                                         </div>
-                                                                                                        <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start'>
+                                                                                                        <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start text-sm'>
                                                                                                             <div className='flex flex-col'>
                                                                                                                 <label className='font-semibold text-sm'> Image URL </label>
                                                                                                                 <input 
@@ -985,19 +1056,21 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                     className='p-2 border border-solid border-[#c0c0c0]'
                                                                                                                     onChange={(e) => listInputValueMulti(e, index, box_index, 'image')}
                                                                                                                     value={ form.content[box_index].container[index].image_input }
+                                                                                                                    placeholder="Image URL"
                                                                                                                 />
                                                                                                             </div>
-                                                                                                            <div className='flex flex-col'>
+                                                                                                            <div className='flex flex-col text-sm'>
                                                                                                                 <label className='font-semibold text-sm'> Link URL </label>
                                                                                                                 <input 
                                                                                                                     type="text" 
                                                                                                                     className='p-2 border border-solid border-[#c0c0c0]'
                                                                                                                     onChange={(e) => listInputValueMulti(e, index, box_index, 'link')}
                                                                                                                     value={ form.content[box_index].container[index].link_input }
+                                                                                                                    placeholder="Link URL"
                                                                                                                 />
                                                                                                             </div>
                                                                                                         </div>
-                                                                                                        <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start'>
+                                                                                                        <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start text-sm'>
                                                                                                             <div className='flex flex-col'>
                                                                                                                 <label className='font-semibold text-sm'> Heading </label>
                                                                                                                 <textarea
@@ -1012,7 +1085,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                 >
                                                                                                                 </textarea>
                                                                                                             </div>
-                                                                                                            <div className='flex flex-col'>
+                                                                                                            <div className='flex flex-col text-sm'>
                                                                                                                 <label className='font-semibold text-sm'> Sub Heading </label>
                                                                                                                 <textarea
                                                                                                                     name="message"
@@ -1033,16 +1106,16 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                 {
                                                                                                                     form.content[box_index].container[index].list.map((list_item, i) => {
                                                                                                                         return (
-                                                                                                                            <div className='relative my-1 flex font-poppins items-center'>
+                                                                                                                            <div className='relative px-2 py-1 mb-1 flex font-poppins items-center text-white transition-colors duration-150 bg-blue-600 border border-transparent active:bg-blue-600 hover:bg-blue-700'>
                                                                                                                                 <img 
-                                                                                                                                    className='w-16 h-16 border border-solid border-gray-500 rounded-md'
+                                                                                                                                    className='w-12 h-12 border border-solid border-white rounded-md'
                                                                                                                                     src={list_item.image}
                                                                                                                                 />
-                                                                                                                                <div className='flex flex-col ml-2'>
+                                                                                                                                <div className='flex flex-col ml-2'> {/*text-[#FB2736]*/}
                                                                                                                                     <h2 className='font-semibold text-base'>{list_item.heading}</h2>
-                                                                                                                                    <p className='text-xs font-semibold text-[#FB2736] drop-shadow-sm'>{list_item.sub_heading}</p>
-                                                                                                                                    <a href={list_item.link} target='_blank'><FontAwesomeIcon icon={faExternalLink} className='absolute right-8 top-1/2 transform -translate-y-1/2'/></a>
-                                                                                                                                    <FontAwesomeIcon onClick={() => removeLists(index, i, box_index)} id={i} icon={faTrash} className='cursor-pointer absolute right-0 top-1/2 transform -translate-y-1/2'/>
+                                                                                                                                    <p className='text-xs drop-shadow-sm'>{list_item.sub_heading}</p>
+                                                                                                                                    <a href={list_item.link} target='_blank'><FontAwesomeIcon icon={faExternalLink} className='absolute right-10 top-1/2 transform -translate-y-1/2'/></a>
+                                                                                                                                    <FontAwesomeIcon onClick={() => removeLists(index, i, box_index)} id={i} icon={faTrash} className='cursor-pointer absolute right-2 top-1/2 transform -translate-y-1/2'/>
                                                                                                                                 </div>
                                                                                                                             </div>
                                                                                                                         )
@@ -1088,7 +1161,17 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                 }
                                                                                                             </div>
                                                                                                         </div>
-                                                                                                        <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start'>
+                                                                                                        <div className='flex flex-col'>
+                                                                                                            <label className='font-semibold text-sm'> Name: </label>
+                                                                                                            <input 
+                                                                                                                type="text" 
+                                                                                                                className='w-full p-2 border border-solid border-[#c0c0c0] text-sm'
+                                                                                                                onChange={(e) => nameValue(e, index, box_index)}
+                                                                                                                value={ form.content[box_index].container[index].name }
+                                                                                                                placeholder='Code name'
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                        <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start text-sm'>
                                                                                                             <div className='flex flex-col'>
                                                                                                                 <label className='font-semibold text-sm'> Language: </label>
                                                                                                                 <select
@@ -1398,7 +1481,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                 </select>
                                                                                                             </div>
                                                                                                         </div>
-                                                                                                        <div className='grid sm:grid-cols-1 grid-cols-1 gap-5 place-content-start mt-2'>
+                                                                                                        <div className='grid sm:grid-cols-1 grid-cols-1 gap-5 place-content-start mt-2 text-sm'>
                                                                                                             <div className='flex flex-col'>
                                                                                                                 <label className='font-semibold text-sm'> Code: <FontAwesomeIcon onClick={() => setCodePreview(!codePreview)} icon={codePreview ? faEyeSlash : faEye} className='cursor-pointer'/></label>
                                                                                                                 {
@@ -1423,6 +1506,110 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                 </SyntaxHighlighter>
                                                                                                             }
                                                                                                         </div>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                :
+                                                                                                item.element === 'download_list' ?
+                                                                                                <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                                                    <div className='flex flex-col'>
+                                                                                                        <div className='flex flex-row justify-between py-2'>
+                                                                                                            <input 
+                                                                                                                type="text" 
+                                                                                                                className='border-none font-semibold outline-none'
+                                                                                                                onChange={(e) => headerValue(e, index, box_index)}
+                                                                                                                value={ form.content[box_index].container[index].header }
+                                                                                                            />
+                                                                                                            <div className='flex'>
+                                                                                                                {
+                                                                                                                    form.content[box_index].container.length === 1 ?
+                                                                                                                        <button onClick={() => removeElementsContent(index, box_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                    :
+                                                                                                                    index === 0 && form.content[box_index].container.length !== 1 ?
+                                                                                                                    <>
+                                                                                                                        <button title="move downwards" onClick={() => moveElementsDownwards(index, box_index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                        <button title="remove elements" onClick={() => removeElementsContent(index, box_index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                    </>
+                                                                                                                    : index === (form.content[box_index].container.length - 1) ?
+                                                                                                                    <>
+                                                                                                                        <button title="move upwards" onClick={() => moveElementUpwards(index, box_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                        <button title="remove elements" onClick={() => removeElementsContent(index, box_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                    </>
+                                                                                                                    :
+                                                                                                                    <>
+                                                                                                                        <button title="move upwards" onClick={() => moveElementUpwards(index, box_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                        <button title="move downwards" onClick={() => moveElementsDownwards(index, box_index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                        <button title="remove elements" onClick={() => removeElementsContent(index, box_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                    </>
+                                                                                                                    
+                                                                                                                }
+                                                                                                                <div className='flex flex-row items-end ml-4'>
+                                                                                                                    <button onClick={() => addListsDownloads(index, box_index)} className='float-left font-semibold text-sm border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add List</button>
+                                                                                                                </div>
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start text-sm'>
+                                                                                                            <div className='flex flex-col text-sm'>
+                                                                                                                <label className='font-semibold text-sm'>File Type: </label>
+                                                                                                                <select
+                                                                                                                    className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                                                                                    default={`normal_naragraph-${box_index}`}
+                                                                                                                    onChange={(e) => selectValue(e, index, box_index, 'icon')}
+                                                                                                                    value={ form.content[box_index].container[index].icon }
+                                                                                                                >
+                                                                                                                    <option value="fa-file-download" className="capitalize">File</option>
+                                                                                                                    <option value="fa-file-code" className="capitalize">Code</option>
+                                                                                                                    <option value="fa-file-video" className="capitalize">Video</option>
+                                                                                                                    <option value="fa-file-audio" className="capitalize">Audio</option>
+                                                                                                                    <option value="fa-file-zipper" className="capitalize">Zip</option>
+                                                                                                                </select>
+                                                                                                                {/* <div className='flex flex-row items-end'>
+                                                                                                                    <button onClick={() => addLists(index, box_index)} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                                                                                </div> */}
+                                                                                                            </div>
+                                                                                                            <div className='flex flex-col text-sm'>
+                                                                                                                <label className='font-semibold text-sm'>File Name: </label>
+                                                                                                                <input 
+                                                                                                                    type="text" 
+                                                                                                                    className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                                                    onChange={(e) => listInputValue(e, index, box_index)}
+                                                                                                                    value={ form.content[box_index].container[index].input }
+                                                                                                                    placeholder='Name'
+                                                                                                                />
+                                                                                                            </div>
+                                                                                                        </div>
+                                                                                                        <div className='flex flex-col text-sm'>
+                                                                                                            <label className='font-semibold text-sm'>File Link: </label>
+                                                                                                            <input 
+                                                                                                                type="text" 
+                                                                                                                className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                                                onChange={(e) => linkValue(e, index, box_index)}
+                                                                                                                value={ form.content[box_index].container[index].link }
+                                                                                                                placeholder='Link'
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                        {
+                                                                                                            form.content[box_index].container[index].list.length > 0 &&
+                                                                                                                <div className='mt-4'>
+                                                                                                                {
+                                                                                                                    form.content[box_index].container[index].list.map((list_item, i) => {
+                                                                                                                        return (
+                                                                                                                            <div className='px-2 py-1 relative mb-1 flex font-poppins items-center text-white transition-colors duration-150 bg-blue-600 border border-transparent active:bg-blue-600 hover:bg-blue-700'>
+                                                                                                                                {/* <img 
+                                                                                                                                    className='w-16 h-16 border border-solid border-gray-500 rounded-md'
+                                                                                                                                    src={list_item.image}
+                                                                                                                                /> */}
+                                                                                                                                <FontAwesomeIcon icon={['fas', list_item.icon]} />
+                                                                                                                                <div className='flex flex-col ml-2'>
+                                                                                                                                    <h2 className='text-sm '>{list_item.name}</h2>
+                                                                                                                                    <a href={list_item.link} target='_blank'><FontAwesomeIcon icon={faExternalLink} className='absolute right-10 top-1/2 transform -translate-y-1/2'/></a>
+                                                                                                                                    <FontAwesomeIcon onClick={() => removeLists(index, i, box_index)} id={i} icon={faTrash} className='cursor-pointer absolute right-2 top-1/2 transform -translate-y-1/2'/>
+                                                                                                                                </div>
+                                                                                                                            </div>
+                                                                                                                        )
+                                                                                                                    })
+                                                                                                                }
+                                                                                                                </div>
+                                                                                                        }
                                                                                                     </div>
                                                                                                 </div>
                                                                                                 :
