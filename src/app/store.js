@@ -8,6 +8,7 @@ import uploadsSlice from '../actions/uploads'
 import gameSlice from '../actions/game'
 import blogsSlice from '../actions/blogs'
 import archiveSlice from '../actions/archive'
+import projectSlice from '../actions/project'
 
 export const store = configureStore({
     reducer: {
@@ -19,7 +20,8 @@ export const store = configureStore({
         uploads: uploadsSlice,
         game: gameSlice,
         blogs: blogsSlice,
-        archive: archiveSlice
+        archive: archiveSlice,
+        project: projectSlice
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({

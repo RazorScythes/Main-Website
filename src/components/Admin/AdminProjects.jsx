@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { uploadProject, clearAlert } from "../../actions/project";
 import { faEye, faPlus, faCalendar, faClose, faTrash, faArrowDown, faArrowUp, faShare, faShareAltSquare, faExternalLink, faEyeSlash, faFile, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from 'react-router-dom'
 import { Header } from './index'
@@ -68,10 +69,11 @@ const responsive = {
 const AdminProjects = ({ user, path }) => {
     const dispatch = useDispatch()
 
-    const alert = useSelector((state) => state.settings.alert)
-    const variant = useSelector((state) => state.settings.variant)
-    const heading = useSelector((state) => state.settings.heading)
-    const paragraph = useSelector((state) => state.settings.paragraph)
+    const alert = useSelector((state) => state.project.alert)
+    const variant = useSelector((state) => state.project.variant)
+    const heading = useSelector((state) => state.project.heading)
+    const paragraph = useSelector((state) => state.project.paragraph)
+    const project = useSelector((state) => state.project.project)
 
     const [open, setOpen] = useState({
         portfolio: false,
@@ -109,6 +111,9 @@ const AdminProjects = ({ user, path }) => {
     const [form, setForm] = useState({
         featured_image: '',
         post_title: '',
+        date_start: '',
+        date_end: '',
+        created_for: 'Personal',
         content: [
             { 
                 header: '',
@@ -223,232 +228,440 @@ const AdminProjects = ({ user, path }) => {
         setForm({...form, content: array})
     }
 
-    const addContentElementsGrid1 = (index, parent) => {
+    const addContentElementsGrid = (index, parent, type) => {
         var array = [...form.content]
 
-        if(contentGrid1Selected === 'heading') {
-            array[parent].container[index].grid1.push({ header: 'Heading',  element: contentGrid1Selected, heading: ''})
+        if(type === 'grid1') {
+            if(contentGrid1Selected === 'heading') {
+                array[parent].container[index].grid1.push({ header: 'Heading',  element: contentGrid1Selected, heading: ''})
+            }
+            else if(contentGrid1Selected === 'normal_naragraph') {
+                array[parent].container[index].grid1.push({ header: 'Normal Paragraph',  element: contentGrid1Selected, paragraph: ''})
+            }
+            else if(contentGrid1Selected === 'quoted_paragraph') {
+                array[parent].container[index].grid1.push({ header: 'Quoted Paragraph',  element: contentGrid1Selected, paragraph: ''})
+            }
+            else if(contentGrid1Selected === 'grid_image') {
+                array[parent].container[index].grid1.push({ header: 'Grid Image', type: 'boxed', element: contentGrid1Selected, input: '', grid_image: []})
+            }
+            else if(contentGrid1Selected === 'sub_heading') {
+                array[parent].container[index].grid1.push({ header: 'Sub Heading',  element: contentGrid1Selected, heading: ''})
+            }
+            else if(contentGrid1Selected === 'bullet_list') {
+                array[parent].container[index].grid1.push({ header: 'Bullet List',  element: contentGrid1Selected, input: '', list: []})
+            }
+            else if(contentGrid1Selected === 'number_list') {
+                array[parent].container[index].grid1.push({ header: 'Number List',  element: contentGrid1Selected, input: '', list: []})
+            }
+            else if(contentGrid1Selected === 'single_image') {
+                array[parent].container[index].grid1.push({ header: 'Single Image',  type: 'rectangular', element: contentGrid1Selected, image: ''})
+            }
+            else if(contentGrid1Selected === 'list_image') {
+                array[parent].container[index].grid1.push({ header: 'List Image',  element: contentGrid1Selected, image_input: '', heading_input: '', sub_input: '', link_input: '', list: []})
+            }
+            else if(contentGrid1Selected === 'download_list') {
+                array[parent].container[index].grid1.push({ header: 'Download List',  element: contentGrid1Selected, input: '', icon: 'fa-file-download', link: '', list: []})
+            }
         }
-        else if(contentGrid1Selected === 'normal_naragraph') {
-            array[parent].container[index].grid1.push({ header: 'Normal Paragraph',  element: contentGrid1Selected, paragraph: ''})
-        }
-        else if(contentGrid1Selected === 'quoted_paragraph') {
-            array[parent].container[index].grid1.push({ header: 'Quoted Paragraph',  element: contentGrid1Selected, paragraph: ''})
-        }
-        else if(contentGrid1Selected === 'grid_image') {
-            array[parent].container[index].grid1.push({ header: 'Grid Image', type: 'boxed', element: contentGrid1Selected, input: '', grid_image: []})
-        }
-        else if(contentGrid1Selected === 'sub_heading') {
-            array[parent].container[index].grid1.push({ header: 'Sub Heading',  element: contentGrid1Selected, heading: ''})
-        }
-        else if(contentGrid1Selected === 'bullet_list') {
-            array[parent].container[index].grid1.push({ header: 'Bullet List',  element: contentGrid1Selected, input: '', list: []})
-        }
-        else if(contentGrid1Selected === 'number_list') {
-            array[parent].container[index].grid1.push({ header: 'Number List',  element: contentGrid1Selected, input: '', list: []})
-        }
-        else if(contentGrid1Selected === 'single_image') {
-            array[parent].container[index].grid1.push({ header: 'Single Image',  type: 'rectangular', element: contentGrid1Selected, image: ''})
-        }
-        else if(contentGrid1Selected === 'list_image') {
-            array[parent].container[index].grid1.push({ header: 'List Image',  element: contentGrid1Selected, image_input: '', heading_input: '', sub_input: '', link_input: '', list: []})
-        }
-        else if(contentGrid1Selected === 'download_list') {
-            array[parent].container[index].grid1.push({ header: 'Download List',  element: contentGrid1Selected, input: '', icon: 'fa-file-download', link: '', list: []})
+        else if(type === 'grid2') {
+            if(contentGrid2Selected === 'heading') {
+                array[parent].container[index].grid2.push({ header: 'Heading',  element: contentGrid2Selected, heading: ''})
+            }
+            else if(contentGrid2Selected === 'normal_naragraph') {
+                array[parent].container[index].grid2.push({ header: 'Normal Paragraph',  element: contentGrid2Selected, paragraph: ''})
+            }
+            else if(contentGrid2Selected === 'quoted_paragraph') {
+                array[parent].container[index].grid2.push({ header: 'Quoted Paragraph',  element: contentGrid2Selected, paragraph: ''})
+            }
+            else if(contentGrid2Selected === 'grid_image') {
+                array[parent].container[index].grid2.push({ header: 'Grid Image', type: 'boxed', element: contentGrid2Selected, input: '', grid_image: []})
+            }
+            else if(contentGrid2Selected === 'sub_heading') {
+                array[parent].container[index].grid2.push({ header: 'Sub Heading',  element: contentGrid2Selected, heading: ''})
+            }
+            else if(contentGrid2Selected === 'bullet_list') {
+                array[parent].container[index].grid2.push({ header: 'Bullet List',  element: contentGrid2Selected, input: '', list: []})
+            }
+            else if(contentGrid2Selected === 'number_list') {
+                array[parent].container[index].grid2.push({ header: 'Number List',  element: contentGrid2Selected, input: '', list: []})
+            }
+            else if(contentGrid2Selected === 'single_image') {
+                array[parent].container[index].grid2.push({ header: 'Single Image',  type: 'rectangular', element: contentGrid2Selected, image: ''})
+            }
+            else if(contentGrid2Selected === 'list_image') {
+                array[parent].container[index].grid2.push({ header: 'List Image',  element: contentGrid2Selected, image_input: '', heading_input: '', sub_input: '', link_input: '', list: []})
+            }
+            else if(contentGrid2Selected === 'download_list') {
+                array[parent].container[index].grid2.push({ header: 'Download List',  element: contentGrid2Selected, input: '', icon: 'fa-file-download', link: '', list: []})
+            }
         }
         setForm({...form, content: array})
     }
 
-    const moveElementUpwardsGrid = (index, parent, sub) => {
+    const moveElementUpwardsGrid = (index, parent, sub, type) => {
         var array = [...form.content]
 
-        // Swapping the positions of the first and second elements
-        const temp = array[parent].container[index].grid1[sub];
-        array[parent].container[index].grid1[sub] = array[parent].container[index].grid1[sub-1];
-        array[parent].container[index].grid1[sub-1] = temp;
+        if(type === 'grid1') {
+            // Swapping the positions of the first and second elements
+            const temp = array[parent].container[index].grid1[sub];
+            array[parent].container[index].grid1[sub] = array[parent].container[index].grid1[sub-1];
+            array[parent].container[index].grid1[sub-1] = temp;
+        }
+        else if(type === 'grid2') {
+            // Swapping the positions of the first and second elements
+            const temp = array[parent].container[index].grid2[sub];
+            array[parent].container[index].grid2[sub] = array[parent].container[index].grid2[sub-1];
+            array[parent].container[index].grid2[sub-1] = temp;
+        }
 
         setForm({...form, content: array})
     }
 
-    const moveElementsDownwardsGrid = (index, parent, sub) => {
+    const moveElementsDownwardsGrid = (index, parent, sub, type) => {
         var array = [...form.content]
 
-        // Swapping the positions of the second and first elements
-        const temp = array[parent].container[index].grid1[sub];
-        array[parent].container[index].grid1[sub] = array[parent].container[index].grid1[sub+1];
-        array[parent].container[index].grid1[sub+1] = temp;
+        if(type === 'grid1') {
+            // Swapping the positions of the second and first elements
+            const temp = array[parent].container[index].grid1[sub];
+            array[parent].container[index].grid1[sub] = array[parent].container[index].grid1[sub+1];
+            array[parent].container[index].grid1[sub+1] = temp;
+        }
+        else if(type === 'grid2') {
+            // Swapping the positions of the second and first elements
+            const temp = array[parent].container[index].grid2[sub];
+            array[parent].container[index].grid2[sub] = array[parent].container[index].grid2[sub+1];
+            array[parent].container[index].grid2[sub+1] = temp;
+        }
 
         setForm({...form, content: array})
     }
 
-    const removeElementsContentGrid = (index, parent, sub) => {
+    const removeElementsContentGrid = (index, parent, sub, type) => {
         var array = [...form.content]
 
-        array[parent].container[index].grid1.splice(index, 1)
+        if(type === 'grid1') {
+            array[parent].container[index].grid1.splice(sub, 1)
+        }
+        else if(type === 'grid2') {
+            array[parent].container[index].grid2.splice(sub, 1)
+        }
 
         setForm({...form, content: array})
     }
 
-    const headerValueGrid = (e, index, parent, sub) => {
+    const headerValueGrid = (e, index, parent, sub, type) => {
         var array = [...form.content]
-        array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], header: e.target.value};
+
+        if(type === 'grid1') {
+            array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], header: e.target.value};
+        }
+        else if(type === 'grid2') {
+            array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], header: e.target.value};
+        }
+
         setForm({...form, content: array})
     }
 
-    const selectValueGrid = (e, index, parent, type, sub) => {
+    const selectValueGrid = (e, index, parent, type, sub, typex) => {
         var array = [...form.content]
-        if(type === 'language') array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], language: e.target.value};
-        else if(type === 'theme') array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], theme: e.target.value};
-        else if(type === 'icon') array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], icon: e.target.value};
+
+        if(typex === 'grid1') {
+            if(type === 'language') array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], language: e.target.value};
+            else if(type === 'theme') array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], theme: e.target.value};
+            else if(type === 'icon') array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], icon: e.target.value};
+        }
+        else if(typex === 'grid2') {
+            if(type === 'language') array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], language: e.target.value};
+            else if(type === 'theme') array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], theme: e.target.value};
+            else if(type === 'icon') array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], icon: e.target.value};
+        }
+
         setForm({...form, content: array})
     }
 
-    const nameValueGrid = (e, index, parent, sub) => {
+    const nameValueGrid = (e, index, parent, sub, type) => {
         var array = [...form.content];
-        array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], name: e.target.value};
+
+        if(type === 'grid1') {
+            array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], name: e.target.value};
+        }
+        else if(type === 'grid2') {
+            array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], name: e.target.value};
+        }
+
         setForm({...form, content: array});
     }
 
-    const linkValueGrid = (e, index, parent, sub) => {
+    const linkValueGrid = (e, index, parent, sub, type) => {
         var array = [...form.content];
-        array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], link: e.target.value};
+
+        if(type === 'grid1') {
+            array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], link: e.target.value};
+        }
+        else if(type === 'grid2') {
+            array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], link: e.target.value};
+        }
+
         setForm({...form, content: array});
     }
 
-    const paragraphValueGrid = (e, index, parent, sub) => {
+    const paragraphValueGrid = (e, index, parent, sub, type) => {
         var array = [...form.content];
-        array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], paragraph: e.target.value};
+
+        if(type === 'grid1') {
+            array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], paragraph: e.target.value};
+        }
+        else if(type === 'grid2') {
+            array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], paragraph: e.target.value};
+        }
+
         setForm({...form, content: array});
     }
 
-    const headingValueGrid = (e, index, parent, sub) => {
+    const headingValueGrid = (e, index, parent, sub, type) => {
         var array = [...form.content]
-        array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], heading: e.target.value};
+
+        if(type === 'grid1') {
+            array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], heading: e.target.value};
+        }
+        else if(type === 'grid2') {
+            array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], heading: e.target.value};
+        }
+
         setForm({...form, content: array})
     }
 
-    const singleInputValueGrid = (e, index, parent, sub) => {
+    const singleInputValueGrid = (e, index, parent, sub, type) => {
         var array = [...form.content]
-        array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], image: e.target.value};
+
+        if(type === 'grid1') {
+            array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], image: e.target.value};
+        }
+        else if(type === 'grid2') {
+            array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], image: e.target.value};
+        }   
+
         setForm({...form, content: array})
     }
 
-    const gridInputValueGrid = (e, index, parent, sub) => {
+    const gridInputValueGrid = (e, index, parent, sub, type) => {
         var array = [...form.content]
-        array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], input: e.target.value};
+
+        if(type === 'grid1') {
+            array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], input: e.target.value};
+        }
+        else if(type === 'grid2') {
+            array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], input: e.target.value};
+        }
+
         setForm({...form, content: array})
     }
 
-    const listInputValueGrid = (e, index, parent, sub) => {
+    const listInputValueGrid = (e, index, parent, sub, type) => {
         var array = [...form.content]
-        array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], input: e.target.value};
+
+        if(type === 'grid1') {
+            array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], input: e.target.value};
+        }
+        else if(type === 'grid2') {
+            array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], input: e.target.value};
+        }
+
         setForm({...form, content: array})
     }
 
-    const listInputValueMultiGrid = (e, index, parent, type, sub) => {
+    const listInputValueMultiGrid = (e, index, parent, type, sub, typex) => {
         var array = [...form.content]
 
-        if(type === 'image') array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], image_input: e.target.value};
-        else if(type === 'link') array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], link_input: e.target.value};
-        else if(type === 'heading') array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], heading_input: e.target.value};
-        else if(type == 'sub_heading') array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], sub_input: e.target.value};
+        if(typex === 'grid1') {
+            if(type === 'image') array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], image_input: e.target.value};
+            else if(type === 'link') array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], link_input: e.target.value};
+            else if(type === 'heading') array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], heading_input: e.target.value};
+            else if(type == 'sub_heading') array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], sub_input: e.target.value};
+        }
+        else if(typex === 'grid2') {
+            if(type === 'image') array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], image_input: e.target.value};
+            else if(type === 'link') array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], link_input: e.target.value};
+            else if(type === 'heading') array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], heading_input: e.target.value};
+            else if(type == 'sub_heading') array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], sub_input: e.target.value};
+        }
         
         setForm({...form, content: array})
     }
     
-    const typeValueGrid = (e, index, parent, sub) => {
-        var array = [...form.content]
-        array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], type: e.target.value};
-        setForm({...form, content: array})
-    }
-
-    const addGridContentImageGrid = (index, parent, sub) => {       
+    const typeValueGrid = (e, index, parent, sub, type) => {
         var array = [...form.content]
 
-        if(!array[parent].container[index].grid1[sub].input) return
-        array[parent].container[index].grid1[sub] = {
-            ...array[parent].container[index].grid1[sub],
-            grid_image: [...array[parent].container[index].grid1[sub].grid_image, array[parent].container[index].grid1[sub].input],
-            input: ''
-        };
+        if(type === 'grid1') {
+            array[parent].container[index].grid1[sub] = {...array[parent].container[index].grid1[sub], type: e.target.value};
+        }
+        else if(type === 'grid2') {
+            array[parent].container[index].grid2[sub] = {...array[parent].container[index].grid2[sub], type: e.target.value};
+        }
 
         setForm({...form, content: array})
     }
 
-    const addListsGrid = (index, parent, sub) => {       
+    const addGridContentImageGrid = (index, parent, sub, type) => {       
         var array = [...form.content]
 
-        if(!array[parent].container[index].grid1[sub].input) return
-
-        array[parent].container[index].grid1[sub] = {
-            ...array[parent].container[index].grid1[sub],
-            list: [...array[parent].container[index].grid1[sub].list, array[parent].container[index].grid1[sub].input],
-            input: ''
-        };
+        if(type === 'grid1') {
+            if(!array[parent].container[index].grid1[sub].input) return
+            array[parent].container[index].grid1[sub] = {
+                ...array[parent].container[index].grid1[sub],
+                grid_image: [...array[parent].container[index].grid1[sub].grid_image, array[parent].container[index].grid1[sub].input],
+                input: ''
+            };
+        }
+        else if(type === 'grid2') {
+            if(!array[parent].container[index].grid2[sub].input) return
+            array[parent].container[index].grid2[sub] = {
+                ...array[parent].container[index].grid2[sub],
+                grid_image: [...array[parent].container[index].grid2[sub].grid_image, array[parent].container[index].grid2[sub].input],
+                input: ''
+            };
+        }
 
         setForm({...form, content: array})
     }
 
-    const addListsMultiGrid = (index, parent, sub) => {       
+    const addListsGrid = (index, parent, sub, type) => {       
         var array = [...form.content]
 
-        if(!array[parent].container[index].grid1[sub].heading_input) return
+        if(type === 'grid1') {
+            if(!array[parent].container[index].grid1[sub].input) return
 
-        array[parent].container[index].grid1[sub] = {
-            ...array[parent].container[index].grid1[sub],
-            list: [
-                ...array[parent].container[index].grid1[sub].list,
-                {
-                    image: array[parent].container[index].grid1[sub].image_input,
-                    link: array[parent].container[index].grid1[sub].link_input,
-                    heading: array[parent].container[index].grid1[sub].heading_input,
-                    sub_heading: array[parent].container[index].grid1[sub].sub_input,
-                }
-            ],
-            image_input: '',
-            link_input: '',
-            heading_input: '',
-            sub_input: '',
-        };
+            array[parent].container[index].grid1[sub] = {
+                ...array[parent].container[index].grid1[sub],
+                list: [...array[parent].container[index].grid1[sub].list, array[parent].container[index].grid1[sub].input],
+                input: ''
+            };
+        }
+        else if(type === 'grid2') {
+            if(!array[parent].container[index].grid2[sub].input) return
+
+            array[parent].container[index].grid2[sub] = {
+                ...array[parent].container[index].grid2[sub],
+                list: [...array[parent].container[index].grid2[sub].list, array[parent].container[index].grid2[sub].input],
+                input: ''
+            };
+        }
 
         setForm({...form, content: array})
     }
 
-    const addListsDownloadsGrid = (index, parent, sub) => {       
+    const addListsMultiGrid = (index, parent, sub, type) => {       
         var array = [...form.content]
 
-        if(!array[parent].container[index].grid1[sub].input || !array[parent].container[index].grid1[sub].link) return
+        if(type === 'grid1') {
+            if(!array[parent].container[index].grid1[sub].heading_input) return
 
-        array[parent].container[index].grid1[sub] = {
-            ...array[parent].container[index].grid1[sub],
-            list: [
-                ...array[parent].container[index].grid1[sub].list,
-                {
-                    name: array[parent].container[index].grid1[sub].input,
-                    link: array[parent].container[index].grid1[sub].link,
-                    icon: array[parent].container[index].grid1[sub].icon,
-                }
-            ],
-            icon: 'fa-file-download',
-            input: '',
-            link: '',
-        };
+            array[parent].container[index].grid1[sub] = {
+                ...array[parent].container[index].grid1[sub],
+                list: [
+                    ...array[parent].container[index].grid1[sub].list,
+                    {
+                        image: array[parent].container[index].grid1[sub].image_input,
+                        link: array[parent].container[index].grid1[sub].link_input,
+                        heading: array[parent].container[index].grid1[sub].heading_input,
+                        sub_heading: array[parent].container[index].grid1[sub].sub_input,
+                    }
+                ],
+                image_input: '',
+                link_input: '',
+                heading_input: '',
+                sub_input: '',
+            };
+        }
+        else if(type === 'grid2') {
+            if(!array[parent].container[index].grid2[sub].heading_input) return
+
+            array[parent].container[index].grid2[sub] = {
+                ...array[parent].container[index].grid2[sub],
+                list: [
+                    ...array[parent].container[index].grid2[sub].list,
+                    {
+                        image: array[parent].container[index].grid2[sub].image_input,
+                        link: array[parent].container[index].grid2[sub].link_input,
+                        heading: array[parent].container[index].grid2[sub].heading_input,
+                        sub_heading: array[parent].container[index].grid2[sub].sub_input,
+                    }
+                ],
+                image_input: '',
+                link_input: '',
+                heading_input: '',
+                sub_input: '',
+            };
+        }
 
         setForm({...form, content: array})
     }
 
-    const removeListsGrid = (parent_index, child_index, parent, sub) => {
+    const addListsDownloadsGrid = (index, parent, sub, type) => {       
         var array = [...form.content]
 
-        array[parent].container[parent_index].grid1[sub].list.splice(child_index, 1)
+        if(type === 'grid1') {
+            if(!array[parent].container[index].grid1[sub].input || !array[parent].container[index].grid1[sub].link) return
+
+            array[parent].container[index].grid1[sub] = {
+                ...array[parent].container[index].grid1[sub],
+                list: [
+                    ...array[parent].container[index].grid1[sub].list,
+                    {
+                        name: array[parent].container[index].grid1[sub].input,
+                        link: array[parent].container[index].grid1[sub].link,
+                        icon: array[parent].container[index].grid1[sub].icon,
+                    }
+                ],
+                icon: 'fa-file-download',
+                input: '',
+                link: '',
+            };
+        }
+        else if(type === 'grid2') {
+            if(!array[parent].container[index].grid2[sub].input || !array[parent].container[index].grid2[sub].link) return
+
+            array[parent].container[index].grid2[sub] = {
+                ...array[parent].container[index].grid2[sub],
+                list: [
+                    ...array[parent].container[index].grid2[sub].list,
+                    {
+                        name: array[parent].container[index].grid2[sub].input,
+                        link: array[parent].container[index].grid2[sub].link,
+                        icon: array[parent].container[index].grid2[sub].icon,
+                    }
+                ],
+                icon: 'fa-file-download',
+                input: '',
+                link: '',
+            };
+        }
 
         setForm({...form, content: array})
     }
 
-    const removeGridContentImageGrid = (parent_index, child_index, parent, sub) => {
+    const removeListsGrid = (parent_index, child_index, parent, sub, type) => {
         var array = [...form.content]
 
-        array[parent].container[parent_index].grid1[sub].grid_image.splice(child_index, 1)
+        if(type === 'grid1') {
+            array[parent].container[parent_index].grid1[sub].list.splice(child_index, 1)
+        }
+        else if(type === 'grid2') {
+            array[parent].container[parent_index].grid2[sub].list.splice(child_index, 1)
+        }
+
+        setForm({...form, content: array})
+    }
+
+    const removeGridContentImageGrid = (parent_index, child_index, parent, sub, type) => {
+        var array = [...form.content]
+
+        if(type === 'grid1') {
+            array[parent].container[parent_index].grid1[sub].grid_image.splice(child_index, 1)
+        }
+        else if(type === 'grid2') {
+            array[parent].container[parent_index].grid2[sub].grid_image.splice(child_index, 1)
+        }
 
         setForm({...form, content: array})
     }
@@ -654,7 +867,20 @@ const AdminProjects = ({ user, path }) => {
     }
 
     const handleSubmit = () => {
+        if(!image || !form.post_title || !form.categories) return
 
+        const obj = {...form}
+        obj['tags'] = tags
+        obj['featured_image'] = image
+
+        if(!submitted) {
+            console.log(obj)
+            dispatch(uploadProject({
+                id: user.result?._id,
+                data: obj
+            }))
+            setSubmitted(true)
+        }
     }
 
     return (
@@ -696,10 +922,7 @@ const AdminProjects = ({ user, path }) => {
                                 <div className={`${styles.marginX} ${styles.flexCenter}`}>
                                     <div className={`${styles.boxWidthEx}`}>
                                         <div className="container mx-auto relative px-0 pt-8 pb-16">
-                                            {
-                                                alertInfo.alert && alertInfo.variant && showAlert &&
-                                                    <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
-                                            }
+                                            
                                             <div className='grid md:grid-cols-1 grid-cols-1 gap-5 place-content-start mb-4 font-poppins'>
                                                 {/* <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 mb-8">
 
@@ -724,8 +947,12 @@ const AdminProjects = ({ user, path }) => {
                                                     <h2 className='text-3xl font-bold my-4 text-gray-800'>New Project</h2>        
                                                 </div>
 
+                                                {
+                                                    alertInfo.alert && alertInfo.variant && showAlert &&
+                                                        <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
+                                                }
                                                 <div className="md:flex items-start justify-center mt-4">
-
+                                                    
                                                     <div className="lg:w-1/3 md:w-1/3 w-full">
                                                         <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
                                                             <h2 className='text-2xl font-bold text-gray-800 my-4'>Details</h2>        
@@ -775,6 +1002,43 @@ const AdminProjects = ({ user, path }) => {
                                                             </div>
                                                         </div>
                                                         
+                                                        <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
+                                                            <div className='flex flex-col'>
+                                                                <label className='font-semibold'> Project Started </label>
+                                                                <input 
+                                                                    type="date" 
+                                                                    className='p-2 border border-solid border-[#c0c0c0]'
+                                                                    value={form.date_start}
+                                                                    onChange={(e) => setForm({...form, date_start: e.target.value})}
+                                                                />
+                                                            </div>
+                                                            <div className='flex flex-col'>
+                                                                <label className='font-semibold'> Project Ended </label>
+                                                                <input 
+                                                                    type="date" 
+                                                                    className='p-2 border border-solid border-[#c0c0c0]'
+                                                                    value={form.date_end}
+                                                                    onChange={(e) => setForm({...form, date_end: e.target.value})}
+                                                                />
+                                                            </div>
+                                                        </div>
+
+                                                        <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                            <div className='flex flex-col'>
+                                                                <label className='font-semibold'> Project Purpose: </label>
+                                                                <select
+                                                                    className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                                    value={form.created_for}
+                                                                    onChange={(e) => setForm({...form, created_for: e.target.value})}
+                                                                >
+                                                                <option value="Personal" className="capitalize">Personal</option>
+                                                                <option value="School" className="capitalize">School</option>
+                                                                <option value="Client" className="capitalize">Client</option>
+                                                                <option value="Others" className="capitalize">Others</option>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
                                                         <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
                                                             <div className='flex flex-col'>
                                                                 <label className='font-semibold'> Category: </label>
@@ -2153,7 +2417,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                             <option value="single_image" className="capitalize">Single Image</option>
                                                                                                                         </select>
                                                                                                                         <div className='flex flex-row items-end'>
-                                                                                                                            <button onClick={() => addContentElementsGrid1(index, box_index)} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                                                                                            <button onClick={() => addContentElementsGrid(index, box_index, 'grid1')} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
                                                                                                                         </div>
                                                                                                                     </div>
                                                                                                                     {
@@ -2169,30 +2433,30 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='border-none font-semibold outline-none'
-                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].header }
                                                                                                                                                     />
                                                                                                                                                     {/* <label className='font-semibold'> Normal Paragraph: </label> */}
                                                                                                                                                     <div>
                                                                                                                                                         {
                                                                                                                                                             form.content[box_index].container[index].grid1.length === 1 ?
-                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             :
                                                                                                                                                             sub_index === 0 && form.content[box_index].container[index].grid1.length !== 1 ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             : sub_index === (form.content[box_index].container[index].grid1.length - 1) ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             :
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             
                                                                                                                                                         }
@@ -2206,7 +2470,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                         rows="8"
                                                                                                                                                         placeholder="Paragraph"
                                                                                                                                                         className="w-full p-2 border border-solid border-[#c0c0c0]"
-                                                                                                                                                        onChange={(e) => paragraphValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => paragraphValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].paragraph }
                                                                                                                                                     >
                                                                                                                                                     </textarea>
@@ -2221,29 +2485,29 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='border-none font-semibold outline-none'
-                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].header }
                                                                                                                                                     />
                                                                                                                                                     <div>
                                                                                                                                                         {
                                                                                                                                                             form.content[box_index].container[index].grid1.length === 1 ?
-                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             :
                                                                                                                                                             sub_index === 0 && form.content[box_index].container[index].grid1.length !== 1 ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             : sub_index === (form.content[box_index].container[index].grid1.length - 1) ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             :
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             
                                                                                                                                                         }
@@ -2253,7 +2517,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='w-full p-2 border border-solid border-[#c0c0c0]'
-                                                                                                                                                        onChange={(e) => headingValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => headingValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].heading }
                                                                                                                                                         placeholder='Heading'
                                                                                                                                                     />
@@ -2268,29 +2532,29 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='border-none font-semibold outline-none'
-                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].header }
                                                                                                                                                     />
                                                                                                                                                     <div>
                                                                                                                                                         {
                                                                                                                                                             form.content[box_index].container[index].grid1.length === 1 ?
-                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             :
                                                                                                                                                             sub_index === 0 && form.content[box_index].container[index].grid1.length !== 1 ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             : sub_index === (form.content[box_index].container[index].grid1.length - 1) ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             :
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             
                                                                                                                                                         }
@@ -2300,7 +2564,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='w-full p-2 border border-solid border-[#c0c0c0]'
-                                                                                                                                                        onChange={(e) => headingValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => headingValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].heading }
                                                                                                                                                         placeholder='Sub Heading'
                                                                                                                                                     />
@@ -2315,29 +2579,29 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='border-none font-semibold outline-none'
-                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].header }
                                                                                                                                                     />
                                                                                                                                                     <div>
                                                                                                                                                         {
                                                                                                                                                             form.content[box_index].container[index].grid1.length === 1 ?
-                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             :
                                                                                                                                                             sub_index === 0 && form.content[box_index].container[index].grid1.length !== 1 ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             : sub_index === (form.content[box_index].container[index].grid1.length - 1) ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             :
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             
                                                                                                                                                         }
@@ -2347,12 +2611,12 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='w-full p-2 border border-solid border-[#c0c0c0]'
-                                                                                                                                                        onChange={(e) => gridInputValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => gridInputValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].input }
                                                                                                                                                         placeholder='Image URL'
                                                                                                                                                     />
                                                                                                                                                     <div className='flex flex-row items-end'>
-                                                                                                                                                        <button onClick={() => addGridContentImageGrid(index, box_index, sub_index)} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                                                                                                                        <button onClick={() => addGridContentImageGrid(index, box_index, sub_index, 'grid1')} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
                                                                                                                                                     </div>
                                                                                                                                                 </div>
                                                                                                                                                 <div className='flex flex-col'>
@@ -2361,7 +2625,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                         className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                                                                                                                                         default="normal_naragraph"
                                                                                                                                                         value={form.content[box_index].container[index].grid1[sub_index].type}
-                                                                                                                                                        onChange={(e) => typeValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => typeValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                     >
                                                                                                                                                         <option value="boxed" className="capitalize">Boxed</option>
                                                                                                                                                         <option value="boxed_full" className="capitalize">Boxed Full</option>
@@ -2382,7 +2646,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                                             className={`w-full ${form.content[box_index].container[index].grid1[sub_index].type === 'boxed-full' && 'md:h-[500px] sm:h-[400px] h-[300px]'} ${(form.content[box_index].container[index].grid1[sub_index].type === 'boxed' || form.content[box_index].container[index].grid1[sub_index].type === 'rectangular') && 'md:h-60 h-48'} object-cover bg-top rounded-lg border border-[#cococo]`}
                                                                                                                                                                             alt={`Grid Image #${i+1}`}
                                                                                                                                                                         />
-                                                                                                                                                                        <button title="remove image" onClick={() => removeGridContentImageGrid(index, i, box_index, sub_index)} className='absolute top-2 right-4'><FontAwesomeIcon icon={faClose} className='cursor-pointer'/></button>
+                                                                                                                                                                        <button title="remove image" onClick={() => removeGridContentImageGrid(index, i, box_index, sub_index, 'grid1')} className='absolute top-2 right-4'><FontAwesomeIcon icon={faClose} className='cursor-pointer'/></button>
                                                                                                                                                                     </div>
                                                                                                                                                                 )
                                                                                                                                                             })
@@ -2400,29 +2664,29 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='border-none font-semibold outline-none'
-                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].header }
                                                                                                                                                     />
                                                                                                                                                     <div>
                                                                                                                                                         {
                                                                                                                                                             form.content[box_index].container[index].grid1.length === 1 ?
-                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             :
                                                                                                                                                             sub_index === 0 && form.content[box_index].container[index].grid1.length !== 1 ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             : sub_index === (form.content[box_index].container[index].grid1.length - 1) ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             :
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             
                                                                                                                                                         }
@@ -2432,7 +2696,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='w-full p-2 border border-solid border-[#c0c0c0]'
-                                                                                                                                                        onChange={(e) => singleInputValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => singleInputValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].image }
                                                                                                                                                         placeholder='Image URL'
                                                                                                                                                     />
@@ -2443,7 +2707,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                         className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                                                                                                                                         default="normal_naragraph"
                                                                                                                                                         value={form.content[box_index].container[index].grid1[sub_index].type}
-                                                                                                                                                        onChange={(e) => typeValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => typeValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                     >
                                                                                                                                                         <option value="rectangular" className="capitalize">Rectangular</option>
                                                                                                                                                         <option value="boxed_full" className="capitalize">Boxed Full</option>
@@ -2470,29 +2734,29 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='border-none font-semibold outline-none'
-                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].header }
                                                                                                                                                     />
                                                                                                                                                     <div>
                                                                                                                                                         {
                                                                                                                                                             form.content[box_index].container[index].grid1.length === 1 ?
-                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             :
                                                                                                                                                             sub_index === 0 && form.content[box_index].container[index].grid1.length !== 1 ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             : sub_index === (form.content[box_index].container[index].grid1.length - 1) ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             :
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             
                                                                                                                                                         }
@@ -2502,12 +2766,12 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='w-full p-2 border border-solid border-[#c0c0c0]'
-                                                                                                                                                        onChange={(e) => listInputValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => listInputValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].input }
                                                                                                                                                         placeholder='Lists Items'
                                                                                                                                                     />
                                                                                                                                                     <div className='flex flex-row items-end'>
-                                                                                                                                                        <button onClick={() => addListsGrid(index, box_index, sub_index)} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                                                                                                                        <button onClick={() => addListsGrid(index, box_index, sub_index, 'grid1')} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
                                                                                                                                                     </div>
                                                                                                                                                 </div>
                                                                                                                                                 {
@@ -2519,7 +2783,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                                     className="mb-1 flex items-center justify-between px-2 py-1 text-xs font-medium leading-5 text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-md active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-purple"
                                                                                                                                                                 >
                                                                                                                                                                     {list_item}
-                                                                                                                                                                    <FontAwesomeIcon onClick={() => removeListsGrid(index, i, box_index, sub_index)} id={i} icon={faClose} className="ml-2 cursor-pointer" />
+                                                                                                                                                                    <FontAwesomeIcon onClick={() => removeListsGrid(index, i, box_index, sub_index, 'grid1')} id={i} icon={faClose} className="ml-2 cursor-pointer" />
                                                                                                                                                                 </button>
                                                                                                                                                             )
                                                                                                                                                         })
@@ -2534,34 +2798,34 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='border-none font-semibold outline-none'
-                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].header }
                                                                                                                                                     />
                                                                                                                                                     <div className='flex'>
                                                                                                                                                         {
                                                                                                                                                             form.content[box_index].container[index].grid1.length === 1 ?
-                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             :
                                                                                                                                                             sub_index === 0 && form.content[box_index].container[index].grid1.length !== 1 ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             : sub_index === (form.content[box_index].container[index].grid1.length - 1) ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             :
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             
                                                                                                                                                         }
                                                                                                                                                         <div className='flex flex-row items-end ml-4'>
-                                                                                                                                                            <button onClick={() => addListsMultiGrid(index, box_index, sub_index)} className='float-left text-sm font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add List</button>
+                                                                                                                                                            <button onClick={() => addListsMultiGrid(index, box_index, sub_index, 'grid1')} className='float-left text-sm font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add List</button>
                                                                                                                                                         </div>
                                                                                                                                                     </div>
                                                                                                                                                 </div>
@@ -2571,7 +2835,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                         <input 
                                                                                                                                                             type="text" 
                                                                                                                                                             className='p-2 border border-solid border-[#c0c0c0]'
-                                                                                                                                                            onChange={(e) => listInputValueMultiGrid(e, index, box_index, 'image', sub_index)}
+                                                                                                                                                            onChange={(e) => listInputValueMultiGrid(e, index, box_index, 'image', sub_index, 'grid1')}
                                                                                                                                                             value={ form.content[box_index].container[index].grid1[sub_index].image_input }
                                                                                                                                                             placeholder="Image URL"
                                                                                                                                                         />
@@ -2581,7 +2845,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                         <input 
                                                                                                                                                             type="text" 
                                                                                                                                                             className='p-2 border border-solid border-[#c0c0c0]'
-                                                                                                                                                            onChange={(e) => listInputValueMultiGrid(e, index, box_index, 'link', sub_index)}
+                                                                                                                                                            onChange={(e) => listInputValueMultiGrid(e, index, box_index, 'link', sub_index, 'grid1')}
                                                                                                                                                             value={ form.content[box_index].container[index].grid1[sub_index].link_input }
                                                                                                                                                             placeholder="Link URL"
                                                                                                                                                         />
@@ -2597,7 +2861,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                             rows="3"
                                                                                                                                                             placeholder="Heading"
                                                                                                                                                             className="w-full p-2 border border-solid border-[#c0c0c0]"
-                                                                                                                                                            onChange={(e) => listInputValueMultiGrid(e, index, box_index, 'heading', sub_index)}
+                                                                                                                                                            onChange={(e) => listInputValueMultiGrid(e, index, box_index, 'heading', sub_index, 'grid1')}
                                                                                                                                                             value={ form.content[box_index].container[index].grid1[sub_index].heading_input }
                                                                                                                                                         >
                                                                                                                                                         </textarea>
@@ -2611,7 +2875,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                             rows="3"
                                                                                                                                                             placeholder="Sub heading"
                                                                                                                                                             className="w-full p-2 border border-solid border-[#c0c0c0]"
-                                                                                                                                                            onChange={(e) => listInputValueMultiGrid(e, index, box_index, 'sub_heading', sub_index)}
+                                                                                                                                                            onChange={(e) => listInputValueMultiGrid(e, index, box_index, 'sub_heading', sub_index, 'grid1')}
                                                                                                                                                             value={ form.content[box_index].container[index].grid1[sub_index].sub_input }
                                                                                                                                                         >
                                                                                                                                                         </textarea>
@@ -2632,7 +2896,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                                             <h2 className='font-semibold text-base'>{list_item.heading}</h2>
                                                                                                                                                                             <p className='text-xs drop-shadow-sm'>{list_item.sub_heading}</p>
                                                                                                                                                                             <a href={list_item.link} target='_blank'><FontAwesomeIcon icon={faExternalLink} className='absolute right-10 top-1/2 transform -translate-y-1/2'/></a>
-                                                                                                                                                                            <FontAwesomeIcon onClick={() => removeListsGrid(index, i, box_index, sub_index)} id={i} icon={faTrash} className='cursor-pointer absolute right-2 top-1/2 transform -translate-y-1/2'/>
+                                                                                                                                                                            <FontAwesomeIcon onClick={() => removeListsGrid(index, i, box_index, sub_index, 'grid1')} id={i} icon={faTrash} className='cursor-pointer absolute right-2 top-1/2 transform -translate-y-1/2'/>
                                                                                                                                                                         </div>
                                                                                                                                                                     </div>
                                                                                                                                                                 )
@@ -2650,34 +2914,34 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='border-none font-semibold outline-none'
-                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].header }
                                                                                                                                                     />
                                                                                                                                                     <div className='flex'>
                                                                                                                                                         {
                                                                                                                                                             form.content[box_index].container[index].grid1.length === 1 ?
-                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             :
                                                                                                                                                             sub_index === 0 && form.content[box_index].container[index].grid1.length !== 1 ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             : sub_index === (form.content[box_index].container[index].grid1.length - 1) ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             :
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             
                                                                                                                                                         }
                                                                                                                                                         <div className='flex flex-row items-end ml-4'>
-                                                                                                                                                            <button onClick={() => addListsDownloadsGrid(index, box_index, sub_index)} className='float-left font-semibold text-sm border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add List</button>
+                                                                                                                                                            <button onClick={() => addListsDownloadsGrid(index, box_index, sub_index, 'grid1')} className='float-left font-semibold text-sm border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add List</button>
                                                                                                                                                         </div>
                                                                                                                                                     </div>
                                                                                                                                                 </div>
@@ -2687,7 +2951,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                         <select
                                                                                                                                                             className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                                                                                                                                             default={`normal_naragraph-${box_index}`}
-                                                                                                                                                            onChange={(e) => selectValueGrid(e, index, box_index, 'icon', sub_index)}
+                                                                                                                                                            onChange={(e) => selectValueGrid(e, index, box_index, 'icon', sub_index, 'grid1')}
                                                                                                                                                             value={ form.content[box_index].container[index].grid1[sub_index].icon }
                                                                                                                                                         >
                                                                                                                                                             <option value="fa-file-download" className="capitalize">File</option>
@@ -2702,7 +2966,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                         <input 
                                                                                                                                                             type="text" 
                                                                                                                                                             className='w-full p-2 border border-solid border-[#c0c0c0]'
-                                                                                                                                                            onChange={(e) => listInputValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                            onChange={(e) => listInputValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                             value={ form.content[box_index].container[index].grid1[sub_index].input }
                                                                                                                                                             placeholder='Name'
                                                                                                                                                         />
@@ -2713,7 +2977,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='w-full p-2 border border-solid border-[#c0c0c0]'
-                                                                                                                                                        onChange={(e) => linkValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => linkValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].link }
                                                                                                                                                         placeholder='Link'
                                                                                                                                                     />
@@ -2729,7 +2993,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                                         <div className='flex flex-col ml-2'>
                                                                                                                                                                             <h2 className='text-sm '>{list_item.name}</h2>
                                                                                                                                                                             <a href={list_item.link} target='_blank'><FontAwesomeIcon icon={faExternalLink} className='absolute right-10 top-1/2 transform -translate-y-1/2'/></a>
-                                                                                                                                                                            <FontAwesomeIcon onClick={() => removeListsGrid(index, i, box_index, sub_index)} id={i} icon={faTrash} className='cursor-pointer absolute right-2 top-1/2 transform -translate-y-1/2'/>
+                                                                                                                                                                            <FontAwesomeIcon onClick={() => removeListsGrid(index, i, box_index, sub_index, 'grid1')} id={i} icon={faTrash} className='cursor-pointer absolute right-2 top-1/2 transform -translate-y-1/2'/>
                                                                                                                                                                         </div>
                                                                                                                                                                     </div>
                                                                                                                                                                 )
@@ -2747,29 +3011,29 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='border-none font-semibold outline-none'
-                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].header }
                                                                                                                                                     />
                                                                                                                                                     <div>
                                                                                                                                                         {
                                                                                                                                                             form.content[box_index].container[index].grid1.length === 1 ?
-                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             :
                                                                                                                                                             sub_index === 0 && form.content[box_index].container[index].grid1.length !== 1 ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             : sub_index === (form.content[box_index].container[index].grid1.length - 1) ?
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             :
                                                                                                                                                             <>
-                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
-                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid1')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
                                                                                                                                                             </>
                                                                                                                                                             
                                                                                                                                                         }
@@ -2779,12 +3043,12 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                     <input 
                                                                                                                                                         type="text" 
                                                                                                                                                         className='w-full p-2 border border-solid border-[#c0c0c0]'
-                                                                                                                                                        onChange={(e) => listInputValueGrid(e, index, box_index, sub_index)}
+                                                                                                                                                        onChange={(e) => listInputValueGrid(e, index, box_index, sub_index, 'grid1')}
                                                                                                                                                         value={ form.content[box_index].container[index].grid1[sub_index].input }
                                                                                                                                                         placeholder='Lists Items'
                                                                                                                                                     />
                                                                                                                                                     <div className='flex flex-row items-end'>
-                                                                                                                                                        <button onClick={() => addListsGrid(index, box_index, sub_index)} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                                                                                                                        <button onClick={() => addListsGrid(index, box_index, sub_index, 'grid1')} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
                                                                                                                                                     </div>
                                                                                                                                                 </div>
                                                                                                                                                 {
@@ -2793,7 +3057,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                                                             return (
                                                                                                                                                                 <div key={i} className='flex items-center relative mt-2 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF] px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
                                                                                                                                                                     <p className='pr-2'>{list_item}</p>
-                                                                                                                                                                    <FontAwesomeIcon onClick={() => removeListsGrid(index, i, box_index, sub_index)} id={i} icon={faClose} className="ml-2 cursor-pointer absolute top-2 right-2" />
+                                                                                                                                                                    <FontAwesomeIcon onClick={() => removeListsGrid(index, i, box_index, sub_index, 'grid1')} id={i} icon={faClose} className="ml-2 cursor-pointer absolute top-2 right-2" />
                                                                                                                                                                 </div>
                                                                                                                                                             )
                                                                                                                                                         })
@@ -2813,7 +3077,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                     <div className='flex flex-row'>
                                                                                                                         <select
                                                                                                                             className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                                                                                                                            default={`normal_naragraph-${box_index}`}
+                                                                                                                            default={`normal_naragraph-x--${box_index}`}
                                                                                                                             value={contentGrid2Selected}
                                                                                                                             onChange={(e) => setContentGrid2Selected(e.target.value)}
                                                                                                                         >
@@ -2822,22 +3086,668 @@ const AdminProjects = ({ user, path }) => {
                                                                                                                             <option value="heading" className="capitalize">Heading</option>
                                                                                                                             <option value="sub_heading" className="capitalize">Sub Heading</option>
                                                                                                                             <option value="normal_naragraph" className="capitalize">Normal Paragraph</option>
-                                                                                                                            <option value="quoted_paragraph" className="capitalize">Quoted Paragraph</option>
-                                                                                                                            <option value="code_highlights" className="capitalize">Code Highlights</option>
                                                                                                                             <option disabled={true} className='text-sm'>-----List</option>
                                                                                                                             <option value="bullet_list" className="capitalize">Bullet List</option>
                                                                                                                             <option value="number_list" className="capitalize">Number List</option>
                                                                                                                             <option value="download_list" className="capitalize">Download List</option>
                                                                                                                             <option value="list_image" className="capitalize">List Image</option>
                                                                                                                             <option disabled={true} className='text-sm'>-----Image</option>
-                                                                                                                            <option value="slider" className="capitalize">Slider</option>
                                                                                                                             <option value="grid_image" className="capitalize">Grid Image</option>
                                                                                                                             <option value="single_image" className="capitalize">Single Image</option>
                                                                                                                         </select>
                                                                                                                         <div className='flex flex-row items-end'>
-                                                                                                                            <button onClick={() => addContentElements(box_index)} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                                                                                            <button onClick={() => addContentElementsGrid(index, box_index, 'grid2')} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
                                                                                                                         </div>
                                                                                                                     </div>
+                                                                                                                    {
+                                                                                                                        form.content[box_index].container[index].grid2.length > 0 &&
+                                                                                                                            form.content[box_index].container[index].grid2.map((item, sub_index) => {
+                                                                                                                                return (
+                                                                                                                                    <>
+                                                                                                                                    {
+                                                                                                                                        item.element === 'normal_naragraph' ?
+                                                                                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                                                                                            <div className='flex flex-col'>
+                                                                                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='border-none font-semibold outline-none'
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].header }
+                                                                                                                                                    />
+                                                                                                                                                    {/* <label className='font-semibold'> Normal Paragraph: </label> */}
+                                                                                                                                                    <div>
+                                                                                                                                                        {
+                                                                                                                                                            form.content[box_index].container[index].grid2.length === 1 ?
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            :
+                                                                                                                                                            sub_index === 0 && form.content[box_index].container[index].grid2.length !== 1 ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            : sub_index === (form.content[box_index].container[index].grid2.length - 1) ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            :
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            
+                                                                                                                                                        }
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                                <div className='flex flex-row'>
+                                                                                                                                                    <textarea
+                                                                                                                                                        name="paragraph"
+                                                                                                                                                        id="message"
+                                                                                                                                                        cols="30"
+                                                                                                                                                        rows="8"
+                                                                                                                                                        placeholder="Paragraph"
+                                                                                                                                                        className="w-full p-2 border border-solid border-[#c0c0c0]"
+                                                                                                                                                        onChange={(e) => paragraphValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].paragraph }
+                                                                                                                                                    >
+                                                                                                                                                    </textarea>
+                                                                                                                                                </div>
+                                                                                                                                            </div>
+                                                                                                                                        </div>
+                                                                                                                                        :
+                                                                                                                                        item.element === 'heading' ?
+                                                                                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                                                                                            <div className='flex flex-col'>
+                                                                                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='border-none font-semibold outline-none'
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].header }
+                                                                                                                                                    />
+                                                                                                                                                    <div>
+                                                                                                                                                        {
+                                                                                                                                                            form.content[box_index].container[index].grid2.length === 1 ?
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            :
+                                                                                                                                                            sub_index === 0 && form.content[box_index].container[index].grid2.length !== 1 ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            : sub_index === (form.content[box_index].container[index].grid2.length - 1) ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            :
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            
+                                                                                                                                                        }
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                                <div className='flex flex-row'>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                                                                                        onChange={(e) => headingValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].heading }
+                                                                                                                                                        placeholder='Heading'
+                                                                                                                                                    />
+                                                                                                                                                </div>
+                                                                                                                                            </div>
+                                                                                                                                        </div>
+                                                                                                                                        :
+                                                                                                                                        item.element === 'sub_heading' ?
+                                                                                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                                                                                            <div className='flex flex-col'>
+                                                                                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='border-none font-semibold outline-none'
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].header }
+                                                                                                                                                    />
+                                                                                                                                                    <div>
+                                                                                                                                                        {
+                                                                                                                                                            form.content[box_index].container[index].grid2.length === 1 ?
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            :
+                                                                                                                                                            sub_index === 0 && form.content[box_index].container[index].grid2.length !== 1 ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            : sub_index === (form.content[box_index].container[index].grid2.length - 1) ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            :
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            
+                                                                                                                                                        }
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                                <div className='flex flex-row'>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                                                                                        onChange={(e) => headingValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].heading }
+                                                                                                                                                        placeholder='Sub Heading'
+                                                                                                                                                    />
+                                                                                                                                                </div>
+                                                                                                                                            </div>
+                                                                                                                                        </div>
+                                                                                                                                        :
+                                                                                                                                        item.element === 'grid_image' ?
+                                                                                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                                                                                            <div className='flex flex-col'>
+                                                                                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='border-none font-semibold outline-none'
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].header }
+                                                                                                                                                    />
+                                                                                                                                                    <div>
+                                                                                                                                                        {
+                                                                                                                                                            form.content[box_index].container[index].grid2.length === 1 ?
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            :
+                                                                                                                                                            sub_index === 0 && form.content[box_index].container[index].grid2.length !== 1 ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            : sub_index === (form.content[box_index].container[index].grid2.length - 1) ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            :
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            
+                                                                                                                                                        }
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                                <div className='flex flex-row'>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                                                                                        onChange={(e) => gridInputValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].input }
+                                                                                                                                                        placeholder='Image URL'
+                                                                                                                                                    />
+                                                                                                                                                    <div className='flex flex-row items-end'>
+                                                                                                                                                        <button onClick={() => addGridContentImageGrid(index, box_index, sub_index, 'grid2')} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                                <div className='flex flex-col'>
+                                                                                                                                                    <label className='font-semibold'> Image/s dimension: </label>
+                                                                                                                                                    <select
+                                                                                                                                                        className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                                                                                                                        default="normal_naragraph"
+                                                                                                                                                        value={form.content[box_index].container[index].grid2[sub_index].type}
+                                                                                                                                                        onChange={(e) => typeValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                    >
+                                                                                                                                                        <option value="boxed" className="capitalize">Boxed</option>
+                                                                                                                                                        <option value="boxed_full" className="capitalize">Boxed Full</option>
+                                                                                                                                                        <option value="rectangular" className="capitalize">Rectangular</option>
+                                                                                                                                                        <option value="auto" className="capitalize">Auto</option>
+                                                                                                                                                    </select>
+                                                                                                                                                </div>
+                                                                                                                                                {
+                                                                                                                                                    form.content[box_index].container[index].grid2[sub_index].grid_image.length > 0 &&
+                                                                                                                                                    <>
+                                                                                                                                                    <div className={`grid ${(form.content[box_index].container[index].grid2[sub_index].type === 'boxed') && 'sm:grid-cols-2'} grid-cols-1 gap-5 place-content-start my-4`}>
+                                                                                                                                                        {
+                                                                                                                                                            form.content[box_index].container[index].grid2[sub_index].grid_image.map((image, i) => {
+                                                                                                                                                                return (
+                                                                                                                                                                    <div key={i} className='relative'>
+                                                                                                                                                                        <img 
+                                                                                                                                                                            src={image}
+                                                                                                                                                                            className={`w-full ${form.content[box_index].container[index].grid2[sub_index].type === 'boxed-full' && 'md:h-[500px] sm:h-[400px] h-[300px]'} ${(form.content[box_index].container[index].grid2[sub_index].type === 'boxed' || form.content[box_index].container[index].grid2[sub_index].type === 'rectangular') && 'md:h-60 h-48'} object-cover bg-top rounded-lg border border-[#cococo]`}
+                                                                                                                                                                            alt={`Grid Image #${i+1}`}
+                                                                                                                                                                        />
+                                                                                                                                                                        <button title="remove image" onClick={() => removeGridContentImageGrid(index, i, box_index, sub_index, 'grid2')} className='absolute top-2 right-4'><FontAwesomeIcon icon={faClose} className='cursor-pointer'/></button>
+                                                                                                                                                                    </div>
+                                                                                                                                                                )
+                                                                                                                                                            })
+                                                                                                                                                        }
+                                                                                                                                                    </div>
+                                                                                                                                                    </>
+                                                                                                                                                }
+                                                                                                                                            </div>
+                                                                                                                                        </div>
+                                                                                                                                        :
+                                                                                                                                        item.element === 'single_image' ?
+                                                                                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                                                                                            <div className='flex flex-col'>
+                                                                                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='border-none font-semibold outline-none'
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].header }
+                                                                                                                                                    />
+                                                                                                                                                    <div>
+                                                                                                                                                        {
+                                                                                                                                                            form.content[box_index].container[index].grid2.length === 1 ?
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            :
+                                                                                                                                                            sub_index === 0 && form.content[box_index].container[index].grid2.length !== 1 ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            : sub_index === (form.content[box_index].container[index].grid2.length - 1) ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            :
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            
+                                                                                                                                                        }
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                                <div className='flex flex-row'>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                                                                                        onChange={(e) => singleInputValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].image }
+                                                                                                                                                        placeholder='Image URL'
+                                                                                                                                                    />
+                                                                                                                                                </div>
+                                                                                                                                                <div className='flex flex-col'>
+                                                                                                                                                    <label className='font-semibold'> Image/s dimension: </label>
+                                                                                                                                                    <select
+                                                                                                                                                        className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                                                                                                                        default="normal_naragraph"
+                                                                                                                                                        value={form.content[box_index].container[index].grid2[sub_index].type}
+                                                                                                                                                        onChange={(e) => typeValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                    >
+                                                                                                                                                        <option value="rectangular" className="capitalize">Rectangular</option>
+                                                                                                                                                        <option value="boxed_full" className="capitalize">Boxed Full</option>
+                                                                                                                                                        <option value="auto" className="capitalize">Auto</option>
+                                                                                                                                                    </select>
+                                                                                                                                                </div>
+                                                                                                                                                {
+                                                                                                                                                    form.content[box_index].container[index].grid2[sub_index].image &&
+                                                                                                                                                        <div className='relative mt-2'>
+                                                                                                                                                            <img 
+                                                                                                                                                                src={form.content[box_index].container[index].grid2[sub_index].image}
+                                                                                                                                                                className={`w-full ${form.content[box_index].container[index].grid2[sub_index].type === 'boxed-full' && 'md:h-[500px] sm:h-[400px] h-[300px]'} ${(form.content[box_index].container[index].grid2[sub_index].type === 'rectangular') && 'md:h-60 h-48'} object-cover bg-top rounded-lg border border-[#cococo]`}
+                                                                                                                                                                alt={`Grid Image`}
+                                                                                                                                                            />
+                                                                                                                                                        </div>
+                                                                                                                                                }
+                                                                                                                                            </div>
+                                                                                                                                        </div>
+                                                                                                                                        :
+                                                                                                                                        item.element === 'bullet_list' ?
+                                                                                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                                                                                            <div className='flex flex-col'>
+                                                                                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='border-none font-semibold outline-none'
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].header }
+                                                                                                                                                    />
+                                                                                                                                                    <div>
+                                                                                                                                                        {
+                                                                                                                                                            form.content[box_index].container[index].grid2.length === 1 ?
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            :
+                                                                                                                                                            sub_index === 0 && form.content[box_index].container[index].grid2.length !== 1 ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            : sub_index === (form.content[box_index].container[index].grid2.length - 1) ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            :
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            
+                                                                                                                                                        }
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                                <div className='flex flex-row mb-2'>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                                                                                        onChange={(e) => listInputValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].input }
+                                                                                                                                                        placeholder='Lists Items'
+                                                                                                                                                    />
+                                                                                                                                                    <div className='flex flex-row items-end'>
+                                                                                                                                                        <button onClick={() => addListsGrid(index, box_index, sub_index, 'grid2')} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                                {
+                                                                                                                                                    form.content[box_index].container[index].grid2[sub_index].list.length > 0 &&
+                                                                                                                                                        form.content[box_index].container[index].grid2[sub_index].list.map((list_item, i) => {
+                                                                                                                                                            return (
+                                                                                                                                                                <button
+                                                                                                                                                                    key={i}
+                                                                                                                                                                    className="mb-1 flex items-center justify-between px-2 py-1 text-xs font-medium leading-5 text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-md active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-purple"
+                                                                                                                                                                >
+                                                                                                                                                                    {list_item}
+                                                                                                                                                                    <FontAwesomeIcon onClick={() => removeListsGrid(index, i, box_index, sub_index, 'grid2')} id={i} icon={faClose} className="ml-2 cursor-pointer" />
+                                                                                                                                                                </button>
+                                                                                                                                                            )
+                                                                                                                                                        })
+                                                                                                                                                }
+                                                                                                                                            </div>
+                                                                                                                                        </div>
+                                                                                                                                        :
+                                                                                                                                        item.element === 'list_image' ?
+                                                                                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                                                                                            <div className='flex flex-col'>
+                                                                                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='border-none font-semibold outline-none'
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].header }
+                                                                                                                                                    />
+                                                                                                                                                    <div className='flex'>
+                                                                                                                                                        {
+                                                                                                                                                            form.content[box_index].container[index].grid2.length === 1 ?
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            :
+                                                                                                                                                            sub_index === 0 && form.content[box_index].container[index].grid2.length !== 1 ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            : sub_index === (form.content[box_index].container[index].grid2.length - 1) ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            :
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            
+                                                                                                                                                        }
+                                                                                                                                                        <div className='flex flex-row items-end ml-4'>
+                                                                                                                                                            <button onClick={() => addListsMultiGrid(index, box_index, sub_index, 'grid2')} className='float-left text-sm font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add List</button>
+                                                                                                                                                        </div>
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                                <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start text-sm'>
+                                                                                                                                                    <div className='flex flex-col'>
+                                                                                                                                                        <label className='font-semibold text-sm'> Image URL </label>
+                                                                                                                                                        <input 
+                                                                                                                                                            type="text" 
+                                                                                                                                                            className='p-2 border border-solid border-[#c0c0c0]'
+                                                                                                                                                            onChange={(e) => listInputValueMultiGrid(e, index, box_index, 'image', sub_index, 'grid2')}
+                                                                                                                                                            value={ form.content[box_index].container[index].grid2[sub_index].image_input }
+                                                                                                                                                            placeholder="Image URL"
+                                                                                                                                                        />
+                                                                                                                                                    </div>
+                                                                                                                                                    <div className='flex flex-col text-sm'>
+                                                                                                                                                        <label className='font-semibold text-sm'> Link URL </label>
+                                                                                                                                                        <input 
+                                                                                                                                                            type="text" 
+                                                                                                                                                            className='p-2 border border-solid border-[#c0c0c0]'
+                                                                                                                                                            onChange={(e) => listInputValueMultiGrid(e, index, box_index, 'link', sub_index, 'grid2')}
+                                                                                                                                                            value={ form.content[box_index].container[index].grid2[sub_index].link_input }
+                                                                                                                                                            placeholder="Link URL"
+                                                                                                                                                        />
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                                <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start text-sm'>
+                                                                                                                                                    <div className='flex flex-col'>
+                                                                                                                                                        <label className='font-semibold text-sm'> Heading </label>
+                                                                                                                                                        <textarea
+                                                                                                                                                            name="message"
+                                                                                                                                                            id="message"
+                                                                                                                                                            cols="30"
+                                                                                                                                                            rows="3"
+                                                                                                                                                            placeholder="Heading"
+                                                                                                                                                            className="w-full p-2 border border-solid border-[#c0c0c0]"
+                                                                                                                                                            onChange={(e) => listInputValueMultiGrid(e, index, box_index, 'heading', sub_index, 'grid2')}
+                                                                                                                                                            value={ form.content[box_index].container[index].grid2[sub_index].heading_input }
+                                                                                                                                                        >
+                                                                                                                                                        </textarea>
+                                                                                                                                                    </div>
+                                                                                                                                                    <div className='flex flex-col text-sm'>
+                                                                                                                                                        <label className='font-semibold text-sm'> Sub Heading </label>
+                                                                                                                                                        <textarea
+                                                                                                                                                            name="message"
+                                                                                                                                                            id="message"
+                                                                                                                                                            cols="30"
+                                                                                                                                                            rows="3"
+                                                                                                                                                            placeholder="Sub heading"
+                                                                                                                                                            className="w-full p-2 border border-solid border-[#c0c0c0]"
+                                                                                                                                                            onChange={(e) => listInputValueMultiGrid(e, index, box_index, 'sub_heading', sub_index, 'grid2')}
+                                                                                                                                                            value={ form.content[box_index].container[index].grid2[sub_index].sub_input }
+                                                                                                                                                        >
+                                                                                                                                                        </textarea>
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                                {
+                                                                                                                                                    form.content[box_index].container[index].grid2[sub_index].list.length > 0 &&
+                                                                                                                                                        <div className='mt-4'>
+                                                                                                                                                        {
+                                                                                                                                                            form.content[box_index].container[index].grid2[sub_index].list.map((list_item, i) => {
+                                                                                                                                                                return (
+                                                                                                                                                                    <div className='relative px-2 py-1 mb-1 flex font-poppins items-center text-white transition-colors duration-150 bg-blue-600 border border-transparent active:bg-blue-600 hover:bg-blue-700'>
+                                                                                                                                                                        <img 
+                                                                                                                                                                            className='w-12 h-12 border border-solid border-white rounded-md'
+                                                                                                                                                                            src={list_item.image}
+                                                                                                                                                                        />
+                                                                                                                                                                        <div className='flex flex-col ml-2'> {/*text-[#FB2736]*/}
+                                                                                                                                                                            <h2 className='font-semibold text-base'>{list_item.heading}</h2>
+                                                                                                                                                                            <p className='text-xs drop-shadow-sm'>{list_item.sub_heading}</p>
+                                                                                                                                                                            <a href={list_item.link} target='_blank'><FontAwesomeIcon icon={faExternalLink} className='absolute right-10 top-1/2 transform -translate-y-1/2'/></a>
+                                                                                                                                                                            <FontAwesomeIcon onClick={() => removeListsGrid(index, i, box_index, sub_index, 'grid2')} id={i} icon={faTrash} className='cursor-pointer absolute right-2 top-1/2 transform -translate-y-1/2'/>
+                                                                                                                                                                        </div>
+                                                                                                                                                                    </div>
+                                                                                                                                                                )
+                                                                                                                                                            })
+                                                                                                                                                        }
+                                                                                                                                                        </div>
+                                                                                                                                                }
+                                                                                                                                            </div>
+                                                                                                                                        </div>
+                                                                                                                                        :
+                                                                                                                                        item.element === 'download_list' ?
+                                                                                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                                                                                            <div className='flex flex-col'>
+                                                                                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='border-none font-semibold outline-none'
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].header }
+                                                                                                                                                    />
+                                                                                                                                                    <div className='flex'>
+                                                                                                                                                        {
+                                                                                                                                                            form.content[box_index].container[index].grid2.length === 1 ?
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            :
+                                                                                                                                                            sub_index === 0 && form.content[box_index].container[index].grid2.length !== 1 ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            : sub_index === (form.content[box_index].container[index].grid2.length - 1) ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            :
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            
+                                                                                                                                                        }
+                                                                                                                                                        <div className='flex flex-row items-end ml-4'>
+                                                                                                                                                            <button onClick={() => addListsDownloadsGrid(index, box_index, sub_index, 'grid2')} className='float-left font-semibold text-sm border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add List</button>
+                                                                                                                                                        </div>
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                                <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start text-sm'>
+                                                                                                                                                    <div className='flex flex-col text-sm'>
+                                                                                                                                                        <label className='font-semibold text-sm'>File Type: </label>
+                                                                                                                                                        <select
+                                                                                                                                                            className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                                                                                                                            default={`normal_naragraph-${box_index}`}
+                                                                                                                                                            onChange={(e) => selectValueGrid(e, index, box_index, 'icon', sub_index, 'grid2')}
+                                                                                                                                                            value={ form.content[box_index].container[index].grid2[sub_index].icon }
+                                                                                                                                                        >
+                                                                                                                                                            <option value="fa-file-download" className="capitalize">File</option>
+                                                                                                                                                            <option value="fa-file-code" className="capitalize">Code</option>
+                                                                                                                                                            <option value="fa-file-video" className="capitalize">Video</option>
+                                                                                                                                                            <option value="fa-file-audio" className="capitalize">Audio</option>
+                                                                                                                                                            <option value="fa-file-zipper" className="capitalize">Zip</option>
+                                                                                                                                                        </select>
+                                                                                                                                                    </div>
+                                                                                                                                                    <div className='flex flex-col text-sm'>
+                                                                                                                                                        <label className='font-semibold text-sm'>File Name: </label>
+                                                                                                                                                        <input 
+                                                                                                                                                            type="text" 
+                                                                                                                                                            className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                                                                                            onChange={(e) => listInputValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                            value={ form.content[box_index].container[index].grid2[sub_index].input }
+                                                                                                                                                            placeholder='Name'
+                                                                                                                                                        />
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                                <div className='flex flex-col text-sm'>
+                                                                                                                                                    <label className='font-semibold text-sm'>File Link: </label>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                                                                                        onChange={(e) => linkValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].link }
+                                                                                                                                                        placeholder='Link'
+                                                                                                                                                    />
+                                                                                                                                                </div>
+                                                                                                                                                {
+                                                                                                                                                    form.content[box_index].container[index].grid2[sub_index].list.length > 0 &&
+                                                                                                                                                        <div className='mt-4'>
+                                                                                                                                                        {
+                                                                                                                                                            form.content[box_index].container[index].grid2[sub_index].list.map((list_item, i) => {
+                                                                                                                                                                return (
+                                                                                                                                                                    <div className='px-2 py-1 relative mb-1 flex font-poppins items-center text-white transition-colors duration-150 bg-blue-600 border border-transparent active:bg-blue-600 hover:bg-blue-700'>
+                                                                                                                                                                        <FontAwesomeIcon icon={['fas', list_item.icon]} />
+                                                                                                                                                                        <div className='flex flex-col ml-2'>
+                                                                                                                                                                            <h2 className='text-sm '>{list_item.name}</h2>
+                                                                                                                                                                            <a href={list_item.link} target='_blank'><FontAwesomeIcon icon={faExternalLink} className='absolute right-10 top-1/2 transform -translate-y-1/2'/></a>
+                                                                                                                                                                            <FontAwesomeIcon onClick={() => removeListsGrid(index, i, box_index, sub_index, 'grid2')} id={i} icon={faTrash} className='cursor-pointer absolute right-2 top-1/2 transform -translate-y-1/2'/>
+                                                                                                                                                                        </div>
+                                                                                                                                                                    </div>
+                                                                                                                                                                )
+                                                                                                                                                            })
+                                                                                                                                                        }
+                                                                                                                                                        </div>
+                                                                                                                                                }
+                                                                                                                                            </div>
+                                                                                                                                        </div>
+                                                                                                                                        :
+                                                                                                                                        item.element === 'number_list' &&
+                                                                                                                                        <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
+                                                                                                                                            <div className='flex flex-col'>
+                                                                                                                                                <div className='flex flex-row justify-between py-2'>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='border-none font-semibold outline-none'
+                                                                                                                                                        onChange={(e) => headerValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].header }
+                                                                                                                                                    />
+                                                                                                                                                    <div>
+                                                                                                                                                        {
+                                                                                                                                                            form.content[box_index].container[index].grid2.length === 1 ?
+                                                                                                                                                                <button onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            :
+                                                                                                                                                            sub_index === 0 && form.content[box_index].container[index].grid2.length !== 1 ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            : sub_index === (form.content[box_index].container[index].grid2.length - 1) ?
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            :
+                                                                                                                                                            <>
+                                                                                                                                                                <button title="move upwards" onClick={() => moveElementUpwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="move downwards" onClick={() => moveElementsDownwardsGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                                                                                                <button title="remove elements" onClick={() => removeElementsContentGrid(index, box_index, sub_index, 'grid2')} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                                                                                            </>
+                                                                                                                                                            
+                                                                                                                                                        }
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                                <div className='flex flex-row'>
+                                                                                                                                                    <input 
+                                                                                                                                                        type="text" 
+                                                                                                                                                        className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                                                                                                                                        onChange={(e) => listInputValueGrid(e, index, box_index, sub_index, 'grid2')}
+                                                                                                                                                        value={ form.content[box_index].container[index].grid2[sub_index].input }
+                                                                                                                                                        placeholder='Lists Items'
+                                                                                                                                                    />
+                                                                                                                                                    <div className='flex flex-row items-end'>
+                                                                                                                                                        <button onClick={() => addListsGrid(index, box_index, sub_index, 'grid2')} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                                                                                                                                    </div>
+                                                                                                                                                </div>
+                                                                                                                                                {
+                                                                                                                                                    form.content[box_index].container[index].grid2[sub_index].list.length > 0 &&
+                                                                                                                                                        form.content[box_index].container[index].grid2[sub_index].list.map((list_item, i) => {
+                                                                                                                                                            return (
+                                                                                                                                                                <div key={i} className='flex items-center relative mt-2 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF] px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
+                                                                                                                                                                    <p className='pr-2'>{list_item}</p>
+                                                                                                                                                                    <FontAwesomeIcon onClick={() => removeListsGrid(index, i, box_index, sub_index, 'grid2')} id={i} icon={faClose} className="ml-2 cursor-pointer absolute top-2 right-2" />
+                                                                                                                                                                </div>
+                                                                                                                                                            )
+                                                                                                                                                        })
+                                                                                                                                                }
+                                                                                                                                            </div>
+                                                                                                                                        </div>
+                                                                                                                                    }
+                                                                                                                                    </>
+                                                                                                                                )
+                                                                                                                            })
+                                                                                                                        }
                                                                                                                 </div>
                                                                                                             </div>
                                                                                                         </div>

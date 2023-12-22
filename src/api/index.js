@@ -171,3 +171,9 @@ export const getArchiveNameById                         = (formData) => User_API
 export const getArchiveDataById                         = (formData) => User_API.post('/archive/getArchiveDataById', formData)
 export const newArchiveList                             = (formData) => User_API.post('/archive/newArchiveList', formData)
 export const removeArchiveList                          = (formData) => User_API.post('/archive/removeArchiveList', formData)
+
+/* 
+    Project
+*/
+
+export const uploadProject                              = (formData) => User_API.post('/project/uploadProject', formData)
