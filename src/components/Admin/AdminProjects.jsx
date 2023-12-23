@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { uploadProject, clearAlert } from "../../actions/project";
-import { faEye, faPlus, faCalendar, faClose, faTrash, faArrowDown, faArrowUp, faShare, faShareAltSquare, faExternalLink, faEyeSlash, faFile, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { getUserProject, uploadProject, editUserProject, removeUserProject, clearAlert } from "../../actions/project";
+import { faEye, faPencilAlt, faTrashAlt, faEllipsisH, faPlus, faCalendar, faClose, faTrash, faArrowDown, faArrowUp, faShare, faShareAltSquare, faExternalLink, faEyeSlash, faFile, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from 'react-router-dom'
 import { Header } from './index'
 import { Link } from 'react-router-dom'
@@ -81,6 +81,8 @@ const AdminProjects = ({ user, path }) => {
         uploads: false,
         manage: false,
     })
+
+    const [projects, setProjects] = useState([])
     const [isOpen, setIsOpen] = useState(false)
     const [imageFile, setimageFile] = useState('')
     const [image, setImage] = useState('')
@@ -90,7 +92,11 @@ const AdminProjects = ({ user, path }) => {
     const [removeImage, setRemoveImage] = useState([])
     const [preview, setPreview] = useState(false)
     const [codePreview, setCodePreview] = useState(false)
-    
+    const [edit, setEdit] = useState(false)
+    const [editIndex, setEditIndex] = useState(0)
+    const [deleteIndex, setDeleteIndex] = useState(null)
+    const [showForm, setShowForm] = useState(false)
+
     const [submitted, setSubmitted] = useState(false)
     const [showAlert, setShowAlert] = useState(false)
     const [alertInfo, setAlertInfo] = useState({
@@ -127,6 +133,36 @@ const AdminProjects = ({ user, path }) => {
     const [input, setInput] = useState({
         tags: '',
     })
+
+    useEffect(() => {
+        dispatch(getUserProject({ id: user.result?._id }))
+    }, [])
+
+    useEffect(() => {
+        if(project && project.length > 0){
+            setProjects(project)
+        }
+        setTags([])
+        setForm({
+            featured_image: '',
+            post_title: '',
+            date_start: '',
+            date_end: '',
+            created_for: 'Personal',
+            content: [
+                { 
+                    header: '',
+                    container: [{ header: 'Heading',  element: 'heading', heading: ''}]
+                }
+            ],
+            tags: [],
+            categories: 'Gaming'
+        })
+        setEdit(false)
+        setImage('')
+        setimageFile('')
+        setSubmitted(false)
+    }, [project])
 
     useEffect(() => {
         if(alert || variant){
@@ -185,47 +221,57 @@ const AdminProjects = ({ user, path }) => {
 
     const addContentElements = (parent) => {
         var array = [...form.content]
+        var element;
 
         if(contentSelected === 'heading') {
-            array[parent].container.push({ header: 'Heading',  element: contentSelected, heading: ''})
+            element = { header: 'Heading',  element: contentSelected, heading: ''}
         }
         else if(contentSelected === 'normal_naragraph') {
-            array[parent].container.push({ header: 'Normal Paragraph',  element: contentSelected, paragraph: ''})
+            element = { header: 'Normal Paragraph',  element: contentSelected, paragraph: ''}
         }
         else if(contentSelected === 'quoted_paragraph') {
-            array[parent].container.push({ header: 'Quoted Paragraph',  element: contentSelected, paragraph: ''})
+            element = { header: 'Quoted Paragraph',  element: contentSelected, paragraph: ''}
         }
         else if(contentSelected === 'grid_image') {
-            array[parent].container.push({ header: 'Grid Image', type: 'boxed', element: contentSelected, input: '', grid_image: []})
+            element = { header: 'Grid Image', type: 'boxed', element: contentSelected, input: '', grid_image: []}
         }
         else if(contentSelected === 'slider') {
-            array[parent].container.push({ header: 'Slider', element: contentSelected, input: '', grid_image: []})
+            element = { header: 'Slider', element: contentSelected, input: '', grid_image: []}
         }
         else if(contentSelected === 'sub_heading') {
-            array[parent].container.push({ header: 'Sub Heading',  element: contentSelected, heading: ''})
+            element = { header: 'Sub Heading',  element: contentSelected, heading: ''}
         }
         else if(contentSelected === 'bullet_list') {
-            array[parent].container.push({ header: 'Bullet List',  element: contentSelected, input: '', list: []})
+            element = { header: 'Bullet List',  element: contentSelected, input: '', list: []}
         }
         else if(contentSelected === 'number_list') {
-            array[parent].container.push({ header: 'Number List',  element: contentSelected, input: '', list: []})
+            element = { header: 'Number List',  element: contentSelected, input: '', list: []}
         }
         else if(contentSelected === 'single_image') {
-            array[parent].container.push({ header: 'Single Image',  type: 'rectangular', element: contentSelected, image: ''})
+            element = { header: 'Single Image',  type: 'rectangular', element: contentSelected, image: ''}
         }
         else if(contentSelected === 'list_image') {
-            array[parent].container.push({ header: 'List Image',  element: contentSelected, image_input: '', heading_input: '', sub_input: '', link_input: '', list: []})
+            element = { header: 'List Image',  element: contentSelected, image_input: '', heading_input: '', sub_input: '', link_input: '', list: []}
         }
         else if(contentSelected === 'code_highlights') {
-            array[parent].container.push({ header: 'Code Highlights',  element: contentSelected, input: '', language: 'javascript', theme: 'docco', name: '', paragraph: ''})
+            element = { header: 'Code Highlights',  element: contentSelected, input: '', language: 'javascript', theme: 'docco', name: '', paragraph: ''}
         }
         else if(contentSelected === 'download_list') {
-            array[parent].container.push({ header: 'Download List',  element: contentSelected, input: '', icon: 'fa-file-download', link: '', list: []})
+            element = { header: 'Download List',  element: contentSelected, input: '', icon: 'fa-file-download', link: '', list: []}
         }
         else if(contentSelected === 'grid_column') {
-            array[parent].container.push({ header: 'Grid Column',  element: contentSelected, input: '', grid1: [], grid2: []})
+            element = { header: 'Grid Column',  element: contentSelected, input: '', grid1: [], grid2: []}
         }
-        setForm({...form, content: array})
+        
+        const newArray = [...array];
+        const parentContainer = { ...newArray[parent] };
+        parentContainer.container = [...(parentContainer.container || []), element];
+        newArray[parent] = parentContainer;
+
+        setForm(prevForm => ({
+            ...prevForm,
+            content: newArray,
+        }));
     }
 
     const addContentElementsGrid = (index, parent, type) => {
@@ -866,6 +912,59 @@ const AdminProjects = ({ user, path }) => {
         setForm({...form, content: array})
     }
 
+    const cancelEdit = () => {
+        setTags([])
+        setForm({
+            featured_image: '',
+            post_title: '',
+            date_start: '',
+            date_end: '',
+            created_for: 'Personal',
+            content: [
+                { 
+                    header: '',
+                    container: [{ header: 'Heading',  element: 'heading', heading: ''}]
+                }
+            ],
+            tags: [],
+            categories: 'Gaming'
+        })
+        setImage('')
+        setimageFile('')
+        setEdit(false)
+        setEditIndex(0)
+    }
+
+    useEffect(() => {
+        if(edit) {
+            window.scrollTo(0, 150)
+            setTags(projects[editIndex].tags)
+            setForm({
+                featured_image: projects[editIndex].featured_image,
+                post_title: projects[editIndex].post_title,
+                date_start: projects[editIndex].date_start,
+                date_end: projects[editIndex].date_end,
+                created_for: projects[editIndex].created_for,
+                content: projects[editIndex].content,
+                tags: projects[editIndex].tags,
+                categories: projects[editIndex].categories
+            })
+            setImage(projects[editIndex].featured_image)
+        }
+    }, [edit])
+
+    useEffect(() => {
+        if(deleteIndex !== null) {
+            if(confirm("do you want to delete this project?")) {
+                dispatch(removeUserProject({ 
+                    id: user.result?._id,
+                    project_id: projects[deleteIndex]._id 
+                }))
+            }
+            setDeleteIndex(null)
+        }
+    }, [deleteIndex])
+
     const handleSubmit = () => {
         if(!image || !form.post_title || !form.categories) return
 
@@ -874,13 +973,75 @@ const AdminProjects = ({ user, path }) => {
         obj['featured_image'] = image
 
         if(!submitted) {
-            console.log(obj)
             dispatch(uploadProject({
                 id: user.result?._id,
                 data: obj
             }))
             setSubmitted(true)
         }
+    }
+
+    const handleEdit = () => {
+        if(!form.post_title || !form.categories) return
+
+        if(!submitted) {
+            let updatedRecord = {
+                ...project[editIndex],
+                featured_image: image ? image : form.featured_image,
+                post_title: form.post_title,
+                date_start: form.date_start,
+                date_end: form.date_end,
+                created_for: form.created_for,
+                content: form.content,
+                tags: tags,
+                categories: form.categories,
+            }
+
+            dispatch(editUserProject({
+                id: user.result?._id,
+                data: updatedRecord
+            }))
+
+            setSubmitted(true)
+        }
+    }
+    
+    const ProjectLists = ({data, index, setEdit, setEditIndex, setDeleteIndex}) => {
+
+        const [open, setOpen] = useState(false)
+
+        return (
+            <div className='relative bg-white hover:bg-blue-100 transision-all hover:cursor-pointer w-full p-2 pb-6 border border-solid border-gray-300 rounded-md'>
+                <button onClick={() => setOpen(!open)} className='absolute top-0 right-0 px-2 mx-2 my-2 text-2xl bg-white opacity-70'><FontAwesomeIcon icon={faEllipsisH} className=''/></button>
+                {
+                    open &&
+                    <div className='absolute top-8 right-4 bg-gray-100 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] p-2 px-4 text-sm rounded-md'>
+                        <button 
+                            onClick={() => {
+                                setEditIndex(index)
+                                setEdit(true)
+                                setOpen(false)
+                            }}
+                            className='hover:text-[#FB2736] mb-1'><FontAwesomeIcon icon={faPencilAlt}/> Edit
+                        </button>
+                        <br/>
+                        <button onClick={() => setDeleteIndex(index)} className='hover:text-[#FB2736]'><FontAwesomeIcon icon={faTrashAlt}/> Delete</button>
+                    </div>
+                }
+                <img
+                    className='object-cover w-full h-52'
+                    src={data.featured_image}
+                />
+                <div className='px-2 pb-2 font-poppins'>
+                    <h2 className='text-lg font-semibold my-2 mr-2 leading-7'>{data.post_title}</h2>
+                    <div className='flex flex-wrap absolute bottom-3'>
+                        <p className='text-sm text-gray-600'>{data.views.length} view{data.views.length > 1 && 's'} • </p>
+                        <p className='text-sm text-gray-600 ml-1'> {data.likes.length} like{data.likes.length > 1 && 's'} •</p>
+                        <p className='text-sm text-gray-600 ml-1'> {data.comment.length} comment{data.comment.length > 1 && 's'}</p>
+                    </div>
+                </div>
+            </div>
+        )
     }
 
     return (
@@ -909,48 +1070,81 @@ const AdminProjects = ({ user, path }) => {
                                 aspects='landscape'
                             />
 
-                            {/* <div className="sm:mx-16 mx-6 pt-8 flex justify-between items-center">
-                                <h2 className='text-3xl font-semibold font-poppins'>Projects</h2>
-                                <div>
-                                <button className="sm:my-8 py-2 px-4 border-[#CAD5DF] leading-5 text-white font-semibold transition-colors duration-150 bg-blue-600 border border-transparent rounded-md active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-purple">
-                                    <FontAwesomeIcon icon={faPlus}/>
-                                </button>
+                            {
+                                (!showForm && !edit) &&
+                                <>
+                                <div className="sm:mx-16 mx-6 pt-8 flex justify-between items-center">
+                                    <h2 className='text-3xl font-bold my-4 text-gray-800'>Projects</h2>
+                                    <div>
+                                        <button onClick={() => {
+                                            setShowForm(true)
+                                            cancelEdit()
+                                        }} className="sm:my-8 py-2 px-4 border-[#CAD5DF] leading-5 text-white font-semibold transition-colors duration-150 bg-blue-600 border border-transparent rounded-md active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-purple">
+                                            <FontAwesomeIcon icon={faPlus}/>
+                                        </button>   
+                                    </div>
                                 </div>
-                            </div> */}
+                                {
+                                    alertInfo.alert && alertInfo.variant && showAlert &&
+                                        <div className="sm:mx-16 mx-6"><Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} /></div>
+                                }
+                                </>
+                            }
                             
                             <div className="relative">   
                                 <div className={`${styles.marginX} ${styles.flexCenter}`}>
                                     <div className={`${styles.boxWidthEx}`}>
-                                        <div className="container mx-auto relative px-0 pt-8 pb-16">
+                                        <div className="container mx-auto relative px-0 pb-16">
                                             
                                             <div className='grid md:grid-cols-1 grid-cols-1 gap-5 place-content-start mb-4 font-poppins'>
-                                                {/* <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 mb-8">
-
-                                                    <div className='relative bg-white hover:bg-blue-100 transision-all hover:cursor-pointer w-full p-2 border border-solid border-gray-300 rounded-md'>
-                                                        <img
-                                                            className='object-cover w-full h-52'
-                                                            src={heroBackgroundImage}
-                                                        />
-                                                        <div className='px-2 pb-2 font-poppins'>
-                                                            <h2 className='text-lg font-semibold my-2 mr-2 leading-7'>32-Band Audio Spectrum Visualizer Analyzer </h2>
-                                                            <div className='flex flex-wrap'>
-                                                            <p className='text-sm text-gray-600'>2310 views • </p>
-                                                            <p className='text-sm text-gray-600 ml-1'> 12 likes •</p>
-                                                            <p className='text-sm text-gray-600 ml-1'> 1 comments</p>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                </div> */}
-
                                                 <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 mb-8">
-                                                    <h2 className='text-3xl font-bold my-4 text-gray-800'>New Project</h2>        
+
+                                                    {
+                                                        (!showForm && !edit) &&
+                                                            projects?.length > 0 &&
+                                                                projects.map((item, index) => {
+                                                                    return (
+                                                                        <ProjectLists 
+                                                                            data={item} 
+                                                                            index={index}
+                                                                            setEdit={setEdit}
+                                                                            setEditIndex={setEditIndex}
+                                                                            setDeleteIndex={setDeleteIndex}
+                                                                            key={index}/>
+                                                                    )
+                                                                })
+                                                    }
+                                                    
+
+                                                </div>
+                                                
+                                                { 
+                                                    (showForm || edit) &&
+                                                <>
+                                                <div className="flex flex-row justify-between items-center mb-8">
+                                                    <h2 className='text-3xl font-bold my-4 text-gray-800'>{ edit ? 'Edit Project' : 'New Project' }</h2>  
+                                                    {
+                                                        edit &&
+                                                        <div className='flex justify-end'>
+                                                            <button onClick={() => cancelEdit()} className='sm:my-8 py-2 px-4 border-[#CAD5DF] leading-5 text-white font-semibold transition-colors duration-150 bg-blue-600 border border-transparent rounded-md active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-purple'>
+                                                                Cancel
+                                                            </button>
+                                                        </div>      
+                                                    }
+                                                    {
+                                                        showForm &&
+                                                        <div className='flex justify-end'>
+                                                            <button onClick={() => setShowForm(false)} className='sm:my-8 py-2 px-4 border-[#CAD5DF] leading-5 text-white font-semibold transition-colors duration-150 bg-blue-600 border border-transparent rounded-md active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-purple'>
+                                                                Cancel
+                                                            </button>
+                                                        </div>      
+                                                    }
                                                 </div>
 
-                                                {
-                                                    alertInfo.alert && alertInfo.variant && showAlert &&
-                                                        <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
-                                                }
+                                                    {
+                                                        alertInfo.alert && alertInfo.variant && showAlert &&
+                                                            <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
+                                                    }
                                                 <div className="md:flex items-start justify-center mt-4">
                                                     
                                                     <div className="lg:w-1/3 md:w-1/3 w-full">
@@ -1120,25 +1314,48 @@ const AdminProjects = ({ user, path }) => {
                                                                 }
                                                                 </div>
                                                         }
-                                                        <div className='grid grid-cols-1 gap-5 place-content-start mt-4 text-sm'>
-                                                            <button onClick={handleSubmit} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
-                                                                {
-                                                                    !submitted ?
-                                                                    "Upload"
-                                                                    :
-                                                                    <div className='flex flex-row justify-center items-center'>
-                                                                        Saving
-                                                                        <div role="status">
-                                                                            <svg aria-hidden="true" class="w-5 h-5 ml-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                                                <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                                                                                <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                                                                            </svg>
-                                                                            <span class="sr-only">Loading...</span>
+                                                        {
+                                                            edit ? 
+                                                            <div className='grid grid-cols-1 gap-5 place-content-start mt-4 text-sm'>
+                                                                <button onClick={handleEdit} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
+                                                                    {
+                                                                        !submitted ?
+                                                                        "Update"
+                                                                        :
+                                                                        <div className='flex flex-row justify-center items-center'>
+                                                                            Updating
+                                                                            <div role="status">
+                                                                                <svg aria-hidden="true" class="w-5 h-5 ml-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                                                                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                                                                </svg>
+                                                                                <span class="sr-only">Loading...</span>
+                                                                            </div>
                                                                         </div>
-                                                                    </div>
-                                                                }
-                                                            </button>
-                                                        </div>
+                                                                    }
+                                                                </button>
+                                                            </div>
+                                                            :
+                                                            <div className='grid grid-cols-1 gap-5 place-content-start mt-4 text-sm'>
+                                                                <button onClick={handleSubmit} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
+                                                                    {
+                                                                        !submitted ?
+                                                                        "Upload"
+                                                                        :
+                                                                        <div className='flex flex-row justify-center items-center'>
+                                                                            Uploading
+                                                                            <div role="status">
+                                                                                <svg aria-hidden="true" class="w-5 h-5 ml-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                                                                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                                                                </svg>
+                                                                                <span class="sr-only">Loading...</span>
+                                                                            </div>
+                                                                        </div>
+                                                                    }
+                                                                </button>
+                                                            </div>
+                                                        }
                                                     </div>
                                                     <div className="lg:w-3/4 md:w-3/4 w-full md:pl-8">
                                                         <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
@@ -3772,6 +3989,8 @@ const AdminProjects = ({ user, path }) => {
                                                         
                                                     </div>
                                                 </div>
+                                                </>
+                                                }
                                             </div>
                                         </div>
                                     </div>
