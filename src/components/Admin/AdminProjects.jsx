@@ -223,6 +223,8 @@ const AdminProjects = ({ user, path }) => {
         var array = [...form.content]
         var element;
 
+        if(!contentSelected) return;
+
         if(contentSelected === 'heading') {
             element = { header: 'Heading',  element: contentSelected, heading: ''}
         }
@@ -714,10 +716,6 @@ const AdminProjects = ({ user, path }) => {
 
     /* ============================================================================================================ */
 
-    useEffect(() => {
-        console.log(form)
-    }, [form])
-
     const moveElementUpwards = (index, parent) => {
         var array = [...form.content]
 
@@ -939,16 +937,21 @@ const AdminProjects = ({ user, path }) => {
         if(edit) {
             window.scrollTo(0, 150)
             setTags(projects[editIndex].tags)
-            setForm({
+
+            const originalContent = projects[editIndex].content;
+            const copiedContent = JSON.parse(JSON.stringify(originalContent));
+
+            setForm({ 
                 featured_image: projects[editIndex].featured_image,
                 post_title: projects[editIndex].post_title,
                 date_start: projects[editIndex].date_start,
                 date_end: projects[editIndex].date_end,
                 created_for: projects[editIndex].created_for,
-                content: projects[editIndex].content,
+                content: copiedContent,
                 tags: projects[editIndex].tags,
                 categories: projects[editIndex].categories
             })
+ 
             setImage(projects[editIndex].featured_image)
         }
     }, [edit])
@@ -1045,7 +1048,7 @@ const AdminProjects = ({ user, path }) => {
     }
 
     return (
-        <div className="flex h-screen bg-gray-50 dark:bg-gray-900 relative text-sm">
+        <div className="flex h-screen bg-gray-50 dark:bg-gray-900 relative">
             <AdminSidebar isOpen={isOpen} setIsOpen={setIsOpen} open={open} setOpen={setOpen} path={path}/>
             <div class="flex flex-col flex-1">
                 <AdminNavbar isOpen={isOpen} setIsOpen={setIsOpen} path={path}/>
@@ -1073,7 +1076,7 @@ const AdminProjects = ({ user, path }) => {
                             {
                                 (!showForm && !edit) &&
                                 <>
-                                <div className="sm:mx-16 mx-6 pt-8 flex justify-between items-center">
+                                <div className="sm:mx-16 mx-6 pt-8 flex justify-between items-center text-sm">
                                     <h2 className='text-3xl font-bold my-4 text-gray-800'>Projects</h2>
                                     <div>
                                         <button onClick={() => {
@@ -1091,7 +1094,7 @@ const AdminProjects = ({ user, path }) => {
                                 </>
                             }
                             
-                            <div className="relative">   
+                            <div className="relative text-sm">   
                                 <div className={`${styles.marginX} ${styles.flexCenter}`}>
                                     <div className={`${styles.boxWidthEx}`}>
                                         <div className="container mx-auto relative px-0 pb-16">
@@ -1140,11 +1143,12 @@ const AdminProjects = ({ user, path }) => {
                                                         </div>      
                                                     }
                                                 </div>
-
+                                                <div className="text-base">
                                                     {
                                                         alertInfo.alert && alertInfo.variant && showAlert &&
                                                             <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
                                                     }
+                                                </div>
                                                 <div className="md:flex items-start justify-center mt-4">
                                                     
                                                     <div className="lg:w-1/3 md:w-1/3 w-full">
