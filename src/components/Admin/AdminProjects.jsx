@@ -151,7 +151,7 @@ const AdminProjects = ({ user, path }) => {
             created_for: 'Personal',
             content: [
                 { 
-                    header: '',
+                    header: 'Container Box',
                     container: [{ header: 'Heading',  element: 'heading', heading: ''}]
                 }
             ],
@@ -216,7 +216,7 @@ const AdminProjects = ({ user, path }) => {
     }   
 
     const addContentContainer = () => {
-        setForm({...form, content: form.content.concat({container: [{ header: 'Heading',  element: 'heading', heading: ''}]})})
+        setForm({...form, content: form.content.concat({header: 'Container Box', container: [{ header: 'Heading',  element: 'heading', heading: ''}]})})
     }
 
     const addContentElements = (parent) => {
@@ -716,6 +716,42 @@ const AdminProjects = ({ user, path }) => {
 
     /* ============================================================================================================ */
 
+    const moveContainerUpwards = (index) => {
+        var array = [...form.content]
+
+        // Swapping the positions of the first and second elements
+        const temp = array[index];
+        array[index] = array[index-1];
+        array[index-1] = temp;
+
+        setForm({...form, content: array})
+    }
+
+    const moveContainerDownwards = (index) => {
+        var array = [...form.content]
+
+        // Swapping the positions of the second and first elements
+        const temp = array[index];
+        array[index] = array[index+1];
+        array[index+1] = temp;
+
+        setForm({...form, content: array})
+    }
+
+    const removeContainer = (index) => {
+        var array = [...form.content]
+
+        array.splice(index, 1)
+
+        setForm({...form, content: array})
+    }
+
+    const headerContainerValue = (e, index) => {
+        var array = [...form.content]
+        array[index] = {...array[index], header: e.target.value};
+        setForm({...form, content: array})
+    }
+
     const moveElementUpwards = (index, parent) => {
         var array = [...form.content]
 
@@ -920,7 +956,7 @@ const AdminProjects = ({ user, path }) => {
             created_for: 'Personal',
             content: [
                 { 
-                    header: '',
+                    header: 'Container Box',
                     container: [{ header: 'Heading',  element: 'heading', heading: ''}]
                 }
             ],
@@ -1369,7 +1405,41 @@ const AdminProjects = ({ user, path }) => {
                                                             form.content?.length > 0 &&
                                                                 form.content.map((box, box_index) => {
                                                                     return(
-                                                                    <div key={box_index} className='border border-solid border-gray-500 p-4 mt-4'>
+                                                                    <div key={box_index}>
+                                                                        <div className='flex flex-row justify-between pt-2'>
+                                                                            <input 
+                                                                                type="text" 
+                                                                                className='border-none font-semibold outline-none'
+                                                                                onChange={(e) => headerContainerValue(e, box_index)}
+                                                                                value={ form.content[box_index].header }
+                                                                            />
+                                                                            {/* <label className='font-semibold'> Normal Paragraph: </label> */}
+                                                                            <div>
+                                                                                {
+                                                                                    form.content.length === 1 ?
+                                                                                        <button onClick={() => removeContainer(box_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                    :
+                                                                                    box_index === 0 && form.content.length !== 1 ?
+                                                                                    <>
+                                                                                        <button title="move downwards" onClick={() => moveContainerDownwards(box_index)}><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                        <button title="remove elements" onClick={() => removeContainer(box_index)}><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                    </>
+                                                                                    : box_index === (form.content.length - 1) ?
+                                                                                    <>
+                                                                                        <button title="move upwards" onClick={() => moveContainerUpwards(box_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                        <button title="remove elements" onClick={() => removeContainer(box_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                    </>
+                                                                                    :
+                                                                                    <>
+                                                                                        <button title="move upwards" onClick={() => moveContainerUpwards(box_index)} ><FontAwesomeIcon icon={faArrowUp} className='mr-4 cursor-pointer'/></button>
+                                                                                        <button title="move downwards" onClick={() => moveContainerDownwards(box_index)} ><FontAwesomeIcon icon={faArrowDown} className='mr-4 cursor-pointer'/></button>
+                                                                                        <button title="remove elements" onClick={() => removeContainer(box_index)} ><FontAwesomeIcon icon={faTrash} className='cursor-pointer'/></button>
+                                                                                    </>
+                                                                                    
+                                                                                }
+                                                                            </div>
+                                                                        </div>
+                                                                    <div className='border border-solid border-gray-500 p-4 mt-4'>
                                                                         <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
                                                                             <div className='flex flex-col'>
                                                                                 <label className='font-semibold'> Element Content: </label>
@@ -1410,7 +1480,6 @@ const AdminProjects = ({ user, path }) => {
                                                                             {
                                                                                 form.content?.length > 0 &&
                                                                                     form.content[box_index].container.map((item, index) => {
-                                                                                        console.log(item, true)
                                                                                         return (
                                                                                             <>
                                                                                             {
@@ -3979,6 +4048,7 @@ const AdminProjects = ({ user, path }) => {
                                                                                         )
                                                                                     })
                                                                             }
+                                                                        </div>
                                                                         </div>
                                                                     </div>
                                                                     )
