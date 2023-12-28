@@ -429,11 +429,11 @@ const Projects = ({ user }) => {
             </div>
             {
                 projects?.length > 0 &&
-                <div className='flex items-center justify-center mt-12'>
+                <div className='flex flex-wrap items-center justify-center mt-12'>
                     <button
                     disabled={currentPage === 1}
                     onClick={() => handlePageChange(currentPage - 1)}
-                    className='cursor-pointer mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
+                    className='mb-2 cursor-pointer mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-4 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
                     >
                     <span className='xs:block hidden'>Prev</span>
                     <FontAwesomeIcon icon={faChevronLeft} className='xs:hidden inline-block'/>
@@ -444,7 +444,7 @@ const Projects = ({ user }) => {
                     onClick={() => handlePageChange(pageNumber)}
                     // className={currentPage === index + 1 ? "active" : ""}
                     style={{backgroundColor: pageIndex === pageNumber ? "rgb(243 244 246)" : "rgb(31 41 55)", color: pageIndex === pageNumber ? "rgb(31 41 55)" : "rgb(243 244 246)"}}
-                    className="cursor-pointer mx-1 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out"
+                    className="mb-2 cursor-pointer mx-1 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-4 border border-gray-100 rounded transition-colors duration-300 ease-in-out"
                     >
                     {pageNumber}
                     </button>
@@ -452,7 +452,7 @@ const Projects = ({ user }) => {
                     <button
                     disabled={currentPage === totalPages}
                     onClick={() => handlePageChange(currentPage + 1)}
-                    className='cursor-pointer ml-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
+                    className='mb-2 cursor-pointer ml-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-4 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
                     >
                     <span className='xs:block hidden'>Next</span>
                     <FontAwesomeIcon icon={faChevronRight} className='xs:hidden inline-block'/>
