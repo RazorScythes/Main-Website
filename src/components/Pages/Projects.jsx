@@ -3,9 +3,54 @@ import styles from "../../style";
 import SideAlert from '../SideAlert'
 import heroBackgroundImage from '../../assets/1696333975880.jpg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faChevronUp, faChevronDown } from '@fortawesome/free-solid-svg-icons';
+import { faCalendar, faChevronUp, faChevronDown, faChevronLeft, faChevronRight, faLightbulb, faArrowAltCircleLeft, faArrowAltCircleRight, faArrowLeft, faArrowRight, faThLarge, faTable, faWindowMaximize, faGamepad, faMicrochip, faWrench, faCogs, faObjectGroup, faCode, faBars, faHandPeace, faArchive, faBoltLightning, faSearch, faExchange, faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useSearchParams, useParams } from "react-router-dom";
 import { Link, useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux'
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
+import { getProjects } from '../../actions/project';
+
+const CustomRight = ({ onClick }) => {
+  return (
+    <div onClick={onClick} className='bg-gray-900 text-white hover:text-cyan-300 transition-all h-full w-16 absolute right-0 flex items-center justify-end cursor-pointer'>
+      <FontAwesomeIcon
+        icon={faArrowRight}
+        className="max-w-4 cursor-pointer text-primary-400 text-2xl font-bold"
+      />
+    </div>
+  )
+};
+
+const CustomLeft = ({ onClick }) => {
+  return (
+    <div onClick={onClick} className='bg-gray-900 text-white hover:text-cyan-300 transition-all h-full w-16 absolute left-0 flex items-center cursor-pointer'>
+      <FontAwesomeIcon
+        icon={faArrowLeft}
+        className="max-w-4 text-primary-400 text-2xl font-bold"
+      />
+    </div>
+  )
+};
+
+const responsive = {
+  desktop: {
+    breakpoint: { max: 3000, min: 1224 },
+    items: 10
+  },
+  laptop: {
+    breakpoint: { max: 1224, min: 890 },
+    items: 6
+  },
+  tablet: {
+    breakpoint: { max: 890, min: 464 },
+    items: 4
+  },
+  mobile: {
+    breakpoint: { max: 464, min: 0 },
+    items: 2
+  }
+};
 
 const categories = [
   {
@@ -21,10 +66,19 @@ const categories = [
     count: 1
   },
 ]
-const Projects = () => {
-  const navigate  = useNavigate()
+const Projects = ({ user }) => {
 
+  const { key } = useParams();
+
+  const navigate  = useNavigate()
+  const dispatch = useDispatch()
+
+  const project = useSelector((state) => state.project.user_project)
+  const isLoading = useSelector((state) => state.project.isLoading)
+
+  const [projects, setProjects] = useState([])
   const [searchParams, setSearchParams] = useSearchParams();
+  const [searchKey, setSearchKey] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
   const [alertActive, setAlertActive] = useState(false)
   const [alertInfo, setAlertInfo] = useState({
@@ -41,8 +95,147 @@ const Projects = () => {
 
   const [toggle, setToggle] = useState({
     categories: false,
-    filtered: false
+    filtered: false,
   })
+  const [displayedPages, setDisplayedPages] = useState([]);
+  const itemsPerPage = 18; // Number of items per page
+  const totalPages = Math.ceil(projects?.length / itemsPerPage); // Total number of pages
+  const [currentPage, setCurrentPage] = useState(pageIndex);
+  // Calculate the start and end indices for the current page
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  useEffect(() => {
+    if(key) {
+
+    }
+    else {
+        dispatch(getProjects({
+            id: user ? user.result?._id : ''
+        }))
+    }
+  }, [])
+
+  useEffect(() => {
+    if(searchParams.get('type') === null || searchParams.get('type') === '') {
+        var filteredData
+        if(filteredType !== null)
+            filteredData = project.filter(obj => filteredType === obj.categories || filteredType === '');
+        else 
+            filteredData = project
+
+        setProjects(filteredData)
+    }
+    else if(searchParams.get('type') === 'latest') {
+        // Filter and group the objects by date
+        const groupedData = project.reduce((result, obj) => {
+          const date = obj.createdAt.split('T')[0];
+          if (result[date]) {
+            result[date].push(obj);
+          } else {
+            result[date] = [obj];
+          }
+          return result;
+        }, {});
+
+        // Get the latest date from the groupedData object
+        const latestDate = Object.keys(groupedData).sort().pop();
+
+        // Get the objects related to the latest date
+        const latestProjects = groupedData[latestDate];
+
+        if(latestProjects !== undefined) { 
+            var filteredData
+            if(filteredType !== null)
+                filteredData = latestProjects.filter(obj => filteredType === obj.categories || filteredType === '');
+            else 
+                filteredData = latestProjects
+
+            setProjects(filteredData)
+        }
+    }
+    else if(searchParams.get('type') === 'most_viewed') {
+        // Sort the data based on views in ascending order
+        if(project.length > 0) {
+          var arr = [...project]
+
+          const sortedData = arr.sort((a, b) => b.views.length - a.views.length);
+
+          if(sortedData.length > 0)
+            var filteredData
+            if(filteredType !== null)
+                filteredData = sortedData.filter(obj => filteredType === obj.categories || filteredType === '');
+            else 
+                filteredData = sortedData
+
+            setProjects(filteredData)
+        }
+    }
+    else if(searchParams.get('type') === 'popular') {
+        // Sort the data based on views in ascending order
+        if(project.length > 0) {
+            var arr = []
+
+            project.forEach(item => {
+            var popularity = ((item.views.length/2) + item.likes.length) - item.dislikes.length
+                if(popularity > 0) { 
+                    arr.push({...item, popularity: popularity})
+                }
+            });
+
+            const sortedData = arr.sort((a, b) => b.popularity - a.popularity);
+
+             if(sortedData.length > 0)
+                var filteredData 
+                if(filteredType !== null)
+                    filteredData = sortedData.filter(obj => filteredType === obj.categories || filteredType === '');
+                else 
+                    filteredData = sortedData
+    
+                setProjects(filteredData)
+            }
+      }
+  }, [project, searchParams.get('type'), filteredType])
+
+  useEffect(() => {
+    window.scrollTo(0, 0)
+    const calculateDisplayedPages = () => {
+    const pagesToShow = [];
+    const maxDisplayedPages = 6; // Maximum number of page buttons to display
+
+    if (totalPages <= maxDisplayedPages) {
+      // If total pages are less than or equal to the maximum, display all pages
+      for (let i = 1; i <= totalPages; i++) {
+        pagesToShow.push(i);
+      }
+    } else {
+      let startPage;
+      let endPage;
+
+      if (currentPage <= Math.floor(maxDisplayedPages / 2)) {
+        // If current page is close to the beginning
+        startPage = 1;
+        endPage = maxDisplayedPages;
+      } else if (currentPage >= totalPages - Math.floor(maxDisplayedPages / 2)) {
+        // If current page is close to the end
+        startPage = totalPages - maxDisplayedPages + 1;
+        endPage = totalPages;
+      } else {
+        // If current page is in the middle
+        startPage = currentPage - Math.floor(maxDisplayedPages / 2);
+        endPage = currentPage + Math.floor(maxDisplayedPages / 2);
+      }
+
+      for (let i = startPage; i <= endPage; i++) {
+        pagesToShow.push(i);
+      }
+    }
+
+    setDisplayedPages(pagesToShow);
+  };
+
+    calculateDisplayedPages();
+  }, [currentPage, totalPages, pageIndex]);
 
   const convertTimezone = (date) => {
     const timeZone = 'America/New_York';
@@ -84,16 +277,20 @@ const Projects = () => {
       setCurrentPage(pageNumber);
 
       if(filteredType)
-        navigate(`/blogs?type=${(searchParams.get('type') !== null) ? searchParams.get('type') : ''}&page=${pageNumber}&filtered=${filteredType}`)
+        navigate(`/projects?type=${(searchParams.get('type') !== null) ? searchParams.get('type') : ''}&page=${pageNumber}&filtered=${filteredType}`)
       else
-        navigate(`/blogs?type=${(searchParams.get('type') !== null) ? searchParams.get('type') : ''}&page=${pageNumber}`)
+        navigate(`/projects?type=${(searchParams.get('type') !== null) ? searchParams.get('type') : ''}&page=${pageNumber}`)
       
       setToggle({tags: false, filtered: false})
   };
 
+  const handleSearch = () => {
+
+  }
+
   return (
     <div
-      className="relative bg-cover bg-center py-20"
+      className="relative bg-cover bg-center pb-20 pt-4"
       style={{ backgroundColor: "#111827" }}
     >   
       <SideAlert
@@ -107,144 +304,161 @@ const Projects = () => {
       <div className={`${styles.marginX} ${styles.flexCenter}`}>
         <div className={`${styles.boxWidthEx}`}>
           <div className="container mx-auto file:lg:px-8 relative px-0">
+            <Carousel 
+                responsive={responsive} className="relative"
+                customLeftArrow={<CustomLeft />}
+                customRightArrow={<CustomRight />}
+                slidesToSlide={1}
+                swipeable
+                infinite={true}
+                centerMode={true}
+            >
+              <button className='text-white hover:text-cyan-300 transition-all flex flex-col items-center py-8 w-32 relative'>
+                <div className='relative'> 
+                  <FontAwesomeIcon icon={faThLarge} className='text-3xl mb-2'/> 
+                  <p className='absolute top-[-20px] right-[-10px]'>0</p>
+                </div>
+                <p className='text-xs'>All Categories</p>
+              </button>
+              <button className='text-white flex flex-col items-center py-8 w-32'>
+                <div className='relative'> 
+                  <FontAwesomeIcon icon={faLightbulb} className='text-3xl mb-2'/>
+                  <p className='absolute top-[-20px] right-[-10px]'>1</p>
+                </div>
+                <p className='text-xs'>Internet of Things</p>
+              </button>
+              <button className='text-white flex flex-col items-center py-8 w-32'>
+                <FontAwesomeIcon icon={faWindowMaximize} className='text-3xl mb-2'/>
+                <p className='text-xs'>Web</p>
+              </button>
+              <button className='text-white flex flex-col items-center py-8 w-32'>
+                <FontAwesomeIcon icon={faGamepad} className='text-3xl mb-2'/>
+                <p className='text-xs'>Game</p>
+              </button>
+              <button className='text-white flex flex-col items-center py-8 w-32'>
+                <FontAwesomeIcon icon={faHandPeace} className='text-3xl mb-2'/>
+                <p className='text-xs'>DIY</p>
+              </button>
+              <button className='text-white flex flex-col items-center py-8 w-32'>
+                <FontAwesomeIcon icon={faCogs} className='text-3xl mb-2'/>
+                <p className='text-xs'>Robotics</p>
+              </button>
+              <button className='text-white flex flex-col items-center py-8 w-32'>
+                <FontAwesomeIcon icon={faMicrochip} className='text-3xl mb-2'/>
+                <p className='text-xs'>Arduino</p>
+              </button>
+              <button className='text-white flex flex-col items-center py-8 w-32'>
+                <FontAwesomeIcon icon={faCode} className='text-3xl mb-2'/>
+                <p className='text-xs'>Software</p>
+              </button>
+              <button className='text-white flex flex-col items-center py-8 w-32'>
+                <FontAwesomeIcon icon={faArchive} className='text-3xl mb-2'/>
+                <p className='text-xs'>Archives</p>
+              </button>
+              <button className='text-white flex flex-col items-center py-8 w-32'>
+                <FontAwesomeIcon icon={faBoltLightning} className='text-3xl mb-2'/>
+                <p className='text-xs'>Electronics</p>
+              </button>
+            </Carousel>
 
-          <div className="flex justify-between items-center">
-            <div className='flex flex-row flex-wrap items-start xs:justify-start justify-center mb-4'>
-                  <button onClick={() => handlePageType("")} style={{backgroundColor: paramIndex && 'rgb(243, 244, 246)', color: paramIndex && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100  transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All</button>
-                  <button onClick={() => handlePageType("latest")} style={{backgroundColor: checkParams('latest') && 'rgb(243, 244, 246)', color: checkParams('latest') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Latest</button>
-                  <button onClick={() => handlePageType("most_viewed")} style={{backgroundColor: checkParams('most_viewed') && 'rgb(243, 244, 246)', color: checkParams('most_viewed') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Most Viewed</button>
-                  <button onClick={() => handlePageType("popular")} style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out'>Popular</button>
-                  <div className='relative z-40 ml-2'>
-                    <button onClick={() => setToggle({...toggle, categories: !toggle.categories, filtered: false})} className='cursor-pointer mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2 flex items-center'>
-                        {selectedCategory ? selectedCategory : 'Categories'}
-                        {toggle.categories ? <FontAwesomeIcon icon={faChevronUp} className='ml-1 font-bold'/> : <FontAwesomeIcon icon={faChevronDown} className='ml-1 font-bold'/> }
-                    </button>
-                    {
-                      categories && categories.length > 0 &&
-                        <div className={`${toggle.categories ? `absolute` : `hidden`}`}>
-                            <ul className='w-full no-scroll max-h-[183px] overflow-y-auto flex flex-col mb-2 font-semibold text-sm bg-gray-800 text-gray-100  border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>
-                            <button onClick={() => handleFilteredChange('')}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer text-left'>All</li></button>
-                                {
-                                    categories.map((item, index) => {
-                                        return (
-                                            <button onClick={() => handleFilteredChange(item.category)} key={index}><li className='text-left px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>{item.category} ({item.count})</li></button>
-                                        )
-                                    })
-                                }
-                            </ul>
-                        </div>
-                    }
-                  </div>
+            <div className='flex sm:flex-row flex-col-reverse sm:justify-between mb-4'>
+              <form onSubmit={handleSearch}>
+                <div className="relative lg:mt-0 mt-4 sm:w-80 w-full">
+                  <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                    <FontAwesomeIcon icon={faSearch} className="text-gray-500" />
+                  </span>
+                  <input value={searchKey} onChange={(e) => setSearchKey(e.target.value)} className="block w-full bg-gray-200 text-sm font-normal text-gray-900 rounded-sm py-2 px-4 pl-10 leading-tight focus:outline-none focus:bg-white focus:text-gray-900" type="text" placeholder='Search Project'/>
+                </div>
+              </form>
+
+              <div className='flex justify-end items-center text-white relative'>
+                <p className='text-base'>{projects?.length} project{projects?.length > 1 && 's'} • </p>
+                <div onClick={() => setToggle({...toggle, categories: !toggle.categories, filtered: false})} className='flex cursor-pointer'>
+                  <button><FontAwesomeIcon icon={faExchange} className='ml-3 text-xl rotate-90 cursor-pointer hover:text-cyan-300 '/></button>
+                  <div className={`${toggle.categories ? `absolute` : `hidden`} z-[100] top-10 right-[-8px] w-48 bg-white p-3 py-2 rounded-sm shadow-2xl`}>
+                    <p className='text-gray-600 text-xs font-semibold mb-1'>Filter by:</p>
+                      <button onClick={() => handlePageType("")} className='w-full text-left text-gray-800 font-semibold text-sm bg-transparent hover:text-gray-900 py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All { paramIndex && <FontAwesomeIcon icon={faCheck}/>}</button>
+                      <button onClick={() => handlePageType("latest")} className='w-full text-left text-gray-800 font-semibold text-sm bg-transparent hover:text-gray-900 py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Latest { checkParams('latest') && <FontAwesomeIcon icon={faCheck}/>}</button>
+                      <button onClick={() => handlePageType("popular")} className='w-full text-left text-gray-800 font-semibold text-sm bg-transparent hover:text-gray-900 py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Trending { checkParams('popular') && <FontAwesomeIcon icon={faCheck}/>}</button>
+                      <button onClick={() => handlePageType("most_viewed")} className='w-full text-left text-gray-800 font-semibold text-sm bg-transparent hover:text-gray-900 py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Most Viewed { checkParams('most_viewed') && <FontAwesomeIcon icon={faCheck}/>}</button>
+                    </div>
+                    <p className='ml-3 text-base sm:block hidden'>
+                      {
+                        checkParams('latest') ? 'Latest'
+                        : checkParams('popular') ? 'Trending'
+                        : checkParams('most_viewed') && 'Most Viewed'
+                      }
+                    </p>
+                </div>
               </div>
             </div>
 
             <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 mb-8">
-
-              <div className='relative bg-white hover:bg-blue-100 transision-all hover:cursor-pointer w-full p-2 border border-solid border-gray-600 rounded-md'>
-                <img
-                  className='object-cover w-full h-52'
-                  src={heroBackgroundImage}
-                />
-                <div className='px-2 pb-2 font-poppins'>
-                  <div className="flex justify-between items-center">
-                    <div className='col-span-2 flex flex-wrap items-center pt-2'>
-                      <img 
-                          src={heroBackgroundImage}
-                          className='w-6 h-6 object-cover rounded-full border border-gray-700'
-                          alt="avatar"
-                      />
-                      <p className='ml-2 break-all text-xs font-semibold text-[#FB2736] drop-shadow-sm'>RazorScythe</p>
-                    </div>
-                    <p className='mr-2 break-all text-xs font-semibold drop-shadow-sm mt-1 text-[#FB2736]'><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> <span> {convertTimezone('2023-08-21T15:01:34.112+00:00')} </span></p>
-                  </div>
-                  <h2 className='text-lg font-semibold my-2 mr-2 leading-7'>32-Band Audio Spectrum Visualizer Analyzer </h2>
-                  <div className='flex flex-wrap'>
-                    <p className='text-sm text-gray-600'>2310 views • </p>
-                    <p className='text-sm text-gray-600 ml-1'> 12 likes •</p>
-                    <p className='text-sm text-gray-600 ml-1'> 1 comments</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className='relative bg-white hover:bg-blue-100 transision-all hover:cursor-pointer w-full p-2 border border-solid border-gray-600 rounded-md'>
-                <img
-                  className='object-cover w-full h-52'
-                  src={heroBackgroundImage}
-                />
-                <div className='px-2 pb-2 font-poppins'>
-                  <div className="flex justify-between items-center">
-                    <div className='col-span-2 flex flex-wrap items-center pt-2'>
-                      <img 
-                          src={heroBackgroundImage}
-                          className='w-6 h-6 object-cover rounded-full border border-gray-700'
-                          alt="avatar"
-                      />
-                      <p className='ml-2 break-all text-xs font-semibold text-[#FB2736] drop-shadow-sm'>RazorScythe</p>
-                    </div>
-                    <p className='mr-2 break-all text-xs font-semibold drop-shadow-sm mt-1 text-[#FB2736]'><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> <span> {convertTimezone('2023-08-21T15:01:34.112+00:00')} </span></p>
-                  </div>
-                  <h2 className='text-lg font-semibold my-2 mr-2 leading-7'>32-Band Audio Spectrum Visualizer Analyzer </h2>
-                  <div className='flex flex-wrap'>
-                    <p className='text-sm text-gray-600'>2310 views • </p>
-                    <p className='text-sm text-gray-600 ml-1'> 12 likes •</p>
-                    <p className='text-sm text-gray-600 ml-1'> 1 comments</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className='relative bg-white hover:bg-blue-100 transision-all hover:cursor-pointer w-full p-2 border border-solid border-gray-600 rounded-md'>
-                <img
-                  className='object-cover w-full h-52'
-                  src={heroBackgroundImage}
-                />
-                <div className='px-2 pb-2 font-poppins'>
-                  <div className="flex justify-between items-center">
-                    <div className='col-span-2 flex flex-wrap items-center pt-2'>
-                      <img 
-                          src={heroBackgroundImage}
-                          className='w-6 h-6 object-cover rounded-full border border-gray-700'
-                          alt="avatar"
-                      />
-                      <p className='ml-2 break-all text-xs font-semibold text-[#FB2736] drop-shadow-sm'>RazorScythe</p>
-                    </div>
-                    <p className='mr-2 break-all text-xs font-semibold drop-shadow-sm mt-1 text-[#FB2736]'><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> <span> {convertTimezone('2023-08-21T15:01:34.112+00:00')} </span></p>
-                  </div>
-                  <h2 className='text-lg font-semibold my-2 mr-2 leading-7'>32-Band Audio Spectrum Visualizer Analyzer </h2>
-                  <div className='flex flex-wrap'>
-                    <p className='text-sm text-gray-600'>2310 views • </p>
-                    <p className='text-sm text-gray-600 ml-1'> 12 likes •</p>
-                    <p className='text-sm text-gray-600 ml-1'> 1 comments</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className='relative bg-white hover:bg-blue-100 transision-all hover:cursor-pointer w-full p-2 border border-solid border-gray-600 rounded-md'>
-                <img
-                  className='object-cover w-full h-52'
-                  src={heroBackgroundImage}
-                />
-                <div className='px-2 pb-2 font-poppins'>
-                  <div className="flex justify-between items-center">
-                    <div className='col-span-2 flex flex-wrap items-center pt-2'>
-                      <img 
-                          src={heroBackgroundImage}
-                          className='w-6 h-6 object-cover rounded-full border border-gray-700'
-                          alt="avatar"
-                      />
-                      <p className='ml-2 break-all text-xs font-semibold text-[#FB2736] drop-shadow-sm'>RazorScythe</p>
-                    </div>
-                    <p className='mr-2 break-all text-xs font-semibold drop-shadow-sm mt-1 text-[#FB2736]'><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> <span> {convertTimezone('2023-08-21T15:01:34.112+00:00')} </span></p>
-                  </div>
-                  <h2 className='text-lg font-semibold my-2 mr-2 leading-7'>32-Band Audio Spectrum Visualizer Analyzer </h2>
-                  <div className='flex flex-wrap'>
-                    <p className='text-sm text-gray-600'>2310 views • </p>
-                    <p className='text-sm text-gray-600 ml-1'> 12 likes •</p>
-                    <p className='text-sm text-gray-600 ml-1'> 1 comments</p>
-                  </div>
-                </div>
-              </div>
-              
+                {
+                  projects?.length > 0 &&
+                    projects.slice(startIndex, endIndex).map((item, index) => {
+                      return (
+                        <div key={index} className='relative bg-white hover:bg-blue-100 transision-all hover:cursor-pointer w-full p-2 border border-solid border-gray-600 rounded-md'>
+                          <img
+                            className='object-cover w-full h-52 border border-solid border-gray-300'
+                            src={item.featured_image}
+                          />
+                          <div className='px-2 pb-2 font-poppins'>
+                            <div className="flex justify-between items-center">
+                              <div className='col-span-2 flex flex-wrap items-center pt-2'>
+                                <img 
+                                    src={item.user.avatar}
+                                    className='w-6 h-6 object-cover rounded-full border border-gray-700'
+                                    alt="avatar"
+                                />
+                                <p className='ml-2 break-all text-xs font-semibold text-[#FB2736] drop-shadow-sm'>{item.user.username}</p>
+                              </div>
+                              <p className='mr-2 break-all text-xs font-semibold drop-shadow-sm mt-1 text-[#FB2736]'><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> <span> {convertTimezone(item.createdAt)} </span></p>
+                            </div>
+                            <h2 className='text-lg font-semibold my-2 mr-2 leading-7 pb-4'>{item.post_title}</h2>
+                            <div className='flex flex-wrap absolute bottom-3'>
+                              <p className='text-sm text-gray-600'>{item.views.length} view{item.views.length > 1 && 's'} • </p>
+                              <p className='text-sm text-gray-600 ml-1'> {item.likes.length} like{item.likes.length > 1 && 's'} •</p>
+                              <p className='text-sm text-gray-600 ml-1'> {item.comment.length} comment{item.comment.length > 1 && 's'}</p>
+                          </div>
+                          </div>
+                        </div>
+                      )
+                    })
+                }
             </div>
+            {
+                projects?.length > 0 &&
+                <div className='flex items-center justify-center mt-12'>
+                    <button
+                    disabled={currentPage === 1}
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    className='cursor-pointer mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
+                    >
+                    <span className='xs:block hidden'>Prev</span>
+                    <FontAwesomeIcon icon={faChevronLeft} className='xs:hidden inline-block'/>
+                    </button>
+                    {displayedPages.map((pageNumber) => (
+                    <button
+                    key={pageNumber}
+                    onClick={() => handlePageChange(pageNumber)}
+                    // className={currentPage === index + 1 ? "active" : ""}
+                    style={{backgroundColor: pageIndex === pageNumber ? "rgb(243 244 246)" : "rgb(31 41 55)", color: pageIndex === pageNumber ? "rgb(31 41 55)" : "rgb(243 244 246)"}}
+                    className="cursor-pointer mx-1 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out"
+                    >
+                    {pageNumber}
+                    </button>
+                    ))}
+                    <button
+                    disabled={currentPage === totalPages}
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    className='cursor-pointer ml-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
+                    >
+                    <span className='xs:block hidden'>Next</span>
+                    <FontAwesomeIcon icon={faChevronRight} className='xs:hidden inline-block'/>
+                    </button>
+                </div>
+            }
           </div>
         </div>
       </div>

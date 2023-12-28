@@ -8,6 +8,7 @@ const initialState = {
     variant: '',
     paragraph: '',
     project: {},
+    user_project: []
 }
 
 export const uploadProject = createAsyncThunk('project/uploadProject', async (form, thunkAPI) => {
@@ -29,6 +30,22 @@ export const uploadProject = createAsyncThunk('project/uploadProject', async (fo
 export const getUserProject = createAsyncThunk('project/getUserProject', async (form, thunkAPI) => {
     try {
         const response = await api.getUserProject(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const getProjects = createAsyncThunk('project/getProjects', async (form, thunkAPI) => {
+    try {
+        const response = await api.getProjects(form)
         return response
     }
     catch (err) {
@@ -78,6 +95,16 @@ export const projectSlice = createSlice({
     name: 'project',
     initialState,
     extraReducers: (builder) => {
+        builder.addCase(getProjects.fulfilled, (state, action) => {
+            state.notFound = false
+            state.user_project = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getProjects.pending, (state, action) => {
+            state.notFound = false
+            state.isLoading = true
+        }),
         builder.addCase(uploadProject.fulfilled, (state, action) => {
             state.project = action.payload.data.result
             state.alert = action.payload.data.message
