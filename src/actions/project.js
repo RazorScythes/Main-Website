@@ -4,11 +4,14 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 const initialState = {
     error: '',
     isLoading: false,
+    category_loading: false,
     alert: '',
     variant: '',
     paragraph: '',
     project: {},
-    user_project: []
+    user_project: [],
+    category: [],
+    user_category: []
 }
 
 export const uploadProject = createAsyncThunk('project/uploadProject', async (form, thunkAPI) => {
@@ -27,9 +30,41 @@ export const uploadProject = createAsyncThunk('project/uploadProject', async (fo
     }
 })
 
+export const getCategory = createAsyncThunk('project/getCategory', async (form, thunkAPI) => {
+    try {
+        const response = await api.getCategory(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const getUserProject = createAsyncThunk('project/getUserProject', async (form, thunkAPI) => {
     try {
         const response = await api.getUserProject(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const getAdminCategory = createAsyncThunk('project/getAdminCategory', async (form, thunkAPI) => {
+    try {
+        const response = await api.getAdminCategory(form)
         return response
     }
     catch (err) {
@@ -95,6 +130,26 @@ export const projectSlice = createSlice({
     name: 'project',
     initialState,
     extraReducers: (builder) => {
+        builder.addCase(getCategory.fulfilled, (state, action) => {
+            state.notFound = false
+            state.user_category = action.payload.data.result
+            state.error = ''
+            state.category_loading = false
+        }),
+        builder.addCase(getCategory.pending, (state, action) => {
+            state.notFound = false
+            state.category_loading = true
+        }),
+        builder.addCase(getAdminCategory.fulfilled, (state, action) => {
+            state.notFound = false
+            state.category = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getAdminCategory.pending, (state, action) => {
+            state.notFound = false
+            state.isLoading = true
+        }),
         builder.addCase(getProjects.fulfilled, (state, action) => {
             state.notFound = false
             state.user_project = action.payload.data.result

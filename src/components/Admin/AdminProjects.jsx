@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { getUserProject, uploadProject, editUserProject, removeUserProject, clearAlert } from "../../actions/project";
+import { getAdminCategory, getUserProject, uploadProject, editUserProject, removeUserProject, clearAlert } from "../../actions/project";
 import { faEye, faPencilAlt, faTrashAlt, faEllipsisH, faPlus, faCalendar, faClose, faTrash, faArrowDown, faArrowUp, faShare, faShareAltSquare, faExternalLink, faEyeSlash, faFile, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from 'react-router-dom'
 import { Header } from './index'
@@ -74,6 +74,7 @@ const AdminProjects = ({ user, path }) => {
     const heading = useSelector((state) => state.project.heading)
     const paragraph = useSelector((state) => state.project.paragraph)
     const project = useSelector((state) => state.project.project)
+    const category = useSelector((state) => state.project.category)
 
     const [open, setOpen] = useState({
         portfolio: false,
@@ -136,6 +137,7 @@ const AdminProjects = ({ user, path }) => {
 
     useEffect(() => {
         dispatch(getUserProject({ id: user.result?._id }))
+        dispatch(getAdminCategory())
     }, [])
 
     useEffect(() => {
@@ -1280,41 +1282,15 @@ const AdminProjects = ({ user, path }) => {
                                                                     className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                                                                     value={form.categories}
                                                                     onChange={(e) => setForm({...form, categories: e.target.value})}
-                                                                >
-                                                                    <option value="Gaming" className="capitalize">Gaming</option>
-                                                                    <option value="Fashion" className="capitalize">Fashion</option>
-                                                                    <option value="Beauty" className="capitalize">Beauty</option>
-                                                                    <option value="Lifestyle" className="capitalize">Lifestyle</option>
-                                                                    <option value="Personal" className="capitalize">Personal</option>
-                                                                    <option value="Technology" className="capitalize">Technology</option>
-                                                                    <option value="Health" className="capitalize">Health</option>
-                                                                    <option value="Fitness" className="capitalize">Fitness</option>
-                                                                    <option value="Wellness" className="capitalize">Wellness</option>
-                                                                    <option value="Business" className="capitalize">Business</option>
-                                                                    <option value="Education" className="capitalize">Education</option>
-                                                                    <option value="Food and Recipe" className="capitalize">Food and Recipe</option>
-                                                                    <option value="Love and Relationships" className="capitalize">Love and Relationships</option>
-                                                                    <option value="Alternative topics" className="capitalize">Alternative topics</option>
-                                                                    <option value="Green living" className="capitalize">Green living</option>
-                                                                    <option value="Music" className="capitalize">Music</option>
-                                                                    <option value="Automotive" className="capitalize">Automotive</option>
-                                                                    <option value="Marketing" className="capitalize">Marketing</option>
-                                                                    <option value="Internet services" className="capitalize">Internet services</option>
-                                                                    <option value="Finance" className="capitalize">Finance</option>
-                                                                    <option value="Sports" className="capitalize">Sports</option>
-                                                                    <option value="Entertainment" className="capitalize">Entertainment</option>
-                                                                    <option value="Productivity" className="capitalize">Productivity</option>
-                                                                    <option value="Hobbies" className="capitalize">Hobbies</option>
-                                                                    <option value="Parenting" className="capitalize">Parenting</option>
-                                                                    <option value="Pets" className="capitalize">Pets</option>
-                                                                    <option value="Photography" className="capitalize">Photography</option>
-                                                                    <option value="Agriculture" className="capitalize">Agriculture</option>
-                                                                    <option value="Art" className="capitalize">Art</option>
-                                                                    <option value="DIY" className="capitalize">DIY</option>
-                                                                    <option value="Science" className="capitalize">Science</option>
-                                                                    <option value="History" className="capitalize">History</option>
-                                                                    <option value="Self-improvement" className="capitalize">Self-improvement</option>
-                                                                    <option value="News and current affairs" className="News and current affairs">Japanese</option>
+                                                                >   
+                                                                    {
+                                                                        category?.length > 0 &&
+                                                                            category.map((item, index) => {
+                                                                                return (
+                                                                                    <option key={index} value={`${item._id}`} className="capitalize">{item.category}</option>
+                                                                                )
+                                                                            })
+                                                                    }
                                                                 </select>
                                                             </div>
                                                         </div>
