@@ -11,7 +11,8 @@ const initialState = {
     project: {},
     user_project: [],
     category: [],
-    user_category: []
+    user_category: [],
+    tagsCount: []
 }
 
 export const uploadProject = createAsyncThunk('project/uploadProject', async (form, thunkAPI) => {
@@ -126,6 +127,22 @@ export const removeUserProject = createAsyncThunk('project/removeUserProject', a
     }
 })
 
+export const projectCountTags = createAsyncThunk('project/projectCountTags', async (form, thunkAPI) => {
+    try {
+        const response = await api.projectCountTags(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const projectSlice = createSlice({
     name: 'project',
     initialState,
@@ -199,6 +216,16 @@ export const projectSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(removeUserProject.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(projectCountTags.fulfilled, (state, action) => {
+            console.log(action.payload.data.result)
+            state.tagsCount = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(projectCountTags.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         })

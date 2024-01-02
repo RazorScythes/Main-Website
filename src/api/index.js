@@ -182,3 +182,4 @@ export const getUserProject                             = (formData) => User_API
 export const uploadProject                              = (formData) => User_API.post('/project/uploadProject', formData)
 export const editUserProject                            = (formData) => User_API.post('/project/editUserProject', formData)
 export const removeUserProject                          = (formData) => User_API.post('/project/removeUserProject', formData)
+export const projectCountTags                           = (formData) => User_API.post('/project/projectCountTags', formData)
