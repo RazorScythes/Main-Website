@@ -3,7 +3,7 @@ import styles from "../../style";
 import SideAlert from '../SideAlert'
 import heroBackgroundImage from '../../assets/1696333975880.jpg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faChevronUp, faChevronDown, faChevronLeft, faChevronRight, faLightbulb, faArrowAltCircleLeft, faArrowAltCircleRight, faArrowLeft, faArrowRight, faThLarge, faTable, faWindowMaximize, faGamepad, faMicrochip, faWrench, faCogs, faObjectGroup, faCode, faBars, faHandPeace, faArchive, faBoltLightning, faSearch, faExchange, faCheck } from '@fortawesome/free-solid-svg-icons';
+import { faCalendar, faChevronUp, faChevronDown, faChevronLeft, faChevronRight, faLightbulb, faArrowAltCircleLeft, faArrowAltCircleRight, faArrowLeft, faArrowRight, faThLarge, faTable, faWindowMaximize, faGamepad, faMicrochip, faWrench, faCogs, faObjectGroup, faCode, faBars, faHandPeace, faArchive, faBoltLightning, faSearch, faExchange, faCheck, faClose } from '@fortawesome/free-solid-svg-icons';
 import { useSearchParams, useParams } from "react-router-dom";
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
@@ -73,6 +73,7 @@ const Projects = ({ user }) => {
   const category = useSelector((state) => state.project.user_category)
   const category_loading = useSelector((state) => state.project.category_loading)
 
+  const [tags, setTags] = useState([])
   const [projects, setProjects] = useState([])
   const [searchParams, setSearchParams] = useSearchParams();
   const [searchKey, setSearchKey] = useState('')
@@ -117,19 +118,53 @@ const Projects = ({ user }) => {
     }
   }, [])
 
-  useEffect(() => {
-    if(searchParams.get('type') === null || searchParams.get('type') === '') {
-        var filteredData
-        if(filteredType !== null)
-            filteredData = project.filter(obj => filteredType === obj.categories || filteredType === '');
-        else 
-            filteredData = project
+  const filterDataByTags = () => {
+    let filter_projects = []
+    project.forEach((proj) => {
+      tags.forEach((tag__) => {
+        proj.tags.forEach((tag_) => {
+              if(tag__.toLowerCase() === tag_.toLowerCase())
+                filter_projects.push(proj)
+          })
+      })
+    })
+    
+    let deleteDuplicate = filter_projects.filter((obj, index, self) =>
+      index === self.findIndex((o) => o._id.toString() === obj._id.toString())
+    );
 
-        setProjects(filteredData)
+    return deleteDuplicate;
+  }
+
+  const initData = () => {
+    if(searchParams.get('type') === null || searchParams.get('type') === '') {
+      var dataTags = filterDataByTags()
+      var filteredData
+      if(filteredType !== null) {
+        if(tags.length > 0) {
+          filteredData = dataTags.filter(obj => filteredType === obj.categories || filteredType === '');
+        }
+        else {
+          filteredData = project.filter(obj => filteredType === obj.categories || filteredType === '');
+        }
+      }
+      else {
+        if(tags.length > 0) {
+          filteredData = dataTags
+        }
+        else {
+          filteredData = project
+        }
+      }
+
+      setProjects(filteredData)
     }
     else if(searchParams.get('type') === 'latest') {
-        // Filter and group the objects by date
-        const groupedData = project.reduce((result, obj) => {
+      // Filter and group the objects by date
+      var groupedData = []
+      if(tags.length > 0) {
+        var dataTags = filterDataByTags()
+        groupedData = dataTags.reduce((result, obj) => {
           const date = obj.createdAt.split('T')[0];
           if (result[date]) {
             result[date].push(obj);
@@ -138,64 +173,108 @@ const Projects = ({ user }) => {
           }
           return result;
         }, {});
+      }
+      else {
+        groupedData = project.reduce((result, obj) => {
+          const date = obj.createdAt.split('T')[0];
+          if (result[date]) {
+            result[date].push(obj);
+          } else {
+            result[date] = [obj];
+          }
+          return result;
+        }, {});
+      }
 
-        // Get the latest date from the groupedData object
-        const latestDate = Object.keys(groupedData).sort().pop();
+      // Get the latest date from the groupedData object
+      const latestDate = Object.keys(groupedData).sort().pop();
 
-        // Get the objects related to the latest date
-        const latestProjects = groupedData[latestDate];
+      // Get the objects related to the latest date
+      const latestProjects = groupedData[latestDate];
 
-        if(latestProjects !== undefined) { 
-            var filteredData
-            if(filteredType !== null)
-                filteredData = latestProjects.filter(obj => filteredType === obj.categories || filteredType === '');
-            else 
-                filteredData = latestProjects
+      if(latestProjects !== undefined) { 
+          var filteredData
+          if(filteredType !== null)
+              filteredData = latestProjects.filter(obj => filteredType === obj.categories || filteredType === '');
+          else 
+              filteredData = latestProjects
 
-            setProjects(filteredData)
-        }
+          setProjects(filteredData)
+      }
     }
     else if(searchParams.get('type') === 'most_viewed') {
-        // Sort the data based on views in ascending order
-        if(project.length > 0) {
-          var arr = [...project]
-
-          const sortedData = arr.sort((a, b) => b.views.length - a.views.length);
-
-          if(sortedData.length > 0)
-            var filteredData
-            if(filteredType !== null)
-                filteredData = sortedData.filter(obj => filteredType === obj.categories || filteredType === '');
-            else 
-                filteredData = sortedData
-
-            setProjects(filteredData)
+      // Sort the data based on views in ascending order
+      if(project.length > 0) {
+        var arr = []
+        
+        if(tags.length > 0) {
+          var dataTags = filterDataByTags()
+          arr = [...dataTags]
         }
+        else {
+          arr = [...project]
+        }
+        const sortedData = arr.sort((a, b) => b.views.length - a.views.length);
+
+        if(sortedData.length > 0)
+          var filteredData
+          if(filteredType !== null)
+              filteredData = sortedData.filter(obj => filteredType === obj.categories || filteredType === '');
+          else 
+              filteredData = sortedData
+
+          setProjects(filteredData)
+      }
     }
     else if(searchParams.get('type') === 'popular') {
         // Sort the data based on views in ascending order
         if(project.length > 0) {
-            var arr = []
+          var arr = []
 
+          if(tags.length > 0) {
+            var dataTags = filterDataByTags()
+            dataTags.forEach(item => {
+              var popularity = ((item.views.length/2) + item.likes.length) - item.dislikes.length
+                  if(popularity > 0) { 
+                      arr.push({...item, popularity: popularity})
+                  }
+              });
+          }
+          else {
             project.forEach(item => {
-            var popularity = ((item.views.length/2) + item.likes.length) - item.dislikes.length
-                if(popularity > 0) { 
-                    arr.push({...item, popularity: popularity})
-                }
+              var popularity = ((item.views.length/2) + item.likes.length) - item.dislikes.length
+                  if(popularity > 0) { 
+                      arr.push({...item, popularity: popularity})
+                  }
             });
+          }
 
-            const sortedData = arr.sort((a, b) => b.popularity - a.popularity);
+          const sortedData = arr.sort((a, b) => b.popularity - a.popularity);
 
-             if(sortedData.length > 0)
-                var filteredData 
-                if(filteredType !== null)
-                    filteredData = sortedData.filter(obj => filteredType === obj.categories || filteredType === '');
-                else 
-                    filteredData = sortedData
-    
-                setProjects(filteredData)
-            }
-      }
+          if(sortedData.length > 0)
+              var filteredData 
+              if(filteredType !== null)
+                  filteredData = sortedData.filter(obj => filteredType === obj.categories || filteredType === '');
+              else 
+                  filteredData = sortedData
+
+              setProjects(filteredData)
+        }
+    }
+  }
+
+  useEffect(() => {
+    if(tags.length > 0) {
+      var dataTags = filterDataByTags()
+      setProjects(dataTags)
+    }
+    else {
+      initData()
+    }
+  }, [tags])
+
+  useEffect(() => {
+    initData()
   }, [project, searchParams.get('type'), filteredType])
 
   useEffect(() => {
@@ -285,6 +364,23 @@ const Projects = ({ user }) => {
       setToggle({tags: false, filtered: false})
   };
 
+  const addTags = (e) => {
+    let duplicate = false
+    if(e.target.value == 'All') {
+      setTags([])
+      return
+    }
+    tags.forEach(item => { if(e.target.value === item) duplicate = true })
+    if(duplicate) { duplicate = false; return;}
+    setTags(tags.concat(e.target.value))
+  }
+
+  const deleteTags = (e) => {
+    let arr = [...tags]
+    arr.splice(e.currentTarget.id, 1)
+    setTags([...arr])
+  } 
+
   const handleSearch = () => {
 
   }
@@ -358,8 +454,7 @@ const Projects = ({ user }) => {
                 <select
                     className="h-9 text-sm text-gray-600 font-semibold sm:w-52 w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
                     default={`tags`}
-                    // value={contentSelected}
-                    // onChange={(e) => setContentSelected(e.target.value)}
+                    onChange={addTags}
                 >
                   <option value="" className="capitalize" disabled={true}>Select Tags</option>
                   <option value="All" className="capitalize">All</option>
@@ -373,7 +468,7 @@ const Projects = ({ user }) => {
                   }
                 </select>
               </form>
-
+              
               <div className='flex justify-end items-center text-white relative sm:mb-0 mb-4'>
                 <p className='text-base'>{projects?.length} project{projects?.length > 1 && 's'} • </p>
                 <div onClick={() => setToggle({...toggle, categories: !toggle.categories, filtered: false})} className='flex cursor-pointer'>
@@ -396,6 +491,25 @@ const Projects = ({ user }) => {
               </div>
             </div>
             
+            {
+              tags?.length > 0 &&
+              <div className='flex flex-wrap items-center pb-4'>
+                  <h3 className='text-white xs:text-lg text-lg font-semibold mr-3'>Tag{tags.length > 1 && 's'}:</h3>
+                  {
+                    tags.map((item, index) => {
+                        return (
+                            <div key={index} className='flex flex-wrap'>
+                                {
+                                    item !== '' &&
+                                        <p className=' mt-1 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out mr-2'>{item} <FontAwesomeIcon onClick={deleteTags} id={index} icon={faClose} className="ml-2 cursor-pointer" /></p>
+                                }
+                            </div>
+                        )
+                    })
+                  }
+              </div>
+            }
+
             {
               isLoading ?
               <div className='h-96 flex items-center justify-center'>
