@@ -9,7 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import { getProjects, getCategory, projectCountTags } from '../../actions/project';
+import { getProjects, getCategory, projectCountTags, getProjectsByCategories } from '../../actions/project';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
@@ -62,7 +62,7 @@ const responsive = {
 
 const Projects = ({ user }) => {
 
-  const { key } = useParams();
+  const { key, cat } = useParams();
 
   const navigate  = useNavigate()
   const dispatch = useDispatch()
@@ -108,12 +108,20 @@ const Projects = ({ user }) => {
 
     }
     else {
-        dispatch(getProjects({
-            id: user ? user.result?._id : ''
+      if(cat){
+        dispatch(getProjectsByCategories({
+          id: user ? user.result?._id : '',
+          category: cat
         }))
-        dispatch(getCategory())
-        dispatch(projectCountTags({
+      }
+      else {
+        dispatch(getProjects({
           id: user ? user.result?._id : ''
+        }))
+      }
+      dispatch(getCategory())
+      dispatch(projectCountTags({
+        id: user ? user.result?._id : ''
       }))
     }
   }, [])
@@ -381,8 +389,17 @@ const Projects = ({ user }) => {
     setTags([...arr])
   } 
 
-  const handleSearch = () => {
+  const handleSearch = (e) => {
+    const keyword = e.target.value.toLowerCase();
+    setSearchKey(e.target.value);
 
+    const filteredData = project.filter((item) =>
+      Object.values(item).some((value) =>
+        String(value).toLowerCase().includes(keyword)
+      )
+    );
+    setCurrentPage(1)
+    setProjects(filteredData);
   }
 
   return (
@@ -419,24 +436,28 @@ const Projects = ({ user }) => {
                     infinite={true}
                     centerMode={true}
                 > 
-                  <button className='text-white hover:text-cyan-300 transition-all flex flex-col items-center py-8 w-32 relative'>
+                  <a href={`/projects/`}>
+                  <button style={{color: (!cat) && 'rgb(103 232 249)'}} className='text-white hover:text-cyan-300 transition-all flex flex-col items-center py-8 w-32 relative'>
                     <div className='relative'> 
                       <FontAwesomeIcon icon={faThLarge} className='text-3xl mb-2'/> 
                       {/* <p className='absolute top-[-20px] right-[-10px]'>0</p> */}
                     </div>
                     <p className='text-xs'>All Categories</p>
                   </button>
+                  </a>
                   {
                     category?.length > 0 &&
                       category.map((item, index) => {
                         return (
-                          <button key={index} className='text-white hover:text-cyan-300 transition-all flex flex-col items-center py-8 w-32 relative'>
+                          <a href={`/projects/category/${item.shortcut}`}>
+                          <button style={{color: (item.shortcut === cat) && 'rgb(103 232 249)'}} key={index} className='text-white hover:text-cyan-300 transition-all flex flex-col items-center py-8 w-32 relative'>
                             <div className='relative'> 
                               <FontAwesomeIcon icon={['fas', item.icon]} className='text-3xl mb-2'/> 
                               <p className='absolute top-[-20px] right-[-10px]'>{item.count}</p>
                             </div>
                             <p className='text-xs'>{item.shortcut}</p>
                           </button>
+                          </a>
                         )
                       })
                     } 
@@ -444,12 +465,12 @@ const Projects = ({ user }) => {
             }
 
             <div className='flex sm:flex-row flex-col-reverse sm:justify-between mb-4'>
-              <form onSubmit={handleSearch} className='flex justify-between gap-2 items-center'>
+              <div className='flex justify-between gap-2 items-center'>
                 <div className="relative lg:mt-0 sm:w-80 w-full">
                   <span className="absolute inset-y-0 left-0 flex items-center pl-3">
                     <FontAwesomeIcon icon={faSearch} className="text-gray-500" />
                   </span>
-                  <input value={searchKey} onChange={(e) => setSearchKey(e.target.value)} className="h-9 block w-full bg-gray-200 text-sm font-normal text-gray-900 rounded-sm py-2 px-4 pl-10 leading-tight focus:outline-none focus:bg-white focus:text-gray-900" type="text" placeholder='Search Project'/>
+                  <input value={searchKey} onChange={handleSearch} className="h-9 block w-full bg-gray-200 text-sm font-normal text-gray-900 rounded-sm py-2 px-4 pl-10 leading-tight focus:outline-none focus:bg-white focus:text-gray-900" type="text" placeholder='Search Project'/>
                 </div>
                 <select
                     className="h-9 text-sm text-gray-600 font-semibold sm:w-52 w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
@@ -467,7 +488,7 @@ const Projects = ({ user }) => {
                       })
                   }
                 </select>
-              </form>
+              </div>
               
               <div className='flex justify-end items-center text-white relative sm:mb-0 mb-4'>
                 <p className='text-base'>{projects?.length} project{projects?.length > 1 && 's'} • </p>
@@ -586,6 +607,37 @@ const Projects = ({ user }) => {
                         <span className='xs:block hidden'>Next</span>
                         <FontAwesomeIcon icon={faChevronRight} className='xs:hidden inline-block'/>
                         </button>
+                    </div>
+                }
+                {
+                  (project?.length === 0 && !isLoading) ?
+                    <div
+                        className="relative bg-cover bg-center py-12"
+                        style={{ backgroundColor: "#111221" }}
+                    >   
+                        <div className={`${styles.marginX} ${styles.flexCenter}`}>
+                            <div className={`${styles.boxWidthEx}`}>
+                                <div className="flex flex-col justify-center items-center">
+                                    <h1 className="text-white text-4xl font-bold mb-4 text-center">No Result Found</h1>
+                                    <p className="text-white text-lg mb-4 text-center">Looks like there is no uploads at the moment.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                  :
+                  (searchKey.length > 0 && projects?.length === 0) &&
+                    <div
+                        className="relative bg-cover bg-center py-12"
+                        style={{ backgroundColor: "#111221" }}
+                    >   
+                        <div className={`${styles.marginX} ${styles.flexCenter}`}>
+                            <div className={`${styles.boxWidthEx}`}>
+                                <div className="flex flex-col justify-center items-center">
+                                    <h1 className="text-white text-4xl font-bold mb-4 text-center">No Result Found</h1>
+                                    <p className="text-white text-lg mb-4 text-center">Please check your search keyword.</p>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 }
               </>

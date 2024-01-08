@@ -178,6 +178,7 @@ export const removeArchiveList                          = (formData) => User_API
 export const getCategory                                = (formData) => User_API.post('/project/getCategory', formData)
 export const getAdminCategory                           = (formData) => User_API.post('/project/getAdminCategory', formData)
 export const getProjects                                = (formData) => User_API.post('/project/getProjects', formData)
+export const getProjectsByCategories                    = (formData) => User_API.post('/project/getProjectsByCategories', formData)
 export const getUserProject                             = (formData) => User_API.post('/project/getUserProject', formData)
 export const uploadProject                              = (formData) => User_API.post('/project/uploadProject', formData)
 export const editUserProject                            = (formData) => User_API.post('/project/editUserProject', formData)

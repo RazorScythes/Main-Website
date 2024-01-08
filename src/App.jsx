@@ -55,6 +55,7 @@ const App = () => {
               <Route path="settings/:options" element={<><AdminSettings user={user} path={URI_PATH_HOME} settings={settings}/></>} />
               <Route path="logs" element={<><AdminLogs path={URI_PATH_HOME}/></>} />
               <Route path="manage" element={<><AdminManage path={URI_PATH_HOME} user={user}/></>} />
+
               <Route path="projects" element={<><AdminProjects path={URI_PATH_HOME} user={user}/></>} />
           </Route>
 
@@ -79,6 +80,7 @@ const App = () => {
               <Route path="videos/artist/:artist_name" element={<><VideoTag user={user} /> <Footer /></>} />
 
               <Route path="projects" element={<><Projects user={user} /> <Footer /></>} />
+              <Route path="projects/category/:cat" element={<><Projects user={user} /> <Footer /></>} />
 
               <Route path="archive" element={<><Archive user={user} /> <Footer /></>} />
               <Route path="archive/:archive" element={<><ArchiveDirectory user={user} /> <Footer /></>} />
