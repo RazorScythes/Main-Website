@@ -9,7 +9,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
-import { getProjects, getCategory, projectCountTags, getProjectsByCategories } from '../../actions/project';
+import { getProjects, getCategory, projectCountTags, getProjectsByCategories, getProjectsBySearchKey } from '../../actions/project';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
@@ -105,7 +105,10 @@ const Projects = ({ user }) => {
 
   useEffect(() => {
     if(key) {
-
+      dispatch(getProjectsBySearchKey({
+        id: user ? user.result?._id : '',
+        searchKey: key
+      }))
     }
     else {
       if(cat){
@@ -118,12 +121,12 @@ const Projects = ({ user }) => {
         dispatch(getProjects({
           id: user ? user.result?._id : ''
         }))
+        dispatch(projectCountTags({
+          id: user ? user.result?._id : ''
+        }))
       }
-      dispatch(getCategory())
-      dispatch(projectCountTags({
-        id: user ? user.result?._id : ''
-      }))
     }
+    dispatch(getCategory())
   }, [])
 
   const filterDataByTags = () => {

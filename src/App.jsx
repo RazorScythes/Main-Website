@@ -81,6 +81,7 @@ const App = () => {
 
               <Route path="projects" element={<><Projects user={user} /> <Footer /></>} />
               <Route path="projects/category/:cat" element={<><Projects user={user} /> <Footer /></>} />
+              <Route path="projects/search/:key" element={<><Projects user={user} /> <Footer /></>} />
 
               <Route path="archive" element={<><Archive user={user} /> <Footer /></>} />
               <Route path="archive/:archive" element={<><ArchiveDirectory user={user} /> <Footer /></>} />

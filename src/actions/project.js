@@ -111,6 +111,22 @@ export const getProjectsByCategories = createAsyncThunk('project/getProjectsByCa
     }
 })
 
+export const getProjectsBySearchKey = createAsyncThunk('project/getProjectsBySearchKey', async (form, thunkAPI) => {
+    try {
+        const response = await api.getProjectsBySearchKey(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const editUserProject = createAsyncThunk('project/editUserProject', async (form, thunkAPI) => {
     try {
         const response = await api.editUserProject(form)
@@ -196,12 +212,32 @@ export const projectSlice = createSlice({
         builder.addCase(getProjectsByCategories.fulfilled, (state, action) => {
             state.notFound = false
             state.user_project = action.payload.data.result
+            state.tagsCount = action.payload.data.tags
             state.error = ''
             state.isLoading = false
         }),
         builder.addCase(getProjectsByCategories.pending, (state, action) => {
             state.notFound = false
             state.isLoading = true
+        }),
+        builder.addCase(getProjectsByCategories.rejected, (state, action) => {
+            state.notFound = true
+            state.isLoading = false
+        }),
+        builder.addCase(getProjectsBySearchKey.fulfilled, (state, action) => {
+            state.notFound = false
+            state.user_project = action.payload.data.result
+            state.tagsCount = action.payload.data.tags
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getProjectsBySearchKey.pending, (state, action) => {
+            state.notFound = false
+            state.isLoading = true
+        }),
+        builder.addCase(getProjectsBySearchKey.rejected, (state, action) => {
+            state.notFound = true
+            state.isLoading = false
         }),
         builder.addCase(uploadProject.fulfilled, (state, action) => {
             state.project = action.payload.data.result
@@ -246,7 +282,6 @@ export const projectSlice = createSlice({
             state.variant = action.payload.variant
         }),
         builder.addCase(projectCountTags.fulfilled, (state, action) => {
-            console.log(action.payload.data.result)
             state.tagsCount = action.payload.data.result
             state.error = ''
             state.isLoading = false
