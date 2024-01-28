@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Navbar, Projects, Home, Games, Login, NewLogin, CreateAccount, ForgotPassword, NotFound, Portfolio, Footer, Blogs, BlogsSingle, Store, Archive, ArchiveDirectory, GamesSingle, Videos, VideosSingle, Verify, VideoTag, GameTag } from './components/index'
+import { Navbar, Projects, Home, Games, Login, NewLogin, CreateAccount, ForgotPassword, NotFound, Portfolio, Footer, Blogs, BlogsSingle, Store, ProjectsSingle, Archive, ArchiveDirectory, GamesSingle, Videos, VideosSingle, Verify, VideoTag, GameTag } from './components/index'
 import { BrowserRouter, Routes, Route, Outlet, Navigate } from "react-router-dom";
 import { AccountNavbar, Overview, AccountPortfolio, AccountStore, Uploads, Settings, Manage, Logs } from './components/Account Section/index'
 import { AdminOverview, AdminPortfolio, AdminUploads, AdminSettings, AdminLogs, AdminManage, AdminProjects } from './components/Admin/index';
@@ -82,6 +82,7 @@ const App = () => {
               <Route path="projects" element={<><Projects user={user} /> <Footer /></>} />
               <Route path="projects/category/:cat" element={<><Projects user={user} /> <Footer /></>} />
               <Route path="projects/search/:key" element={<><Projects user={user} /> <Footer /></>} />
+              <Route path="projects/:id" element={<><ProjectsSingle user={user} /> <Footer /></>} />
 
               <Route path="archive" element={<><Archive user={user} /> <Footer /></>} />
               <Route path="archive/:archive" element={<><ArchiveDirectory user={user} /> <Footer /></>} />

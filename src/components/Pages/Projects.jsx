@@ -21,7 +21,7 @@ library.add(fas, far, fab);
 
 const CustomRight = ({ onClick }) => {
   return (
-    <div onClick={onClick} className='bg-gray-900 text-white hover:text-cyan-300 transition-all h-full w-16 absolute right-0 flex items-center justify-end cursor-pointer'>
+    <div onClick={onClick} className='bg-[#0F172A] text-white hover:text-[#0BC9D5] transition-all h-full w-16 absolute right-0 flex items-center justify-end cursor-pointer'>
       <FontAwesomeIcon
         icon={faArrowRight}
         className="max-w-4 cursor-pointer text-primary-400 text-2xl font-bold"
@@ -32,7 +32,7 @@ const CustomRight = ({ onClick }) => {
 
 const CustomLeft = ({ onClick }) => {
   return (
-    <div onClick={onClick} className='bg-gray-900 text-white hover:text-cyan-300 transition-all h-full w-16 absolute left-0 flex items-center cursor-pointer'>
+    <div onClick={onClick} className='bg-[#0F172A] text-white hover:text-[#0BC9D5] transition-all h-full w-16 absolute left-0 flex items-center cursor-pointer'>
       <FontAwesomeIcon
         icon={faArrowLeft}
         className="max-w-4 text-primary-400 text-2xl font-bold"
@@ -404,11 +404,11 @@ const Projects = ({ user }) => {
     setCurrentPage(1)
     setProjects(filteredData);
   }
-
+  // https://drive.google.com/thumbnail?id=1hMI7v0KpQF1gMJpu9S1GjWqZiL_wRO-U&sz=w1000
   return (
     <div
       className="relative bg-cover bg-center pb-20 pt-4"
-      style={{ backgroundColor: "#111827" }}
+      style={{ backgroundColor: "#0F172A" }}
     >   
       <SideAlert
           variants={alertInfo.variant}
@@ -440,7 +440,7 @@ const Projects = ({ user }) => {
                     centerMode={true}
                 > 
                   <a href={`/projects/`}>
-                  <button style={{color: (!cat) && 'rgb(103 232 249)'}} className='text-white hover:text-cyan-300 transition-all flex flex-col items-center py-8 w-32 relative'>
+                  <button style={{color: (!cat) && 'rgb(11,201,213)'}} className='text-white hover:text-cyan-300 transition-all flex flex-col items-center py-8 w-32 relative'>
                     <div className='relative'> 
                       <FontAwesomeIcon icon={faThLarge} className='text-3xl mb-2'/> 
                       {/* <p className='absolute top-[-20px] right-[-10px]'>0</p> */}
@@ -453,7 +453,7 @@ const Projects = ({ user }) => {
                       category.map((item, index) => {
                         return (
                           <a href={`/projects/category/${item.shortcut}`}>
-                          <button style={{color: (item.shortcut === cat) && 'rgb(103 232 249)'}} key={index} className='text-white hover:text-cyan-300 transition-all flex flex-col items-center py-8 w-32 relative'>
+                          <button style={{color: (item.shortcut === cat) && 'rgb(11,201,213)'}} key={index} className='text-white hover:text-cyan-300 transition-all flex flex-col items-center py-8 w-32 relative'>
                             <div className='relative'> 
                               <FontAwesomeIcon icon={['fas', item.icon]} className='text-3xl mb-2'/> 
                               <p className='absolute top-[-20px] right-[-10px]'>{item.count}</p>

@@ -34,7 +34,7 @@ import Verify from './Pages/Verify'
 import VideoTag from './Pages/VideoTag'
 import GameTag from './Pages/GameTag'
 import Projects from './Pages/Projects'
-
+import ProjectsSingle from './Pages/ProjectsSingle'
 export {
     ArchiveDirectory,
     Verify,
@@ -70,4 +70,5 @@ export {
     Banner,
     Users,
     Footer,
+    ProjectsSingle
 }
