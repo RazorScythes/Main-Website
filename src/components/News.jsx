@@ -158,7 +158,7 @@ const News = ({ user }) => {
                             blogs.length > 0 &&
                                 <>
                                     <img 
-                                        src={blogs[active].featured_image} 
+                                        src={convertDriveImageLink(blogs[active].featured_image)} 
                                         alt="featured image" 
                                         className={`object-cover w-full h-full border-solid border border-[#696969] transition-opacity duration-500 ease-in-out
                                         ${isLoaded ? 'visible opacity-100' : 'opacity-0 invisible'}`} 
