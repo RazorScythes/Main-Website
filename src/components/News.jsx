@@ -5,6 +5,7 @@ import { faCalendar, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { toram_online, genshin_impact, minecraft, tower_of_fantasy } from '../assets';
 import { getBlogs } from "../actions/blogs";
+import { convertDriveImageLink } from './Tools'
 const news = [
     {
         category:"Test",
@@ -140,7 +141,7 @@ const News = ({ user }) => {
                                         <Content
                                             id={index}
                                             key={index}
-                                            image={item.featured_image}
+                                            image={convertDriveImageLink(item.featured_image)}
                                             title={item.post_title}
                                             description={first_paragraph}
                                             date={convertTimezone(item.createdAt)}
