@@ -5,6 +5,7 @@ import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons
 import { useParams } from 'react-router-dom'
 import { Page_not_found, Error_forbiden } from '../../assets';
 import { getProject, clearProjectSingle } from "../../actions/portfolio";
+import { convertDriveImageLink } from '../Tools'
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
@@ -173,7 +174,7 @@ const ProjectSingle = () => {
                           <div className='grid grid-cols-1 gap-5 place-content-start text-white md:px-8 px-2 mb-16'>
                               <div className='w-full sm:h-[600px] h-auto flex items-center justify-center overflow-y-scroll no-scroll relative'>
                                 <img 
-                                  src={portfolio.image}
+                                  src={convertDriveImageLink(portfolio.image)}
                                   className="w-full object-cover sm:absolute sm:top-0 sm:left-0"
                                 />
                               </div>

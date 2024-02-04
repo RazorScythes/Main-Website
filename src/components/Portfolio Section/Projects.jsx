@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import herobg from '../../assets/hero-bg.jpg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { convertDriveImageLink } from '../Tools'
 import { faCircleCheck, faCalendar, faSitemap, faArrowRight, faGamepad, faChevronLeft, faChevronRight, faBriefcase } from "@fortawesome/free-solid-svg-icons";
 import styles from "../../style";
 import Carousel from "react-multi-carousel";
@@ -95,7 +96,7 @@ const Projects = ({ projects }) => {
                                                     <div className="overflow-hidden relative">
                                                         <div className="bg-black opacity-80 transition-all hover:opacity-100">
                                                             <img
-                                                                src={item.image}
+                                                                src={convertDriveImageLink(item.image)}
                                                                 alt="User"
                                                                 className='relative w-full h-[400px] object-cover mb-8 transition duration-500 ease-in-out transform hover:scale-105 border border-1 border-gray-700 rounded-sm'
                                                             />

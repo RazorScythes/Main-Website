@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight, faChevronDown, faClose, faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { portfolio_selector } from '../../../constants';
 import { addExperience, updateExperience } from "../../../actions/portfolio";
+import { convertDriveImageLink } from '../../Tools'
 import { clearAlert } from '../../../actions/portfolio';
 import { useDispatch, useSelector } from 'react-redux'
 import Alert from '../../Alert';
@@ -441,7 +442,7 @@ const Services = ({ user, portfolio, index, setIndex }) => {
                                                     <div className='flex flex-col text-center relative'>
                                                         <h2 className='text-2xl font-bold mb-2'>{item.year_start.split('-')[0]} - {item.year_end.split('-')[0]}</h2>
                                                         <img
-                                                            src={item.company_logo}
+                                                            src={convertDriveImageLink(item.company_logo)}
                                                             className="w-16 h-16 mx-auto object-cover"
                                                         />
                                                         <h2 className='text-2xl font-bold capitalize'>{item.position}</h2>

@@ -4,6 +4,7 @@ import { faTrash, faChevronRight, faChevronDown, faClose, faArrowRight, faEdit }
 import { portfolio_selector } from '../../../constants';
 import { uploadServices, addExperience, updateExperience, addProject, updateProject, deleteProject } from "../../../actions/portfolio";
 import { clearAlert } from '../../../actions/portfolio';
+import { convertDriveImageLink } from '../../Tools'
 import { useDispatch, useSelector } from 'react-redux'
 import { useDropzone } from 'react-dropzone'
 import { library } from '@fortawesome/fontawesome-svg-core';
@@ -850,7 +851,7 @@ const Projects = ({ user, portfolio, index, setIndex }) => {
                                                     <div className='grid ss:grid-cols-2 grid-cols-1 gap-4 place-content-start'>
                                                         <img 
                                                             className='w-full h-56 object-cover rounded-md ss:mt-0 mt-4'
-                                                            src={item.image} 
+                                                            src={convertDriveImageLink(item.image)} 
                                                         />
                                                         <div>
                                                             <h2 className='text-xl font-semibold mb-2 leading-6'><TextWithEllipsis limit={50} text={item.project_name} /></h2>

@@ -3,6 +3,7 @@ import { LazyLoadImage } from 'react-lazy-load-image-component';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFacebookF, faInstagram, faTwitter, faGithub, faLinkedinIn } from "@fortawesome/free-brands-svg-icons";
 import { TypeAnimation } from 'react-type-animation';
+import { convertDriveImageLink } from '../Tools'
 import 'react-lazy-load-image-component/src/effects/blur.css';
 import styles from "../../style";
 
@@ -188,8 +189,8 @@ const Hero = ({ hero, resultRef }) => {
                                         className="rounded-md"
                                         effect="blur"
                                         alt="Hero Image"    
-                                        placeholderSrc={heroData.image}                  
-                                        src={heroData.image}
+                                        placeholderSrc={convertDriveImageLink(heroData.image)}                  
+                                        src={convertDriveImageLink(heroData.image)}
                                     />
                                 </div>
                             </div>

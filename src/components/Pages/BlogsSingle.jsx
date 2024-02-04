@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom';
 import { getBlogByID, getBlogComments, uploadBlogComment, removeBlogComment, addOneBlogViews, getLatestBlogs,addLatestBlogLikes, clearAlert } from "../../actions/blogs";
 import { MotionAnimate } from 'react-motion-animate'
+import { convertDriveImageLink } from '../Tools'
 import Cookies from 'universal-cookie';
 import loading from '../../assets/loading.gif'
 import heroImage from '../../assets/hero-image.jpg';
@@ -226,7 +227,7 @@ const BlogsSingle = ({ user }) => {
                                 Object.keys(blogData).length !== 0  &&
                                 <>
                                     <img 
-                                        src={blogData.blog.secondary_featured_image ? blogData.blog.secondary_featured_image : blogData.blog.featured_image}
+                                        src={blogData.blog.secondary_featured_image ? convertDriveImageLink(blogData.blog.secondary_featured_image) : convertDriveImageLink(blogData.blog.featured_image)}
                                         className='w-full xs:h-80 object-cover bg-top rounded-lg'
                                         alt="Display Image"
                                     />
@@ -237,7 +238,7 @@ const BlogsSingle = ({ user }) => {
                                                 <div className='flex py-3'>
                                                     <div className='col-span-2 flex flex-wrap items-center'>
                                                         <img 
-                                                            src={blogData.avatar}
+                                                            src={convertDriveImageLink(blogData.avatar)}
                                                             className='w-8 h-8 object-cover rounded-full border border-gray-400'
                                                             alt="avatar"
                                                         />
@@ -412,7 +413,7 @@ const BlogsSingle = ({ user }) => {
                                                                                 <div className='flex items-center text-gray-400'>
                                                                                     <img
                                                                                         className='rounded-full xs:w-6 xs:h-6 w-6 h-6'
-                                                                                        src={item.avatar ? item.avatar : avatar}
+                                                                                        src={item.avatar ? convertDriveImageLink(item.avatar) : convertDriveImageLink(avatar)}
                                                                                         alt="user profile"
                                                                                     />
                                                                                     <p className='ml-2 break-all'>
@@ -464,7 +465,7 @@ const BlogsSingle = ({ user }) => {
                                                             }}>
                                                                 <div className='mb-4'>
                                                                     <img 
-                                                                        src={item.featured_image}
+                                                                        src={convertDriveImageLink(item.featured_image)}
                                                                         className='w-full h-48 object-cover bg-top rounded-lg'
                                                                         alt="Display Image"
                                                                     />
@@ -568,7 +569,7 @@ const BlogsSingle = ({ user }) => {
                                                                             <div className='flex items-center text-gray-400'>
                                                                                 <img
                                                                                     className='rounded-full xs:w-6 xs:h-6 w-6 h-6'
-                                                                                    src={item.avatar ? item.avatar : avatar}
+                                                                                    src={item.avatar ? convertDriveImageLink(item.avatar) : convertDriveImageLink(avatar)}
                                                                                     alt="user profile"
                                                                                 />
                                                                                 <p className='ml-2 break-all'>

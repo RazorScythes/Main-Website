@@ -15,6 +15,8 @@ import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { fab } from '@fortawesome/free-brands-svg-icons';
 import loading from '../../assets/loading.gif'
+import { convertDriveImageLink } from '../Tools'
+
 import { MotionAnimate } from 'react-motion-animate';
 
 library.add(fas, far, fab);
@@ -553,7 +555,7 @@ const Projects = ({ user }) => {
                               <div className='relative bg-white hover:bg-blue-100 transision-all hover:cursor-pointer w-full p-2 border border-solid border-gray-600 rounded-md'>
                                 <img
                                   className='object-cover w-full h-52 border border-solid border-gray-300'
-                                  src={item.featured_image}
+                                  src={convertDriveImageLink(item.featured_image)}
                                 />
                                 <div className='px-2 pb-2 font-poppins'>
                                   <div className="flex justify-between items-center">

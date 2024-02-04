@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash, faChevronRight, faChevronDown, faClose, faEye } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { uploadSkills, getPortfolio } from "../../../actions/portfolio";
+import { convertDriveImageLink } from '../../Tools'
 import { clearAlert } from '../../../actions/portfolio';
 import { useDropzone } from 'react-dropzone'
 import { portfolio_selector } from '../../../constants';
@@ -530,7 +531,7 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
                                         { 
                                             item ?
                                                 <div className='flex items-center justify-center p-6 w-32 h-32 border-2 border-dashed border-gray-400 mx-auto relative'>
-                                                    <img className="w-full h-full object-cover" src={item} alt="app icons"/>
+                                                    <img className="w-full h-full object-cover" src={convertDriveImageLink(item)} alt="app icons"/>
                                                     <FontAwesomeIcon id={i} icon={faClose} onClick={(e) => deleteIcon(e, item)} className="absolute p-1 text-gray-400 cursor-pointer top-0 right-0 w-5 h-5"/>
                                                 </div>
                                             :

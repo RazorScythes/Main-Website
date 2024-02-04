@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { addOneLikes, addOneDislikes, addOneViews, getVideoByID, getComments, getRelatedVideos, uploadComment, removeComment, addToWatchLater, clearAlert } from "../../actions/video";
 import { useParams, useSearchParams } from 'react-router-dom'
 import { MotionAnimate } from 'react-motion-animate'
+import { convertDriveImageLink } from '../Tools'
 import { Page_not_found } from '../../assets';
 import loading from '../../assets/loading.gif'
 import moment from 'moment'
@@ -250,6 +251,7 @@ const VideosSingle = ({ user }) => {
     }
 
     const checkVideoFileSize = (size = "") => {
+        return false;
         if(!size) return false
 
         var file_size = size.split(" ")
@@ -412,7 +414,7 @@ const VideosSingle = ({ user }) => {
                                                 <Link to="" className='flex items-center'>
                                                     <img
                                                         className='rounded-full xs:w-8 xs:h-8 w-8 h-8 border border-solid border-gray-500'
-                                                        src={ data ? data.avatar : avatar }
+                                                        src={ data ? convertDriveImageLink(data.avatar) : convertDriveImageLink(avatar) }
                                                         alt="user profile"
                                                     />
                                                     <p className='ml-2 break-all text-white'>{ data ? data.username : "Anonymous" }</p>
@@ -548,7 +550,7 @@ const VideosSingle = ({ user }) => {
                                                                             <div className='flex items-center text-gray-400'>
                                                                                 <img
                                                                                     className='rounded-full xs:w-6 xs:h-6 w-6 h-6'
-                                                                                    src={item.avatar ? item.avatar : avatar}
+                                                                                    src={item.avatar ? convertDriveImageLink(item.avatar) : convertDriveImageLink(avatar)}
                                                                                     alt="user profile"
                                                                                 />
                                                                                 <p className='ml-2 break-all'>
@@ -673,7 +675,7 @@ const VideosSingle = ({ user }) => {
                                                                         <div className='flex items-center text-gray-400'>
                                                                             <img
                                                                                 className='rounded-full xs:w-6 xs:h-6 w-6 h-6'
-                                                                                src={item.avatar ? item.avatar : avatar}
+                                                                                src={item.avatar ? convertDriveImageLink(item.avatar) : convertDriveImageLink(avatar)}
                                                                                 alt="user profile"
                                                                             />
                                                                             <p className='ml-2 break-all'>

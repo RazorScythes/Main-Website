@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react'
+import { convertDriveImageLink } from './Tools'
 import Cropper from 'react-easy-crop'
 import getCroppedImg from './cropImage'
 
@@ -74,7 +75,7 @@ const ImageModal = ({ openModal, setOpenModal, image, setImage, preview, setPrev
                                     {
                                         preview ?
                                         <img 
-                                            src={image}
+                                            src={image.includes("https://drive") ? convertDriveImageLink(image) : image}
                                             alt={'avatar'}
                                             className="object-cover w-full sm:h-[400px] h-[250px]"
                                         />

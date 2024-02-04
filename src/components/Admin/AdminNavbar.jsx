@@ -1,11 +1,15 @@
 import React, { useState } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faUser, faGear, faRightFromBracket, faFolder , faEnvelope} from "@fortawesome/free-solid-svg-icons";
+import { Link, useNavigate } from "react-router-dom";
+import { convertDriveImageLink } from '../Tools'
+import { logout } from "../../actions/auth";
 import { useDispatch, useSelector } from 'react-redux'
 import Avatar from '../../assets/avatar.png'
 
 const AdminNavbar = ({ isOpen, setIsOpen, path }) => {
-
+    const navigate  = useNavigate()
+    
     const tokenResult = useSelector((state) => state.settings.tokenResult)
     const settings = useSelector((state) => state.settings.data)
 
@@ -14,6 +18,12 @@ const AdminNavbar = ({ isOpen, setIsOpen, path }) => {
 
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
     const [avatar, setAvatar] = useState(settings.avatar ? settings.avatar : localStorage.getItem('avatar') ? localStorage.getItem('avatar')?.replaceAll('"', "") : '')
+
+    const sign_out = () => {
+        dispatch(logout())
+        navigate(`${path}/login`)
+        setUser(null)
+    }
 
     return (
         <header className="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
@@ -41,7 +51,7 @@ const AdminNavbar = ({ isOpen, setIsOpen, path }) => {
                     {
                         user?.result? 
                         <>
-                            <img className="h-8 w-8 rounded-full cursor-pointer object-cover border border-gray-400" src={avatar ? avatar : Avatar} alt="Profile" onClick={() => {
+                            <img className="h-8 w-8 rounded-full cursor-pointer object-cover border border-gray-400" src={avatar ? convertDriveImageLink(avatar) : Avatar} alt="Profile" onClick={() => {
                             setToggle(!toggle)
                             setIsActive(false)
                             }} />

@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { getAdminCategory, getUserProject, uploadProject, editUserProject, removeUserProject, clearAlert } from "../../actions/project";
 import { faEye, faPencilAlt, faTrashAlt, faEllipsisH, faPlus, faCalendar, faClose, faTrash, faArrowDown, faArrowUp, faShare, faShareAltSquare, faExternalLink, faEyeSlash, faFile, faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useParams } from 'react-router-dom'
+import { convertDriveImageLink } from '../Tools'
 import { Header } from './index'
 import { Link } from 'react-router-dom'
 import { library, findIconDefinition  } from '@fortawesome/fontawesome-svg-core';
@@ -1071,7 +1072,7 @@ const AdminProjects = ({ user, path }) => {
                 }
                 <img
                     className='object-cover w-full h-52'
-                    src={data.featured_image}
+                    src={convertDriveImageLink(data.featured_image)}
                 />
                 <div className='px-2 pb-2 font-poppins'>
                     <h2 className='text-lg font-semibold my-2 mr-2 leading-7'>{data.post_title}</h2>

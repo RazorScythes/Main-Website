@@ -6,6 +6,7 @@ import { useSearchParams, useParams } from "react-router-dom";
 import { Link, useNavigate } from 'react-router-dom';
 import { getBlogs, countBlogCategories, addOneBlogLikes, getBlogsBySearchKey, countBlogCategoriesBySearchKey, addOneBlogLikesBySearchKey } from "../../actions/blogs";
 import { MotionAnimate } from 'react-motion-animate'
+import { convertDriveImageLink } from '../Tools'
 import Cookies from 'universal-cookie';
 import loading from '../../assets/loading.gif'
 import moment from 'moment';
@@ -385,7 +386,7 @@ const Blogs = ({ user }) => {
                                                 <div>
                                                     <div className='relative'>
                                                         <img 
-                                                            src={item.featured_image}
+                                                            src={convertDriveImageLink(item.featured_image)}
                                                             alt="Featured Image"
                                                             className='rounded-lg h-[435px] w-full object-cover border border-gray-800'
                                                         />
@@ -394,7 +395,7 @@ const Blogs = ({ user }) => {
                                                     <div className='grid sm:grid-cols-3 grid-cols-3 gap-12 place-content-start p-2 py-3'>
                                                         <div className='col-span-2 flex flex-wrap items-center'>
                                                             <img 
-                                                                src={item.user.avatar}
+                                                                src={convertDriveImageLink(item.user.avatar)}
                                                                 className='w-8 h-8 object-cover rounded-full border border-gray-400'
                                                                 alt="avatar"
                                                             />

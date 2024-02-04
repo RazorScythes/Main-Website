@@ -5,6 +5,7 @@ import { Header } from './index'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from "react-router-dom";
 import { getAllUsers } from '../../actions/settings';
+import { convertDriveImageLink } from '../Tools'
 import TableMenu from './TableMenu';
 import styles from '../../style'
 import Avatar from '../../assets/avatar.png'
@@ -205,7 +206,7 @@ const AdminManage = ({ path, user }) => {
                                                                                                             >
                                                                                                                 <img
                                                                                                                 className="object-cover w-full h-full rounded-full"
-                                                                                                                src={item.avatar ? item.avatar : Avatar}
+                                                                                                                src={item.avatar ? convertDriveImageLink(item.avatar) : Avatar}
                                                                                                                 alt=""
                                                                                                                 loading="lazy"
                                                                                                                 />

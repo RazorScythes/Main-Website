@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { nav_links, user_navLinks } from "../constants";
 import { faUser, faGear, faRightFromBracket, faFolder , faEnvelope} from "@fortawesome/free-solid-svg-icons";
 import { logout } from "../actions/auth";
+import { convertDriveImageLink } from './Tools'
 import { useDispatch, useSelector } from 'react-redux'
 
 import Logo from '../assets/logo.png'
@@ -87,7 +88,7 @@ const Navbar = ({ path }) => {
         {
           user?.result?
           <>
-              <img className="h-8 w-8 rounded-full ml-4 cursor-pointer object-cover border border-gray-400" src={avatar ? avatar : Avatar} alt="Profile" onClick={() => {
+              <img className="h-8 w-8 rounded-full ml-4 cursor-pointer object-cover border border-gray-400" src={avatar ? convertDriveImageLink(avatar) : Avatar} alt="Profile" onClick={() => {
                 setToggle(!toggle)
                 setIsActive(false)
               }} />
@@ -165,7 +166,7 @@ const Navbar = ({ path }) => {
           {
             user?.result? 
             <>
-                <img className="h-10 w-10 rounded-full ml-4 cursor-pointer object-cover border border-gray-400" src={avatar ? avatar : Avatar} alt="Profile" onClick={() => {
+                <img className="h-10 w-10 rounded-full ml-4 cursor-pointer object-cover border border-gray-400" src={avatar ? convertDriveImageLink(avatar) : Avatar} alt="Profile" onClick={() => {
                   setToggle(!toggle)
                   setIsActive(false)
                 }} />

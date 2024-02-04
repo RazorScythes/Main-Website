@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import heroImage from '../../assets/hero-image.jpg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleCheck } from "@fortawesome/free-solid-svg-icons";
+import { convertDriveImageLink } from '../Tools'
 import CountUp from 'react-countup';
 
 import { photshop_svg } from "../../assets";
@@ -66,25 +67,25 @@ const Skills = ({ skills }) => {
                                         className="mx-auto rounded-lg shadow-lg lg:w-[31.25rem] lg:h-[31.25rem] w-full sm:h-[46.875rem] h-full object-cover"
                                         effect="blur"
                                         alt="Hero Image"    
-                                        placeholderSrc={skillsData.image}                  
-                                        src={skillsData.image} 
+                                        placeholderSrc={convertDriveImageLink(skillsData.image)}                  
+                                        src={convertDriveImageLink(skillsData.image)} 
                                     />
                                     <div className="absolute top-4 left-4 ss:p-4 p-2 bg-white rounded-lg">
                                         <img
                                             className="md:w-16 md:h-16 w-10 h-10 bg-white object-cover"
-                                            src={skillsData.icon1}
+                                            src={convertDriveImageLink(skillsData.icon1)}
                                         />
                                     </div>
                                     <div className="absolute top-4 right-4 ss:p-4 p-2 bg-white rounded-lg">
                                         <img
                                             className="md:w-16 md:h-16 w-10 h-10 bg-white object-cover"
-                                            src={skillsData.icon2}
+                                            src={convertDriveImageLink(skillsData.icon2)}
                                         />
                                     </div>
                                     <div className="absolute bottom-4 right-4 ss:p-4 p-2 bg-white rounded-lg">
                                         <img
                                             className="md:w-16 md:h-16 w-10 h-10 bg-white object-cover"
-                                            src={skillsData.icon3}
+                                            src={convertDriveImageLink(skillsData.icon3)}
                                         />
                                     </div>
                                     <div className="absolute bottom-0 left-0 bg-white rounded-full font-poppins ss:py-3 py-1 ss:px-8 px-4">

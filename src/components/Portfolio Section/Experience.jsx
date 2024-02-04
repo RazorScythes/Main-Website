@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { convertDriveImageLink } from '../Tools'
 import styles from "../../style";
 
 const Experience = ({ experience }) => {
@@ -52,7 +53,7 @@ const Experience = ({ experience }) => {
                                                         <h2 className="sm:w-1/2 lg:text-3xl sm:text-xl text-2xl font-bold">{item.year_start.split('-')[0]}-{item.year_end.split('-')[0]}</h2>
                                                         <div className="sm:w-1/3 text-center">
                                                             <img
-                                                                src={item.company_logo}
+                                                                src={convertDriveImageLink(item.company_logo)}
                                                                 className="lg:w-16 lg:h-16 sm:w-12 sm:h-12 w-16 h-16 sm:my-4 my-4 rounded-lg bg-cover bg-center border border-solid border-white object-cover"
                                                             />
                                                         </div>

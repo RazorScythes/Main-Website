@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import { useParams, useSearchParams } from 'react-router-dom'
 import { addOneDownload, getRelatedGames, updateGameAccessKey, getGameByID, countTags, getRecentGameBlog, addRecentGamingBlogLikes, clearAlert } from "../../actions/game";
 import { MotionAnimate } from 'react-motion-animate'
+import { convertDriveImageLink } from '../Tools'
 import ModalImage from "react-modal-image";
 import Carousel from "react-multi-carousel";
 import Cookies from 'universal-cookie';
@@ -500,7 +501,7 @@ const GamesSingle = ({ user }) => {
                                                 <div className='flex mb-8'>
                                                     <img
                                                         className='rounded-full xs:w-20 xs:h-20 w-12 h-12 border border-gray-400'
-                                                        src={gameData.avatar}
+                                                        src={convertDriveImageLink(gameData.avatar)}
                                                         alt="user profile"
                                                     />
                                                     <div className='xs:ml-4 ml-2 xs:my-2'>
@@ -564,7 +565,7 @@ const GamesSingle = ({ user }) => {
                                                                         <div className='mb-4'>
                                                                             <Link to={`/blogs/${item._id}`} >
                                                                                 <img 
-                                                                                    src={item.featured_image}
+                                                                                    src={convertDriveImageLink(item.featured_image)}
                                                                                     alt="Post Image"
                                                                                     className='w-full md:h-44 h-72 object-cover rounded-lg'
                                                                                 />
