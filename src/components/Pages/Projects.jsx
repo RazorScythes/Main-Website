@@ -552,6 +552,7 @@ const Projects = ({ user }) => {
                         projects.slice(startIndex, endIndex).map((item, index) => {
                           return (
                             <MotionAnimate key={index} animation='fadeInUp'>
+                              <Link to={`/projects/${item._id}`}>
                               <div className='relative bg-white hover:bg-blue-100 transision-all hover:cursor-pointer w-full p-2 border border-solid border-gray-600 rounded-md'>
                                 <img
                                   className='object-cover w-full h-52 border border-solid border-gray-300'
@@ -577,6 +578,7 @@ const Projects = ({ user }) => {
                                 </div>
                                 </div>
                               </div>
+                              </Link>
                             </MotionAnimate>
                           )
                         })

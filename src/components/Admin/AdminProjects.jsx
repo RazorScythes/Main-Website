@@ -259,7 +259,7 @@ const AdminProjects = ({ user, path }) => {
             element = { header: 'List Image',  element: contentSelected, image_input: '', heading_input: '', sub_input: '', link_input: '', list: []}
         }
         else if(contentSelected === 'code_highlights') {
-            element = { header: 'Code Highlights',  element: contentSelected, input: '', language: 'javascript', theme: 'docco', name: '', paragraph: ''}
+            element = { header: 'Code Highlights',  element: contentSelected, input: '', language: 'javascript', theme: 'srcery', name: '', paragraph: ''}
         }
         else if(contentSelected === 'download_list') {
             element = { header: 'Download List',  element: contentSelected, input: '', icon: 'fa-file-download', link: '', list: []}
