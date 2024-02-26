@@ -220,11 +220,11 @@ const ProjectsSingle = ({ user }) => {
                                                                         <div key={i}>
                                                                             {
                                                                                 item.element === 'normal_naragraph' ?
-                                                                                    <p className='leading-normal mt-2'>
+                                                                                    <p className='leading-normal mt-2 whitespace-pre-wrap'>
                                                                                         {item.paragraph}
                                                                                     </p>
                                                                                 :
-                                                                                item.element === 'normal_naragraph' ?
+                                                                                item.element === 'quoted_naragraph whitespace-pre-wrap' ?
                                                                                     <p className='my-8 '>
                                                                                         <FontAwesomeIcon icon={faQuoteLeft} className='mr-1 text-xs mb-1'/><span className='font-semibold'>{item.paragraph}</span><FontAwesomeIcon icon={faQuoteRight} className='ml-1 text-xs mb-1'/>
                                                                                     </p>
