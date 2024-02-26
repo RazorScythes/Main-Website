@@ -415,7 +415,7 @@ const ProjectsSingle = ({ user }) => {
                                                 className="w-full p-4 text-sm rounded-lg mt-2 outline-0 transition-all focus:border-gray-600 bg-[#131C31] border border-solid border-[#222F43] text-gray-100 focus:ring-gray-700"
                                             >
                                             </textarea>
-                                            <button onClick={submitComment} className="text-sm float-right bg-[#3a8894] hover:bg-transparent hover:bg-[#131C31] text-gray-100 py-2 px-4 border border-[#222F43] rounded transition-colors duration-300 ease-in-out">
+                                            <button onClick={submitComment} className="text-sm float-right bg-[#0DBFDC] hover:bg-transparent hover:bg-[#131C31] text-gray-100 py-2 px-4 border border-[#222F43] rounded transition-colors duration-300 ease-in-out">
                                                 {
                                                     // !submitted ?
                                                     (
