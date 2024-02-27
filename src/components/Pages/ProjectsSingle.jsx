@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react'
 import styles from "../../style";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSearchParams, useParams } from "react-router-dom";
-import { faArrowLeft, faArrowRight, faArrowRightRotate, faChevronLeft, faChevronRight, faExternalLink, faFile, faHome, faHomeAlt, faHomeLg, faQuoteLeft, faQuoteRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faArrowRight, faArrowRightRotate, faChevronLeft, faChevronRight, faClock, faExternalLink, faFile, faHome, faHomeAlt, faHomeLg, faQuoteLeft, faQuoteRight, faTrash } from '@fortawesome/free-solid-svg-icons';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { getProjectByID, clearAlert } from "../../actions/project";
+import { getProjectByID, getProjectComments, uploadProjectComment, removeProjectComment, clearAlert } from "../../actions/project";
 import { useDispatch, useSelector } from 'react-redux'
 import * as hljsStyles from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import Carousel from "react-multi-carousel";
@@ -65,17 +65,25 @@ const ProjectsSingle = ({ user }) => {
 
     const dispatch = useDispatch()
     const project_data = useSelector((state) => state.project.data)
+    const comments = useSelector((state) => state.project.comments)
     const notFound = useSelector((state) => state.project.notFound)
     const forbiden = useSelector((state) => state.project.forbiden)
     const isLoading = useSelector((state) => state.project.isLoading)
 
     const [projectData, setProjectData] = useState({})
+    const [commentList, setCommentList] = useState([])
+    const [submitted, setSubmitted] = useState(false)
+    const [comment, setComment] = useState('')
+    const [deleted, setDeleted] = useState(false)
+
 
     useEffect(() => {
+        setProjectData({})
         dispatch(getProjectByID({ 
             id: user ? user.result?._id : '', 
             projectId: id 
         }))
+        dispatch(getProjectComments({ projectId: id }))
         window.scrollTo(0, 0)
     }, [id])
 
@@ -87,7 +95,15 @@ const ProjectsSingle = ({ user }) => {
 
     useEffect(() => {
         console.log(projectData)
-    }, [projectData])
+        console.log(comments)
+    }, [projectData, comments])
+
+    useEffect(() => {
+        setCommentList(comments)
+        setSubmitted(false)
+        setDeleted(false)
+        setComment('')
+    }, [comments])
 
     const convertTimezone = (date) => {
         const timeZone = 'America/New_York';
@@ -105,7 +121,27 @@ const ProjectsSingle = ({ user }) => {
     }
 
     const submitComment = () => {
+        if(comment.length === 0) return
 
+        if(!submitted) {
+            dispatch(uploadProjectComment({
+                id: project_data.project._id,
+                user: user?.result._id,
+                comment: comment
+            }))
+            setSubmitted(true)
+        }
+    }
+
+    const deleteComment = (parent_id, comment_id) => {
+        if(confirm("Are you sure you want to remove your comment? action cannot be undone."))
+            if(!deleted) {
+                dispatch(removeProjectComment({
+                    parent_id: parent_id,
+                    comment_id: comment_id
+                }))
+                setDeleted(true)
+            }
     }
 
     return (
@@ -403,44 +439,199 @@ const ProjectsSingle = ({ user }) => {
                                                     })
                                                 }
                                             </div>
-                                            <h2 className='text-3xl font-semibold my-4 mt-8 text-[#B9E0F2]'>Leave a comment</h2>
-                                            <textarea
-                                                value=""
-                                                // onChange={(e) => setComment(e.target.value)}
-                                                name="message"
-                                                id="message"
-                                                cols="30"
-                                                rows="8"
-                                                placeholder="Write a comment"
-                                                className="w-full p-4 text-sm rounded-lg mt-2 outline-0 transition-all focus:border-gray-600 bg-[#131C31] border border-solid border-[#222F43] text-gray-100 focus:ring-gray-700"
-                                            >
-                                            </textarea>
-                                            <button onClick={submitComment} className="text-sm float-right bg-[#0DBFDC] hover:bg-transparent hover:bg-[#131C31] text-gray-100 py-2 px-4 border border-[#222F43] rounded transition-colors duration-300 ease-in-out">
+
+                                            <div className='md:block hidden'>
                                                 {
-                                                    // !submitted ?
-                                                    (
+                                                    user ? (
                                                         <>
-                                                            Post Comment
+                                                            <h2 className='text-3xl font-semibold my-4 mt-8 text-[#B9E0F2]'>Leave a comment</h2>
+                                                            <textarea
+                                                                value={comment}
+                                                                onChange={(e) => setComment(e.target.value)}
+                                                                name="message"
+                                                                id="message"
+                                                                cols="30"
+                                                                rows="8"
+                                                                placeholder="Write a comment"
+                                                                className="w-full p-4 text-sm rounded-lg mt-2 outline-0 transition-all focus:border-gray-600 bg-[#131C31] border border-solid border-[#222F43] text-gray-100 focus:ring-gray-700"
+                                                            >
+                                                            </textarea>
+                                                            <button onClick={submitComment} className="text-sm float-right bg-[#0DBFDC] hover:bg-transparent hover:bg-[#131C31] text-gray-100 py-2 px-4 border border-[#222F43] rounded transition-colors duration-300 ease-in-out">
+                                                                {
+                                                                    !submitted ?
+                                                                    (
+                                                                        <>
+                                                                            Post Comment
+                                                                        </>
+                                                                    )
+                                                                    :
+                                                                    (
+                                                                        <div className='flex flex-row justify-center items-center px-4'>
+                                                                            <div role="status">
+                                                                                <svg aria-hidden="true" class="w-5 h-5 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                                    <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                                                                    <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                                                                </svg>
+                                                                                <span class="sr-only">Loading...</span>
+                                                                            </div>
+                                                                            Sending
+                                                                        </div>
+                                                                    )
+                                                                }
+                                                            </button>
                                                         </>
                                                     )
-                                                    // :
-                                                    // (
-                                                    //     <div className='flex flex-row justify-center items-center px-4'>
-                                                    //         <div role="status">
-                                                    //             <svg aria-hidden="true" class="w-5 h-5 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                    //                 <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
-                                                    //                 <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
-                                                    //             </svg>
-                                                    //             <span class="sr-only">Loading...</span>
-                                                    //         </div>
-                                                    //         Commenting
-                                                    //     </div>
-                                                    // )
+                                                    :
+                                                    (
+                                                        <div className='mt-8 w-full border border-solid border-[#222F43] bg-[#131C31] text-gray-100 text-sm p-8 text-center'>
+                                                            <p>You need to <a href='/login' className='hover:text-[#0DBFDC] transition-all'>login</a> to comment.</p>
+                                                        </div>
+                                                    )
                                                 }
-                                            </button>
+                                            
+                                                <div className='mt-12'>
+                                                    <h2 className='text-2xl font-semibold my-4 mt-8 text-[#B9E0F2]'>Comments ({ commentList && commentList.length ? commentList.length : 0 })</h2>
+                                                    {
+                                                        commentList && commentList.length > 0 ?
+                                                            commentList.map((item, i) => {
+                                                                return (
+                                                                    <MotionAnimate key={i} animation='fadeInUp'>
+                                                                        <div className="w-full p-4 text-sm rounded-lg mt-8 outline-0 transition-all focus:border-gray-600 bg-[#131C31] border border-solid border-[#222F43] text-gray-100 focus:ring-gray-700">
+                                                                            <div className='grid grid-cols-2'>
+                                                                                <div className='flex items-center text-[#0DBFDC]'>
+                                                                                    <img
+                                                                                        className='rounded-full xs:w-6 xs:h-6 w-6 h-6 border border-solid border-[#222F43]'
+                                                                                        src={item.avatar ? convertDriveImageLink(item.avatar) : convertDriveImageLink(avatar)}
+                                                                                        alt="user profile"
+                                                                                    />
+                                                                                    <p className='ml-2 break-all'>
+                                                                                        @{item.username}  
+                                                                                        {
+                                                                                            user?.result?.username === item.username && 
+                                                                                                <span> (Me)</span>
+                                                                                        }
+                                                                                    </p>
+                                                                                </div>
+                                                                                <div className='flex items-center justify-end text-gray-100'>
+                                                                                    <FontAwesomeIcon icon={faClock} className="text-gray-100"/>
+                                                                                    <p className='ml-2 break-all text-sm'>{moment(item.date).fromNow()}</p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <p className='mt-4 whitespace-pre-wrap'>{item.comments}</p>
+                                                                            {
+                                                                                user?.result?.username === item.username && 
+                                                                                    <div className='flex justify-between items-center'>
+                                                                                        <div></div>
+                                                                                        <p onClick={() => deleteComment(project_data.project._id, item.id)} id={item.id} className='transition-all border border-solid border-[#222F43] text-gray-100 py-2 px-4 hover:text-[#0DBFDC] text-sm cursor-pointer'><FontAwesomeIcon icon={faTrash} className="mr-2"/> Delete</p>
+                                                                                    </div>
+                                                                            }
+                                                                        </div>
+                                                                    </MotionAnimate>
+                                                                )
+                                                            })
+                                                            :
+                                                            <p className='my-8 text-sm'> No comment to show</p>
+                                                    }
+                                                </div>
+                                            </div>
                                         </div>
                                         <div>
                                             HELLO
+                                        </div>
+                                    </div>
+
+                                    <div className='md:hidden block'>
+                                        {
+                                            user ? (
+                                                <>
+                                                    <h2 className='text-3xl font-semibold my-4 mt-8 text-[#B9E0F2]'>Leave a comment</h2>
+                                                    <textarea
+                                                        value={comment}
+                                                        onChange={(e) => setComment(e.target.value)}
+                                                        name="message"
+                                                        id="message"
+                                                        cols="30"
+                                                        rows="8"
+                                                        placeholder="Write a comment"
+                                                        className="w-full p-4 text-sm rounded-lg mt-2 outline-0 transition-all focus:border-gray-600 bg-[#131C31] border border-solid border-[#222F43] text-gray-100 focus:ring-gray-700"
+                                                    >
+                                                    </textarea>
+                                                    <button onClick={submitComment} className="text-sm float-right bg-[#0DBFDC] hover:bg-transparent hover:bg-[#131C31] text-gray-100 py-2 px-4 border border-[#222F43] rounded transition-colors duration-300 ease-in-out">
+                                                        {
+                                                            !submitted ?
+                                                            (
+                                                                <>
+                                                                    Post Comment
+                                                                </>
+                                                            )
+                                                            :
+                                                            (
+                                                                <div className='flex flex-row justify-center items-center px-4'>
+                                                                    <div role="status">
+                                                                        <svg aria-hidden="true" class="w-5 h-5 mr-2 text-gray-200 animate-spin dark:text-gray-600 fill-blue-600" viewBox="0 0 100 101" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                                            <path d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z" fill="currentColor"/>
+                                                                            <path d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z" fill="currentFill"/>
+                                                                        </svg>
+                                                                        <span class="sr-only">Loading...</span>
+                                                                    </div>
+                                                                    Sending
+                                                                </div>
+                                                            )
+                                                        }
+                                                    </button>
+                                                </>
+                                            )
+                                            :
+                                            (
+                                                <div className='mt-8 w-full border border-solid border-[#222F43] bg-[#131C31] text-gray-100 text-sm p-8 text-center'>
+                                                    <p>You need to <a href='/login' className='hover:text-[#0DBFDC] transition-all'>login</a> to comment.</p>
+                                                </div>
+                                            )
+                                        }
+                                    
+                                        <div className='mt-12'>
+                                            <h2 className='text-2xl font-semibold my-4 mt-8 text-[#B9E0F2]'>Comments ({ commentList && commentList.length ? commentList.length : 0 })</h2>
+                                            {
+                                                commentList && commentList.length > 0 ?
+                                                    commentList.map((item, i) => {
+                                                        return (
+                                                            <MotionAnimate key={i} animation='fadeInUp'>
+                                                                <div className="w-full p-4 text-sm rounded-lg mt-8 outline-0 transition-all focus:border-gray-600 bg-[#131C31] border border-solid border-[#222F43] text-gray-100 focus:ring-gray-700">
+                                                                    <div className='grid grid-cols-2'>
+                                                                        <div className='flex items-center text-[#0DBFDC]'>
+                                                                            <img
+                                                                                className='rounded-full xs:w-6 xs:h-6 w-6 h-6 border border-solid border-[#222F43]'
+                                                                                src={item.avatar ? convertDriveImageLink(item.avatar) : convertDriveImageLink(avatar)}
+                                                                                alt="user profile"
+                                                                            />
+                                                                            <p className='ml-2 break-all'>
+                                                                                @{item.username}  
+                                                                                {
+                                                                                    user?.result?.username === item.username && 
+                                                                                        <span> (Me)</span>
+                                                                                }
+                                                                            </p>
+                                                                        </div>
+                                                                        <div className='flex items-center justify-end text-gray-100'>
+                                                                            <FontAwesomeIcon icon={faClock} className="text-gray-100"/>
+                                                                            <p className='ml-2 break-all text-sm'>{moment(item.date).fromNow()}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <p className='mt-4 whitespace-pre-wrap'>{item.comments}</p>
+                                                                    {
+                                                                        user?.result?.username === item.username && 
+                                                                            <div className='flex justify-between items-center'>
+                                                                                <div></div>
+                                                                                <p onClick={() => deleteComment(project_data.project._id, item.id)} id={item.id} className='transition-all border border-solid border-[#222F43] text-gray-100 py-2 px-4 hover:text-[#0DBFDC] text-sm cursor-pointer'><FontAwesomeIcon icon={faTrash} className="mr-2"/> Delete</p>
+                                                                            </div>
+                                                                    }
+                                                                </div>
+                                                            </MotionAnimate>
+                                                        )
+                                                    })
+                                                    :
+                                                    <p className='my-8'> No comments to show</p>
+                                            }
                                         </div>
                                     </div>
                                 </>

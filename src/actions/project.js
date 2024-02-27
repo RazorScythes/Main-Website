@@ -9,6 +9,7 @@ const initialState = {
     variant: '',
     paragraph: '',
     project: {},
+    comments: [],
     user_project: [],
     category: [],
     user_category: [],
@@ -193,6 +194,54 @@ export const projectCountTags = createAsyncThunk('project/projectCountTags', asy
     }
 })
 
+export const getProjectComments = createAsyncThunk('project/getProjectComments', async (form, thunkAPI) => {
+    try {
+        const response = await api.getProjectComments(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const uploadProjectComment = createAsyncThunk('project/uploadProjectComment', async (form, thunkAPI) => {
+    try {
+        const response = await api.uploadProjectComment(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const removeProjectComment = createAsyncThunk('project/removeProjectComment', async (form, thunkAPI) => {
+    try {
+        const response = await api.removeProjectComment(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const projectSlice = createSlice({
     name: 'project',
     initialState,
@@ -322,6 +371,33 @@ export const projectSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(projectCountTags.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(getProjectComments.fulfilled, (state, action) => {
+            state.comments = action.payload.data.comments
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getProjectComments.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(removeProjectComment.fulfilled, (state, action) => {
+            state.comments = action.payload.data.comments
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(removeProjectComment.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(uploadProjectComment.fulfilled, (state, action) => {
+            state.comments = action.payload.data.comments
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(uploadProjectComment.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         })
