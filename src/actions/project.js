@@ -16,6 +16,8 @@ const initialState = {
     tagsCount: [],
     data: {},
     forbiden: '',
+    categories: [],
+    latestProjects: []
 }
 
 export const getProjectByID = createAsyncThunk('project/getProjectByID', async (form, thunkAPI) => {
@@ -242,6 +244,22 @@ export const removeProjectComment = createAsyncThunk('project/removeProjectComme
     }
 })
 
+export const getLatestProjects = createAsyncThunk('project/getLatestProjects', async (form, thunkAPI) => {
+    try {
+        const response = await api.getLatestProjects(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const projectSlice = createSlice({
     name: 'project',
     initialState,
@@ -400,6 +418,16 @@ export const projectSlice = createSlice({
         builder.addCase(uploadProjectComment.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
+        }),
+        builder.addCase(getLatestProjects.fulfilled, (state, action) => {
+            state.notFound = false
+            state.latestProjects = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getLatestProjects.pending, (state, action) => {
+            state.notFound = false
+            state.isLoading = true
         })
     },
     reducers: {

@@ -189,3 +189,4 @@ export const projectCountTags                           = (formData) => User_API
 export const getProjectComments                         = (formData) => User_API.post('/project/getProjectComments', formData)
 export const uploadProjectComment                       = (formData) => User_API.post('/project/uploadProjectComment', formData)
 export const removeProjectComment                       = (formData) => User_API.post('/project/removeProjectComment', formData)
+export const getLatestProjects                          = (formData) => User_API.post('/project/getLatestProjects', formData)

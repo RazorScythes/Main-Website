@@ -575,7 +575,7 @@ const Projects = ({ user }) => {
                                     <p className='text-sm text-gray-600'>{item.views.length} view{item.views.length > 1 && 's'} • </p>
                                     <p className='text-sm text-gray-600 ml-1'> {item.likes.length} like{item.likes.length > 1 && 's'} •</p>
                                     <p className='text-sm text-gray-600 ml-1'> {item.comment.length} comment{item.comment.length > 1 && 's'}</p>
-                                </div>
+                                  </div>
                                 </div>
                               </div>
                               </Link>

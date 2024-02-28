@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useSearchParams, useParams } from "react-router-dom";
 import { faArrowLeft, faArrowRight, faArrowRightRotate, faChevronLeft, faChevronRight, faClock, faExternalLink, faFile, faHome, faHomeAlt, faHomeLg, faQuoteLeft, faQuoteRight, faTrash } from '@fortawesome/free-solid-svg-icons';
 import SyntaxHighlighter from 'react-syntax-highlighter';
-import { getProjectByID, getProjectComments, uploadProjectComment, removeProjectComment, clearAlert } from "../../actions/project";
+import { getLatestProjects, getCategory, getProjectByID, getProjectComments, uploadProjectComment, removeProjectComment, clearAlert } from "../../actions/project";
 import { useDispatch, useSelector } from 'react-redux'
 import * as hljsStyles from 'react-syntax-highlighter/dist/esm/styles/hljs';
 import Carousel from "react-multi-carousel";
@@ -66,6 +66,8 @@ const ProjectsSingle = ({ user }) => {
     const dispatch = useDispatch()
     const project_data = useSelector((state) => state.project.data)
     const comments = useSelector((state) => state.project.comments)
+    const category = useSelector((state) => state.project.user_category)
+    const latestProjects = useSelector((state) => state.project.latestProjects)
     const notFound = useSelector((state) => state.project.notFound)
     const forbiden = useSelector((state) => state.project.forbiden)
     const isLoading = useSelector((state) => state.project.isLoading)
@@ -79,11 +81,16 @@ const ProjectsSingle = ({ user }) => {
 
     useEffect(() => {
         setProjectData({})
+        dispatch(getLatestProjects({
+            id: user ? user.result?._id : '',
+            projectId: id 
+        }))
         dispatch(getProjectByID({ 
             id: user ? user.result?._id : '', 
             projectId: id 
         }))
         dispatch(getProjectComments({ projectId: id }))
+        dispatch(getCategory())
         window.scrollTo(0, 0)
     }, [id])
 
@@ -96,7 +103,9 @@ const ProjectsSingle = ({ user }) => {
     useEffect(() => {
         console.log(projectData)
         console.log(comments)
-    }, [projectData, comments])
+        console.log(category)
+        console.log(latestProjects)
+    }, [projectData, comments, category, latestProjects])
 
     useEffect(() => {
         setCommentList(comments)
@@ -104,6 +113,16 @@ const ProjectsSingle = ({ user }) => {
         setDeleted(false)
         setComment('')
     }, [comments])
+
+    const diffInMonths = (d1, d2) => {
+        if(!d1 || !d2) return 'N/A'
+        const date1 = new Date(d1);
+        const date2 = new Date(d2);
+    
+        const result = (date2.getFullYear() - date1.getFullYear()) * 12 + (date2.getMonth() - date1.getMonth())
+    
+        return result + ' months'
+      }
 
     const convertTimezone = (date) => {
         const timeZone = 'America/New_York';
@@ -220,9 +239,9 @@ const ProjectsSingle = ({ user }) => {
 
                                     <hr className='border-[#94a9c9] my-4'/>
 
-                                    <div className='flex flex-row items-center text-sm mt-12'>
+                                    <div className='flex flex-row items-center text-sm mt-12 pb-4'>
                                         <div className='sm:w-3/4 w-full'>
-                                            <h1 className='text-5xl font-semibold text-[#0DBFDC] leading-normal drop-shadow-md'> {projectData.project.post_title} </h1>
+                                            <h1 className='sm:text-5xl text-4xl font-semibold text-[#0DBFDC] drop-shadow-md'> {projectData.project.post_title} </h1>
                                         </div>
                                         <div className='sm:w-1/4 w-full sm:block hidden'>
 
@@ -276,7 +295,7 @@ const ProjectsSingle = ({ user }) => {
                                                                                     <h2 className='text-2xl font-semibold my-4 text-[#B9E0F2]'>{item.heading}</h2>
                                                                                 :
                                                                                 item.element === 'number_list' ?
-                                                                                    <ul className='list-decimal pl-4 text-[#B9E0F2] py-4 pt-2'>
+                                                                                    <ul className='list-decimal pl-4 py-4 pt-2'>
                                                                                         {
                                                                                             item.list?.map((l, ix) => {
                                                                                                 return (
@@ -287,7 +306,7 @@ const ProjectsSingle = ({ user }) => {
                                                                                     </ul>
                                                                                 :
                                                                                 item.element === 'bullet_list' ?
-                                                                                    <ul className='list-decimal pl-4 text-[#B9E0F2] py-4 pt-2'>
+                                                                                    <ul className='list-decimal pl-4 py-4 pt-2'>
                                                                                         {
                                                                                             item.list?.map((l, ix) => {
                                                                                                 return (
@@ -535,8 +554,85 @@ const ProjectsSingle = ({ user }) => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div>
-                                            HELLO
+                                        <div className='sm:px-2 flex flex-col gap-8'>
+                                            <div className='transition-all p-4 py-5 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100'>
+                                                <h2 className='text-xl font-semibold mb-2 text-[#0DBFDC]'>Project Details</h2>
+                                                <hr className='border-[1.8px] border-[#0DBFDC] mb-6 w-1/3'/>
+                                                
+                                                <div className='flex mb-4'>
+                                                    <h2 className='text-[#B9E0F2] font-bold mr-2'>Duration: </h2>
+                                                    <p> {diffInMonths(project_data.project.date_start, project_data.project.date_end)}</p>
+                                                </div>
+                                                
+                                                <div className='flex flex-wrap gap-2 mb-4'>
+                                                    <span className='cursor-pointer transition-all p-4 py-2 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
+                                                        #School
+                                                    </span>
+                                                    <span className='cursor-pointer transition-all p-4 py-2 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
+                                                        #Web Development
+                                                    </span>
+                                                </div>
+                                                
+                                                <hr className='border-gray-700 my-2'/>
+
+                                                <div className='flex flex-wrap text-gray-100 cursor-pointer'>
+                                                    <p className='text-sm '><span className='hover:text-[#0DBFDC]'> {project_data.project.views.length} view{project_data.project.views.length > 1 && 's'}</span> • </p>
+                                                    <p className='text-sm ml-1'><span className='hover:text-[#0DBFDC]'> {project_data.project.likes.length} like{project_data.project.likes.length > 1 && 's'}</span> •</p>
+                                                    <p className='text-sm ml-1'><span className='hover:text-[#0DBFDC]'> {project_data.project.comment.length} comment{project_data.project.comment.length > 1 && 's'}</span></p>
+                                                </div>
+                                            </div>
+
+                                            <div className='transition-all p-4 py-5 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100'>
+                                                <h2 className='text-xl font-semibold mb-2 text-[#0DBFDC]'>Categories</h2>
+                                                <hr className='border-[1.8px] border-[#0DBFDC] mb-6 w-1/3'/>
+
+                                                <div className='flex flex-col gap-2 mb-4'>
+                                                    {
+                                                        category?.length > 0 &&
+                                                        category.map((item, index) => {
+                                                            return (
+                                                                <div className='flex justify-between items-center cursor-pointer transition-all p-4 py-3 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
+                                                                    <span>
+                                                                        <FontAwesomeIcon icon={['fas', item.icon]} className='mr-2'/>
+                                                                        {item.category}
+                                                                    </span>
+
+                                                                    <p className='bg-[#222F43] px-3 py-1 rounded-full text-xs'>{item.count}</p>
+                                                                </div>
+                                                            )
+                                                        })
+                                                    } 
+                                                </div>
+                                            </div>
+
+                                            <div className='transition-all p-4 py-5 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100'>
+                                                <h2 className='text-xl font-semibold mb-2 text-[#0DBFDC]'>Latest Projects</h2>
+                                                <hr className='border-[1.8px] border-[#0DBFDC] mb-6 w-1/3'/>
+                                                
+                                                {
+                                                    latestProjects?.length > 0 &&
+                                                    latestProjects.map((item, index) => {
+                                                        return (
+                                                            <div className='flex flex-row items-center text-sm mt-4'>
+                                                                <div className='w-full'>
+                                                                    <div className='flex items-center mb-2'>
+                                                                        <img
+                                                                            className='flex items-start rounded-full xs:w-16 xs:h-16 w-12 h-12 border border-gray-400 object-cover'
+                                                                            src={convertDriveImageLink(item.featured_image)}
+                                                                            alt="user profile"
+                                                                        />
+                                                                        <div className='xs:ml-4 ml-2'>
+                                                                            <p className='text-[#B9E0F2] text-base font-semibold'>{item.post_title}</p>
+                                                                            <p className='whitespace-pre-wrap text-sm mt-1 text-[#94a9c9]'>#{item.category_shortcut} • {convertTimezone(item.createdAt)}</p>
+                                                                            <hr className='border-gray-700 mt-4'/>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )
+                                                    })
+                                                }
+                                            </div>
                                         </div>
                                     </div>
 
