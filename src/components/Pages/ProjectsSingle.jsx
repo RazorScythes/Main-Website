@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import styles from "../../style";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useSearchParams, useParams } from "react-router-dom";
+import { useSearchParams, useParams, Link } from "react-router-dom";
 import { faArrowLeft, faArrowRight, faArrowRightRotate, faChevronLeft, faChevronRight, faClock, faExternalLink, faFile, faHome, faHomeAlt, faHomeLg, faQuoteLeft, faQuoteRight, faTrash } from '@fortawesome/free-solid-svg-icons';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import { getLatestProjects, getCategory, getProjectByID, getProjectComments, uploadProjectComment, removeProjectComment, clearAlert } from "../../actions/project";
@@ -23,21 +23,23 @@ library.add(fas, far, fab);
 
 const CustomRight = ({ onClick }) => {
     return (
-      <FontAwesomeIcon
-        icon={faArrowRight}
-        onClick={onClick}
-        className="absolute sm:right-0 right-4 max-w-4 cursor-pointer text-primary-400 text-2xl font-bold text-[#0DBFDC] p-4 rounded-full drop-shadow-lg"
-      />
+      <div onClick={onClick} className='bg-transparent text-transparent transition-all h-full w-16 absolute sm:right-4 right-0 flex items-center justify-end cursor-pointer'>
+        <FontAwesomeIcon
+          icon={faArrowRight}
+          className="absolute sm:right-4 right-0 max-w-4 cursor-pointer text-primary-400 text-2xl font-bold"
+        />
+      </div>
     )
 };
   
 const CustomLeft = ({ onClick }) => {
     return (
-      <FontAwesomeIcon
-        icon={faArrowLeft}
-        onClick={onClick}
-        className="absolute sm:left-0 left-4 max-w-4 cursor-pointer text-primary-400 text-2xl font-bold text-[#0DBFDC] p-4 rounded-full drop-shadow-lg"
-      />
+      <div onClick={onClick} className='bg-transparent text-transparent transition-all h-full w-16 absolute sm:left-4 left-0 flex items-center cursor-pointer'>
+        <FontAwesomeIcon
+          icon={faArrowLeft}
+          className="absolute sm:left-4 left-0 max-w-4 text-primary-400 text-2xl font-bold"
+        />
+      </div>
     )
 };
 
@@ -231,7 +233,7 @@ const ProjectsSingle = ({ user }) => {
                                 :
                                 Object.keys(projectData).length !== 0  &&
                                 <>
-                                    <div className='flex flex-row items-center text-sm'>
+                                    <div className='flex flex-row flex-wrap items-center text-sm'>
                                         <div className='mr-2'><FontAwesomeIcon icon={faHomeLg} className='mr-1'/> <a href='' className='hover:underline transition-all hover:text-[#0CBCDC]'> Home </a></div>
                                         <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> <a href='' className='hover:underline transition-all hover:text-[#0CBCDC]'> Projects </a></div>
                                         <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> {projectData.project.post_title} </div>
@@ -415,11 +417,11 @@ const ProjectsSingle = ({ user }) => {
                                                                                                 {
                                                                                                     item.grid_image.map((grid, x) => {
                                                                                                         return (
-                                                                                                            <div key={x} className='md:px-0 md:py-4 w-full md:h-[400px] h-[200px] overflow-hidden rounded-md'>
+                                                                                                            <div key={x} className='md:px-0 md:py-4 w-full md:h-[400px] h-[200px]  rounded-md overflow-y-scroll no-scroll relative'>
                                                                                                                 <img
                                                                                                                     src={grid}
                                                                                                                     alt={`gallery #${x+1}`}
-                                                                                                                    className='w-full md:h-[400px] h-[200px] object-cover border border-gray-900 transition duration-500 ease-in-out transform hover:scale-105 rounded-md'
+                                                                                                                    className='sm:absolute sm:top-0 sm:left-0 mx-auto w-full object-cover border border-gray-900 transition duration-500 ease-in-out transform rounded-md'
                                                                                                                 />
                                                                                                             </div>  
                                                                                                         )
@@ -556,24 +558,39 @@ const ProjectsSingle = ({ user }) => {
                                         </div>
                                         <div className='sm:px-2 flex flex-col gap-8'>
                                             <div className='transition-all p-4 py-5 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100'>
-                                                <h2 className='text-xl font-semibold mb-2 text-[#0DBFDC]'>Project Details</h2>
+                                                <h2 className='text-xl font-semibold mb-2 text-[#0DBFDC]'>Project Information</h2>
                                                 <hr className='border-[1.8px] border-[#0DBFDC] mb-6 w-1/3'/>
                                                 
-                                                <div className='flex mb-4'>
-                                                    <h2 className='text-[#B9E0F2] font-bold mr-2'>Duration: </h2>
+                                                <div className='mb-4'>
+                                                    <h2 className='text-[#B9E0F2] mr-2 uppercase mb-2'>Category </h2>
+                                                    <div className='flex flex-wrap gap-2 mb-4'>
+                                                        <span className='cursor-pointer transition-all p-4 py-2 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
+                                                            #School
+                                                        </span>
+                                                        <span className='cursor-pointer transition-all p-4 py-2 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
+                                                            #Web Development
+                                                        </span>
+                                                    </div>
+                                                    <hr className='border-gray-700 my-4'/>
+                                                </div>
+                                                
+                                                <div className='mb-4'>
+                                                    <h2 className='text-[#B9E0F2] mr-2 uppercase mb-2'>Portfolio</h2>
+                                                    <a href={`/${project_data.username}/portfolio`} className=' transition-all text-gray-100 hover:text-[#0DBFDC]'> Click Here </a>
+                                                    <hr className='border-gray-700 my-4'/>
+                                                </div>
+
+                                                <div className='mb-4'>
+                                                    <h2 className='text-[#B9E0F2] mr-2 uppercase mb-2'>Project Completion </h2>
                                                     <p> {diffInMonths(project_data.project.date_start, project_data.project.date_end)}</p>
+                                                    <hr className='border-gray-700 my-4'/>
                                                 </div>
-                                                
-                                                <div className='flex flex-wrap gap-2 mb-4'>
-                                                    <span className='cursor-pointer transition-all p-4 py-2 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
-                                                        #School
-                                                    </span>
-                                                    <span className='cursor-pointer transition-all p-4 py-2 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
-                                                        #Web Development
-                                                    </span>
-                                                </div>
-                                                
-                                                <hr className='border-gray-700 my-2'/>
+
+                                                <div className='mb-4'>
+                                                    <h2 className='text-[#B9E0F2] mr-2 uppercase mb-2'>Project URL </h2>
+                                                    <p> {project_data.project.url ? project_data.project.url : "N/A"}</p>
+                                                    <hr className='border-gray-700 my-4'/>
+                                                </div>                                
 
                                                 <div className='flex flex-wrap text-gray-100 cursor-pointer'>
                                                     <p className='text-sm '><span className='hover:text-[#0DBFDC]'> {project_data.project.views.length} view{project_data.project.views.length > 1 && 's'}</span> • </p>
@@ -591,14 +608,14 @@ const ProjectsSingle = ({ user }) => {
                                                         category?.length > 0 &&
                                                         category.map((item, index) => {
                                                             return (
-                                                                <div className='flex justify-between items-center cursor-pointer transition-all p-4 py-3 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
+                                                                <a href={`/projects/category/${item.shortcut}`} key={index} className='flex justify-between items-center cursor-pointer transition-all p-4 py-3 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
                                                                     <span>
                                                                         <FontAwesomeIcon icon={['fas', item.icon]} className='mr-2'/>
                                                                         {item.category}
                                                                     </span>
 
                                                                     <p className='bg-[#222F43] px-3 py-1 rounded-full text-xs'>{item.count}</p>
-                                                                </div>
+                                                                </a>
                                                             )
                                                         })
                                                     } 
@@ -613,7 +630,7 @@ const ProjectsSingle = ({ user }) => {
                                                     latestProjects?.length > 0 &&
                                                     latestProjects.map((item, index) => {
                                                         return (
-                                                            <div className='flex flex-row items-center text-sm mt-4'>
+                                                            <Link to={`/projects/${item._id}`} className='flex flex-row items-center text-sm mt-4 cursor-pointer'>
                                                                 <div className='w-full'>
                                                                     <div className='flex items-center mb-2'>
                                                                         <img
@@ -628,7 +645,7 @@ const ProjectsSingle = ({ user }) => {
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
+                                                            </Link>
                                                         )
                                                     })
                                                 }

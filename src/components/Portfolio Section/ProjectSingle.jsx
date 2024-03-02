@@ -254,7 +254,7 @@ const ProjectSingle = () => {
                               portfolio.gallery.map((item, i) => {
                                 return (
                                   <div className='grid grid-cols-1 gap-5 place-content-start text-white md:px-8 px-2 mb-16'>
-                                      <div className='w-full sm:h-[700px] h-[350px]  flex items-center justify-center overflow-y-scroll no-scroll relative'>
+                                      <div className='w-full sm:h-[700px] h-[350px] flex items-center justify-center overflow-y-scroll no-scroll relative'>
                                         <img 
                                           src={item}
                                           alt="gallery image"
