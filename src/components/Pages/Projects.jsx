@@ -3,7 +3,7 @@ import styles from "../../style";
 import SideAlert from '../SideAlert'
 import heroBackgroundImage from '../../assets/1696333975880.jpg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faChevronUp, faChevronDown, faChevronLeft, faChevronRight, faLightbulb, faArrowAltCircleLeft, faArrowAltCircleRight, faArrowLeft, faArrowRight, faThLarge, faTable, faWindowMaximize, faGamepad, faMicrochip, faWrench, faCogs, faObjectGroup, faCode, faBars, faHandPeace, faArchive, faBoltLightning, faSearch, faExchange, faCheck, faClose } from '@fortawesome/free-solid-svg-icons';
+import { faCalendar, faChevronUp, faChevronDown, faChevronLeft, faChevronRight, faLightbulb, faArrowAltCircleLeft, faArrowAltCircleRight, faArrowLeft, faArrowRight, faThLarge, faTable, faWindowMaximize, faGamepad, faMicrochip, faWrench, faCogs, faObjectGroup, faCode, faBars, faHandPeace, faArchive, faBoltLightning, faSearch, faExchange, faCheck, faClose, faCalendarCheck, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
 import { useSearchParams, useParams } from "react-router-dom";
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
@@ -23,7 +23,7 @@ library.add(fas, far, fab);
 
 const CustomRight = ({ onClick }) => {
   return (
-    <div onClick={onClick} className='bg-[#0F172A] text-white hover:text-[#0BC9D5] transition-all h-full w-16 absolute right-0 flex items-center justify-end cursor-pointer'>
+    <div onClick={onClick} className='bg-[#0F172A] text-white hover:text-[#0DBFDC] transition-all h-full w-16 absolute right-0 flex items-center justify-end cursor-pointer'>
       <FontAwesomeIcon
         icon={faArrowRight}
         className="max-w-4 cursor-pointer text-primary-400 text-2xl font-bold"
@@ -34,7 +34,7 @@ const CustomRight = ({ onClick }) => {
 
 const CustomLeft = ({ onClick }) => {
   return (
-    <div onClick={onClick} className='bg-[#0F172A] text-white hover:text-[#0BC9D5] transition-all h-full w-16 absolute left-0 flex items-center cursor-pointer'>
+    <div onClick={onClick} className='bg-[#0F172A] text-white hover:text-[#0DBFDC] transition-all h-full w-16 absolute left-0 flex items-center cursor-pointer'>
       <FontAwesomeIcon
         icon={faArrowLeft}
         className="max-w-4 text-primary-400 text-2xl font-bold"
@@ -433,7 +433,7 @@ const Projects = ({ user }) => {
                 </div>
                 :
                 <Carousel 
-                    responsive={responsive} className="relative"
+                    responsive={responsive} className="relative "
                     customLeftArrow={<CustomLeft />}
                     customRightArrow={<CustomRight />}
                     slidesToSlide={1}
@@ -442,7 +442,7 @@ const Projects = ({ user }) => {
                     centerMode={true}
                 > 
                   <a href={`/projects/`}>
-                  <button style={{color: (!cat) && 'rgb(11,201,213)'}} className='text-white hover:text-cyan-300 transition-all flex flex-col items-center py-8 w-32 relative'>
+                  <button style={{color: (!cat) && '#0DBFDC'}} className='text-white hover:text-[#0DBFDC] transition-all flex flex-col items-center py-8 w-32 relative'>
                     <div className='relative'> 
                       <FontAwesomeIcon icon={faThLarge} className='text-3xl mb-2'/> 
                       {/* <p className='absolute top-[-20px] right-[-10px]'>0</p> */}
@@ -455,7 +455,7 @@ const Projects = ({ user }) => {
                       category.map((item, index) => {
                         return (
                           <a href={`/projects/category/${item.shortcut}`}>
-                          <button style={{color: (item.shortcut === cat) && 'rgb(11,201,213)'}} key={index} className='text-white hover:text-cyan-300 transition-all flex flex-col items-center py-8 w-32 relative'>
+                          <button style={{color: (item.shortcut === cat) && '#0DBFDC'}} key={index} className='text-white hover:text-[#0DBFDC] transition-all flex flex-col items-center py-8 w-32 relative'>
                             <div className='relative'> 
                               <FontAwesomeIcon icon={['fas', item.icon]} className='text-3xl mb-2'/> 
                               <p className='absolute top-[-20px] right-[-10px]'>{item.count}</p>
@@ -469,36 +469,46 @@ const Projects = ({ user }) => {
                 </Carousel>
             }
 
-            <div className='flex sm:flex-row flex-col-reverse sm:justify-between mb-4'>
+            <div className='flex sm:flex-row flex-col-reverse sm:justify-between mb-4 font-poppins'>
               <div className='flex justify-between gap-2 items-center'>
-                <div className="relative lg:mt-0 sm:w-80 w-full">
-                  <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+                <div className="relative lg:mt-0 sm:w-80 w-full ">
+                  <span className="absolute inset-y-0 right-0 flex items-center pr-3">
                     <FontAwesomeIcon icon={faSearch} className="text-gray-500" />
                   </span>
-                  <input value={searchKey} onChange={handleSearch} className="h-9 block w-full bg-gray-200 text-sm font-normal text-gray-900 rounded-sm py-2 px-4 pl-10 leading-tight focus:outline-none focus:bg-white focus:text-gray-900" type="text" placeholder='Search Project'/>
+                  <input value={searchKey} onChange={handleSearch} className="h-11 rounded-lg block w-full bg-[#131C31] border border-solid border-[#222F43] text-gray-100 text-sm font-normal py-2 px-4 pr-10 leading-tight focus:outline-none " type="text" placeholder='Search Project'/>
                 </div>
-                <select
-                    className="h-9 text-sm text-gray-600 font-semibold sm:w-52 w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-1 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                    default={`tags`}
-                    onChange={addTags}
-                >
-                  <option value="" className="capitalize" disabled={true}>Select Tags</option>
-                  <option value="All" className="capitalize">All</option>
-                  {
-                    tagsList?.length > 0 &&
-                      tagsList.map((item, index) => {
-                        return (
-                          <option key={index} value={item.tag} className="capitalize">{item.tag}</option>
-                        )
-                      })
-                  }
-                </select>
+                <div className='grid grid-cols-3 w-24 items-center'>
+                  <p className='h-[2.60rem] col-span-2 rounded-l-lg py-[0.65rem] font-semibold capitalize bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm'>Tags:</p>
+                  <select
+                      className="h-[2.60rem] rounded-r-lg text-sm sm:w-52 w-full capitalize appearance-none bg-[#131C31] border border-[#222F43] text-gray-100 text px-4 py-1 pr-8 shadow leading-tight focus:outline-none"
+                      default={`tags`}
+                      onChange={addTags}
+                  >
+                    <option value="" className="capitalize" disabled={true}>Select Tags</option>
+                    <option value="All" className="capitalize">All</option>
+                    {
+                      tagsList?.length > 0 &&
+                        tagsList.map((item, index) => {
+                          return (
+                            <option key={index} value={item.tag} className="capitalize">{item.tag}</option>
+                          )
+                        })
+                    }
+                  </select>
+                </div>
               </div>
               
               <div className='flex justify-end items-center text-white relative sm:mb-0 mb-4'>
                 <p className='text-base'>{projects?.length} project{projects?.length > 1 && 's'} • </p>
                 <div onClick={() => setToggle({...toggle, categories: !toggle.categories, filtered: false})} className='flex cursor-pointer'>
-                  <button><FontAwesomeIcon icon={faExchange} className='ml-3 text-xl rotate-90 cursor-pointer hover:text-cyan-300 '/></button>
+                  <button>
+                    {/* <FontAwesomeIcon icon={faExchange} className='ml-3 text-xl rotate-90 cursor-pointer hover:text-cyan-300 '/> */}
+                    <svg 
+                      className='ml-3 text-xl rotate-90 cursor-pointer hover:text-cyan-300 '
+                      xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-filter" viewBox="0 0 16 16">
+                      <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"/>
+                    </svg>
+                  </button>
                   <div className={`${toggle.categories ? `absolute` : `hidden`} z-[100] top-10 right-[-8px] w-48 bg-white p-3 py-2 rounded-sm shadow-2xl`}>
                     <p className='text-gray-600 text-xs font-semibold mb-1'>Filter by:</p>
                       <button onClick={() => handlePageType("")} className='w-full text-left text-gray-800 font-semibold text-sm bg-transparent hover:text-gray-900 py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All { paramIndex && <FontAwesomeIcon icon={faCheck}/>}</button>
@@ -519,15 +529,15 @@ const Projects = ({ user }) => {
             
             {
               tags?.length > 0 &&
-              <div className='flex flex-wrap items-center pb-4'>
-                  <h3 className='text-white xs:text-lg text-lg font-semibold mr-3'>Tag{tags.length > 1 && 's'}:</h3>
+              <div className='flex flex-wrap items-center pb-4 font-poppins'>
+                  <h3 className='text-[#0DBFDC] xs:text-lg text-lg font-semibold mr-3'>Tag{tags.length > 1 && 's'}:</h3>
                   {
                     tags.map((item, index) => {
                         return (
                             <div key={index} className='flex flex-wrap'>
                                 {
                                     item !== '' &&
-                                        <p className=' mt-1 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out mr-2'>{item} <FontAwesomeIcon onClick={deleteTags} id={index} icon={faClose} className="ml-2 cursor-pointer" /></p>
+                                        <p className='cursor-pointer transition-all ml-2 p-4 py-2 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>#{item} <FontAwesomeIcon onClick={deleteTags} id={index} icon={faClose} className="ml-2 cursor-pointer" /></p>
                                 }
                             </div>
                         )
@@ -546,40 +556,70 @@ const Projects = ({ user }) => {
               </div>
               :
               <>
-                <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 mb-8">
+                <div className="grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-4 mb-8 font-poppins">
                     {
                       projects?.length > 0 &&
                         projects.slice(startIndex, endIndex).map((item, index) => {
                           return (
                             <MotionAnimate key={index} animation='fadeInUp'>
                               <Link to={`/projects/${item._id}`}>
-                              <div className='relative bg-white hover:bg-blue-100 transision-all hover:cursor-pointer w-full p-2 border border-solid border-gray-600 rounded-md'>
+                              <div className='relative bg-[#131C31] hover:bg-[#17213a] transition-all border border-solid border-[#222F43] text-gray-100 transision-all hover:cursor-pointer w-full p-2 rounded-md'>
                                 <img
-                                  className='object-cover w-full h-52 border border-solid border-gray-300'
+                                  className='object-cover w-full h-52 border border-solid border-[#222F43]'
                                   src={convertDriveImageLink(item.featured_image)}
                                 />
                                 <div className='px-2 pb-2 font-poppins'>
                                   <div className="flex justify-between items-center">
-                                    <div className='col-span-2 flex flex-wrap items-center pt-2'>
+                                  <p className='pt-2 mr-2 text-sm mt-1 text-[#B9E0F2]'><span> #{item.categories.category} </span></p>
+                                    {/* <div className='col-span-2 flex flex-wrap items-center pt-2'>
                                       <img 
-                                          src={item.user.avatar}
+                                          src={convertDriveImageLink(item.user.avatar)}
                                           className='w-6 h-6 object-cover rounded-full border border-gray-700'
                                           alt="avatar"
                                       />
-                                      <p className='ml-2 break-all text-xs font-semibold text-[#FB2736] drop-shadow-sm'>{item.user.username}</p>
-                                    </div>
-                                    <p className='mr-2 break-all text-xs font-semibold drop-shadow-sm mt-1 text-[#FB2736]'><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> <span> {convertTimezone(item.createdAt)} </span></p>
+                                      <p className='ml-2 break-all text-xs text-[#B9E0F2] drop-shadow-sm'>{item.user.username}</p>
+                                    </div> */}
+                                    <p className='mr-2 text-sm mt-1 text-[#B9E0F2]'><FontAwesomeIcon icon={faCalendarAlt} className='mr-1'/> <span> {convertTimezone(item.createdAt)} </span></p>
                                   </div>
-                                  <h2 className='text-lg font-semibold my-2 mr-2 leading-7 pb-4'>{item.post_title}</h2>
-                                  <div className='flex flex-wrap absolute bottom-3'>
-                                    <p className='text-sm text-gray-600'>{item.views.length} view{item.views.length > 1 && 's'} • </p>
-                                    <p className='text-sm text-gray-600 ml-1'> {item.likes.length} like{item.likes.length > 1 && 's'} •</p>
-                                    <p className='text-sm text-gray-600 ml-1'> {item.comment.length} comment{item.comment.length > 1 && 's'}</p>
+                                  <h2 className='text-lg font-semibold my-2 mr-2 leading-7 pb-4 text-[#0DBFDC]'>{item.post_title}</h2>
+                                  <div className='flex flex-wrap absolute bottom-3 text-[#94a9c9]'>
+                                    <p className='text-sm'>{item.views.length} view{item.views.length > 1 && 's'} • </p>
+                                    <p className='text-sm ml-1'> {item.likes.length} like{item.likes.length > 1 && 's'} •</p>
+                                    <p className='text-sm ml-1'> {item.comment.length} comment{item.comment.length > 1 && 's'}</p>
                                   </div>
                                 </div>
                               </div>
                               </Link>
                             </MotionAnimate>
+                            // <MotionAnimate key={index} animation='fadeInUp'>
+                            //   <Link to={`/projects/${item._id}`}>
+                            //   <div className='relative bg-white hover:bg-blue-100 transision-all hover:cursor-pointer w-full p-2 border border-solid border-gray-600 rounded-md'>
+                            //     <img
+                            //       className='object-cover w-full h-52 border border-solid border-gray-300'
+                            //       src={convertDriveImageLink(item.featured_image)}
+                            //     />
+                            //     <div className='px-2 pb-2 font-poppins'>
+                            //       <div className="flex justify-between items-center">
+                            //         <div className='col-span-2 flex flex-wrap items-center pt-2'>
+                            //           <img 
+                            //               src={item.user.avatar}
+                            //               className='w-6 h-6 object-cover rounded-full border border-gray-700'
+                            //               alt="avatar"
+                            //           />
+                            //           <p className='ml-2 break-all text-xs font-semibold text-[#FB2736] drop-shadow-sm'>{item.user.username}</p>
+                            //         </div>
+                            //         <p className='mr-2 break-all text-xs font-semibold drop-shadow-sm mt-1 text-[#FB2736]'><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> <span> {convertTimezone(item.createdAt)} </span></p>
+                            //       </div>
+                            //       <h2 className='text-lg font-semibold my-2 mr-2 leading-7 pb-4'>{item.post_title}</h2>
+                            //       <div className='flex flex-wrap absolute bottom-3'>
+                            //         <p className='text-sm text-gray-600'>{item.views.length} view{item.views.length > 1 && 's'} • </p>
+                            //         <p className='text-sm text-gray-600 ml-1'> {item.likes.length} like{item.likes.length > 1 && 's'} •</p>
+                            //         <p className='text-sm text-gray-600 ml-1'> {item.comment.length} comment{item.comment.length > 1 && 's'}</p>
+                            //       </div>
+                            //     </div>
+                            //   </div>
+                            //   </Link>
+                            // </MotionAnimate>
                           )
                         })
                     }
@@ -588,31 +628,30 @@ const Projects = ({ user }) => {
                     projects?.length > 0 &&
                     <div className='flex flex-wrap items-center justify-center mt-12'>
                         <button
-                        disabled={currentPage === 1}
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        className='mb-2 cursor-pointer mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-4 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
-                        >
-                        <span className='xs:block hidden'>Prev</span>
-                        <FontAwesomeIcon icon={faChevronLeft} className='xs:hidden inline-block'/>
+                          disabled={currentPage === 1}
+                          onClick={() => handlePageChange(currentPage - 1)}
+                          className="font-bold text-sm mb-2 cursor-pointer mx-1 bg-[#222F43] hover:bg-[#0EA6EA] hover:text-gray-100 text-gray-100 py-2 xs:px-3 px-3 border border-[#222F43] hover:border-[#0EA6EA] rounded-full transition-colors duration-300 ease-in-out"
+                          >
+                          {/* <span className='xs:block hidden'>Prev</span> */}
+                          <FontAwesomeIcon icon={faArrowLeft}/>
                         </button>
                         {displayedPages.map((pageNumber) => (
                         <button
-                        key={pageNumber}
-                        onClick={() => handlePageChange(pageNumber)}
-                        // className={currentPage === index + 1 ? "active" : ""}
-                        style={{backgroundColor: pageIndex === pageNumber ? "rgb(243 244 246)" : "rgb(31 41 55)", color: pageIndex === pageNumber ? "rgb(31 41 55)" : "rgb(243 244 246)"}}
-                        className="mb-2 cursor-pointer mx-1 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-4 border border-gray-100 rounded transition-colors duration-300 ease-in-out"
+                          key={pageNumber}
+                          onClick={() => handlePageChange(pageNumber)}
+                          // className={currentPage === index + 1 ? "active" : ""}
+                          style={{backgroundColor: pageIndex === pageNumber && "#0EA6EA"}}
+                          className="font-bold mb-2 text-sm cursor-pointer mx-1 bg-[#222F43] hover:bg-[#0EA6EA] hover:text-gray-100 text-gray-100 py-2 xs:px-[0.90rem] px-3 border border-[#222F43] hover:border-[#0EA6EA] rounded-full transition-colors duration-300 ease-in-out"
                         >
                         {pageNumber}
                         </button>
                         ))}
                         <button
-                        disabled={currentPage === totalPages}
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        className='mb-2 cursor-pointer ml-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-4 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
-                        >
-                        <span className='xs:block hidden'>Next</span>
-                        <FontAwesomeIcon icon={faChevronRight} className='xs:hidden inline-block'/>
+                          disabled={currentPage === totalPages}
+                          onClick={() => handlePageChange(currentPage + 1)}
+                          className="font-bold text-sm mb-2 cursor-pointer mx-1 bg-[#222F43] hover:bg-[#0EA6EA] hover:text-gray-100 text-gray-100 py-2 xs:px-3 px-3 border border-[#222F43] hover:border-[#0EA6EA] rounded-full transition-colors duration-300 ease-in-out"
+                          >
+                          <FontAwesomeIcon icon={faArrowRight}/>
                         </button>
                     </div>
                 }

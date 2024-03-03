@@ -630,7 +630,7 @@ const ProjectsSingle = ({ user }) => {
                                                     latestProjects?.length > 0 &&
                                                     latestProjects.map((item, index) => {
                                                         return (
-                                                            <Link to={`/projects/${item._id}`} className='flex flex-row items-center text-sm mt-4 cursor-pointer'>
+                                                            <Link to={`/projects/${item._id}`} className='flex flex-row items-center text-sm mt-4 cursor-pointer hover:text-[#0DBFDC] text-[#B9E0F2] transition-all'>
                                                                 <div className='w-full'>
                                                                     <div className='flex items-center mb-2'>
                                                                         <img
@@ -639,7 +639,7 @@ const ProjectsSingle = ({ user }) => {
                                                                             alt="user profile"
                                                                         />
                                                                         <div className='xs:ml-4 ml-2'>
-                                                                            <p className='text-[#B9E0F2] text-base font-semibold'>{item.post_title}</p>
+                                                                            <p className='text-base font-semibold'>{item.post_title}</p>
                                                                             <p className='whitespace-pre-wrap text-sm mt-1 text-[#94a9c9]'>#{item.category_shortcut} • {convertTimezone(item.createdAt)}</p>
                                                                             <hr className='border-gray-700 mt-4'/>
                                                                         </div>
