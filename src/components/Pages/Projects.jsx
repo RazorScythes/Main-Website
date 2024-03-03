@@ -471,13 +471,13 @@ const Projects = ({ user }) => {
 
             <div className='flex sm:flex-row flex-col-reverse sm:justify-between mb-4 font-poppins'>
               <div className='flex justify-between gap-2 items-center'>
-                <div className="relative lg:mt-0 sm:w-80 w-full ">
+                <div className="relative lg:mt-0 sm:w-80 w-1/2 ">
                   <span className="absolute inset-y-0 right-0 flex items-center pr-3">
                     <FontAwesomeIcon icon={faSearch} className="text-gray-500" />
                   </span>
                   <input value={searchKey} onChange={handleSearch} className="h-11 rounded-lg block w-full bg-[#131C31] border border-solid border-[#222F43] text-gray-100 text-sm font-normal py-2 px-4 pr-10 leading-tight focus:outline-none " type="text" placeholder='Search Project'/>
                 </div>
-                <div className='grid grid-cols-3 w-24 items-center'>
+                <div className='grid grid-cols-3 sm:w-24 w-1/2 items-center'>
                   <p className='h-[2.60rem] col-span-2 rounded-l-lg py-[0.65rem] font-semibold capitalize bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm'>Tags:</p>
                   <select
                       className="h-[2.60rem] rounded-r-lg text-sm sm:w-52 w-full capitalize appearance-none bg-[#131C31] border border-[#222F43] text-gray-100 text px-4 py-1 pr-8 shadow leading-tight focus:outline-none"
@@ -499,28 +499,28 @@ const Projects = ({ user }) => {
               </div>
               
               <div className='flex justify-end items-center text-white relative sm:mb-0 mb-4'>
-                <p className='text-base'>{projects?.length} project{projects?.length > 1 && 's'} • </p>
+                <p className='text-sm'>{projects?.length} project{projects?.length > 1 && 's'} <span className='mx-2 text-base'>•</span> </p>
                 <div onClick={() => setToggle({...toggle, categories: !toggle.categories, filtered: false})} className='flex cursor-pointer'>
                   <button>
                     {/* <FontAwesomeIcon icon={faExchange} className='ml-3 text-xl rotate-90 cursor-pointer hover:text-cyan-300 '/> */}
                     <svg 
-                      className='ml-3 text-xl rotate-90 cursor-pointer hover:text-cyan-300 '
+                      className='ml-2 text-sm cursor-pointer hover:text-[#0DBFDC] '
                       xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-filter" viewBox="0 0 16 16">
                       <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"/>
                     </svg>
                   </button>
-                  <div className={`${toggle.categories ? `absolute` : `hidden`} z-[100] top-10 right-[-8px] w-48 bg-white p-3 py-2 rounded-sm shadow-2xl`}>
-                    <p className='text-gray-600 text-xs font-semibold mb-1'>Filter by:</p>
-                      <button onClick={() => handlePageType("")} className='w-full text-left text-gray-800 font-semibold text-sm bg-transparent hover:text-gray-900 py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All { paramIndex && <FontAwesomeIcon icon={faCheck}/>}</button>
-                      <button onClick={() => handlePageType("latest")} className='w-full text-left text-gray-800 font-semibold text-sm bg-transparent hover:text-gray-900 py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Latest { checkParams('latest') && <FontAwesomeIcon icon={faCheck}/>}</button>
-                      <button onClick={() => handlePageType("popular")} className='w-full text-left text-gray-800 font-semibold text-sm bg-transparent hover:text-gray-900 py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Trending { checkParams('popular') && <FontAwesomeIcon icon={faCheck}/>}</button>
-                      <button onClick={() => handlePageType("most_viewed")} className='w-full text-left text-gray-800 font-semibold text-sm bg-transparent hover:text-gray-900 py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Most Viewed { checkParams('most_viewed') && <FontAwesomeIcon icon={faCheck}/>}</button>
+                  <div className={`${toggle.categories ? `absolute` : `hidden`} text-sm z-[100] top-10 right-[-8px] w-48 bg-[#131C31] border border-[#222F43] text-gray-100 p-3 py-2 rounded-sm shadow-2xl`}>
+                    <p className='text-sm font-semibold mb-1'>Filter by:</p>
+                      <button onClick={() => handlePageType("")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- All { paramIndex && <FontAwesomeIcon icon={faCheck}/>}</button>
+                      <button onClick={() => handlePageType("latest")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- Latest { checkParams('latest') && <FontAwesomeIcon icon={faCheck}/>}</button>
+                      <button onClick={() => handlePageType("popular")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- Trending { checkParams('popular') && <FontAwesomeIcon icon={faCheck}/>}</button>
+                      <button onClick={() => handlePageType("most_viewed")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- Most Viewed { checkParams('most_viewed') && <FontAwesomeIcon icon={faCheck}/>}</button>
                     </div>
-                    <p className='ml-3 text-base sm:block hidden'>
+                    <p className='ml-3 text-sm sm:block hidden'>
                       {
-                        checkParams('latest') ? 'Latest'
-                        : checkParams('popular') ? 'Trending'
-                        : checkParams('most_viewed') && 'Most Viewed'
+                        checkParams('latest') ? <span className="px-2 py-1 rounded-lg bg-[#131C31] border border-[#222F43] text-gray-100">Latest</span>
+                        : checkParams('popular') ? <span className="px-2 py-1 rounded-lg bg-[#131C31] border border-[#222F43] text-gray-100">Trending</span>
+                        : checkParams('most_viewed') && <span className="px-2 py-1 rounded-lg bg-[#131C31] border border-[#222F43] text-gray-100">Most Viewed</span>
                       }
                     </p>
                 </div>
@@ -529,15 +529,15 @@ const Projects = ({ user }) => {
             
             {
               tags?.length > 0 &&
-              <div className='flex flex-wrap items-center pb-4 font-poppins'>
+              <div className='flex flex-wrap items-start pb-4 font-poppins'>
                   <h3 className='text-[#0DBFDC] xs:text-lg text-lg font-semibold mr-3'>Tag{tags.length > 1 && 's'}:</h3>
                   {
                     tags.map((item, index) => {
                         return (
-                            <div key={index} className='flex flex-wrap'>
+                            <div key={index} className='flex flex-wrap gap-2 mb-2'>
                                 {
                                     item !== '' &&
-                                        <p className='cursor-pointer transition-all ml-2 p-4 py-2 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>#{item} <FontAwesomeIcon onClick={deleteTags} id={index} icon={faClose} className="ml-2 cursor-pointer" /></p>
+                                        <p className='cursor-pointer transition-all ml-2 p-4 py-2 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100 '>#{item} <FontAwesomeIcon onClick={deleteTags} id={index} icon={faClose} className="ml-2 cursor-pointer hover:text-[#0DBFDC]" /></p>
                                 }
                             </div>
                         )
@@ -579,7 +579,7 @@ const Projects = ({ user }) => {
                                       />
                                       <p className='ml-2 break-all text-xs text-[#B9E0F2] drop-shadow-sm'>{item.user.username}</p>
                                     </div> */}
-                                    <p className='mr-2 text-sm mt-1 text-[#B9E0F2]'><FontAwesomeIcon icon={faCalendarAlt} className='mr-1'/> <span> {convertTimezone(item.createdAt)} </span></p>
+                                    <p className='pt-2 mr-2 text-sm mt-1 text-[#B9E0F2]'><FontAwesomeIcon icon={faCalendarAlt} className='mr-1'/> <span> {convertTimezone(item.createdAt)} </span></p>
                                   </div>
                                   <h2 className='text-lg font-semibold my-2 mr-2 leading-7 pb-4 text-[#0DBFDC]'>{item.post_title}</h2>
                                   <div className='flex flex-wrap absolute bottom-3 text-[#94a9c9]'>
@@ -658,14 +658,13 @@ const Projects = ({ user }) => {
                 {
                   (project?.length === 0 && !isLoading) ?
                     <div
-                        className="relative bg-cover bg-center py-12"
-                        style={{ backgroundColor: "#111221" }}
+                        className="relative bg-cover bg-center py-12 bg-[#131C31] border border-solid border-[#222F43] text-gray-100 font-poppins"
                     >   
                         <div className={`${styles.marginX} ${styles.flexCenter}`}>
                             <div className={`${styles.boxWidthEx}`}>
-                                <div className="flex flex-col justify-center items-center">
-                                    <h1 className="text-white text-4xl font-bold mb-4 text-center">No Result Found</h1>
-                                    <p className="text-white text-lg mb-4 text-center">Looks like there is no uploads at the moment.</p>
+                                <div className="flex flex-col justify-center items-center ">
+                                    <h1 className="text-3xl font-semibold mb-4 text-center">No Project Found</h1>
+                                    <p className="text-base text-center">Looks like there is no uploads at the moment.</p>
                                 </div>
                             </div>
                         </div>
@@ -673,14 +672,13 @@ const Projects = ({ user }) => {
                   :
                   (searchKey.length > 0 && projects?.length === 0) &&
                     <div
-                        className="relative bg-cover bg-center py-12"
-                        style={{ backgroundColor: "#111221" }}
+                        className="relative bg-cover bg-center py-12 bg-[#131C31] border border-solid border-[#222F43] text-gray-100 font-poppins"
                     >   
                         <div className={`${styles.marginX} ${styles.flexCenter}`}>
                             <div className={`${styles.boxWidthEx}`}>
-                                <div className="flex flex-col justify-center items-center">
-                                    <h1 className="text-white text-4xl font-bold mb-4 text-center">No Result Found</h1>
-                                    <p className="text-white text-lg mb-4 text-center">Please check your search keyword.</p>
+                                <div className="flex flex-col justify-center items-center ">
+                                    <h1 className="text-3xl font-semibold mb-4 text-center">No Result Found</h1>
+                                    <p className="text-base text-center">Please check your search keyword.</p>
                                 </div>
                             </div>
                         </div>
