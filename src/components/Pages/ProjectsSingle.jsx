@@ -234,8 +234,8 @@ const ProjectsSingle = ({ user }) => {
                                 Object.keys(projectData).length !== 0  &&
                                 <>
                                     <div className='flex flex-row flex-wrap items-center text-sm'>
-                                        <div className='mr-2'><FontAwesomeIcon icon={faHomeLg} className='mr-1'/> <a href='' className='hover:underline transition-all hover:text-[#0CBCDC]'> Home </a></div>
-                                        <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> <a href='' className='hover:underline transition-all hover:text-[#0CBCDC]'> Projects </a></div>
+                                        <div className='mr-2'><FontAwesomeIcon icon={faHomeLg} className='mr-1'/> <a href='/' className='hover:underline transition-all hover:text-[#0CBCDC]'> Home </a></div>
+                                        <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> <a href='/projects' className='hover:underline transition-all hover:text-[#0CBCDC]'> Projects </a></div>
                                         <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> {projectData.project.post_title} </div>
                                     </div>
 
@@ -285,8 +285,8 @@ const ProjectsSingle = ({ user }) => {
                                                                                         {item.paragraph}
                                                                                     </p>
                                                                                 :
-                                                                                item.element === 'quoted_naragraph whitespace-pre-wrap' ?
-                                                                                    <p className='my-8 '>
+                                                                                item.element === 'quoted_naragraph' ?
+                                                                                    <p className='my-8 whitespace-pre-wrap'>
                                                                                         <FontAwesomeIcon icon={faQuoteLeft} className='mr-1 text-xs mb-1'/><span className='font-semibold'>{item.paragraph}</span><FontAwesomeIcon icon={faQuoteRight} className='ml-1 text-xs mb-1'/>
                                                                                     </p>
                                                                                 :
@@ -297,7 +297,7 @@ const ProjectsSingle = ({ user }) => {
                                                                                     <h2 className='text-2xl font-semibold my-4 text-[#B9E0F2]'>{item.heading}</h2>
                                                                                 :
                                                                                 item.element === 'number_list' ?
-                                                                                    <ul className='list-decimal pl-4 py-4 pt-2'>
+                                                                                    <ul className='list-decimal pl-4 my-6'>
                                                                                         {
                                                                                             item.list?.map((l, ix) => {
                                                                                                 return (
@@ -308,7 +308,7 @@ const ProjectsSingle = ({ user }) => {
                                                                                     </ul>
                                                                                 :
                                                                                 item.element === 'bullet_list' ?
-                                                                                    <ul className='list-decimal pl-4 py-4 pt-2'>
+                                                                                    <ul className='list-disc pl-4 my-6'>
                                                                                         {
                                                                                             item.list?.map((l, ix) => {
                                                                                                 return (
@@ -361,7 +361,7 @@ const ProjectsSingle = ({ user }) => {
                                                                                     </div>
                                                                                 :
                                                                                 item.element === 'grid_image' ?
-                                                                                    <div className={`grid ${(item.type === 'boxed') && 'sm:grid-cols-2'} grid-cols-1 gap-5 place-content-start my-4`}>
+                                                                                    <div className={`grid ${(item.type === 'boxed') && 'sm:grid-cols-2'} grid-cols-1 gap-2 place-content-start my-4`}>
                                                                                         {
                                                                                             item.grid_image?.map((image, i) => {
                                                                                                 return (
@@ -556,6 +556,7 @@ const ProjectsSingle = ({ user }) => {
                                                 </div>
                                             </div>
                                         </div>
+
                                         <div className='sm:px-2 flex flex-col gap-8'>
                                             <div className='transition-all p-4 py-5 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100'>
                                                 <h2 className='text-xl font-semibold mb-2 text-[#0DBFDC]'>Project Information</h2>
@@ -630,7 +631,7 @@ const ProjectsSingle = ({ user }) => {
                                                     latestProjects?.length > 0 &&
                                                     latestProjects.map((item, index) => {
                                                         return (
-                                                            <Link to={`/projects/${item._id}`} className='flex flex-row items-center text-sm mt-4 cursor-pointer hover:text-[#0DBFDC] text-[#B9E0F2] transition-all'>
+                                                            <Link to={`/projects/${item._id}`} key={index} className='flex flex-row items-center text-sm mt-4 cursor-pointer hover:text-[#0DBFDC] text-[#B9E0F2] transition-all'>
                                                                 <div className='w-full'>
                                                                     <div className='flex items-center mb-2'>
                                                                         <img
