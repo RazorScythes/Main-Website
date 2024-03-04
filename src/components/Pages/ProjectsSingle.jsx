@@ -346,7 +346,7 @@ const ProjectsSingle = ({ user }) => {
                                                                                                     <div className='flex items-center relative hover:bg-gray-700 transition-all p-2'>
                                                                                                         <img
                                                                                                             className='rounded-sm xs:w-12 xs:h-12 w-10 h-10 border border-gray-400 object-cover'
-                                                                                                            src={convertDriveImageLink(l.image)}
+                                                                                                            src={l.image}
                                                                                                             alt="user profile"
                                                                                                         />
                                                                                                         <div className='xs:ml-4 ml-2' key={ix}>
@@ -380,7 +380,7 @@ const ProjectsSingle = ({ user }) => {
                                                                                                     }}>
                                                                                                         <div className='relative'>
                                                                                                             <img 
-                                                                                                                src={convertDriveImageLink(image)}
+                                                                                                                src={image}
                                                                                                                 className={`w-full ${item.type === 'boxed-full' && 'md:h-[500px] sm:h-[400px] h-[300px]'} ${(item.type === 'boxed' || item.type === 'rectangular') && 'md:h-60 h-48'} object-cover bg-top rounded-lg border border-[#1C1B19]`}
                                                                                                                 alt={`Grid Image #${i+1}`}
                                                                                                             />
@@ -394,7 +394,7 @@ const ProjectsSingle = ({ user }) => {
                                                                                 item.element === 'single_image' ?
                                                                                     <MotionAnimate key={index} animation='fadeInUp'>
                                                                                         <img 
-                                                                                            src={convertDriveImageLink(item.image)}
+                                                                                            src={item.image}
                                                                                             className={`w-full ${item.type === 'boxed-full' && 'md:h-[500px] sm:h-[400px] h-[300px]'} ${(item.type === 'rectangular') && 'md:h-60 h-48'} object-cover bg-top rounded-lg border border-[#1C1B19] my-4`}
                                                                                             alt={`Grid Image`}
                                                                                         />
@@ -419,7 +419,7 @@ const ProjectsSingle = ({ user }) => {
                                                                                                         return (
                                                                                                             <div key={x} className='md:px-0 md:py-4 w-full md:h-[400px] h-[200px]  rounded-md overflow-y-scroll no-scroll relative'>
                                                                                                                 <img
-                                                                                                                    src={convertDriveImageLink(grid)}
+                                                                                                                    src={grid}
                                                                                                                     alt={`gallery #${x+1}`}
                                                                                                                     className='sm:absolute sm:top-0 sm:left-0 mx-auto w-full object-cover border border-gray-900 transition duration-500 ease-in-out transform rounded-md'
                                                                                                                 />
