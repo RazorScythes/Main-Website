@@ -20,5 +20,8 @@ const getLinkId = (url) => {
 }
 
 export const convertDriveImageLink = (url) => {
-    return `https://drive.google.com/thumbnail?id=${getLinkId(url)}&sz=w1000`
+    if(url.includes('drive.google.com'))
+        return `https://drive.google.com/thumbnail?id=${getLinkId(url)}&sz=w1000`
+    else
+        return url
 }

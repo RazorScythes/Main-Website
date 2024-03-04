@@ -313,7 +313,7 @@ const BlogsSingle = ({ user }) => {
                                                                                     }}>
                                                                                         <div className='relative'>
                                                                                             <img 
-                                                                                                src={image}
+                                                                                                src={convertDriveImageLink(image)}
                                                                                                 className={`w-full ${data.type === 'boxed-full' && 'md:h-[500px] sm:h-[400px] h-[300px]'} ${(data.type === 'boxed' || data.type === 'rectangular') && 'md:h-60 h-48'} object-cover bg-top rounded-lg border border-[#1C1B19]`}
                                                                                                 alt={`Grid Image #${i+1}`}
                                                                                             />
@@ -352,7 +352,7 @@ const BlogsSingle = ({ user }) => {
                                                                 data.element === 'single_image' &&
                                                                     <MotionAnimate key={index} animation='fadeInUp'>
                                                                         <img 
-                                                                            src={data.image}
+                                                                            src={convertDriveImageLink(data.image)}
                                                                             className={`w-full ${data.type === 'boxed-full' && 'md:h-[500px] sm:h-[400px] h-[300px]'} ${(data.type === 'rectangular') && 'md:h-60 h-48'} object-cover bg-top rounded-lg border border-[#1C1B19] my-4`}
                                                                             alt={`Grid Image`}
                                                                         />
