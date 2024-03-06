@@ -510,7 +510,7 @@ const Blogs = ({ user }) => {
                         </div>
                         }
 
-                        <div className='grid sm:grid-cols-3 grid-cols-1 gap-5 place-content-start mt-16'>
+                        <div className='grid sm:grid-cols-3 grid-cols-1 gap-5 place-content-start mt-16 font-poppins'>
                             <div className='col-span-2'>
                             </div>
                             <div className='sm:px-2 flex flex-col gap-8'>
