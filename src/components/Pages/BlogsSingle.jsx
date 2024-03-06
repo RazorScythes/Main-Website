@@ -506,7 +506,7 @@ const BlogsSingle = ({ user }) => {
                                             </div>
 
                                             <div className='transition-all p-4 py-5 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100'>
-                                                <h2 className='text-xl font-semibold mb-2 text-[#0DBFDC]'>Latest Post{latestList?.length > 1 && 's'}</h2>
+                                                <h2 className='text-xl font-semibold mb-2 text-[#0DBFDC]'>Latest Blog{latestList?.length > 1 && 's'}</h2>
                                                 <hr className='border-[1.8px] border-[#0DBFDC] mb-6 w-1/3'/>
                                                 
                                                 {
@@ -544,7 +544,7 @@ const BlogsSingle = ({ user }) => {
                                             {
                                                 blogData.blog.tags?.length > 0 &&
                                                 <div className='transition-all p-4 py-5 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100'>
-                                                    <h2 className='text-xl font-semibold mb-2 text-[#0DBFDC]'>Post Tag{blogData.blog.tags?.length > 1 && 's'}</h2>
+                                                    <h2 className='text-xl font-semibold mb-2 text-[#0DBFDC]'>Tag{blogData.blog.tags?.length > 1 && 's'}</h2>
                                                     <hr className='border-[1.8px] border-[#0DBFDC] mb-6 w-1/3'/>
 
                                                     <div className='flex flex-wrap gap-2'>

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faArrowRight, faCalendar, faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faChevronRight, faComment, faChevronUp, faChevronDown, faArrowRight, faCalendar, faHeart, faHomeLg, faSearch, faClose, faCheck } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { useSearchParams, useParams } from "react-router-dom";
 import { Link, useNavigate } from 'react-router-dom';
-import { getBlogs, countBlogCategories, addOneBlogLikes, getBlogsBySearchKey, countBlogCategoriesBySearchKey, addOneBlogLikesBySearchKey } from "../../actions/blogs";
+import { getLatestBlogs, addLatestBlogLikes, getBlogs, countBlogCategories, addOneBlogLikes, getBlogsBySearchKey, countBlogCategoriesBySearchKey, addOneBlogLikesBySearchKey } from "../../actions/blogs";
 import { MotionAnimate } from 'react-motion-animate'
 import { convertDriveImageLink } from '../Tools'
 import Cookies from 'universal-cookie';
@@ -31,9 +31,13 @@ const Blogs = ({ user }) => {
     const blog = useSelector((state) => state.blogs.blogs)
     const categories = useSelector((state) => state.blogs.categories)
     const isLoading = useSelector((state) => state.blogs.isLoading)
+    const latestBlogs = useSelector((state) => state.blogs.latestBlogs)
 
+    const [tags, setTags] = useState([])
     const [searchParams, setSearchParams] = useSearchParams();
     const [selectedCategory, setSelectedCategory] = useState('')
+    const [searchKey, setSearchKey] = useState('')
+    const [latestList, setLatestList] = useState([])
 
     useEffect(() => {
         if(key) {
@@ -54,6 +58,9 @@ const Blogs = ({ user }) => {
                 id: user ? user.result?._id : ''
             }))
         }
+        dispatch(getLatestBlogs({
+            id: user ? user.result?._id : '',
+        }))
     }, [])
 
     const pageIndex = searchParams.get('page') ? parseInt(searchParams.get('page')) : 1
@@ -75,6 +82,12 @@ const Blogs = ({ user }) => {
     // Calculate the start and end indices for the current page
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
+
+    useEffect(() => {
+        if(latestBlogs.length > 0) {
+            setLatestList(latestBlogs)
+        }
+    }, [latestBlogs])
 
     useEffect(() => {
         window.scrollTo(0, 0)
@@ -212,18 +225,6 @@ const Blogs = ({ user }) => {
         return formattedDate
     }
 
-    const handlePageType = (type) => {
-        const urlString = window.location.href.split('?')[0];
-        const baseUrl = window.location.origin;
-        const path = urlString.substring(baseUrl.length);
-        if(filteredType)
-          navigate(`${path}?type=${type}&page=${1}&filtered=${filteredType}`)
-        else
-          navigate(`${path}?type=${type}&page=${1}`)
-          
-        setToggle({tags: false, filtered: false})
-    };
-
     const handleFilteredChange = (filtered) => {
         const urlString = window.location.href.split('?')[0];
         const baseUrl = window.location.origin;
@@ -293,6 +294,46 @@ const Blogs = ({ user }) => {
         }
     }
 
+    const addLatestBlogsLikes = (index) => {
+        var array = [...latestList]
+        var duplicate = false
+
+        array[index].likes.map((item) => { if(item === cookies.get('uid')) duplicate = true })
+        if(!duplicate) {
+            var updatedBlog = { ...array[index] }; 
+
+            updatedBlog.likes = Array.isArray(updatedBlog.likes)
+            ? [...updatedBlog.likes]
+            : [];
+
+            updatedBlog.likes.push(cookies.get('uid'));
+
+            array[index] = updatedBlog;
+
+            setLatestList(array);
+        }
+        else {
+            var updatedBlog = { ...array[index] };
+
+            updatedBlog.likes = Array.isArray(updatedBlog.likes)
+            ? [...updatedBlog.likes]
+            : [];
+
+            updatedBlog.likes = updatedBlog.likes.filter((item) => item !== cookies.get('uid'))
+
+            array[index] = updatedBlog;
+
+            setLatestList(array);
+        }
+
+        dispatch(addLatestBlogLikes({
+            id: array[index]._id,
+            likes: array[index].likes,
+            userId: user ? user.result?._id : '',
+            blogId: "empty" 
+        }))
+    }
+
     const checkedForLikedBLogs = (likes) => {
         var liked = likes.some((item) => { if(item === cookies.get('uid')) return true })
         return liked ? liked : false;
@@ -308,6 +349,49 @@ const Blogs = ({ user }) => {
         })
         return text
     }
+
+    const handlePageType = (type) => {
+        const urlString = window.location.href.split('?')[0];
+        const baseUrl = window.location.origin;
+        const path = urlString.substring(baseUrl.length);
+        if(filteredType)
+          navigate(`${path}?type=${type}&page=${1}&filtered=${filteredType}`)
+        else
+          navigate(`${path}?type=${type}&page=${1}`)
+          
+        setToggle({tags: false, filtered: false})
+    };
+
+    const addTags = (e) => {
+        let duplicate = false
+        if(e.target.value == 'All') {
+          setTags([])
+          return
+        }
+        tags.forEach(item => { if(e.target.value === item) duplicate = true })
+        if(duplicate) { duplicate = false; return;}
+        setTags(tags.concat(e.target.value))
+    }
+
+    const deleteTags = (e) => {
+        let arr = [...tags]
+        arr.splice(e.currentTarget.id, 1)
+        setTags([...arr])
+    } 
+
+    const handleSearch = (e) => {
+        const keyword = e.target.value.toLowerCase();
+        setSearchKey(e.target.value);
+    
+        // const filteredData = project.filter((item) =>
+        //   Object.values(item).some((value) =>
+        //     String(value).toLowerCase().includes(keyword)
+        //   )
+        // );
+        // setCurrentPage(1)
+        // setProjects(filteredData);
+    }
+
     return (
         <div
             className="relative bg-cover bg-center"
@@ -316,26 +400,182 @@ const Blogs = ({ user }) => {
             <div className={`${styles.marginX} ${styles.flexCenter}`}>
                 <div className={`${styles.boxWidthEx}`}>
                     <div className={`${styles.boxWidthEx}`}>
-                        <div className='sm:h-96'>
-                            <div className="container mx-auto py-12 xs:px-6 text-white">
+                        <div className=''>
+                            <div className="container mx-auto py-12 pt-6 xs:px-6 text-[#94a9c9] font-poppins">
                                 <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start'>
                                     <div>
+                                        <div className='flex flex-row items-start text-sm mt-6 pb-2'>
+                                            <h1 className='sm:text-5xl text-4xl font-bold text-[#0DBFDC] drop-shadow-md'> Latest Blogs </h1>
+                                            <button className='top-0 ml-2 mb-2 font-semibold bg-[#131C31] border border-solid border-[#222F43] text-gray-100  transition-colors duration-300 ease-in-out px-8 py-1 rounded-full'>
+                                                {blogs?.length > 0 ? blogs.length : "0" } Articles
+                                            </button>
+                                        </div>
+                                        <div className='flex flex-row flex-wrap items-center text-sm'>
+                                            <div className='mr-2'><FontAwesomeIcon icon={faHomeLg} className='mr-1'/> <a href='/' className='hover:underline transition-all hover:text-[#0CBCDC]'> Home </a></div>
+                                            <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> <a href='/blogs' className='hover:underline transition-all hover:text-[#0CBCDC]'> Blogs </a></div>
+                                        </div>
+                                    </div>
+                                    {/* <div>
                                         <p>Home / <Link to={`/blogs`}>Blogs</Link> {key && `/ search`}</p>
                                         <button className='mt-4 mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 border border-gray-100  transition-colors duration-300 ease-in-out px-8 rounded-full'>
                                             {blogs?.length > 0 ? blogs.length : "0" } Articles
                                         </button>
                                         <h1 className='text-4xl font-semibold my-4'>Blogs</h1>
                                         <p>Welcome to my personal website! Here, I blend my passions for gaming, insightful guides, personal reflections, and creative narratives, offering a unique digital space where stories, strategies, and virtual adventures come to life. Join me on this dynamic journey of exploration and entertainment.</p>
-                                    </div>
+                                    </div> */}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
             <div className={`${styles.marginX} ${styles.flexCenter}`}>
                 <div className={`${styles.boxWidthEx}`}>
                     <div className="container mx-auto py-12 pt-4 xs:px-6 text-white">
+                        <div className='flex sm:flex-row flex-col-reverse sm:justify-between mb-4 font-poppins'>
+                            <div className='flex justify-between gap-2 items-center'>
+                                <div className="relative lg:mt-0 sm:w-80 w-1/2 ">
+                                    <span className="absolute inset-y-0 right-0 flex items-center pr-3">
+                                        <FontAwesomeIcon icon={faSearch} className="text-gray-500" />
+                                    </span>
+                                    <input value={searchKey} onChange={handleSearch} className="h-11 rounded-lg block w-full bg-[#131C31] border border-solid border-[#222F43] text-gray-100 text-sm font-normal py-2 px-4 pr-10 leading-tight focus:outline-none " type="text" placeholder='Search Blog'/>
+                                </div>
+                                <div className='grid grid-cols-3 sm:w-24 w-1/2 items-center'>
+                                    <p className='h-[2.60rem] col-span-2 rounded-l-lg py-[0.65rem] font-semibold capitalize bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm'>Tags:</p>
+                                    <select
+                                        className="h-[2.60rem] rounded-r-lg text-sm sm:w-52 w-full capitalize appearance-none bg-[#131C31] border border-[#222F43] text-gray-100 text px-4 py-1 pr-8 shadow leading-tight focus:outline-none"
+                                        default={`tags`}
+                                        onChange={addTags}
+                                    >
+                                        <option value="" className="capitalize" disabled={true}>Select Tags</option>
+                                        <option value="All" className="capitalize">All</option>
+                                        {
+                                        // tagsList?.length > 0 &&
+                                        //     tagsList.map((item, index) => {
+                                        //     return (
+                                        //         <option key={index} value={item.tag} className="capitalize">{item.tag}</option>
+                                        //     )
+                                        //     })
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div className='flex justify-end items-center text-white relative sm:mb-0 mb-4'>
+                                <p className='text-sm'>{blogs?.length} blog{blogs?.length > 1 && 's'} <span className='mx-2 text-base'>•</span> </p>
+                                <div onClick={() => setToggle({...toggle, categories: !toggle.categories, filtered: false})} className='flex cursor-pointer'>
+                                <button>
+                                    {/* <FontAwesomeIcon icon={faExchange} className='ml-3 text-xl rotate-90 cursor-pointer hover:text-cyan-300 '/> */}
+                                    <svg 
+                                    className='ml-2 text-sm cursor-pointer hover:text-[#0DBFDC] '
+                                    xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-filter" viewBox="0 0 16 16">
+                                    <path d="M6 10.5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h7a.5.5 0 0 1 0 1h-7a.5.5 0 0 1-.5-.5m-2-3a.5.5 0 0 1 .5-.5h11a.5.5 0 0 1 0 1h-11a.5.5 0 0 1-.5-.5"/>
+                                    </svg>
+                                </button>
+                                <div className={`${toggle.categories ? `absolute` : `hidden`} text-sm z-[100] top-10 right-[-8px] w-48 bg-[#131C31] border border-[#222F43] text-gray-100 p-3 py-2 rounded-sm shadow-2xl`}>
+                                    <p className='text-sm font-semibold mb-1'>Filter by:</p>
+                                    <button onClick={() => handlePageType("")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- All { paramIndex && <FontAwesomeIcon icon={faCheck}/>}</button>
+                                    <button onClick={() => handlePageType("latest")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- Latest { checkParams('latest') && <FontAwesomeIcon icon={faCheck}/>}</button>
+                                    <button onClick={() => handlePageType("popular")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- Trending { checkParams('popular') && <FontAwesomeIcon icon={faCheck}/>}</button>
+                                    <button onClick={() => handlePageType("most_viewed")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- Most Viewed { checkParams('most_viewed') && <FontAwesomeIcon icon={faCheck}/>}</button>
+                                    </div>
+                                    <p className='ml-3 text-sm sm:block hidden'>
+                                    {
+                                        checkParams('latest') ? <span className="px-2 py-1 rounded-lg bg-[#131C31] border border-[#222F43] text-gray-100">Latest</span>
+                                        : checkParams('popular') ? <span className="px-2 py-1 rounded-lg bg-[#131C31] border border-[#222F43] text-gray-100">Trending</span>
+                                        : checkParams('most_viewed') && <span className="px-2 py-1 rounded-lg bg-[#131C31] border border-[#222F43] text-gray-100">Most Viewed</span>
+                                    }
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        {
+                        tags?.length > 0 &&
+                        <div className='flex flex-wrap items-start pb-4 font-poppins'>
+                            <h3 className='text-[#0DBFDC] xs:text-lg text-lg font-semibold mr-3'>Tag{tags.length > 1 && 's'}:</h3>
+                            {
+                                tags.map((item, index) => {
+                                    return (
+                                        <div key={index} className='flex flex-wrap gap-2 mb-2'>
+                                            {
+                                                item !== '' &&
+                                                    <p className='cursor-pointer transition-all ml-2 p-4 py-2 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100 '>#{item} <FontAwesomeIcon onClick={deleteTags} id={index} icon={faClose} className="ml-2 cursor-pointer hover:text-[#0DBFDC]" /></p>
+                                            }
+                                        </div>
+                                    )
+                                })
+                            }
+                        </div>
+                        }
+
+                        <div className='grid sm:grid-cols-3 grid-cols-1 gap-5 place-content-start mt-16'>
+                            <div className='col-span-2'>
+                            </div>
+                            <div className='sm:px-2 flex flex-col gap-8'>
+                                <div className='transition-all p-4 py-5 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100'>
+                                    <h2 className='text-xl font-semibold mb-2 text-[#0DBFDC]'>Blog Categories</h2>
+                                    <hr className='border-[1.8px] border-[#0DBFDC] mb-6 w-1/3'/>
+
+                                    <div className='flex flex-col gap-2 mb-4'>
+                                        {
+                                            categories?.length > 0 &&
+                                            categories.map((item, index) => {
+                                                return (
+                                                    <a href={`/blogs?type=&page=1&category=${item.category}`} key={index} className='flex justify-between items-center cursor-pointer transition-all p-4 py-3 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
+                                                        <span>
+                                                            {/* <FontAwesomeIcon icon={['fas', item.icon]} className='mr-2'/> */}
+                                                            {item.category}
+                                                        </span>
+
+                                                        <p className='bg-[#222F43] px-3 py-1 rounded-full text-xs'>{item.count}</p>
+                                                    </a>
+                                                )
+                                            })
+                                        } 
+                                    </div>
+                                </div>
+
+                                <div className='transition-all p-4 py-5 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100'>
+                                    <h2 className='text-xl font-semibold mb-2 text-[#0DBFDC]'>Latest Blog{latestList?.length > 1 && 's'}</h2>
+                                    <hr className='border-[1.8px] border-[#0DBFDC] mb-6 w-1/3'/>
+                                    
+                                    {
+                                        latestList?.length > 0 &&
+                                        latestList.map((item, index) => {
+                                            var liked_blogs = checkedForLikedBLogs(item.likes);
+                                            return (
+                                                <div key={index} className='flex flex-row items-center text-sm mt-4 hover:text-[#0DBFDC] text-[#B9E0F2] transition-all'>
+                                                    <div className='w-full'>
+                                                        <div className='flex items-center mb-2'>
+                                                            <img
+                                                                className='rounded-full xs:w-16 xs:h-16 w-12 h-12 border border-gray-400 object-cover'
+                                                                src={convertDriveImageLink(item.featured_image)}
+                                                                alt="user profile"
+                                                            />
+                                                            <div className='xs:ml-4 ml-2'>
+                                                                <Link to={`/blogs/${item._id}`}><p className='text-base font-semibold cursor-pointer'>{item.post_title}</p></Link>
+                                                                <p className='whitespace-pre-wrap text-sm mt-1 text-[#94a9c9]'>#{item.categories} • {convertTimezone(item.createdAt)}</p>
+                                                                
+                                                                <div className='flex flex-wrap items-center text-gray-100 mt-1'>
+                                                                    <button className='cursor-pointer' onClick={() => addLatestBlogsLikes(index, item._id)}><FontAwesomeIcon icon={faHeart} style={{color: liked_blogs ? '#CD3242' : '#FFF'}} className='pt-[0.15rem] font-bold text-base'/> {item.likes?.length > 0 ? item.likes.length : 0} </button>
+                                                                    <span className='mx-2 text-lg'>•</span>
+                                                                    <p className='text-sm'><FontAwesomeIcon icon={faComment} className='mx-1'/> {item.comments > 0 ? item.comments : 0}</p>
+                                                                </div>
+                                                                
+                                                                <hr className='border-gray-700 mt-2'/>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })
+                                    }
+                                </div>
+                            </div>
+                        </div>
+
                         <div className="flex justify-between items-center">
                             <div className='flex flex-row flex-wrap items-start xs:justify-start justify-center'>
                                 <button onClick={() => handlePageType("")} style={{backgroundColor: paramIndex && 'rgb(243, 244, 246)', color: paramIndex && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100  transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All</button>
