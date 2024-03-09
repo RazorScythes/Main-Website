@@ -406,7 +406,7 @@ const Projects = ({ user }) => {
     setCurrentPage(1)
     setProjects(filteredData);
   }
-  // https://drive.google.com/thumbnail?id=1hMI7v0KpQF1gMJpu9S1GjWqZiL_wRO-U&sz=w1000
+
   return (
     <div
       className="relative bg-cover bg-center pb-20 pt-4"

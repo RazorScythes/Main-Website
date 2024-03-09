@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faChevronRight, faComment, faChevronUp, faChevronDown, faArrowRight, faCalendar, faHeart, faHomeLg, faSearch, faClose, faCheck } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faChevronRight, faComment, faChevronUp, faChevronDown, faArrowRight, faCalendar, faHeart, faHomeLg, faSearch, faClose, faCheck, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { useSearchParams, useParams } from "react-router-dom";
 import { Link, useNavigate } from 'react-router-dom';
@@ -383,13 +383,13 @@ const Blogs = ({ user }) => {
         const keyword = e.target.value.toLowerCase();
         setSearchKey(e.target.value);
     
-        // const filteredData = project.filter((item) =>
-        //   Object.values(item).some((value) =>
-        //     String(value).toLowerCase().includes(keyword)
-        //   )
-        // );
-        // setCurrentPage(1)
-        // setProjects(filteredData);
+        const filteredData = blog.filter((item) =>
+          Object.values(item).some((value) =>
+            String(value).toLowerCase().includes(keyword)
+          )
+        );
+        setCurrentPage(1)
+        setBlogs(filteredData);
     }
 
     return (
@@ -463,7 +463,8 @@ const Blogs = ({ user }) => {
                             </div>
 
                             <div className='flex justify-end items-center text-white relative sm:mb-0 mb-4'>
-                                <p className='text-sm'>{blogs?.length} blog{blogs?.length > 1 && 's'} <span className='mx-2 text-base'>•</span> </p>
+                                {/* <p className='text-sm'>{blogs?.length} blog{blogs?.length > 1 && 's'} <span className='mx-2 text-base'>•</span> </p> */}
+                                <p className='text-sm'>Filter <span className='mx-2 text-base'>•</span></p>
                                 <div onClick={() => setToggle({...toggle, categories: !toggle.categories, filtered: false})} className='flex cursor-pointer'>
                                 <button>
                                     {/* <FontAwesomeIcon icon={faExchange} className='ml-3 text-xl rotate-90 cursor-pointer hover:text-cyan-300 '/> */}
@@ -512,6 +513,83 @@ const Blogs = ({ user }) => {
 
                         <div className='grid sm:grid-cols-3 grid-cols-1 gap-5 place-content-start mt-16 font-poppins'>
                             <div className='col-span-2'>
+                                {
+                                    isLoading ?
+                                        <div className='h-96 flex items-center justify-center'>
+                                            <div className='flex flex-col items-center justify-center'>
+                                                <img className="w-16" src={loading} />
+                                                <p className='text-white font-semibold text-lg mt-2'>Loading Data</p>
+                                            </div>
+                                        </div>
+                                    :
+                                    <>
+                                        <div className='grid sm:grid-cols-2 grid-cols-1 gap-4 place-content-start'>
+                                            {
+                                                blogs && blogs.length > 0 &&
+                                                    blogs.slice(startIndex, endIndex).map((item, index) => {
+                                                        var liked_blogs = checkedForLikedBLogs(item.likes);
+                                                        var first_paragraph = getFirstParagraph(item.content)
+                                                        return (
+                                                            <div className='bg-[#131C31] hover:bg-[#17213a] rounded-t-lg transition-all border border-solid border-[#222F43] text-gray-100 relative pb-12'>
+                                                                <MotionAnimate key={index} animation='fadeInUp'>
+                                                                <img
+                                                                    src={convertDriveImageLink(item.featured_image)}
+                                                                    className='h-[220px] object-cover w-full rounded-t-lg'
+                                                                />
+                                                                <div className='p-4'>
+                                                                    <p className='text-sm text-[#B9E0F2] pb-2'>#{item.categories}</p>
+                                                                    <Link to={`/blogs/${item._id}`} className='text-lg font-semibold my-2 mr-2 leading-7 mb-3 text-[#0DBFDC] cursor-pointer'><TextWithEllipsis text={item.post_title} limit={60}/></Link>
+                                                                    <p className='text-sm pt-2'><TextWithEllipsis text={first_paragraph} limit={150}/></p>
+                                                                    <div className='absolute w-full px-4 bottom-2 left-0 text-sm'>
+                                                                        <hr className='border-[#222F43] my-2'/>
+                                                                        <div className='flex justify-between'>
+                                                                            <div className='flex flex-wrap items-center text-gray-100'>
+                                                                                <button className='cursor-pointer' onClick={() => addLikes(index, item._id)}><FontAwesomeIcon icon={faHeart} style={{color: liked_blogs ? '#CD3242' : '#FFF'}} className='font-bold text-sm mr-1'/> {item.likes?.length > 0 ? item.likes.length : 0} </button>
+                                                                                <span className='mx-2 text-lg'>•</span>
+                                                                                <p className='text-sm'><FontAwesomeIcon icon={faComment} className='mx-1'/> {item.comment.length > 0 ? item.comment.length : 0}</p>
+                                                                            </div>
+                                                                            <Link to={`/blogs/${item._id}`} className='cursor-pointer text-sm flex items-center justify-end text-right hover:text-[#0DBFDC] transition-all'>Continue Reading <FontAwesomeIcon icon={faArrowRight} className='ml-2 pt-1 font-bold'/></Link>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                </MotionAnimate>
+                                                            </div>
+                                                        )
+                                                    })
+                                            }
+                                        </div>
+
+                                        {
+                                            blogs && blogs.length > 0 &&
+                                            <div className='flex flex-wrap items-start justify-start mt-6'>
+                                                <button
+                                                    disabled={currentPage === 1}
+                                                    onClick={() => handlePageChange(currentPage - 1)}
+                                                    className="font-bold text-sm mb-2 cursor-pointer mx-1 bg-[#222F43] hover:bg-[#0EA6EA] hover:text-gray-100 text-gray-100 py-2 xs:px-3 px-3 border border-[#222F43] hover:border-[#0EA6EA] rounded-full transition-colors duration-300 ease-in-out"
+                                                >
+                                                    <FontAwesomeIcon icon={faArrowLeft}/>
+                                                </button>
+                                                {displayedPages.map((pageNumber) => (
+                                                    <button
+                                                        key={pageNumber}
+                                                        onClick={() => handlePageChange(pageNumber)}
+                                                        style={{backgroundColor: pageIndex === pageNumber && "#0EA6EA"}}
+                                                        className="font-bold mb-2 text-sm cursor-pointer mx-1 bg-[#222F43] hover:bg-[#0EA6EA] hover:text-gray-100 text-gray-100 py-2 xs:px-[0.90rem] px-3 border border-[#222F43] hover:border-[#0EA6EA] rounded-full transition-colors duration-300 ease-in-out"
+                                                    >
+                                                        {pageNumber}
+                                                    </button>
+                                                ))}
+                                                <button
+                                                    disabled={currentPage === totalPages}
+                                                    onClick={() => handlePageChange(currentPage + 1)}
+                                                    className="font-bold text-sm mb-2 cursor-pointer mx-1 bg-[#222F43] hover:bg-[#0EA6EA] hover:text-gray-100 text-gray-100 py-2 xs:px-3 px-3 border border-[#222F43] hover:border-[#0EA6EA] rounded-full transition-colors duration-300 ease-in-out"
+                                                >
+                                                    <FontAwesomeIcon icon={faArrowRight}/>
+                                                </button>
+                                            </div>
+                                        }
+                                    </>
+                                }
                             </div>
                             <div className='sm:px-2 flex flex-col gap-8'>
                                 <div className='transition-all p-4 py-5 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100'>
@@ -523,14 +601,13 @@ const Blogs = ({ user }) => {
                                             categories?.length > 0 &&
                                             categories.map((item, index) => {
                                                 return (
-                                                    <a href={`/blogs?type=&page=1&category=${item.category}`} key={index} className='flex justify-between items-center cursor-pointer transition-all p-4 py-3 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
+                                                    <button onClick={() => handleFilteredChange(item.category)} key={index} className='flex justify-between items-center cursor-pointer transition-all p-4 py-3 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
                                                         <span>
-                                                            {/* <FontAwesomeIcon icon={['fas', item.icon]} className='mr-2'/> */}
                                                             {item.category}
                                                         </span>
 
                                                         <p className='bg-[#222F43] px-3 py-1 rounded-full text-xs'>{item.count}</p>
-                                                    </a>
+                                                    </button>
                                                 )
                                             })
                                         } 
@@ -575,125 +652,6 @@ const Blogs = ({ user }) => {
                                 </div>
                             </div>
                         </div>
-
-                        <div className="flex justify-between items-center">
-                            <div className='flex flex-row flex-wrap items-start xs:justify-start justify-center'>
-                                <button onClick={() => handlePageType("")} style={{backgroundColor: paramIndex && 'rgb(243, 244, 246)', color: paramIndex && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100  transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>All</button>
-                                <button onClick={() => handlePageType("latest")} style={{backgroundColor: checkParams('latest') && 'rgb(243, 244, 246)', color: checkParams('latest') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Latest</button>
-                                <button onClick={() => handlePageType("most_viewed")} style={{backgroundColor: checkParams('most_viewed') && 'rgb(243, 244, 246)', color: checkParams('most_viewed') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>Most Viewed</button>
-                                <button onClick={() => handlePageType("popular")} style={{backgroundColor: checkParams('popular') && 'rgb(243, 244, 246)', color: checkParams('popular') && 'rgb(31, 41, 55)'}} className='mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out'>Popular</button>
-                                <div className='relative z-40 ml-2'>
-                                    <button onClick={() => setToggle({...toggle, categories: !toggle.categories, filtered: false})} className='cursor-pointer mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2 flex items-center'>
-                                        {selectedCategory ? selectedCategory : 'Categories'}
-                                        {toggle.categories ? <FontAwesomeIcon icon={faChevronUp} className='ml-1 font-bold'/> : <FontAwesomeIcon icon={faChevronDown} className='ml-1 font-bold'/> }
-                                    </button>
-                                    {
-                                        categories && categories.length > 0 &&
-                                            <div className={`${toggle.categories ? `absolute` : `hidden`}`}>
-                                                <ul className='no-scroll max-h-[183px] overflow-y-auto flex flex-col mb-2 font-semibold text-sm bg-gray-800 text-gray-100  border border-gray-100 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>
-                                                <button onClick={() => handleFilteredChange('')}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>All</li></button>
-                                                    {
-                                                        categories.map((item, index) => {
-                                                            return (
-                                                                <button onClick={() => handleFilteredChange(item.category)} key={index}><li className='px-4 py-2 hover:bg-gray-900 hover:text-gray-100 cursor-pointer'>{item.category} ({item.count})</li></button>
-                                                            )
-                                                        })
-                                                    }
-                                                </ul>
-                                            </div>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                        {
-                            isLoading ?
-                            <div className='h-96 flex items-center justify-center'>
-                                <div className='flex flex-col items-center justify-center'>
-                                    <img className="w-16" src={loading} />
-                                    <p className='text-white font-semibold text-lg mt-2'>Loading Data</p>
-                                </div>
-                            </div>
-                            :
-                            <>
-                            <div className='grid md:grid-cols-3 sm:grid-cols-2 grid-cols-1 lg:gap-12 gap-5 place-content-start mt-8'>
-                                {
-                                    blogs && blogs.length > 0 &&
-                                        blogs.slice(startIndex, endIndex).map((item, index) => {
-                                            var liked_blogs = checkedForLikedBLogs(item.likes);
-                                            var first_paragraph = getFirstParagraph(item.content)
-                                            return (
-                                                <MotionAnimate key={index} animation='fadeInUp'>
-                                                <div>
-                                                    <div className='relative'>
-                                                        <img 
-                                                            src={convertDriveImageLink(item.featured_image)}
-                                                            alt="Featured Image"
-                                                            className='rounded-lg h-[435px] w-full object-cover border border-gray-800'
-                                                        />
-                                                        <label className='absolute top-16 font-semibold  bg-[#CD3242] pl-4 pr-8 py-1 rounded-br-full rounded-tr-full'>{item.categories}</label>
-                                                    </div>
-                                                    <div className='grid sm:grid-cols-3 grid-cols-3 gap-12 place-content-start p-2 py-3'>
-                                                        <div className='col-span-2 flex flex-wrap items-center'>
-                                                            <img 
-                                                                src={convertDriveImageLink(item.user.avatar)}
-                                                                className='w-8 h-8 object-cover rounded-full border border-gray-400'
-                                                                alt="avatar"
-                                                            />
-                                                            <p className='ml-2 break-all text-white'>{item.user.username}</p>
-                                                        </div>
-                                                        <div className='flex flex-wrap items-center justify-end'>
-                                                            <button className='cursor-pointer' onClick={() => addLikes(index, item._id)}><FontAwesomeIcon icon={faHeart} style={{color: liked_blogs ? '#CD3242' : '#FFF'}} className='mr-1 pt-1 font-bold text-lg'/> {item.likes.length}</button>
-                                                        </div>
-                                                    </div>
-                                                    <div className='p-2 py-1'>
-                                                        <h2 className='text-3xl font-semibold'><TextWithEllipsis text={item.post_title} limit={60}/></h2>
-                                                        <p className='break-all text-white mt-2'><TextWithEllipsis text={first_paragraph} limit={150}/></p>
-                                                        <div className='flex justify-between items-center mt-4'>
-                                                            <p><FontAwesomeIcon icon={faCalendar} className='mr-1 pt-1 font-bold'/> {convertTimezone(item.createdAt)}</p>
-                                                            <Link to={`/blogs/${item._id}`} className='flex items-center justify-end text-right hover:text-[#CD3242] transition-all'>Continue Reading <FontAwesomeIcon icon={faArrowRight} className='ml-1 pt-1 font-bold'/></Link>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                </MotionAnimate>
-                                            )
-                                        })
-                                }
-                            </div>
-
-                            {
-                                blogs && blogs.length > 0 &&
-                                <div className='flex items-center justify-center mt-12'>
-                                    <button
-                                    disabled={currentPage === 1}
-                                    onClick={() => handlePageChange(currentPage - 1)}
-                                    className='cursor-pointer mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
-                                    >
-                                    <span className='xs:block hidden'>Prev</span>
-                                    <FontAwesomeIcon icon={faChevronLeft} className='xs:hidden inline-block'/>
-                                    </button>
-                                    {displayedPages.map((pageNumber) => (
-                                    <button
-                                    key={pageNumber}
-                                    onClick={() => handlePageChange(pageNumber)}
-                                    // className={currentPage === index + 1 ? "active" : ""}
-                                    style={{backgroundColor: pageIndex === pageNumber ? "rgb(243 244 246)" : "rgb(31 41 55)", color: pageIndex === pageNumber ? "rgb(31 41 55)" : "rgb(243 244 246)"}}
-                                    className="cursor-pointer mx-1 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out"
-                                    >
-                                    {pageNumber}
-                                    </button>
-                                    ))}
-                                    <button
-                                    disabled={currentPage === totalPages}
-                                    onClick={() => handlePageChange(currentPage + 1)}
-                                    className='cursor-pointer ml-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out'
-                                    >
-                                    <span className='xs:block hidden'>Next</span>
-                                    <FontAwesomeIcon icon={faChevronRight} className='xs:hidden inline-block'/>
-                                    </button>
-                                </div>
-                            }
-                            </>
-                        }
                     </div>
                 </div>
             </div>
