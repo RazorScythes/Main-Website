@@ -162,6 +162,7 @@ export const addOneBlogLikes                            = (formData) => User_API
 export const addOneBlogLikesBySearchKey                 = (formData) => User_API.post('/blogs/addOneBlogLikesBySearchKey', formData)
 export const addLatestBlogLikes                         = (formData) => User_API.post('/blogs/addLatestBlogLikes', formData)
 export const getBlogsBySearchKey                        = (formData) => User_API.post('/blogs/getBlogsBySearchKey', formData)
+export const blogsCountTags                             = (formData) => User_API.post('/blogs/blogsCountTags', formData)
 
 /*
     Archive

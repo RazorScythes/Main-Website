@@ -228,6 +228,22 @@ export const addOneBlogLikesBySearchKey = createAsyncThunk('blog/addOneBlogLikes
     }
 })
 
+export const blogsCountTags = createAsyncThunk('blog/blogsCountTags', async (form, thunkAPI) => {
+    try {
+        const response = await api.blogsCountTags(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const blogsSlice = createSlice({
     name: 'blogs',
     initialState,
@@ -345,6 +361,7 @@ export const blogsSlice = createSlice({
         }),
         builder.addCase(getBlogsBySearchKey.fulfilled, (state, action) => {
             state.blogs = action.payload.data.result
+            state.tagsCount = action.payload.data.tags
             state.error = ''
             state.isLoading = false
         }),
@@ -353,6 +370,15 @@ export const blogsSlice = createSlice({
         }),
         builder.addCase(getBlogsBySearchKey.pending, (state, action) => {
             state.isLoading = true
+        }),
+        builder.addCase(blogsCountTags.fulfilled, (state, action) => {
+            state.tagsCount = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(blogsCountTags.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
         })
     },
     reducers: {

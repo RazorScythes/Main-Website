@@ -4,7 +4,7 @@ import { faChevronLeft, faChevronRight, faComment, faChevronUp, faChevronDown, f
 import { useDispatch, useSelector } from 'react-redux'
 import { useSearchParams, useParams } from "react-router-dom";
 import { Link, useNavigate } from 'react-router-dom';
-import { getLatestBlogs, addLatestBlogLikes, getBlogs, countBlogCategories, addOneBlogLikes, getBlogsBySearchKey, countBlogCategoriesBySearchKey, addOneBlogLikesBySearchKey } from "../../actions/blogs";
+import { blogsCountTags, getLatestBlogs, addLatestBlogLikes, getBlogs, countBlogCategories, addOneBlogLikes, getBlogsBySearchKey, countBlogCategoriesBySearchKey, addOneBlogLikesBySearchKey } from "../../actions/blogs";
 import { MotionAnimate } from 'react-motion-animate'
 import { convertDriveImageLink } from '../Tools'
 import Cookies from 'universal-cookie';
@@ -29,6 +29,7 @@ const Blogs = ({ user }) => {
     const dispatch = useDispatch()
 
     const blog = useSelector((state) => state.blogs.blogs)
+    const tagsList = useSelector((state) => state.blogs.tagsCount)
     const categories = useSelector((state) => state.blogs.categories)
     const isLoading = useSelector((state) => state.blogs.isLoading)
     const latestBlogs = useSelector((state) => state.blogs.latestBlogs)
@@ -55,6 +56,9 @@ const Blogs = ({ user }) => {
                 id: user ? user.result?._id : ''
             }))
             dispatch(countBlogCategories({
+                id: user ? user.result?._id : ''
+            }))
+            dispatch(blogsCountTags({
                 id: user ? user.result?._id : ''
             }))
         }
@@ -129,27 +133,74 @@ const Blogs = ({ user }) => {
         calculateDisplayedPages();
     }, [currentPage, totalPages, pageIndex]);
 
-    useEffect(() => {
+    const filterDataByTags = () => {
+        let filter_blogs = []
+        blog.forEach((blo) => {
+          tags.forEach((tag__) => {
+            blo.tags.forEach((tag_) => {
+                  if(tag__.toLowerCase() === tag_.toLowerCase())
+                  filter_blogs.push(blo)
+              })
+          })
+        })
+        
+        let deleteDuplicate = filter_blogs.filter((obj, index, self) =>
+          index === self.findIndex((o) => o._id.toString() === obj._id.toString())
+        );
+    
+        return deleteDuplicate;
+    }
+
+    const initData = () => {
         if(searchParams.get('type') === null || searchParams.get('type') === '') {
+            var dataTags = filterDataByTags()
             var filteredData
-            if(filteredType !== null)
-                filteredData = blog.filter(obj => filteredType === obj.categories || filteredType === '');
-            else 
-                filteredData = blog
+            if(filteredType !== null) {
+                if(tags.length > 0) {
+                    dataTags = blog.filter(obj => filteredType === obj.categories || filteredType === '');
+                }
+                else {
+                    filteredData = blog.filter(obj => filteredType === obj.categories || filteredType === '');
+                }
+            }
+            else {
+                if(tags.length > 0) {
+                    filteredData = dataTags
+                }
+                else {
+                    filteredData = blog
+                }
+            }
 
             setBlogs(filteredData)
         }
         else if(searchParams.get('type') === 'latest') {
             // Filter and group the objects by date
-            const groupedData = blog.reduce((result, obj) => {
-              const date = obj.createdAt.split('T')[0];
-              if (result[date]) {
-                result[date].push(obj);
-              } else {
-                result[date] = [obj];
-              }
-              return result;
-            }, {});
+            var groupedData = []
+
+            if(tags.length > 0) {
+                var dataTags = filterDataByTags()
+                groupedData = dataTags.reduce((result, obj) => {
+                const date = obj.createdAt.split('T')[0];
+                if (result[date]) {
+                    result[date].push(obj);
+                } else {
+                    result[date] = [obj];
+                }
+                return result;
+                }, {});
+            }
+            else {
+                groupedData = blog.reduce((result, obj) => {
+                const date = obj.createdAt.split('T')[0];
+                if (result[date]) {
+                    result[date].push(obj);
+                } else {
+                    result[date] = [obj];
+                }
+                return result;
+                }, {});
+            }
     
             // Get the latest date from the groupedData object
             const latestDate = Object.keys(groupedData).sort().pop();
@@ -170,31 +221,50 @@ const Blogs = ({ user }) => {
         else if(searchParams.get('type') === 'most_viewed') {
             // Sort the data based on views in ascending order
             if(blog.length > 0) {
-              var arr = [...blog]
-    
-              const sortedData = arr.sort((a, b) => b.views.length - a.views.length);
-    
-              if(sortedData.length > 0)
-                var filteredData
-                if(filteredType !== null)
-                    filteredData = sortedData.filter(obj => filteredType === obj.categories || filteredType === '');
-                else 
-                    filteredData = sortedData
-    
-                setBlogs(filteredData)
+                var arr = []
+
+                if(tags.length > 0) {
+                    var dataTags = filterDataByTags()
+                    arr = [...dataTags]
+                }
+                else {
+                    arr = [...blog]
+                }
+        
+                const sortedData = arr.sort((a, b) => b.views.length - a.views.length);
+        
+                if(sortedData.length > 0)
+                    var filteredData
+                    if(filteredType !== null)
+                        filteredData = sortedData.filter(obj => filteredType === obj.categories || filteredType === '');
+                    else 
+                        filteredData = sortedData
+        
+                    setBlogs(filteredData)
             }
         }
         else if(searchParams.get('type') === 'popular') {
             // Sort the data based on views in ascending order
             if(blog.length > 0) {
                 var arr = []
-    
-                blog.forEach(item => {
-                var popularity = ((item.views.length/2) + item.likes.length) - item.dislikes.length
-                    if(popularity > 0) { 
-                        arr.push({...item, popularity: popularity})
-                    }
-                });
+                
+                if(tags.length > 0) {
+                    var dataTags = filterDataByTags()
+                    dataTags.forEach(item => {
+                    var popularity = ((item.views.length/2) + item.likes.length) - item.dislikes.length
+                        if(popularity > 0) { 
+                            arr.push({...item, popularity: popularity})
+                        }
+                    });
+                }
+                else {
+                    blog.forEach(item => {
+                    var popularity = ((item.views.length/2) + item.likes.length) - item.dislikes.length
+                        if(popularity > 0) { 
+                            arr.push({...item, popularity: popularity})
+                        }
+                    });
+                }
     
                 const sortedData = arr.sort((a, b) => b.popularity - a.popularity);
     
@@ -207,7 +277,21 @@ const Blogs = ({ user }) => {
         
                     setBlogs(filteredData)
                 }
-          }
+        }
+    }
+
+    useEffect(() => {
+        if(tags.length > 0) {
+          var dataTags = filterDataByTags()
+          setBlogs(dataTags)
+        }
+        else {
+          initData()
+        }
+    }, [tags])
+
+    useEffect(() => {
+        initData()
     }, [blog, searchParams.get('type'), filteredType])
 
     const convertTimezone = (date) => {
@@ -405,24 +489,33 @@ const Blogs = ({ user }) => {
                                 <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start'>
                                     <div>
                                         <div className='flex flex-row items-start text-sm mt-6 pb-2'>
-                                            <h1 className='sm:text-5xl text-4xl font-bold text-[#0DBFDC] drop-shadow-md'> Latest Blogs </h1>
+                                            <h1 className='sm:text-5xl text-4xl font-bold text-[#0DBFDC] drop-shadow-md'> {key ? 'Blogs Search' : 'Latest Blogs'} </h1>
                                             <button className='top-0 ml-2 mb-2 font-semibold bg-[#131C31] border border-solid border-[#222F43] text-gray-100  transition-colors duration-300 ease-in-out px-8 py-1 rounded-full'>
                                                 {blogs?.length > 0 ? blogs.length : "0" } Articles
                                             </button>
                                         </div>
-                                        <div className='flex flex-row flex-wrap items-center text-sm'>
-                                            <div className='mr-2'><FontAwesomeIcon icon={faHomeLg} className='mr-1'/> <a href='/' className='hover:underline transition-all hover:text-[#0CBCDC]'> Home </a></div>
-                                            <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> <a href='/blogs' className='hover:underline transition-all hover:text-[#0CBCDC]'> Blogs </a></div>
-                                        </div>
+                                        {
+                                            key ?
+                                            <div className='flex flex-row flex-wrap items-center text-sm'>
+                                                <div className='mr-2'><FontAwesomeIcon icon={faHomeLg} className='mr-1'/> <a href='/' className='hover:underline transition-all hover:text-[#0CBCDC]'> Home </a></div>
+                                                <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> <a href='/blogs' className='hover:underline transition-all hover:text-[#0CBCDC]'> Blogs </a></div>
+                                                <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> <span className='hover:underline transition-all hover:text-[#0CBCDC]'> Search </span></div>
+                                                <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> <span className='hover:underline transition-all hover:text-[#0CBCDC]'> {key} </span></div>
+                                            </div> :
+                                            filteredType ?
+                                            <div className='flex flex-row flex-wrap items-center text-sm'>
+                                                <div className='mr-2'><FontAwesomeIcon icon={faHomeLg} className='mr-1'/> <a href='/' className='hover:underline transition-all hover:text-[#0CBCDC]'> Home </a></div>
+                                                <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> <a href='/blogs' className='hover:underline transition-all hover:text-[#0CBCDC]'> Blogs </a></div>
+                                                <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> <span className='hover:underline transition-all hover:text-[#0CBCDC]'> Category </span></div>
+                                                <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> <span className='hover:underline transition-all hover:text-[#0CBCDC]'> {filteredType} </span></div>
+                                            </div>
+                                            :
+                                            <div className='flex flex-row flex-wrap items-center text-sm'>
+                                                <div className='mr-2'><FontAwesomeIcon icon={faHomeLg} className='mr-1'/> <a href='/' className='hover:underline transition-all hover:text-[#0CBCDC]'> Home </a></div>
+                                                <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> <a href='/blogs' className='hover:underline transition-all hover:text-[#0CBCDC]'> Blogs </a></div>
+                                            </div>
+                                        }
                                     </div>
-                                    {/* <div>
-                                        <p>Home / <Link to={`/blogs`}>Blogs</Link> {key && `/ search`}</p>
-                                        <button className='mt-4 mb-2 font-semibold text-sm bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 border border-gray-100  transition-colors duration-300 ease-in-out px-8 rounded-full'>
-                                            {blogs?.length > 0 ? blogs.length : "0" } Articles
-                                        </button>
-                                        <h1 className='text-4xl font-semibold my-4'>Blogs</h1>
-                                        <p>Welcome to my personal website! Here, I blend my passions for gaming, insightful guides, personal reflections, and creative narratives, offering a unique digital space where stories, strategies, and virtual adventures come to life. Join me on this dynamic journey of exploration and entertainment.</p>
-                                    </div> */}
                                 </div>
                             </div>
                         </div>
@@ -451,23 +544,21 @@ const Blogs = ({ user }) => {
                                         <option value="" className="capitalize" disabled={true}>Select Tags</option>
                                         <option value="All" className="capitalize">All</option>
                                         {
-                                        // tagsList?.length > 0 &&
-                                        //     tagsList.map((item, index) => {
-                                        //     return (
-                                        //         <option key={index} value={item.tag} className="capitalize">{item.tag}</option>
-                                        //     )
-                                        //     })
+                                        tagsList?.length > 0 &&
+                                            tagsList.map((item, index) => {
+                                            return (
+                                                <option key={index} value={item.tag} className="capitalize">{item.tag}</option>
+                                            )
+                                            })
                                         }
                                     </select>
                                 </div>
                             </div>
 
                             <div className='flex justify-end items-center text-white relative sm:mb-0 mb-4'>
-                                {/* <p className='text-sm'>{blogs?.length} blog{blogs?.length > 1 && 's'} <span className='mx-2 text-base'>•</span> </p> */}
                                 <p className='text-sm'>Filter <span className='mx-2 text-base'>•</span></p>
                                 <div onClick={() => setToggle({...toggle, categories: !toggle.categories, filtered: false})} className='flex cursor-pointer'>
                                 <button>
-                                    {/* <FontAwesomeIcon icon={faExchange} className='ml-3 text-xl rotate-90 cursor-pointer hover:text-cyan-300 '/> */}
                                     <svg 
                                     className='ml-2 text-sm cursor-pointer hover:text-[#0DBFDC] '
                                     xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-filter" viewBox="0 0 16 16">
