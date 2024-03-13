@@ -102,23 +102,23 @@ const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings
     }
 
     return (
-        <div className='xs:w-full w-64 mx-auto bg-gray-800 rounded-sm shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)]'>
+        <div className='xs:w-full w-64 mx-auto bg-[#131C31] hover:bg-[#17213a] rounded-t-lg transition-all border border-solid border-[#222F43] text-gray-100 font-poppins'>
             <img
                 className='h-44 w-full object-cover rounded-t-sm'
                 alt="game feature image"
                 src={image}
             />
             <div className='py-2 px-4 text-gray-300'>
-                <p className="text-center mb-2 text-sm w-full mr-2 bg-gray-700 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                <p className="text-center mb-2 text-sm w-full mr-2 bg-[#131C31] text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
                     {category}
                 </p>
-                <h2 className='text-lg  font-semibold'><TextWithEllipsis text={heading}/> </h2>
-                <p className='text-xs text-gray-400'><strong>By:</strong> {uploader}</p>
+                <h2 className='text-lg font-semibold text-[#0DBFDC]'><TextWithEllipsis text={heading}/> </h2>
+                <p className='text-xs text-[#94a9c9]'><span>By:</span> {uploader}</p>
                 <div className="flex items-center star-rating">
                     {[...Array(5)].map((_, index) => ( 
                         <span
                             key={index}
-                            className={`relative star ${fixedRating >= index + 1 ? 'filled' : rating >= index + 1 ? 'filled' : ''} ${
+                            className={`relative star  ${fixedRating >= index + 1 ? 'filled' : rating >= index + 1 ? 'filled' : ''} ${
                                 fixedRating === index + 0.5 ? 'half-filled' : rating === index + 0.5 ? 'half-filled' : ''
                             }`}
                             onMouseEnter={() => handleMouseEnter(index, false)}
@@ -128,25 +128,25 @@ const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings
                             &#9733;
                         </span>
                     ))}
-                    <span className='ml-1'>({ratingNumber})</span>
+                    <span className='ml-1 text-sm'>({ratingNumber})</span>
                 </div>
-                <div className='grid grid-cols-2 gap-2 mt-2'>
-                    <p className='flex items-center text-sm'>{downloads.length > 0 ? downloads.length : 0} Download{downloads.length > 1 && 's'}</p>
+                <div className='grid grid-cols-2 gap-2'>
+                    <p className='flex items-center text-xs text-[#94a9c9]'>{downloads.length > 0 ? downloads.length : 0} Download{downloads.length > 1 && 's'}</p>
                 </div>
                 <div className='grid grid-cols-3 gap-2 mt-2'>
                     <Link to={`/games/${id}`} className='col-span-2 '>
-                        <button className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
+                        <button className="text-sm w-full mr-2 bg-[#131C31] hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
                             Preview
                         </button>
                     </Link>
                     {
                         downloadable ?
-                            <button title="No Download Link" disabled={true} className="disabled:bg-gray-500 disabled:cursor-no-drop sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
+                            <button title="No Download Link" disabled={true} className="disabled:bg-gray-500 disabled:cursor-no-drop text-sm w-full mr-2 bg-[#131C31] hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
                                 <FontAwesomeIcon icon={faLinkSlash} className="text-white"/>
                             </button>
                         :
                             <a href={downloadLink ? downloadLink : "#"} target='_blank'>
-                                <button onClick={() => addDownloadCount()} className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
+                                <button onClick={() => addDownloadCount()} className="text-sm w-full mr-2 bg-[#131C31] hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
                                     <FontAwesomeIcon icon={faDownload} className="text-white"/>
                                 </button>
                             </a>
@@ -155,6 +155,59 @@ const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings
                 </div>
             </div>
         </div>
+        // <div className='xs:w-full w-64 mx-auto bg-gray-800 rounded-sm shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)]'>
+        //     <img
+        //         className='h-44 w-full object-cover rounded-t-sm'
+        //         alt="game feature image"
+        //         src={image}
+        //     />
+        //     <div className='py-2 px-4 text-gray-300'>
+        //         <p className="text-center mb-2 text-sm w-full mr-2 bg-gray-700 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+        //             {category}
+        //         </p>
+        //         <h2 className='text-lg  font-semibold'><TextWithEllipsis text={heading}/> </h2>
+        //         <p className='text-xs text-gray-400'><strong>By:</strong> {uploader}</p>
+        //         <div className="flex items-center star-rating">
+        //             {[...Array(5)].map((_, index) => ( 
+        //                 <span
+        //                     key={index}
+        //                     className={`relative star ${fixedRating >= index + 1 ? 'filled' : rating >= index + 1 ? 'filled' : ''} ${
+        //                         fixedRating === index + 0.5 ? 'half-filled' : rating === index + 0.5 ? 'half-filled' : ''
+        //                     }`}
+        //                     onMouseEnter={() => handleMouseEnter(index, false)}
+        //                     onMouseLeave={handleMouseLeave}
+        //                     onClick={() => handleStarClick(index, false)}
+        //                 >
+        //                     &#9733;
+        //                 </span>
+        //             ))}
+        //             <span className='ml-1'>({ratingNumber})</span>
+        //         </div>
+        //         <div className='grid grid-cols-2 gap-2 mt-2'>
+        //             <p className='flex items-center text-sm'>{downloads.length > 0 ? downloads.length : 0} Download{downloads.length > 1 && 's'}</p>
+        //         </div>
+        //         <div className='grid grid-cols-3 gap-2 mt-2'>
+        //             <Link to={`/games/${id}`} className='col-span-2 '>
+        //                 <button className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
+        //                     Preview
+        //                 </button>
+        //             </Link>
+        //             {
+        //                 downloadable ?
+        //                     <button title="No Download Link" disabled={true} className="disabled:bg-gray-500 disabled:cursor-no-drop sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
+        //                         <FontAwesomeIcon icon={faLinkSlash} className="text-white"/>
+        //                     </button>
+        //                 :
+        //                     <a href={downloadLink ? downloadLink : "#"} target='_blank'>
+        //                         <button onClick={() => addDownloadCount()} className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
+        //                             <FontAwesomeIcon icon={faDownload} className="text-white"/>
+        //                         </button>
+        //                     </a>
+        //             }
+                    
+        //         </div>
+        //     </div>
+        // </div>
     )
 }
 

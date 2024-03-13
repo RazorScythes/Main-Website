@@ -514,6 +514,7 @@ const AdminUploads = ({ user, path }) => {
         _id: '',
         featured_image: '',
         title: '',
+        category: 'Simulation',
         description: '',
         strict: false,
         privacy: false,
@@ -558,6 +559,7 @@ const AdminUploads = ({ user, path }) => {
             _id: '',
             featured_image: '',
             title: '',
+            category: 'Simulation',
             description: '',
             strict: false,
             privacy: false,
@@ -716,6 +718,7 @@ const AdminUploads = ({ user, path }) => {
                 ...gameData[currentGameIndex],
                 featured_image: gameForm.featured_image,
                 title: gameForm.title,
+                category: gameForm.category,
                 description: gameForm.description,
                 strict: gameForm.strict,
                 privacy: gameForm.privacy,
@@ -834,6 +837,7 @@ const AdminUploads = ({ user, path }) => {
             _id: gameData[index]._id,
             featured_image: gameData[index].featured_image,
             title: gameData[index].title,
+            category: gameData[index].category,
             description: gameData[index].description,
             strict: gameData[index].strict,
             privacy: gameData[index].privacy,
@@ -863,6 +867,7 @@ const AdminUploads = ({ user, path }) => {
         setGameForm({
             featured_image: '',
             title: '',
+            category: 'Simulation',
             description: '',
             strict: false,
             privacy: false,
@@ -2072,6 +2077,33 @@ const AdminUploads = ({ user, path }) => {
                                                                     </div>
                                                                 </div>
                                                                 
+                                                                <div className='grid grid-cols-1  gap-5 place-content-start mb-4'>
+                                                                    <div className='flex flex-col'>
+                                                                        <label className='font-semibold'> Category: </label>
+                                                                        <select
+                                                                            className="w-full capitalize appearance-none bg-white border border-gray-300 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
+                                                                            value={gameForm.category}
+                                                                            onChange={(e) => setGameForm({...gameForm, category: e.target.value})}
+                                                                        >
+                                                                        <option value="Simulation" className="capitalize">Simulation</option>
+                                                                        <option value="Games 3D" className="capitalize">Games 3D</option>
+                                                                        <option value="Animated" className="capitalize">Animated</option>
+                                                                        <option value="Extreme" className="capitalize">Extreme</option>
+                                                                        <option value="Puzzle" className="capitalize">Puzzle</option>
+                                                                        <option value="Virtual Reality" className="capitalize">Virtual Reality</option>
+                                                                        <option value="Visual Novel" className="capitalize">Visual Novel</option>
+                                                                        <option value="RPG" className="capitalize">RPG</option>
+                                                                        <option value="Horror" className="capitalize">Horror</option>
+                                                                        <option value="Fighting" className="capitalize">Fighting</option>
+                                                                        <option value="Racing" className="capitalize">Racing</option>
+                                                                        <option value="Shooting" className="capitalize">Shooting</option>
+                                                                        <option value="Flash" className="capitalize">Flash</option>
+                                                                        <option value="Non - Hen" className="capitalize">Non - Hen</option>
+                                                                        <option value="Others" className="capitalize">Others</option>
+                                                                        </select>
+                                                                    </div>
+                                                                </div>
+
                                                                 <div className='grid grid-cols-1 gap-5 place-content-start mb-2'>
                                                                     <div className='flex flex-col'>
                                                                         <label className='font-semibold'> Game description: </label>

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from 'react-redux'
-import { faCalendar, faInfoCircle, faImage, faDownload, faMinus, faChevronRight, faChevronLeft, faArrowRight, faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faInfoCircle, faImage, faDownload, faMinus, faChevronRight, faChevronLeft, faArrowRight, faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
 import { useParams, useSearchParams } from 'react-router-dom'
-import { addOneDownload, getRelatedGames, updateGameAccessKey, getGameByID, countTags, getRecentGameBlog, addRecentGamingBlogLikes, clearAlert } from "../../actions/game";
+import { categoriesCount, addOneDownload, getRelatedGames, updateGameAccessKey, getGameByID, countTags, getRecentGameBlog, addRecentGamingBlogLikes, clearAlert } from "../../actions/game";
 import { MotionAnimate } from 'react-motion-animate'
 import { convertDriveImageLink } from '../Tools'
 import ModalImage from "react-modal-image";
@@ -90,6 +90,7 @@ const GamesSingle = ({ user }) => {
     const isLoading = useSelector((state) => state.game.isLoading)
     const sideAlert = useSelector((state) => state.game.sideAlert)
     const tagsList = useSelector((state) => state.game.tagsCount)
+    const categoriesList = useSelector((state) => state.game.categoriesCount)
     const recentGameBlog = useSelector((state) => state.game.recentGameBlog)
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -136,6 +137,9 @@ const GamesSingle = ({ user }) => {
 
     useEffect(() => {
         dispatch(countTags({
+            id: user ? user.result?._id : ''
+        }))
+        dispatch(categoriesCount({
             id: user ? user.result?._id : ''
         }))
     }, [])
@@ -230,14 +234,29 @@ const GamesSingle = ({ user }) => {
         else { return true }
     }
     
+    const convertTimezone = (date) => {
+        const timeZone = 'America/New_York';
+
+        const dateObj = new Date(date);
+        const formattedDate = new Intl.DateTimeFormat('en-US', {
+            timeZone,
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+            hour12: false,
+        }).format(dateObj);
+
+        return formattedDate
+    }
+
     return (
         <div
-            className="relative bg-cover bg-center xs:py-14 py-4"
+            className="relative bg-cover bg-center xs:py-14 py-4 font-poppins"
             style={{ backgroundColor: "#111221" }}
         >   
             <div className={`${styles.marginX2} ${styles.flexCenter}`}>
                 <div className={`${styles.boxWidthEx}`}>
-                    <div className="container mx-auto file:lg:px-8 relative px-0">
+                    <div className="container mx-auto relative xs:px-6">
                             {
                                 isLoading ?
                                     <div className='h-96 flex items-center justify-center'>
@@ -329,7 +348,8 @@ const GamesSingle = ({ user }) => {
                                 :
                                 <>
                                     <div className="grid md:grid-cols-3 grid-cols-1 gap-4">
-                                        <div className="md:col-span-2 bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] sm:p-16 p-8 text-white">
+                                        <div className="md:col-span-2">
+                                            <div className='rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100 font-poppins sm:p-12 p-8'>
                                             {
                                                 Object.keys(gameData).length !== 0  &&
                                                 <>
@@ -341,37 +361,37 @@ const GamesSingle = ({ user }) => {
                                                     />
                                                     <div className='my-2'>
 
-                                                        <h2 className='text-3xl font-semibold'>{gameData.game.title}</h2>
-                                                        <p className='whitespace-pre-wrap'><span className='font-semibold'>Developer</span>:
+                                                        <h2 className='text-3xl font-semibold text-[#0DBFDC]'>{gameData.game.title}</h2>
+                                                        <p className='whitespace-pre-wrap'><span className='font-semibold text-[#B9E0F2]'>Developer</span>:
                                                             {
                                                                 gameData.game.details?.developer ?
-                                                                    <Link to={`/games/developer/${gameData.game.details.developer}`}> {gameData.game.details.developer}</Link>
+                                                                    <Link to={`/games/developer/${gameData.game.details.developer}`} className='hover:text-[#0DBFDC] transition-all'> {gameData.game.details.developer}</Link>
                                                                 :
-                                                                    <Link to={`/games/developer/Anonymous`}> Anonymous</Link>
+                                                                    <Link to={`/games/developer/Anonymous`} className='hover:text-[#0DBFDC] transition-all'> Anonymous</Link>
                                                             }
                                                         </p>
                                                         <hr className='my-1 mb-2'/>                                   
                                                         
                                                         <div className='grid grid-cols-3 gap-5 place-content-start mt-4'>
-                                                            <p className='whitespace-pre-wrap font-bold'>Language</p><span className='col-span-2'>: {gameData.game.details.language}</span>
+                                                            <p className='whitespace-pre-wrap font-semibold text-[#B9E0F2]'>Language</p><span className='col-span-2'>: {gameData.game.details.language}</span>
                                                         </div>
                                                         <div className='grid grid-cols-3 gap-5 place-content-start mt-1'>
-                                                            <p className='whitespace-pre-wrap font-bold'>Version</p><span className='col-span-2'>: {gameData.game.details.latest_version}</span>
+                                                            <p className='whitespace-pre-wrap font-semibold text-[#B9E0F2]'>Version</p><span className='col-span-2'>: {gameData.game.details.latest_version}</span>
                                                         </div>
                                                         <div className='grid grid-cols-3 gap-5 place-content-start mt-1'>
-                                                            <p className='whitespace-pre-wrap font-bold'>Uploaded</p><span className='col-span-2'>: {gameData.game.details.upload_date}</span>
+                                                            <p className='whitespace-pre-wrap font-semibold text-[#B9E0F2]'>Uploaded</p><span className='col-span-2'>: {gameData.game.details.upload_date}</span>
                                                         </div>
                                                         <div className='grid grid-cols-3 gap-5 place-content-start mt-1'>
-                                                            <p className='whitespace-pre-wrap font-bold'>Platform</p><span className='col-span-2'>: {gameData.game.details.platform}</span>
+                                                            <p className='whitespace-pre-wrap font-semibold text-[#B9E0F2]'>Platform</p><span className='col-span-2'>: {gameData.game.details.platform}</span>
                                                         </div>
                                                         <div className='grid grid-cols-3 gap-5 place-content-start mt-1'>
-                                                            <p className='whitespace-pre-wrap font-bold'>Censorhip</p><span className='col-span-2'>: {gameData.game.details.censorship}</span>
+                                                            <p className='whitespace-pre-wrap font-semibold text-[#B9E0F2]'>Censorhip</p><span className='col-span-2'>: {gameData.game.details.censorship}</span>
                                                         </div>
                                                         <div className='grid grid-cols-3 gap-5 place-content-start mt-1'>
-                                                            <p className='whitespace-pre-wrap font-bold'>Downloaded</p><span className='col-span-2'>: {gameData.game.download_count.length > 0 ? gameData.game.download_count.length : 0}</span>
+                                                            <p className='whitespace-pre-wrap font-semibold text-[#B9E0F2]'>Downloaded</p><span className='col-span-2'>: {gameData.game.download_count.length > 0 ? gameData.game.download_count.length : 0}</span>
                                                         </div>
                                                         <div className='grid grid-cols-3 gap-5 place-content-start mt-1'>
-                                                            <p className='whitespace-pre-wrap font-bold'>Ratings:</p>
+                                                            <p className='whitespace-pre-wrap font-semibold text-[#B9E0F2]'>Ratings:</p>
                                                         </div>
                                                         <div className="flex items-center star-rating">
                                                             {[...Array(5)].map((_, index) => ( 
@@ -405,10 +425,10 @@ const GamesSingle = ({ user }) => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <p className='whitespace-pre-wrap font-bold text-2xl mb-2'>Description</p>
+                                                <p className='whitespace-pre-wrap font-bold text-2xl mb-2 text-[#0DBFDC]'>Description</p>
                                                 <p className='whitespace-pre-wrap'>{gameData.game.description}</p>
                                                 
-                                                <p className='whitespace-pre-wrap font-bold text-2xl mt-4 mb-2'>Gallery</p>
+                                                <p className='whitespace-pre-wrap font-bold text-2xl mt-4 mb-2 text-[#0DBFDC]'>Gallery</p>
                                                 {
                                                     (gameData.game.carousel && gameData.game.gallery && gameData.game.gallery.length > 0) ?
                                                     <Carousel 
@@ -462,7 +482,7 @@ const GamesSingle = ({ user }) => {
                                                     !(gameData.game.gallery && gameData.game.gallery.length > 0) &&
                                                     <p className='mt-1 whitespace-pre-wrap'>No image to show</p>
                                                 }
-                                                <p className='whitespace-pre-wrap font-bold text-2xl mt-4 mb-2'>Downloads</p>
+                                                <p className='whitespace-pre-wrap font-bold text-2xl mt-4 mb-2 text-[#0DBFDC]'>Downloads</p>
 
                                                 {
                                                     gameData.game.download_link && gameData.game.download_link.length > 0 &&
@@ -521,78 +541,140 @@ const GamesSingle = ({ user }) => {
                                                 </div>
                                                 </>
                                             }
-                                        </div>
-                                        <div className="">
+                                            </div>
 
                                             {
-                                                tagsList && tagsList.length > 0 &&
-                                                    <div className='bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] mb-4 p-8 text-white h-[370px] overflow-auto scrollbar-hide'>
-                                                        <h2 className='text-xl font-semibold mb-6'>Tags</h2>
-                                                        <ul className='sm:text-base text-sm'>
-                                                            {
-                                                                tagsList.map((item, index) => {
-                                                                    return (
-                                                                        <MotionAnimate animation='fadeInUp' key={index}>
-                                                                            <Link to={`/games/tags/${item.tag}`}><li className='capitalize flex justify-between hover:text-[#00FFFF] cursor-pointer hover:ml-3 transition-all mb-2 font-semibold border-b border-solid border-gray-500 pb-2'>{item.tag}<span className='text-white'>({item.count})</span></li></Link>
-                                                                        </MotionAnimate>
-                                                                    )
-                                                                })
-                                                            }
-                                                        </ul>
-                                                    </div>
-                                            }
-                                            {
-                                                recentBlogs?.length > 0 &&
-                                                <div className='bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] mb-8 p-8 text-white'>
-                                                    <h2 className='text-xl font-semibold mb-6'>Recent Gaming Blogs</h2>
-                                                    <div className='flex flex-col'>
+                                                relatedGames && relatedGames.length > 0 &&
+                                                <>
+                                                    <h1 className='text-3xl font-semibold mb-8 mt-8 text-[#0DBFDC]'>Related Games:</h1>
+                                                    <div className="grid md:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-5 place-content-start my-10">
                                                         {
-                                                            recentBlogs.map((item, index) => {
-                                                                var liked_blogs = checkedForLikedBLogs(item.likes);
+                                                            relatedGames.map((item, index) => {
                                                                 return (
-                                                                    <MotionAnimate key={index} variant={{
-                                                                        hidden: { 
-                                                                            transform: 'scale(0)'
-                                                                        },
-                                                                        show: {
-                                                                            opacity: 1,
-                                                                            transform: 'scale(1)',
-                                                                            transition: {
-                                                                                duration: 0.2,
-                                                                            }
-                                                                        }
-                                                                    }}>
-                                                                        <div className='mb-4'>
-                                                                            <Link to={`/blogs/${item._id}`} >
-                                                                                <img 
-                                                                                    src={convertDriveImageLink(item.featured_image)}
-                                                                                    alt="Post Image"
-                                                                                    className='w-full md:h-44 h-72 object-cover rounded-lg'
-                                                                                />
-                                                                            </Link>
-                                                                            <div className='ml-2 relative'>
-                                                                                <Link to={`/blogs/${item._id}`} className='mb-4'><h2 className='text-xl font-semibold my-2'>{item.post_title}</h2></Link>
-                                                                                <div className='flex justify-between'>
-                                                                                    <div className='flex flex-wrap items-center justify-end'>
-                                                                                        <button className='cursor-pointer' onClick={() => addLikes(index, item._id)}><FontAwesomeIcon icon={faHeart} style={{color: liked_blogs ? '#CD3242' : '#FFF'}} className='mr-1 pt-1 font-bold text-lg'/> {item.likes.length}</button>
-                                                                                    </div>
-                                                                                    <div className='flex items-center'>
-                                                                                        <FontAwesomeIcon icon={faCalendar} className="text-white text-xs"/>
-                                                                                        <p className='text-gray-400 xs:text-sm text-xs ml-2 break-all'>{moment(item.createdAt).fromNow()}</p>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
+                                                                    <MotionAnimate key={index} animation='fadeInUp'>
+                                                                        <GamesCards  
+                                                                            id={item._id}
+                                                                            heading={item.title} 
+                                                                            image={item.featured_image} 
+                                                                            downloads={item.download_count > 0 ? item.download_count : 0}
+                                                                            category={item.tags.length > 0 ? item.tags[0] : 'No Tag Available'} 
+                                                                            uploader={item.user.username} 
+                                                                            ratings={item.ratings}
+                                                                            download_links={item.download_link}
+                                                                            relatedGames={true}
+                                                                        />
                                                                     </MotionAnimate>
                                                                 )
                                                             })
                                                         }
                                                     </div>
+                                                </>
+                                            }
+                                        </div>
+                                        <div className="sm:px-2 flex flex-col gap-8">
+
+                                            <div className='transition-all p-4 py-5 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100 font-poppins'>
+                                                <h2 className='text-xl font-semibold mb-2 text-[#0DBFDC]'>Categories</h2>
+                                                <hr className='border-[1.8px] border-[#0DBFDC] mb-6 w-1/3'/>
+
+                                                <div className='flex flex-col gap-2 mb-4'>
+                                                    {
+                                                        categoriesList?.length > 0 &&
+                                                        categoriesList.map((item, index) => {
+                                                            return (
+                                                                <a href={`/games/category/${item.category}`} key={index} className='flex justify-between items-center cursor-pointer transition-all p-4 py-3 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
+                                                                    <span>
+                                                                        {/* <FontAwesomeIcon icon={['fas', item.icon]} className='mr-2'/> */}
+                                                                        {item.category}
+                                                                    </span>
+
+                                                                    <p className='bg-[#222F43] px-3 py-1 rounded-full text-xs'>{item.count}</p>
+                                                                </a>
+                                                            )
+                                                        })
+                                                    } 
+                                                </div>
+                                            </div>
+
+                                            <div className='transition-all p-4 py-5 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100 font-poppins'>
+                                                <h2 className='text-xl font-semibold mb-2 text-[#0DBFDC]'>Tags</h2>
+                                                <hr className='border-[1.8px] border-[#0DBFDC] mb-6 w-1/3'/>
+
+                                                <div className='flex flex-col gap-2 mb-4'>
+                                                    {
+                                                        tagsList?.length > 0 &&
+                                                        tagsList.map((item, index) => {
+                                                            return (
+                                                                <a href={`/games/tags/${item.tag}`} key={index} className='flex justify-between items-center cursor-pointer transition-all p-4 py-3 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
+                                                                    <span>
+                                                                        {/* <FontAwesomeIcon icon={['fas', item.icon]} className='mr-2'/> */}
+                                                                        #{item.tag}
+                                                                    </span>
+
+                                                                    <p className='bg-[#222F43] px-3 py-1 rounded-full text-xs'>{item.count}</p>
+                                                                </a>
+                                                            )
+                                                        })
+                                                    } 
+                                                </div>
+                                            </div>
+
+                                            {
+                                                recentBlogs?.length > 0 &&
+                                                <div className='transition-all p-4 py-5 text-sm rounded-lg bg-[#131C31] border border-solid border-[#222F43] text-gray-100 font-poppins'>
+                                                    <h2 className='text-xl font-semibold mb-2 text-[#0DBFDC]'>Latest Gaming Blog{recentBlogs?.length > 1 && 's'}</h2>
+                                                    <hr className='border-[1.8px] border-[#0DBFDC] mb-6 w-1/3'/>
+                                                    
+                                                    {
+                                                        recentBlogs?.length > 0 &&
+                                                        recentBlogs.map((item, index) => {
+                                                            var liked_blogs = checkedForLikedBLogs(item.likes);
+                                                            return (
+                                                                <MotionAnimate key={index} variant={{
+                                                                    hidden: { 
+                                                                        transform: 'scale(0)'
+                                                                    },
+                                                                    show: {
+                                                                        opacity: 1,
+                                                                        transform: 'scale(1)',
+                                                                        transition: {
+                                                                            duration: 0.2,
+                                                                        }
+                                                                    }
+                                                                }}>
+                                                                <div className='flex flex-row items-center text-sm mt-4 hover:text-[#0DBFDC] text-[#B9E0F2] transition-all'>
+                                                                    <div className='w-full'>
+                                                                        <div className='flex items-center mb-2'>
+                                                                            <img
+                                                                                className='rounded-full xs:w-16 xs:h-16 w-12 h-12 border border-gray-400 object-cover'
+                                                                                src={convertDriveImageLink(item.featured_image)}
+                                                                                alt="user profile"
+                                                                            />
+                                                                            <div className='xs:ml-4 ml-2'>
+                                                                                <Link to={`/blogs/${item._id}`}><p className='text-base font-semibold cursor-pointer'>{item.post_title}</p></Link>
+                                                                                <p className='whitespace-pre-wrap text-sm mt-1 text-[#94a9c9]'>#{item.categories} • {convertTimezone(item.createdAt)}</p>
+                                                                                
+                                                                                <div className='flex flex-wrap items-center text-gray-100 mt-1'>
+                                                                                    <button className='cursor-pointer' onClick={() => addLikes(index, item._id)}><FontAwesomeIcon icon={faHeart} style={{color: liked_blogs ? '#CD3242' : '#FFF'}} className='pt-[0.15rem] font-bold text-base'/> {item.likes?.length > 0 ? item.likes.length : 0} </button>
+                                                                                    <span className='mx-2 text-lg'>•</span>
+                                                                                    <p className='text-sm'><FontAwesomeIcon icon={faComment} className='mx-1'/> {item.comments > 0 ? item.comments : 0}</p>
+                                                                                </div>
+                                                                                
+                                                                                <hr className='border-gray-700 mt-2'/>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                </MotionAnimate>
+                                                            )
+                                                        })
+                                                    }
                                                 </div>
                                             }
                                         </div>
                                     </div>
-                                    {
+
+                                    {/* {
                                         relatedGames && relatedGames.length > 0 &&
                                         <>
                                             <h1 className='text-3xl font-semibold mb-8 text-gray-300 mt-8'>Related Games:</h1>
@@ -618,7 +700,7 @@ const GamesSingle = ({ user }) => {
                                                 }
                                             </div>
                                         </>
-                                    }
+                                    } */}
                                 </>
                             }
                     </div>

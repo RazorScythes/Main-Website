@@ -16,6 +16,7 @@ const initialState = {
     forbiden: '',
     sideAlert: {},
     tagsCount: [],
+    categoriesCount: [],
     recentGameBlog: []
 }
 
@@ -134,6 +135,22 @@ export const updateGameAccessKey = createAsyncThunk('game/updateGameAccessKey', 
 export const countTags = createAsyncThunk('game/countTags', async (form, thunkAPI) => {
     try {
         const response = await api.countTags(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const categoriesCount = createAsyncThunk('game/categoriesCount', async (form, thunkAPI) => {
+    try {
+        const response = await api.categoriesCount(form)
         return response
     }
     catch (err) {
@@ -323,6 +340,15 @@ export const gameSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(countTags.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(categoriesCount.fulfilled, (state, action) => {
+            state.categoriesCount = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(categoriesCount.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         }),

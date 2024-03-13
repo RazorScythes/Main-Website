@@ -488,9 +488,9 @@ const Blogs = ({ user }) => {
                             <div className="container mx-auto py-12 pt-6 xs:px-6 text-[#94a9c9] font-poppins">
                                 <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start'>
                                     <div>
-                                        <div className='flex flex-row items-start text-sm mt-6 pb-2'>
+                                        <div className='flex sm:flex-row flex-col items-start text-sm mt-6 pb-2'>
                                             <h1 className='sm:text-5xl text-4xl font-bold text-[#0DBFDC] drop-shadow-md'> {key ? 'Blogs Search' : 'Latest Blogs'} </h1>
-                                            <button className='top-0 ml-2 mb-2 font-semibold bg-[#131C31] border border-solid border-[#222F43] text-gray-100  transition-colors duration-300 ease-in-out px-8 py-1 rounded-full'>
+                                            <button className='top-0 sm:ml-2 ml-0 mb-2 sm:mt-0 mt-2 font-semibold bg-[#131C31] border border-solid border-[#222F43] text-gray-100  transition-colors duration-300 ease-in-out px-8 py-1 rounded-full'>
                                                 {blogs?.length > 0 ? blogs.length : "0" } Articles
                                             </button>
                                         </div>

@@ -137,6 +137,7 @@ export const getGames                                   = (formData) => User_API
 export const getRelatedGames                            = (formData) => User_API.post('/game/getRelatedGames', formData)
 export const addRatings                                 = (formData) => User_API.post('/game/addRatings', formData, options)
 export const countTags                                  = (formData) => User_API.post('/game/countTags', formData, options)
+export const categoriesCount                            = (formData) => User_API.post('/game/categoriesCount', formData, options)
 export const getGameByTag                               = (formData) => User_API.post('/game/getGameByTag', formData)
 export const getGameByDeveloper                         = (formData) => User_API.post('/game/getGameByDeveloper', formData)
 export const getGameBySearchKey                         = (formData) => User_API.post('/game/getGameBySearchKey', formData)
