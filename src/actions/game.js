@@ -276,6 +276,7 @@ export const gameSlice = createSlice({
         }),
         builder.addCase(getGameByDeveloper.fulfilled, (state, action) => {
             state.games = action.payload.data.result
+            state.tagsCount = action.payload.data.tags
             state.error = ''
             state.isLoading = false
         }),
@@ -284,6 +285,7 @@ export const gameSlice = createSlice({
         }),
         builder.addCase(getGameBySearchKey.fulfilled, (state, action) => {
             state.games = action.payload.data.result
+            state.tagsCount = action.payload.data.tags
             state.error = ''
             state.isLoading = false
         }),

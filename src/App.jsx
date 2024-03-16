@@ -65,8 +65,8 @@ const App = () => {
               <Route path="games" element={<><Games user={user}/> <Footer /></>} />
               <Route path="games/:id" element={<><GamesSingle user={user}/> <Footer /></>} />
               <Route path="games/tags/:tag" element={<><GameTag user={user} /> <Footer /></>} />
-              <Route path="games/search/:key" element={<><GameTag user={user} /> <Footer /></>} />
-              <Route path="games/developer/:developer" element={<><GameTag user={user} /> <Footer /></>} />
+              <Route path="games/search/:key" element={<><Games user={user} /> <Footer /></>} />
+              <Route path="games/developer/:developer" element={<><Games user={user} /> <Footer /></>} />
 
               <Route path="blogs" element={<><Blogs user={user} /> <Footer /></>} />
               <Route path="blogs/search/:key" element={<><Blogs user={user} /> <Footer /></>} />

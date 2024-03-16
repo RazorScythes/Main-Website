@@ -157,7 +157,7 @@ const Blogs = ({ user }) => {
             var filteredData
             if(filteredType !== null) {
                 if(tags.length > 0) {
-                    dataTags = blog.filter(obj => filteredType === obj.categories || filteredType === '');
+                    filteredData = blog.filter(obj => filteredType === obj.categories || filteredType === '');
                 }
                 else {
                     filteredData = blog.filter(obj => filteredType === obj.categories || filteredType === '');
@@ -310,6 +310,7 @@ const Blogs = ({ user }) => {
     }
 
     const handleFilteredChange = (filtered) => {
+        if(filtered === filteredType) filtered = ''
         const urlString = window.location.href.split('?')[0];
         const baseUrl = window.location.origin;
         const path = urlString.substring(baseUrl.length);

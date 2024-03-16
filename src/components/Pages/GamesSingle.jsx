@@ -398,7 +398,7 @@ const GamesSingle = ({ user }) => {
                                                                 <span
                                                                     key={index}
                                                                     className={`relative star ${fixedRating >= index + 1 ? 'filled' : rating >= index + 1 ? 'filled' : ''} ${
-                                                                        fixedRating === index + 0.5 ? 'half-filled' : rating === index + 0.5 ? 'half-filled' : ''
+                                                                        fixedRating > (index + 0.5) ? 'half-filled' : rating > (index + 0.5) ? 'half-filled' : ''
                                                                     }`}
                                                                 >
                                                                     &#9733;
@@ -582,7 +582,7 @@ const GamesSingle = ({ user }) => {
                                                         categoriesList?.length > 0 &&
                                                         categoriesList.map((item, index) => {
                                                             return (
-                                                                <a href={`/games/category/${item.category}`} key={index} className='flex justify-between items-center cursor-pointer transition-all p-4 py-3 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
+                                                                <a href={`/games?category=${item.category}`} key={index} className='flex justify-between items-center cursor-pointer transition-all p-4 py-3 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
                                                                     <span>
                                                                         {/* <FontAwesomeIcon icon={['fas', item.icon]} className='mr-2'/> */}
                                                                         {item.category}
@@ -605,7 +605,7 @@ const GamesSingle = ({ user }) => {
                                                         tagsList?.length > 0 &&
                                                         tagsList.map((item, index) => {
                                                             return (
-                                                                <a href={`/games/tags/${item.tag}`} key={index} className='flex justify-between items-center cursor-pointer transition-all p-4 py-3 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
+                                                                <a href={`/games?tags=${item.tag}`} key={index} className='flex justify-between items-center cursor-pointer transition-all p-4 py-3 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
                                                                     <span>
                                                                         {/* <FontAwesomeIcon icon={['fas', item.icon]} className='mr-2'/> */}
                                                                         #{item.tag}
