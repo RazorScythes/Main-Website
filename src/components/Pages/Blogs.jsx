@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faChevronRight, faComment, faChevronUp, faChevronDown, faArrowRight, faCalendar, faHeart, faHomeLg, faSearch, faClose, faCheck, faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faChevronRight, faComment, faChevronUp, faChevronDown, faArrowRight, faCalendar, faHeart, faHomeLg, faSearch, faClose, faCheck, faArrowLeft, faCheckSquare, faSquare } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { useSearchParams, useParams } from "react-router-dom";
 import { Link, useNavigate } from 'react-router-dom';
@@ -568,10 +568,10 @@ const Blogs = ({ user }) => {
                                 </button>
                                 <div className={`${toggle.categories ? `absolute` : `hidden`} text-sm z-[100] top-10 right-[-8px] w-48 bg-[#131C31] border border-[#222F43] text-gray-100 p-3 py-2 rounded-sm shadow-2xl`}>
                                     <p className='text-sm font-semibold mb-1'>Filter by:</p>
-                                    <button onClick={() => handlePageType("")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- All { paramIndex && <FontAwesomeIcon icon={faCheck}/>}</button>
-                                    <button onClick={() => handlePageType("latest")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- Latest { checkParams('latest') && <FontAwesomeIcon icon={faCheck}/>}</button>
-                                    <button onClick={() => handlePageType("popular")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- Trending { checkParams('popular') && <FontAwesomeIcon icon={faCheck}/>}</button>
-                                    <button onClick={() => handlePageType("most_viewed")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- Most Viewed { checkParams('most_viewed') && <FontAwesomeIcon icon={faCheck}/>}</button>
+                                    <button onClick={() => handlePageType("")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'><FontAwesomeIcon icon={paramIndex ? faCheckSquare : faSquare} className='mr-1'/> All</button>
+                                    <button onClick={() => handlePageType("latest")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'><FontAwesomeIcon icon={checkParams('latest') ? faCheckSquare : faSquare} className='mr-1'/> Latest</button>
+                                    <button onClick={() => handlePageType("popular")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'><FontAwesomeIcon icon={checkParams('popular') ? faCheckSquare : faSquare} className='mr-1'/> Popular</button>
+                                    <button onClick={() => handlePageType("most_viewed")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'><FontAwesomeIcon icon={checkParams('most_viewed') ? faCheckSquare : faSquare} className='mr-1'/> Most Viewed</button>
                                     </div>
                                     <p className='ml-3 text-sm sm:block hidden'>
                                     {

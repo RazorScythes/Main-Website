@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Error_forbiden } from '../../assets';
 import { Link, useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowLeft, faArrowRight, faCalendar, faCheck, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faClose, faDownload, faHomeLg, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { faArrowLeft, faArrowRight, faCalendar, faCheck, faCheckSquare, faChevronDown, faChevronLeft, faChevronRight, faChevronUp, faClose, faDownload, faHomeLg, faSearch, faSquare } from "@fortawesome/free-solid-svg-icons";
 import { useSearchParams, useParams } from "react-router-dom";
 import { getGameBySearchKey, getGameByDeveloper, categoriesCount, getGames, countTags, clearAlert } from "../../actions/game";
 import { MotionAnimate } from 'react-motion-animate'
@@ -517,10 +517,10 @@ const Games = ({ user }) => {
                                 </button>
                                 <div className={`${toggle.categories ? `absolute` : `hidden`} text-sm z-[100] top-10 right-[-8px] w-48 bg-[#131C31] border border-[#222F43] text-gray-100 p-3 py-2 rounded-sm shadow-2xl`}>
                                     <p className='text-sm font-semibold mb-1'>Filter by:</p>
-                                    <button onClick={() => handlePageType("")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- All { paramIndex && <FontAwesomeIcon icon={faCheck}/>}</button>
-                                    <button onClick={() => handlePageType("latest")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- Latest { checkParams('latest') && <FontAwesomeIcon icon={faCheck}/>}</button>
-                                    <button onClick={() => handlePageType("popular")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- Popular { checkParams('popular') && <FontAwesomeIcon icon={faCheck}/>}</button>
-                                    <button onClick={() => handlePageType("most_viewed")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- Most Viewed { checkParams('most_viewed') && <FontAwesomeIcon icon={faCheck}/>}</button>
+                                    <button onClick={() => handlePageType("")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'><FontAwesomeIcon icon={paramIndex ? faCheckSquare : faSquare} className='mr-1'/> All</button>
+                                    <button onClick={() => handlePageType("latest")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'><FontAwesomeIcon icon={checkParams('latest') ? faCheckSquare : faSquare} className='mr-1'/> Latest</button>
+                                    <button onClick={() => handlePageType("popular")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'><FontAwesomeIcon icon={checkParams('popular') ? faCheckSquare : faSquare} className='mr-1'/> Popular</button>
+                                    <button onClick={() => handlePageType("most_viewed")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'><FontAwesomeIcon icon={checkParams('most_viewed') ? faCheckSquare : faSquare} className='mr-1'/> Most Viewed</button>
                                     </div>
                                     <p className='ml-3 text-sm sm:block hidden'>
                                     {

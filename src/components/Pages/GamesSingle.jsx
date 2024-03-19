@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useDispatch, useSelector } from 'react-redux'
-import { faCalendar, faInfoCircle, faImage, faDownload, faMinus, faChevronRight, faChevronLeft, faArrowRight, faHeart, faComment } from "@fortawesome/free-solid-svg-icons";
+import { faCalendar, faInfoCircle, faImage, faDownload, faMinus, faChevronRight, faChevronLeft, faArrowRight, faHeart, faComment, faArrowLeft, faExternalLink } from "@fortawesome/free-solid-svg-icons";
 import { Link } from 'react-router-dom';
 import { useParams, useSearchParams } from 'react-router-dom'
 import { categoriesCount, addOneDownload, getRelatedGames, updateGameAccessKey, getGameByID, countTags, getRecentGameBlog, addRecentGamingBlogLikes, clearAlert } from "../../actions/game";
@@ -17,26 +17,29 @@ import avatar from '../../assets/avatar.png'
 import loading from '../../assets/loading.gif'
 import moment from 'moment';
 import "react-multi-carousel/lib/styles.css";
+import { faGoogleDrive } from '@fortawesome/free-brands-svg-icons';
 
 const cookies = new Cookies();
 
 const CustomRight = ({ onClick }) => {
     return (
-      <FontAwesomeIcon
-        icon={faChevronRight}
-        onClick={onClick}
-        className="absolute sm:right-0 right-4 max-w-4 cursor-pointer text-primary-400 text-2xl font-bold text-white"
-      />
+      <div onClick={onClick} className='bg-transparent text-transparent transition-all h-full w-16 absolute sm:right-4 right-0 flex items-center justify-end cursor-pointer'>
+        <FontAwesomeIcon
+          icon={faArrowRight}
+          className="absolute sm:right-4 right-0 max-w-4 cursor-pointer text-primary-400 text-2xl font-bold"
+        />
+      </div>
     )
 };
   
 const CustomLeft = ({ onClick }) => {
     return (
-      <FontAwesomeIcon
-        icon={faChevronLeft}
-        onClick={onClick}
-        className="absolute sm:left-0 left-4 max-w-4 cursor-pointer text-primary-400 text-2xl font-bold text-white"
-      />
+      <div onClick={onClick} className='bg-transparent text-transparent transition-all h-full w-16 absolute sm:left-4 left-0 flex items-center cursor-pointer'>
+        <FontAwesomeIcon
+          icon={faArrowLeft}
+          className="absolute sm:left-4 left-0 max-w-4 text-primary-400 text-2xl font-bold"
+        />
+      </div>
     )
 };
 
@@ -357,11 +360,11 @@ const GamesSingle = ({ user }) => {
                                                     <img
                                                         src={gameData.game.featured_image}
                                                         alt="Featured Image"
-                                                        className='object-cover w-full border-gray-600 border-2 rounded-md'
+                                                        className='object-cover w-full border-[#222F43] border-2 rounded-md'
                                                     />
                                                     <div className='my-2'>
 
-                                                        <h2 className='text-3xl font-semibold text-[#0DBFDC]'>{gameData.game.title}</h2>
+                                                        <h2 className='text-3xl font-semibold text-[#0DBFDC] mb-1'>{gameData.game.title}</h2>
                                                         <p className='whitespace-pre-wrap'><span className='font-semibold text-[#B9E0F2]'>Developer</span>:
                                                             {
                                                                 gameData.game.details?.developer ?
@@ -370,7 +373,7 @@ const GamesSingle = ({ user }) => {
                                                                     <Link to={`/games/developer/Anonymous`} className='hover:text-[#0DBFDC] transition-all'> Anonymous</Link>
                                                             }
                                                         </p>
-                                                        <hr className='my-1 mb-2'/>                                   
+                                                        <hr className='border-gray-700 mt-2'/>                                   
                                                         
                                                         <div className='grid grid-cols-3 gap-5 place-content-start mt-4'>
                                                             <p className='whitespace-pre-wrap font-semibold text-[#B9E0F2]'>Language</p><span className='col-span-2'>: {gameData.game.details.language}</span>
@@ -407,14 +410,19 @@ const GamesSingle = ({ user }) => {
                                                             <span className='ml-1'>({!isNaN(ratingNumber) ? ratingNumber : 0})</span>
                                                         </div>
                                                         <p className='mt-1 whitespace-pre-wrap'><span className='font-bold'>Tags</span>:</p>
-                                                        <div className='flex flex-wrap items-center mt-2 mb-4 relative'>
+                                                        <div className='flex flex-wrap items-center mt-2 mb-4 gap-2 relative'>
                                                             {
                                                                 gameData.game.tags && gameData.game.tags.length > 0 &&
                                                                     gameData.game.tags.map((item, index) => {
                                                                         return (
-                                                                            <div key={index} className='mt-1 flex items-center relative bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF] px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
-                                                                                <p>{item}</p>  
-                                                                            </div>  
+                                                                            <a href={`/games?tags=${item}`} key={index} className='flex justify-between items-center cursor-pointer transition-all p-3 py-2 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
+                                                                                <span>
+                                                                                    #{item}
+                                                                                </span>
+                                                                            </a>
+                                                                            // <div key={index} className='mt-1 flex items-center relative bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] border border-[#CAD5DF] px-4 py-1 mr-2 xs:text-sm text-sm font-semibold transition-all capitalize'>
+                                                                            //     <p>{item}</p>  
+                                                                            // </div>  
                                                                         )
                                                                 })
                                                             }
@@ -425,10 +433,10 @@ const GamesSingle = ({ user }) => {
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <p className='whitespace-pre-wrap font-bold text-2xl mb-2 text-[#0DBFDC]'>Description</p>
-                                                <p className='whitespace-pre-wrap'>{gameData.game.description}</p>
+                                                <p className='whitespace-pre-wrap font-bold text-2xl mb-2 text-[#B9E0F2]'>Description</p>
+                                                <p className='whitespace-pre-wrap text-[#94a9c9]'>{gameData.game.description}</p>
                                                 
-                                                <p className='whitespace-pre-wrap font-bold text-2xl mt-4 mb-2 text-[#0DBFDC]'>Gallery</p>
+                                                <p className='whitespace-pre-wrap font-bold text-2xl mt-4 mb-2 text-[#B9E0F2]'>Gallery</p>
                                                 {
                                                     (gameData.game.carousel && gameData.game.gallery && gameData.game.gallery.length > 0) ?
                                                     <Carousel 
@@ -446,7 +454,7 @@ const GamesSingle = ({ user }) => {
                                                             gameData.game.gallery && gameData.game.gallery.length > 0 &&
                                                                 gameData.game.gallery.map((item, index) => {
                                                                     return (
-                                                                        <div key={index} className='md:px-8 md:py-4 w-full md:h-[400px] h-[200px] overflow-hidden'>
+                                                                        <div key={index} className='md:py-4 w-full md:h-[400px] h-[200px] overflow-hidden'>
                                                                             <img
                                                                                 src={item}
                                                                                 alt={`gallery #${index+1}`}
@@ -480,9 +488,9 @@ const GamesSingle = ({ user }) => {
 
                                                 {
                                                     !(gameData.game.gallery && gameData.game.gallery.length > 0) &&
-                                                    <p className='mt-1 whitespace-pre-wrap'>No image to show</p>
+                                                    <p className='mt-1 whitespace-pre-wrap text-[#94a9c9]'>No image to show</p>
                                                 }
-                                                <p className='whitespace-pre-wrap font-bold text-2xl mt-4 mb-2 text-[#0DBFDC]'>Downloads</p>
+                                                <p className='whitespace-pre-wrap font-bold text-2xl mt-4 mb-2 text-[#B9E0F2]'>Downloads</p>
 
                                                 {
                                                     gameData.game.download_link && gameData.game.download_link.length > 0 &&
@@ -492,16 +500,27 @@ const GamesSingle = ({ user }) => {
                                                                     {
                                                                         item.links.length > 0 &&
                                                                         <>
-                                                                            <p className='whitespace-pre-wrap font-semibold text-lg mt-4'>{item.storage_name}: <span className='font-normal'>{gameData.game.password}</span></p>
-                                                                            <div className='flex flex-wrap'>
+                                                                            <p className='whitespace-pre-wrap font-semibold text-base mt-4 font-poppins'>{item.storage_name}: <span className='font-normal text-sm'>{gameData.game.password}</span></p>
+                                                                            <hr className='border-gray-700 mt-1 mb-2 w-32'/>   
+                                                                            <div className=''>
                                                                                 {
                                                                                     item.links.map((link, i) => {
                                                                                         return (
-                                                                                            <>  
-                                                                                                <a href={link} onClick={() => addDownloadCount()}  target="_blank" className="text-center font-semibold text-base sm:w-1/3 xs:w-1/2 w-full mr-2 mt-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
-                                                                                                    <FontAwesomeIcon icon={faDownload} className="text-white mr-1"/> Link #{i+1}
-                                                                                                </a>
-                                                                                            </>
+                                                                                            <div className='grid sm:grid-cols-3 grid-cols-1 gap-1 place-content-start cursor-pointer'>
+                                                                                                <div className='col-span-2 flex items-center relative hover:bg-gray-700 transition-all p-2'>
+                                                                                                    <FontAwesomeIcon icon={faGoogleDrive} className='mr-2 text-[#0DBFDC]'/>
+                                                                                                    <div>
+                                                                                                        <p className='text-white xs:text-sm text-sm break-all'>Link #{i+1}</p>
+                                                                                                        <a href={link} onClick={() => addDownloadCount()} target="_blank"><FontAwesomeIcon icon={faExternalLink} className='cursor-pointer text-[#0DBFDC] absolute right-0 top-1/2 transform -translate-x-1/2 -translate-y-1/2'/></a>
+                                                                                                    </div>
+                                                                                                </div>
+                                                                                                <div></div>
+                                                                                            </div>
+                                                                                            // <>  
+                                                                                            //     <a href={link} onClick={() => addDownloadCount()}  target="_blank" className="text-center font-semibold text-base sm:w-1/3 xs:w-1/2 w-full mr-2 mt-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                                                            //         <FontAwesomeIcon icon={faDownload} className="text-white mr-1"/> Link #{i+1}
+                                                                                            //     </a>
+                                                                                            // </>
                                                                                         )
                                                                                     })
                                                                                 }
@@ -514,9 +533,10 @@ const GamesSingle = ({ user }) => {
                                                 }
                                                 {
                                                     checkDownloadLinks() &&
-                                                        <p className='mt-1 whitespace-pre-wrap'>No download link to show</p>
+                                                        <p className='mt-1 whitespace-pre-wrap text-[#94a9c9]'>No download link to show</p>
                                                 }
-                                                <hr className='mt-8 mb-4'/>
+
+                                                <hr className='border-gray-700 mt-8 mb-4'/>   
                     
                                                 <div className='flex mb-8'>
                                                     <img
@@ -525,18 +545,18 @@ const GamesSingle = ({ user }) => {
                                                         alt="user profile"
                                                     />
                                                     <div className='xs:ml-4 ml-2 xs:my-2'>
-                                                        <p className='text-white xs:text-xl text-lg break-all font-bold'>{gameData.username}</p>
-                                                        <p className='whitespace-pre-wrap xs:text-base text-sm xs:mt-2 mt-1'>{gameData.game.leave_uploader_message}</p>
+                                                        <p className='xs:text-xl text-lg break-all font-bold text-[#0DBFDC]'>{gameData.username}</p>
+                                                        <p className='whitespace-pre-wrap xs:text-base text-sm xs:mt-2 mt-1 text-[#94a9c9]'>{gameData.game.leave_uploader_message}</p>
                                                     </div>
                                                 </div>
                                                 
                                                 <div className='flex justify-between items-center'>
-                                                    <p className='xs:text-base text-sm'><FontAwesomeIcon icon={faCalendar} className="text-gray-400 mr-1"/> {moment(gameData.game.createdAt).fromNow()}</p>
+                                                    <p className='text-sm text-[#94a9c9]'>{/*<FontAwesomeIcon icon={faCalendar} className="text-gray-400 mr-1"/>*/}{convertTimezone(gameData.game.createdAt)} ({moment(gameData.game.createdAt).fromNow()})</p>
                                                     {
                                                         gameData.game.guide_link && 
-                                                            <button title="guide" className='rounded-sm float-right bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-2 px-4 border border-[#CAD5DF] transition-colors duration-300 ease-in-out'>
-                                                                Guides
-                                                            </button>
+                                                            <a href={gameData.game.guide_link} target='_blank' className="cursor-pointer text-sm float-right bg-[#0DBFDC] hover:bg-transparent hover:bg-[#131C31] text-gray-100 py-2 px-4 border border-[#222F43] rounded transition-colors duration-300 ease-in-out">
+                                                                View Guides
+                                                            </a>
                                                     }
                                                 </div>
                                                 </>
@@ -556,7 +576,7 @@ const GamesSingle = ({ user }) => {
                                                                             id={item._id}
                                                                             heading={item.title} 
                                                                             image={item.featured_image} 
-                                                                            downloads={item.download_count > 0 ? item.download_count : 0}
+                                                                            downloads={item.download_count}
                                                                             category={item.tags.length > 0 ? item.tags[0] : 'No Tag Available'} 
                                                                             uploader={item.user.username} 
                                                                             ratings={item.ratings}

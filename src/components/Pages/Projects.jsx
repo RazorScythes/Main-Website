@@ -3,7 +3,7 @@ import styles from "../../style";
 import SideAlert from '../SideAlert'
 import heroBackgroundImage from '../../assets/1696333975880.jpg';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendar, faChevronUp, faChevronDown, faChevronLeft, faChevronRight, faLightbulb, faArrowAltCircleLeft, faArrowAltCircleRight, faArrowLeft, faArrowRight, faThLarge, faTable, faWindowMaximize, faGamepad, faMicrochip, faWrench, faCogs, faObjectGroup, faCode, faBars, faHandPeace, faArchive, faBoltLightning, faSearch, faExchange, faCheck, faClose, faCalendarCheck, faCalendarAlt } from '@fortawesome/free-solid-svg-icons';
+import { faCalendar, faChevronUp, faChevronDown, faChevronLeft, faChevronRight, faLightbulb, faArrowAltCircleLeft, faArrowAltCircleRight, faArrowLeft, faArrowRight, faThLarge, faTable, faWindowMaximize, faGamepad, faMicrochip, faWrench, faCogs, faObjectGroup, faCode, faBars, faHandPeace, faArchive, faBoltLightning, faSearch, faExchange, faCheck, faClose, faCalendarCheck, faCalendarAlt, faCheckSquare, faSquare } from '@fortawesome/free-solid-svg-icons';
 import { useSearchParams, useParams } from "react-router-dom";
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux'
@@ -511,10 +511,10 @@ const Projects = ({ user }) => {
                   </button>
                   <div className={`${toggle.categories ? `absolute` : `hidden`} text-sm z-[100] top-10 right-[-8px] w-48 bg-[#131C31] border border-[#222F43] text-gray-100 p-3 py-2 rounded-sm shadow-2xl`}>
                     <p className='text-sm font-semibold mb-1'>Filter by:</p>
-                      <button onClick={() => handlePageType("")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- All { paramIndex && <FontAwesomeIcon icon={faCheck}/>}</button>
-                      <button onClick={() => handlePageType("latest")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- Latest { checkParams('latest') && <FontAwesomeIcon icon={faCheck}/>}</button>
-                      <button onClick={() => handlePageType("popular")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- Trending { checkParams('popular') && <FontAwesomeIcon icon={faCheck}/>}</button>
-                      <button onClick={() => handlePageType("most_viewed")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'>- Most Viewed { checkParams('most_viewed') && <FontAwesomeIcon icon={faCheck}/>}</button>
+                    <button onClick={() => handlePageType("")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'><FontAwesomeIcon icon={paramIndex ? faCheckSquare : faSquare} className='mr-1'/> All</button>
+                                    <button onClick={() => handlePageType("latest")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'><FontAwesomeIcon icon={checkParams('latest') ? faCheckSquare : faSquare} className='mr-1'/> Latest</button>
+                                    <button onClick={() => handlePageType("popular")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'><FontAwesomeIcon icon={checkParams('popular') ? faCheckSquare : faSquare} className='mr-1'/> Popular</button>
+                                    <button onClick={() => handlePageType("most_viewed")} className='w-full text-left text-sm bg-transparent hover:text-[#0DBFDC] py-1 transition-colors duration-300 ease-in-out xs:mr-2 mr-2'><FontAwesomeIcon icon={checkParams('most_viewed') ? faCheckSquare : faSquare} className='mr-1'/> Most Viewed</button>
                     </div>
                     <p className='ml-3 text-sm sm:block hidden'>
                       {
