@@ -145,6 +145,9 @@ export const getRecentGameBlog                          = (formData) => User_API
 export const addRecentGamingBlogLikes                   = (formData) => User_API.post('/game/addRecentGamingBlogLikes', formData)
 export const addOneDownload                             = (formData) => User_API.post('/game/addOneDownload', formData)
 export const updateGameAccessKey                        = (formData) => User_API.post('/game/updateGameAccessKey', formData)
+export const getGameComments                            = (formData) => User_API.post('/game/getGameComments', formData)
+export const uploadGameComment                          = (formData) => User_API.post('/game/uploadGameComment', formData)
+export const removeGameComment                          = (formData) => User_API.post('/game/removeGameComment', formData)
 
 /*
     Blogs

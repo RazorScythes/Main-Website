@@ -103,13 +103,6 @@ const ProjectsSingle = ({ user }) => {
     }, [project_data])
 
     useEffect(() => {
-        console.log(projectData)
-        console.log(comments)
-        console.log(category)
-        console.log(latestProjects)
-    }, [projectData, comments, category, latestProjects])
-
-    useEffect(() => {
         setCommentList(comments)
         setSubmitted(false)
         setDeleted(false)

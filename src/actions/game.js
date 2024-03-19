@@ -244,6 +244,54 @@ export const addRecentGamingBlogLikes = createAsyncThunk('game/addRecentGamingBl
     }
 })
 
+export const getGameComments = createAsyncThunk('game/getGameComments', async (form, thunkAPI) => {
+    try {
+        const response = await api.getGameComments(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const uploadGameComment = createAsyncThunk('game/uploadGameComment', async (form, thunkAPI) => {
+    try {
+        const response = await api.uploadGameComment(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const removeGameComment = createAsyncThunk('game/removeGameComment', async (form, thunkAPI) => {
+    try {
+        const response = await api.removeGameComment(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const gameSlice = createSlice({
     name: 'game',
     initialState,
@@ -370,6 +418,33 @@ export const gameSlice = createSlice({
         }),
         builder.addCase(addRecentGamingBlogLikes.rejected, (state, action) => {
             console.log("failed to like blog post")
+        }),
+        builder.addCase(getGameComments.fulfilled, (state, action) => {
+            state.comments = action.payload.data.comments
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getGameComments.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(removeGameComment.fulfilled, (state, action) => {
+            state.comments = action.payload.data.comments
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(removeGameComment.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(uploadGameComment.fulfilled, (state, action) => {
+            state.comments = action.payload.data.comments
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(uploadGameComment.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
         })
     },
     reducers: {
