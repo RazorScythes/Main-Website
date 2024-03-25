@@ -438,7 +438,7 @@ const GamesSingle = ({ user }) => {
                                                                 <span
                                                                     key={index}
                                                                     className={`relative star ${fixedRating >= index + 1 ? 'filled' : rating >= index + 1 ? 'filled' : ''} ${
-                                                                        fixedRating > (index + 0.5) ? 'half-filled' : rating > (index + 0.5) ? 'half-filled' : ''
+                                                                        fixedRating >= (index + 0.5) ? 'half-filled' : rating >= (index + 0.5) ? 'half-filled' : ''
                                                                     }`}
                                                                 >
                                                                     &#9733;
