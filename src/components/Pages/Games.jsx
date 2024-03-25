@@ -440,7 +440,7 @@ const Games = ({ user }) => {
                                 <div className='flex sm:flex-row flex-col items-start text-sm mt-6 pb-2'>
                                     <h1 className='sm:text-5xl text-4xl font-bold text-[#0DBFDC] drop-shadow-md'> {key ? 'Games Search' : developer ? 'Developer Search' : 'Latest Games'} </h1>
                                     <button className='top-0 sm:ml-2 ml-0 mb-2 sm:mt-0 mt-2 font-semibold bg-[#131C31] border border-solid border-[#222F43] text-gray-100  transition-colors duration-300 ease-in-out px-8 py-1 rounded-full'>
-                                        {games?.length > 0 ? games.length : "0" } Items
+                                        {games?.length > 0 ? games.length : "0" } Games
                                     </button>
                                 </div>
                                 {
@@ -556,13 +556,17 @@ const Games = ({ user }) => {
                             <div className='col-span-2'>
                             {
                                 message.length > 0 ?
-                                    <div className='h-96 flex flex-col items-center justify-center'> 
-                                        <h3 className='text-white xs:text-3xl text-2xl font-semibold text-center capitalize'>{message}</h3>
-                                        <a href="/games">
-                                            <button className="mt-6 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 xs:px-4 px-2 border border-gray-100 transition-colors duration-300 ease-in-out">
-                                                Reload Page
-                                            </button>
-                                        </a>
+                                    <div
+                                        className="relative bg-cover bg-center py-12 bg-[#131C31] border border-solid border-[#222F43] text-gray-100 font-poppins"
+                                    >   
+                                        <div className={`${styles.marginX} ${styles.flexCenter}`}>
+                                            <div className={`${styles.boxWidthEx}`}>
+                                                <div className="flex flex-col justify-center items-center ">
+                                                    <h1 className="text-3xl font-semibold mb-4 text-center">{message}</h1>
+                                                    <p className="text-base text-center">Looks like there is no uploads at the moment.</p>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 :
                                 games && games.length > 0 ?
@@ -655,7 +659,8 @@ const Games = ({ user }) => {
                                     <div className={`${styles.marginX} ${styles.flexCenter}`}>
                                         <div className={`${styles.boxWidthEx}`}>
                                             <div className="flex flex-col justify-center items-center ">
-                                                <h1 className="text-3xl font-semibold text-center">No Games Found</h1>
+                                                <h1 className="text-3xl font-semibold mb-4 text-center">No Games Found</h1>
+                                                <p className="text-base text-center">Looks like there is no uploads at the moment.</p>
                                             </div>
                                         </div>
                                     </div>

@@ -492,7 +492,7 @@ const Blogs = ({ user }) => {
                                         <div className='flex sm:flex-row flex-col items-start text-sm mt-6 pb-2'>
                                             <h1 className='sm:text-5xl text-4xl font-bold text-[#0DBFDC] drop-shadow-md'> {key ? 'Blogs Search' : 'Latest Blogs'} </h1>
                                             <button className='top-0 sm:ml-2 ml-0 mb-2 sm:mt-0 mt-2 font-semibold bg-[#131C31] border border-solid border-[#222F43] text-gray-100  transition-colors duration-300 ease-in-out px-8 py-1 rounded-full'>
-                                                {blogs?.length > 0 ? blogs.length : "0" } Articles
+                                                {blogs?.length > 0 ? blogs.length : "0" } Blogs
                                             </button>
                                         </div>
                                         {
@@ -614,6 +614,20 @@ const Blogs = ({ user }) => {
                                             </div>
                                         </div>
                                     :
+                                    ((searchKey && blogs.length === 0 && blog?.length > 0) || (filteredType && blogs.length === 0 && blog?.length > 0)) ?
+                                    <div
+                                        className="relative bg-cover bg-center py-12 bg-[#131C31] border border-solid border-[#222F43] text-gray-100 font-poppins"
+                                    >   
+                                        <div className={`${styles.marginX} ${styles.flexCenter}`}>
+                                            <div className={`${styles.boxWidthEx}`}>
+                                                <div className="flex flex-col justify-center items-center ">
+                                                    <h1 className="text-3xl font-semibold mb-4 text-center">No Blogs Found</h1>
+                                                    <p className="text-base text-center">Looks like there is no uploads at the moment.</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    :
                                     <>
                                         <div className='grid sm:grid-cols-2 grid-cols-1 gap-4 place-content-start'>
                                             {
@@ -694,7 +708,7 @@ const Blogs = ({ user }) => {
                                             categories.map((item, index) => {
                                                 return (
                                                     <button onClick={() => handleFilteredChange(item.category)} key={index} className='flex justify-between items-center cursor-pointer transition-all p-4 py-3 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>
-                                                        <span>
+                                                        <span style={{color: filteredType === item.category && '#FFD700'}}>
                                                             {item.category}
                                                         </span>
 

@@ -103,7 +103,7 @@ const GamesCards = ({ id, heading, image, category, downloads, uploader, ratings
     }
 
     const getLastStarRating = (index) => {
-        return fixedRating > (index + 0.5) ? 'half-filled' : rating > (index + 0.5) ? 'half-filled' : ''
+        return fixedRating >= (index + 0.5) ? 'half-filled' : rating >= (index + 0.5) ? 'half-filled' : ''
     }
 
     return (
