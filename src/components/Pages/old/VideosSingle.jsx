@@ -1,9 +1,9 @@
 import React, { useEffect, useState, useRef  } from 'react';
 import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"; 
-import { faEye, faEllipsisV, faThumbsUp, faThumbsDown, faAdd, faDownload, faArrowRightRotate, faClock, faCalendar, faTrash, faLinkSlash, faExclamationTriangle, faMinus, faBars, faFlag, faBox, faSquare, faCheckSquare } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEllipsisV, faThumbsUp, faThumbsDown, faAdd, faDownload, faArrowRightRotate, faClock, faCalendar, faTrash, faLinkSlash, faExclamationTriangle, faMinus } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
-import { uploadLists, addOneLikes, addOneDislikes, addOneViews, getVideoByID, getComments, getRelatedVideos, uploadComment, removeComment, addToWatchLater, clearAlert } from "../../actions/video";
+import { addOneLikes, addOneDislikes, addOneViews, getVideoByID, getComments, getRelatedVideos, uploadComment, removeComment, addToWatchLater, clearAlert } from "../../actions/video";
 import { useParams, useSearchParams } from 'react-router-dom'
 import { MotionAnimate } from 'react-motion-animate'
 import { convertDriveImageLink } from '../Tools'
@@ -54,8 +54,6 @@ const VideosSingle = ({ user }) => {
     const isLoading = useSelector((state) => state.video.isLoading)
     const sideAlert = useSelector((state) => state.video.sideAlert)
     const archiveList = useSelector((state) => state.video.archiveList)
-    const uploads = useSelector((state) => state.video.videoList)
-    const archiveSaveLists = useSelector((state) => state.video.archiveSaveLists)
 
     const [avatar, setAvatar] = useState(localStorage.getItem('avatar')?.replaceAll('"', ""))
     const [active, setActive] = useState(0)
@@ -71,7 +69,7 @@ const VideosSingle = ({ user }) => {
     const [isAnimatingTU, setIsAnimatingTU] = useState(false)
     const [isAnimatingTD, setIsAnimatingTD] = useState(false)
     const [openDirectory, setOpenDirectory] = useState(false)
-
+    console.log(data)
     const [searchParams, setSearchParams] = useSearchParams();
     const access_key = searchParams.get('access_key')
 
@@ -124,13 +122,6 @@ const VideosSingle = ({ user }) => {
     }, [sideAlert])
 
     useEffect(() => {
-        if(Object.keys(video).length !== 0) {
-            dispatch(uploadLists({ 
-                id: user ? user.result?._id : '', 
-                uploader_id: video.id 
-            }))
-        }
-
         setData(video)
         setLikes(video && video.video ? video.video.likes : [])
         setDislikes(video && video.video ? video.video.dislikes : [])
@@ -269,28 +260,6 @@ const VideosSingle = ({ user }) => {
         return false
     }
 
-    const convertTimezone = (date) => {
-        const timeZone = 'America/New_York';
-
-        const dateObj = new Date(date);
-        const formattedDate = new Intl.DateTimeFormat('en-US', {
-            timeZone,
-            year: 'numeric',
-            month: 'short',
-            day: '2-digit',
-            hour12: false,
-        }).format(dateObj);
-
-        return formattedDate
-    }
-
-    const TextWithEllipsis = ({ text, limit = 70 }) => {
-        if (text.length > limit) {
-          return <span>{text.slice(0, limit)}...</span>;
-        }
-        return <span>{text}</span>;
-    }
-
     return (
         <div
             className="relative bg-cover bg-center py-8"
@@ -298,9 +267,9 @@ const VideosSingle = ({ user }) => {
         >   
             <div className={`${styles.marginX} ${styles.flexCenter}`}>
                 <div className={`${styles.boxWidthEx}`}>
-                    <div className="container mx-auto py-12 text-[#94a9c9] font-poppins">
+                    <div className="container mx-auto file:lg:px-8 relative px-0">
                         <SideAlert
-                            variants={alertInfo.variant}    
+                            variants={alertInfo.variant}
                             heading={alertInfo.heading}
                             paragraph={alertInfo.paragraph}
                             active={alertActive}
@@ -382,7 +351,7 @@ const VideosSingle = ({ user }) => {
                             Object.keys(data).length !== 0 ?
                                 <div className="grid md:grid-cols-3 grid-cols-1 gap-4">
                                     <div className="w-full md:col-span-2 text-white">
-                                        {/* <p className='mb-4 font-semibold xs:text-3xl text-2xl break-all'>{ data && data.video ? data.video.title : '' }</p>
+                                        <p className='mb-4 font-semibold xs:text-3xl text-2xl break-all'>{ data && data.video ? data.video.title : '' }</p>
                                         <div className='flex items-center mb-4'>
                                             {
                                                 data && data.video && (
@@ -392,7 +361,7 @@ const VideosSingle = ({ user }) => {
                                                     </>
                                                 )
                                             }
-                                        </div> */}
+                                        </div>
                                         <div className='relative'>
                                             {
                                                 checkVideoFileSize(data?.video?.file_size) ?
@@ -408,7 +377,7 @@ const VideosSingle = ({ user }) => {
                                                 <iframe 
                                                     ref={iframeRef} 
                                                     src={data?.video?.link}
-                                                    className='w-full lg:h-[450px] md:h-[400px] sm:h-[450px] xs:h-[400px] h-[225px] rounded-md'
+                                                    className='w-full lg:h-[450px] md:h-[400px] sm:h-[450px] xs:h-[400px] h-[225px]'
                                                     allow="autoplay"
                                                     onLoad={addViews}
                                                     sandbox="allow-scripts allow-same-origin"
@@ -440,88 +409,76 @@ const VideosSingle = ({ user }) => {
                                                 onPlay={addViews}
                                             /> */}
                                         </div>
-                                        <p className='my-2 font-semibold text-2xl break-all text-[#0DBFDC]'>{ data && data.video ? data.video.title : '' }</p>
                                         <div className='grid sm:grid-cols-2 grid-cols-1 mt-2'>
                                             <div className='flex xs:items-center items-start xs:flex-row flex-col mt-2 text-gray-400'>
                                                 <Link to="" className='flex items-center'>
                                                     <img
-                                                        className='rounded-full w-11 h-11 border border-solid border-[#1C1B19]'
+                                                        className='rounded-full xs:w-8 xs:h-8 w-8 h-8 border border-solid border-gray-500'
                                                         src={ data ? convertDriveImageLink(data.avatar) : convertDriveImageLink(avatar) }
                                                         alt="user profile"
                                                     />
-                                                    <div className='flex flex-col text-xs justify-between'>
-                                                        <p className='ml-2 break-all text-[#0DBFDC] font-semibold mb-1 text-sm'>{ data ? data.username : "Anonymous" }</p>
-                                                        <p className='ml-2 break-all '>Uploader</p>
-                                                    </div>
+                                                    <p className='ml-2 break-all text-white'>{ data ? data.username : "Anonymous" }</p>
                                                 </Link>
                                                 <div className='flex xs:mt-0 mt-2'>
-                                                    <div className='h-8 px-4 rounded-full flex items-center xs:ml-6 ml-0 bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm' title="Views">
+                                                    <div className='flex items-center xs:ml-8 ml-0' title="Views">
                                                         <FontAwesomeIcon icon={faEye} className="text-white mr-2"/>
                                                         <p>{ data && data.video ? data.video.views.length : 0 } <span className='xs:hidden inline-block'>view{data && data.video && data.video.views.length > 0 && 's'}</span></p>
                                                     </div>
-                                                    <div className='rounded-r-lg h-8 px-4 rounded-full flex items-center xs:ml-4 ml-1 bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm' title="Likes">
-                                                        <FontAwesomeIcon onClick={addLikes} style={{color: isAnimatingTU ? '#0DBFDC' : '#FFF'}} icon={faThumbsUp} className="mr-2 cursor-pointer"/>
+                                                    <div className='flex items-center ml-8' title="Likes">
+                                                        <FontAwesomeIcon onClick={addLikes} style={{color: isAnimatingTU ? '#CD3242' : '#FFF'}} icon={faThumbsUp} className="mr-2 cursor-pointer"/>
                                                         <p>{ likes && likes.length }</p>
                                                     </div>
-                                                    <div className='rounded-l-lg h-8 px-4 rounded-full flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm' title="Dislikes">
-                                                        <FontAwesomeIcon onClick={addDislikes} style={{color: isAnimatingTD ? '#0DBFDC' : '#FFF'}} icon={faThumbsDown} className="text-white mr-2 hover:text-[#CD3242] cursor-pointer"/>
+                                                    <div className='flex items-center ml-4' title="Dislikes">
+                                                        <FontAwesomeIcon onClick={addDislikes} style={{color: isAnimatingTD ? '#CD3242' : '#FFF'}} icon={faThumbsDown} className="text-white mr-2 hover:text-[#CD3242] cursor-pointer"/>
                                                         <p>{ dislikes && dislikes.length }</p>
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className='flex flex-wrap items-center sm:justify-end sm:mt-0 mt-2 gap-2'>
-                                                <div className='relative'>
-                                                    <button onClick={() => setOpenDirectory(!openDirectory)} className='rounded-full h-8 px-4 flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm cursor-pointer hover:text-[#0DBFDC] transition-all'>
-                                                        <FontAwesomeIcon icon={faBars} className="mr-2"/> Save
-                                                    </button>
+                                            <div className='flex items-center sm:justify-end sm:mt-0 mt-2'>
+                                                <div className='sm:w-auto w-full grid grid-cols-2 gap-2 mt-2'>
+                                                    <div className='relative'>
+                                                        <button onClick={() => setOpenDirectory(!openDirectory)} className="sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                            <FontAwesomeIcon icon={faAdd} className="text-white"/> Watch Later
+                                                        </button>
+                                                        {
+                                                            openDirectory && 
+                                                            <div className='absolute top-[45px] z-10 right-0 flex flex-col bg-gray-800 shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] w-40'>
+                                                                {
+                                                                    archiveList.archive_list.map((item, index) => {
+                                                                        return (
+                                                                        <Link onClick={() => watchLater(archiveList._id, item.name)} key={index} to="" className='text-sm px-4 py-2 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> {item.name}</Link>
+                                                                        )
+                                                                    })
+                                                                }
+                                                            </div>
+                                                        }
+                                                    </div>
+                                                    {/* <button disabled={true} onClick={() => watchLater()} className="disabled:bg-gray-500 disabled:cursor-no-drop sm:text-base text-sm w-full mr-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                        <FontAwesomeIcon icon={faExclamationTriangle} className="text-white"/> Report
+                                                    </button> */}
                                                     {
-                                                        openDirectory && 
-                                                        <div className='py-2 absolute top-[45px] z-10 right-0 flex flex-col bg-[#131C31] border border-solid border-[#222F43] font-poppins text-sm shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] w-40'>
-                                                            <p className='font-semibold text-sm text-[#0DBFDC] px-4 mb-1'>SAVE TO</p>
-                                                            <hr className='border-gray-700 mb-1'/>
-                                                            {
-                                                                archiveList.archive_list.map((item, index) => {
-                                                                    const saved = archiveSaveLists.some((val) => val.directory_name === item.name);
-                                                                    return (
-                                                                        <Link onClick={() => watchLater(archiveList._id, item.name)} key={index} to="" className='text-xs px-4 py-1 hover:bg-gray-900 flex items-center'>
-                                                                            <FontAwesomeIcon icon={saved ? faCheckSquare : faSquare} className="mr-2"/> 
-                                                                            {item.name}
-                                                                        </Link>
-                                                                    )
-                                                                })
-                                                            }
-                                                        </div>
+                                                        data && data.video && data.video.downloadable ? 
+                                                            <button className="sm:text-base text-sm sm:w-auto w-full bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                                <FontAwesomeIcon icon={faDownload} className="text-white"/> Download
+                                                            </button>
+                                                            :
+                                                            <button disabled={true} className="sm:text-base text-sm sm:w-auto w-full disabled:bg-gray-500 disabled:cursor-no-drop bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-2 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
+                                                                <FontAwesomeIcon icon={faLinkSlash} className="text-white"/> Download
+                                                            </button>
                                                     }
                                                 </div>
-                                                {
-                                                    data && data.video && data.video.downloadable ? 
-                                                        <button className='rounded-full h-8 px-4 flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm cursor-pointer hover:text-[#0DBFDC] transition-all'>
-                                                            <FontAwesomeIcon icon={faDownload} className="mr-2"/> Download
-                                                        </button>
-                                                        :
-                                                        <button disabled={true} className='rounded-full h-8 px-4 flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm cursor-pointer hover:text-[#0DBFDC] transition-all'>
-                                                            <FontAwesomeIcon icon={faLinkSlash} className="mr-2"/> Download
-                                                        </button>
-                                                }
-                                                <button disabled={true} onClick={() => watchLater()} className='rounded-full h-8 px-4 flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm cursor-pointer hover:text-[#0DBFDC] transition-all'>
-                                                    <FontAwesomeIcon icon={faFlag} className="mr-2"/> Report
-                                                </button>
                                             </div>
                                         </div>
-                                        <div className="w-full p-4 text-sm rounded-lg mt-4 outline-0 transition-all focus:border-gray-600 bg-[#131C31] border border-solid border-[#222F43] text-gray-100 focus:ring-gray-700">
-                                            <p className='text-[#94a9c9] text-xs font-semibold'>{convertTimezone(data.video.createdAt)} ({moment(data.video.createdAt).fromNow()})</p>
-                                            <p className='my-2 text-[#B9E0F2]'>[{ data ? data.username : "Anonymous" }] { data && data.video ? data.video.title : '' }</p>
-                                            <p className='text-[#94a9c9]'>{ data.video.description ? data.video.description : 'No description' }</p>
-                                        </div>
+
                                         {
                                             data && data.video && data.video.tags.length > 0 && (
-                                                <div className='flex flex-wrap items-center mt-4 relative text-sm'>
-                                                    <p className='mr-2 absolute top-0 left-0 mt-2 text-[#0DBFDC] font-semibold'>Tags:</p>
-                                                    <div className='ml-12 flex flex-wrap items-center gap-2'>
+                                                <div className='flex flex-wrap items-center mt-4 relative'>
+                                                    <p className='mr-2 absolute top-0 left-0 mt-2'>Tags:</p>
+                                                    <div className='ml-12 flex flex-wrap items-center'>
                                                         {
                                                                 data.video.tags.map((item, i) => {
                                                                     return (
-                                                                        <Link key={i} to={`/videos/tags/${item}`}><p className='flex justify-between items-center cursor-pointer transition-all p-3 py-2 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>{item}</p></Link>
+                                                                        <Link key={i} to={`/videos/tags/${item}`}><p className='mt-2 bg-gray-800 hover:bg-transparent hover:text-gray-100 text-white border border-gray-100 px-4 py-1 mr-2 xs:text-sm text-sm transition-all capitalize'>{item}</p></Link>
                                                                     )
                                                                 })
                                                         }
@@ -529,32 +486,32 @@ const VideosSingle = ({ user }) => {
                                                 </div>
                                             )
                                         }
-                                        <div className='flex mt-4 text-sm'>
-                                            <p className='mr-2 text-[#0DBFDC] font-semibold'>Artist:</p>
-                                            <Link to={`/videos/artist/${data && data.video && data.video.owner ? data.video.owner : "Anonymous"}`}><p className='hover:text-[#0DBFDC] transition-all'>{data && data.video && data.video.owner ? data.video.owner : "Anonymous"}</p></Link>
+                                        <div className='flex mt-4'>
+                                            <p className='mr-2'>Artist:</p>
+                                            <Link to={`/videos/artist/${data && data.video && data.video.owner ? data.video.owner : "Anonymous"}`}><p className=''>{data && data.video && data.video.owner ? data.video.owner : "Anonymous"}</p></Link>
                                         </div>
                                         <div className='md:block hidden'>
                                             {
                                                 user ? (
-                                                    <>
-                                                        <h2 className='text-2xl font-semibold my-4 mt-8 text-[#B9E0F2]'>Leave a comment</h2>
+                                                    <div className='mt-8'>
+                                                        <p>Write a comment</p>
                                                         <textarea
                                                             value={comment}
                                                             onChange={(e) => setComment(e.target.value)}
                                                             name="message"
                                                             id="message"
                                                             cols="30"
-                                                            rows="8"
-                                                            placeholder="Write a comment"
-                                                            className="w-full p-4 text-sm rounded-lg mt-2 outline-0 transition-all focus:border-gray-600 bg-[#131C31] border border-solid border-[#222F43] text-gray-100 focus:ring-gray-700"
+                                                            rows="5"
+                                                            placeholder="Message"
+                                                            className="w-full py-2 pl-2 mt-2 outline-0 transition-all focus:border-gray-600 bg-transparent border-2 border-solid border-gray-400 text-gray-100 rounded-sm focus:ring-gray-700"
                                                         >
                                                         </textarea>
-                                                        <button onClick={submitComment} className="text-sm float-right bg-[#0DBFDC] hover:bg-transparent hover:bg-[#131C31] text-gray-100 py-2 px-4 border border-[#222F43] rounded transition-colors duration-300 ease-in-out">
+                                                        <button onClick={submitComment} className="float-right bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
                                                             {
                                                                 !submitted ?
                                                                 (
                                                                     <>
-                                                                        Post Comment
+                                                                        <FontAwesomeIcon icon={faArrowRightRotate} className="text-white mr-2"/> Comment
                                                                     </>
                                                                 )
                                                                 :
@@ -567,109 +524,65 @@ const VideosSingle = ({ user }) => {
                                                                             </svg>
                                                                             <span class="sr-only">Loading...</span>
                                                                         </div>
-                                                                        Sending
+                                                                        Commenting
                                                                     </div>
                                                                 )
                                                             }
                                                         </button>
-                                                    </>
+                                                    </div>
                                                 )
                                                 :
                                                 (
-                                                    <div className='mt-8 w-full border border-solid border-[#222F43] bg-[#131C31] text-gray-100 text-sm p-8 text-center'>
-                                                        <p>You need to <a href='/login' className='hover:text-[#0DBFDC] transition-all'>login</a> to comment.</p>
+                                                    <div className='mt-8 w-full border-2 border-solid border-gray-400 p-8 text-center'>
+                                                        <p>You need to <a href='/login' className='hover:underline'>login</a> to comment.</p>
                                                     </div>
                                                 )
                                             }
-                                        
-                                            <div className='mt-12'>
-                                                <h2 className='text-2xl font-semibold my-4 mt-8 text-[#B9E0F2]'>Comments ({ commentList && commentList.length ? commentList.length : 0 })</h2>
+                                            <div className='mt-8'>
+                                                <p>Comments ({ commentList && commentList.length ? commentList.length : 0 })</p>
                                                 {
                                                     commentList && commentList.length > 0 ?
                                                         commentList.map((item, i) => {
                                                             return (
                                                                 <MotionAnimate key={i} animation='fadeInUp'>
-                                                                    <div className="w-full p-4 text-sm rounded-lg mt-8 outline-0 transition-all focus:border-gray-600 bg-[#131C31] border border-solid border-[#222F43] text-gray-100 focus:ring-gray-700">
+                                                                    <div className='mt-8 border-l-4 border-solid border-gray-300 pl-3 rounded-l-sm py-1'>
                                                                         <div className='grid grid-cols-2'>
-                                                                            <div className='flex items-center text-[#0DBFDC]'>
+                                                                            <div className='flex items-center text-gray-400'>
                                                                                 <img
-                                                                                    className='rounded-full xs:w-6 xs:h-6 w-6 h-6 border border-solid border-[#222F43]'
+                                                                                    className='rounded-full xs:w-6 xs:h-6 w-6 h-6'
                                                                                     src={item.avatar ? convertDriveImageLink(item.avatar) : convertDriveImageLink(avatar)}
                                                                                     alt="user profile"
                                                                                 />
                                                                                 <p className='ml-2 break-all'>
-                                                                                    @{item.username}  
+                                                                                    {item.username}  
                                                                                     {
                                                                                         user?.result?.username === item.username && 
                                                                                             <span> (Me)</span>
                                                                                     }
                                                                                 </p>
                                                                             </div>
-                                                                            <div className='flex items-center justify-end text-gray-100'>
-                                                                                <FontAwesomeIcon icon={faClock} className="text-gray-100"/>
+                                                                            <div className='flex items-center justify-end text-gray-400'>
+                                                                                <FontAwesomeIcon icon={faClock} className="text-white"/>
                                                                                 <p className='ml-2 break-all text-sm'>{moment(item.date).fromNow()}</p>
                                                                             </div>
                                                                         </div>
-                                                                        <p className='mt-4 whitespace-pre-wrap'>{item.comments}</p>
+                                                                        <p className='mt-4 text-gray-300 whitespace-pre-wrap'>{item.comments}</p>
                                                                         {
                                                                             user?.result?.username === item.username && 
-                                                                                <div className='flex justify-between items-center'>
-                                                                                    <div></div>
-                                                                                    <p onClick={() => deleteComment(data.video._id, item.id)} id={item.id} className='transition-all border border-solid border-[#222F43] text-gray-100 py-2 px-4 hover:text-[#0DBFDC] text-sm cursor-pointer'><FontAwesomeIcon icon={faTrash} className="mr-2"/> Delete</p>
-                                                                                </div>
+                                                                                <p onClick={() => deleteComment(video.video._id, item.id)} id={item.id} className='flex justify-end items-center text-gray-300 hover:text-gray-400 text-sm cursor-pointer'><FontAwesomeIcon icon={faTrash} className="mr-2"/> Delete</p>
                                                                         }
                                                                     </div>
                                                                 </MotionAnimate>
                                                             )
                                                         })
                                                         :
-                                                        <p className='my-8 text-sm'> No comment to show</p>
+                                                        <p className='my-8'> No comments to show</p>
                                                 }
                                             </div>
                                         </div>
                                     </div>
-                                    <div className='md:px-2'>
-                                        <div className='transition-all p-4 py-3 text-sm rounded-t-lg bg-[#131C31] border border-solid border-[#222F43] font-poppins'>
-                                            <p className='text-[#0DBFDC] font-semibold mb-1'>{ data ? data.username : "Anonymous" } Uploads</p>
-                                            <p className='text-xs'>{uploads?.length > 0 ? uploads.length : 0} videos</p>
-                                        </div>
-                                        <div className='transition-all py-3 text-sm rounded-b-lg bg-[#131C31] border border-solid border-[#222F43] max-h-[500px] overflow-y-auto'>
-                                            {
-                                                uploads && uploads.length > 0 ?
-                                                    uploads.map((item, index) => {
-                                                        return (
-                                                            <VideoThumbnail 
-                                                                key={index} 
-                                                                id={item._id} 
-                                                                index={index} 
-                                                                title={item.title} 
-                                                                views={item.views} 
-                                                                timestamp={item.createdAt} 
-                                                                setActive={setActive} 
-                                                                active={active} 
-                                                                embedLink={getVideoId(item.link)}
-                                                                currentId={getVideoId(data?.video?.link)}
-                                                                user={user}
-                                                                setAlertSubActive={setAlertSubActive}
-                                                                fixed={false}
-                                                                file_size={item.file_size}
-                                                                archiveList={archiveList ? archiveList : {}}
-                                                                likes={item.likes}
-                                                                username={data ? data.username : "Anonymous" }
-                                                                uploader={true}
-                                                            />
-                                                        )
-                                                    })
-                                                :
-                                                <div className='flex items-center justify-center py-2'>
-                                                    <div className='flex items-center justify-center'>
-                                                        <img className="w-8" src={loading} />
-                                                        <p className='text-white font-semibold text-base ml-2'>Loading Videos</p>
-                                                    </div>
-                                                </div>
-                                            }
-                                        </div>
-                                        {/* <div className='mb-8 sm:pt-4 text-white md:bg-transparent xs:bg-gray-800 bg-transparent  md:rounded-none rounded-md md:p-4 xs:p-8 py-8 mx-auto'>
+                                    <div>
+                                        <div className='mb-8 sm:pt-4 text-white md:bg-transparent xs:bg-gray-800 bg-transparent  md:rounded-none rounded-md md:p-4 xs:p-8 py-8 mx-auto'>
                                             <h2 className='text-2xl font-semibold mb-6'>Related Videos</h2>
                                             <div className='md:flex md:flex-col xs:grid md:grid-cols-2 xs:gap-5 grid-cols-1 lg:pr-16'>
                                                 {
@@ -688,13 +601,11 @@ const VideosSingle = ({ user }) => {
                                                                             setActive={setActive} 
                                                                             active={active} 
                                                                             embedLink={getVideoId(item.link)}
-                                                                            currentId={getVideoId(data?.video?.link)}
                                                                             user={user}
                                                                             setAlertSubActive={setAlertSubActive}
                                                                             fixed={false}
                                                                             file_size={item.file_size}
                                                                             archiveList={archiveList ? archiveList : {}}
-                                                                            likes={item.likes}
                                                                         />
                                                                     </MotionAnimate>
                                                                 </div>
@@ -702,30 +613,30 @@ const VideosSingle = ({ user }) => {
                                                         })
                                                 }
                                             </div>
-                                        </div>                                     */}
+                                        </div>                                    
                                     </div>
-                                    <div className='md:hidden block'>
+                                    <div className='md:hidden block text-white'>
                                         {
                                             user ? (
-                                                <>
-                                                    <h2 className='text-3xl font-semibold my-4 mt-8 text-[#B9E0F2]'>Leave a comment</h2>
+                                                <div className='mt-8'>
+                                                    <p>Write a comment</p>
                                                     <textarea
                                                         value={comment}
                                                         onChange={(e) => setComment(e.target.value)}
                                                         name="message"
                                                         id="message"
                                                         cols="30"
-                                                        rows="8"
-                                                        placeholder="Write a comment"
-                                                        className="w-full p-4 text-sm rounded-lg mt-2 outline-0 transition-all focus:border-gray-600 bg-[#131C31] border border-solid border-[#222F43] text-gray-100 focus:ring-gray-700"
+                                                        rows="5"
+                                                        placeholder="Message"
+                                                        className="w-full py-2 pl-2 mt-2 outline-0 transition-all focus:border-gray-600 bg-transparent border-2 border-solid border-gray-400 text-gray-100 rounded-sm focus:ring-gray-700"
                                                     >
                                                     </textarea>
-                                                    <button onClick={submitComment} className="text-sm float-right bg-[#0DBFDC] hover:bg-transparent hover:bg-[#131C31] text-gray-100 py-2 px-4 border border-[#222F43] rounded transition-colors duration-300 ease-in-out">
+                                                    <button onClick={submitComment} className="float-right bg-gray-800 hover:bg-transparent hover:text-gray-100 text-gray-100 py-1 px-4 border border-gray-100 rounded transition-colors duration-300 ease-in-out">
                                                         {
                                                             !submitted ?
                                                             (
                                                                 <>
-                                                                    Post Comment
+                                                                    <FontAwesomeIcon icon={faArrowRightRotate} className="text-white mr-2"/> Comment
                                                                 </>
                                                             )
                                                             :
@@ -738,56 +649,52 @@ const VideosSingle = ({ user }) => {
                                                                         </svg>
                                                                         <span class="sr-only">Loading...</span>
                                                                     </div>
-                                                                    Sending
+                                                                    Commenting
                                                                 </div>
                                                             )
                                                         }
                                                     </button>
-                                                </>
+                                                </div>
                                             )
                                             :
                                             (
-                                                <div className='mt-8 w-full border border-solid border-[#222F43] bg-[#131C31] text-gray-100 text-sm p-8 text-center'>
-                                                    <p>You need to <a href='/login' className='hover:text-[#0DBFDC] transition-all'>login</a> to comment.</p>
+                                                <div className='mt-8 w-full border-2 border-solid border-gray-400 p-8 text-center'>
+                                                    <p>You need to <a href='/login' className='hover:underline'>login</a> to comment.</p>
                                                 </div>
                                             )
                                         }
-                                    
-                                        <div className='mt-12'>
-                                            <h2 className='text-2xl font-semibold my-4 mt-8 text-[#B9E0F2]'>Comments ({ commentList && commentList.length ? commentList.length : 0 })</h2>
+                                        <div className='mt-8'>
+                                            <p>Comments ({ commentList && commentList.length ? commentList.length : 0 })</p>
                                             {
                                                 commentList && commentList.length > 0 ?
                                                     commentList.map((item, i) => {
                                                         return (
                                                             <MotionAnimate key={i} animation='fadeInUp'>
-                                                                <div className="w-full p-4 text-sm rounded-lg mt-8 outline-0 transition-all focus:border-gray-600 bg-[#131C31] border border-solid border-[#222F43] text-gray-100 focus:ring-gray-700">
+                                                                <div className='mt-8 border-l-4 border-solid border-gray-300 pl-3 rounded-l-sm py-1'>
                                                                     <div className='grid grid-cols-2'>
-                                                                        <div className='flex items-center text-[#0DBFDC]'>
+                                                                        <div className='flex items-center text-gray-400'>
                                                                             <img
-                                                                                className='rounded-full xs:w-6 xs:h-6 w-6 h-6 border border-solid border-[#222F43]'
+                                                                                className='rounded-full xs:w-6 xs:h-6 w-6 h-6'
                                                                                 src={item.avatar ? convertDriveImageLink(item.avatar) : convertDriveImageLink(avatar)}
                                                                                 alt="user profile"
                                                                             />
                                                                             <p className='ml-2 break-all'>
-                                                                                @{item.username}  
+                                                                                {item.username}  
                                                                                 {
                                                                                     user?.result?.username === item.username && 
                                                                                         <span> (Me)</span>
                                                                                 }
                                                                             </p>
                                                                         </div>
-                                                                        <div className='flex items-center justify-end text-gray-100'>
-                                                                            <FontAwesomeIcon icon={faClock} className="text-gray-100"/>
+                                                                        <div className='flex items-center justify-end text-gray-400'>
+                                                                            <FontAwesomeIcon icon={faClock} className="text-white"/>
                                                                             <p className='ml-2 break-all text-sm'>{moment(item.date).fromNow()}</p>
                                                                         </div>
                                                                     </div>
-                                                                    <p className='mt-4 whitespace-pre-wrap'>{item.comments}</p>
+                                                                    <p className='mt-4 text-gray-300 whitespace-pre-wrap'>{item.comments}</p>
                                                                     {
                                                                         user?.result?.username === item.username && 
-                                                                            <div className='flex justify-between items-center'>
-                                                                                <div></div>
-                                                                                <p onClick={() => deleteComment(data.video._id, item.id)} id={item.id} className='transition-all border border-solid border-[#222F43] text-gray-100 py-2 px-4 hover:text-[#0DBFDC] text-sm cursor-pointer'><FontAwesomeIcon icon={faTrash} className="mr-2"/> Delete</p>
-                                                                            </div>
+                                                                            <p onClick={() => deleteComment(video.video._id, item.id)} id={item.id} className='flex justify-end items-center text-gray-300 hover:text-gray-400 text-sm cursor-pointer'><FontAwesomeIcon icon={faTrash} className="mr-2"/> Delete</p>
                                                                     }
                                                                 </div>
                                                             </MotionAnimate>

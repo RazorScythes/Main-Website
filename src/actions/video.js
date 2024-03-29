@@ -16,7 +16,9 @@ const initialState = {
     forbiden: '',
     sideAlert: {},
     tagsCount: [],
-    archiveList: {}
+    archiveList: {},
+    videoList: [],
+    archiveSaveLists: []
 }
 
 export const getVideoByID = createAsyncThunk('video/getVideoByID', async (form, thunkAPI) => {
@@ -243,6 +245,22 @@ export const countVideoTags = createAsyncThunk('video/countVideoTags', async (fo
     }
 })
 
+export const uploadLists = createAsyncThunk('video/uploadLists', async (form, thunkAPI) => {
+    try {
+        const response = await api.uploadLists(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const videoSlice = createSlice({
     name: 'video',
     initialState,
@@ -308,6 +326,7 @@ export const videoSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(getVideoByID.fulfilled, (state, action) => {
+            state.archiveSaveLists = action.payload.data.archiveSaveLists
             state.archiveList = action.payload.data.archiveList
             state.notFound = false
             state.data = action.payload.data.result
@@ -362,6 +381,7 @@ export const videoSlice = createSlice({
             state.variant = action.payload.variant
         }),
         builder.addCase(addToWatchLater.fulfilled, (state, action) => {
+            state.archiveSaveLists = action.payload.data.archiveSaveLists
             state.sideAlert = action.payload.data.sideAlert
         }),
         builder.addCase(addToWatchLater.rejected, (state, action) => {
@@ -373,6 +393,15 @@ export const videoSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(countVideoTags.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
+        }),
+        builder.addCase(uploadLists.fulfilled, (state, action) => {
+            state.videoList = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(uploadLists.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
         })

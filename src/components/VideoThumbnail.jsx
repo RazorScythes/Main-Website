@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEllipsisV, faCode, faVideo, faFileVideo, faPhotoVideo, faVideoSlash, faVideoCamera, faChevronRight, faMinus, faChevronDown, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { faEye, faEllipsisV, faCode, faVideo, faFileVideo, faPhotoVideo, faVideoSlash, faVideoCamera, faChevronRight, faMinus, faChevronDown, faChevronUp, faThumbsUp, faBars, faFlag } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from 'react-redux'
 import { addToWatchLater } from "../actions/video";
 import { Link } from 'react-router-dom';
@@ -23,7 +23,7 @@ const checkVideoFileSize = (size = "") => {
   return false
 }
 
-const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp, setActive, height, user, setAlertSubActive, fixed = true, file_size, archiveList }) => {
+const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp, setActive, height, user, setAlertSubActive, fixed = true, file_size, archiveList, currentId = '', uploader = false, likes = [], username= '' }) => {
   const dispatch = useDispatch()
 
   const [isOpen, setIsOpen] = useState(false)
@@ -50,6 +50,74 @@ const VideoThumbnail = ({ id, embedLink, index, active, title, views, timestamp,
   return (
     <>
     {
+      uploader ?
+        <Link to={`/videos/${id}`} className='flex items-center text-gray-100 text-sm mb-2 px-4 hover:bg-[#111827] cursor-pointer transition-all relative'>
+            <Link to={`/videos/${id}`} className='bg-black rounded-lg overflow-hidden md:w-48 md:max-w-48 xs:w-36 xs:max-w-36 w-32 max-w-32 h-20 mr-2 relative border border-gray-900'>
+                {
+                    embedLink === currentId &&
+                        <p style={{backgroundColor: 'rgb(0, 0, 0, 0.8'}} className='w-full text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 text-xs py-1'>Watching</p>
+                }
+                <img 
+                    src={`https://drive.google.com/thumbnail?id=${embedLink}`} alt="Video Thumbnail" 
+                    className='mx-auto object-cover h-20'
+                />
+            </Link>
+            <div className='flex flex-col w-60 max-w-60 overflow-x-hidden'>
+                <p className='truncate'><TextWithEllipsis text={title} limit={70} /></p>
+                <p className='text-xs my-1 text-[#94a9c9]'>{username}</p>
+                <div className='flex relative'>
+                    <div className='text-xs h-6 px-2 rounded-sm flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100' title="Views">
+                        <FontAwesomeIcon icon={faEye} className="text-white mr-2"/>
+                        <p>{ views ? views.length : 0 } <span className='xs:hidden inline-block'></span></p>
+                    </div>
+                    <div className='rounded-sm h-6 px-2 flex items-center ml-1 bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-xs' title="Likes">
+                        <FontAwesomeIcon icon={faThumbsUp} className="mr-2"/>
+                        <p>{ likes && likes.length }</p>
+                    </div>
+
+                    {/* <button onClick={() => {
+                        setActive(index)
+                        setIsOpen(!isOpen)
+                    }}>
+                      <FontAwesomeIcon icon={faEllipsisV} className="text-sm px-2 absolute bottom-1 right-0 mr-1 cursor-pointer hover:text-gray-500"/>
+                    </button> */}
+                </div>
+                {
+                  isOpen && (index === active) &&
+                  <MotionAnimate delay={0} speed={0.1}>
+                    <div className='absolute top-[75px] z-10 right-6 flex flex-col bg-[#131C31] border border-solid border-[#222F43] font-poppins text-sm shadow-[0px_2px_10px_2px_rgba(0,0,0,0.56)] w-40'>
+                      {
+                        Object.keys(archiveList).length !== 0 ? 
+                        <>
+                        <button onClick={() => setOpenDirectory(!openDirectory)} className='px-4 py-2 hover:bg-gray-900 text-left flex justify-between items-center'>
+                          <div><FontAwesomeIcon icon={faBars} className="mr-1"/> Save</div>
+                          <FontAwesomeIcon icon={openDirectory ? faChevronUp: faChevronDown} className="text-xs ml-2"/>
+                        </button>
+                        {
+                          openDirectory && 
+                          <>
+                            {
+                              archiveList.archive_list.map((item, index) => {
+                                return (
+                                  <Link onClick={() => watchLater(archiveList._id, item.name)} key={index} to="" className='text-xs px-4 py-1 hover:bg-gray-900 flex items-center'><FontAwesomeIcon icon={faMinus} className="mr-2"/> {item.name}</Link>
+                                )
+                              })
+                            }
+                          </>
+                        }
+                        </>
+                        :
+                        <button onClick={() => watchLater()} className='px-4 py-2 hover:bg-gray-900 text-left flex justify-between items-center'>
+                          Watch Later
+                        </button>
+                      }
+                      <button className='px-4 py-2 hover:bg-gray-900 text-left'><FontAwesomeIcon icon={faFlag} className="mr-1"/> Report</button>
+                    </div>
+                  </MotionAnimate>
+                }
+            </div>
+        </Link>
+      :
       fixed ?
         <div className='mx-auto xs:w-full w-64 text-white transition-all sm:px-0 xs:px-4 px-2'>
             <Link to={`/videos/${id}`}>
