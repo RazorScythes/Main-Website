@@ -350,22 +350,31 @@ const AdminUploads = ({ user, path }) => {
           const apiKey = api_key;
   
           // Request URL with API key
-          const url = `https://www.googleapis.com/drive/v3/files?q='${parentFolderId}' in parents and trashed=false&fields=files(id,name,size)&key=${apiKey}`;
-  
+          // const url = `https://www.googleapis.com/drive/v3/files?q='${parentFolderId}' in parents and trashed=false&fields=files(id,name,size)&key=${apiKey}`;
+            const url = `https://www.googleapis.com/drive/v2/files?q='${parentFolderId}' in parents and trashed=false&key=${apiKey}`;
           // Make the GET request to the Google Drive API
           const response = await axios.get(url);
-  
+ 
           // Extract the file names and IDs from the response
-          const filesData = response.data.files;
+          const filesData = response.data.items;
+   
           const fileDetails = filesData.map(file => ({
             id: file.id,
-            name: file.name,
-            size: file.size
+            name: file.title,
+            alternateLink: file.alternateLink,
+            downloadUrl: file.downloadUrl,
+            embedLink: file.embedLink,
+            fileExtension: file.fileExtension,
+            webContentLink: file.webContentLink,
+            thumbnailLink: file.thumbnailLink,
+            duration: file.videoMediaMetadata ? file.videoMediaMetadata.durationMillis : '0',
+            size: file.fileSize
           }));
   
           // Set the file details in the state
           return fileDetails;
         } catch (err) {
+            console.log(err)
             return err.response.data.error
         }
     };
@@ -424,14 +433,31 @@ const AdminUploads = ({ user, path }) => {
                         downloadable: bulkForm.downloadable,
                         tags: bulkForm.tags,
                     },
-                    size: file.size
+                    size: file.size,
+                    alternateLink: file.alternateLink,
+                    downloadUrl: file.downloadUrl,
+                    embedLink: file.embedLink,
+                    fileExtension: file.fileExtension,
+                    webContentLink: file.webContentLink,
+                    thumbnailLink: file.thumbnailLink,
+                    duration: file.duration
                 }
 
                 if(longTitle) num_video_count = num_video_count + 1
 
                 try {
                     if(APIProperties) {
-                        await User_API.post('/uploads/updateVideoProperties', { file_id: file.id, size: file.size })
+                        await User_API.post('/uploads/updateVideoProperties', { 
+                            file_id: file.id, 
+                            size: file.size,
+                            alternateLink: file.alternateLink,
+                            downloadUrl: file.downloadUrl,
+                            embedLink: file.embedLink,
+                            fileExtension: file.fileExtension,
+                            webContentLink: file.webContentLink,
+                            thumbnailLink: file.thumbnailLink,
+                            duration: file.duration
+                        })
 
                         setBulkAlert({
                             variant: 'success',

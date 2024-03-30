@@ -72,6 +72,12 @@ const VideosSingle = ({ user }) => {
     const [isAnimatingTD, setIsAnimatingTD] = useState(false)
     const [openDirectory, setOpenDirectory] = useState(false)
 
+    const [uploadsPagination, setUploadsPagination] = useState(1)
+    const [uploadsEndIndex, setUploadsEndIndex] = useState(0)
+
+    const [relatedPagination, setRelatedPagination] = useState(1)
+    const [relatedEndIndex, setRelatedEndIndex] = useState(0)
+
     const [searchParams, setSearchParams] = useSearchParams();
     const access_key = searchParams.get('access_key')
 
@@ -87,6 +93,8 @@ const VideosSingle = ({ user }) => {
         setComment('')
         setIsAnimatingTU(false)
         setIsAnimatingTD(false)
+        setUploadsPagination(1)
+        setRelatedPagination(1)
         window.scrollTo(0, 0)
     }, [id])
 
@@ -135,6 +143,18 @@ const VideosSingle = ({ user }) => {
         setLikes(video && video.video ? video.video.likes : [])
         setDislikes(video && video.video ? video.video.dislikes : [])
     }, [video])
+
+    useEffect(() => {
+        if(uploads.length > 0) {
+            setUploadsEndIndex(((uploadsPagination - 1) * 20) + 20)
+        }
+    }, [uploads])
+
+    useEffect(() => {
+        if(related.length > 0) {
+            setRelatedEndIndex(((relatedPagination - 1) * 8) + 8)
+        }
+    }, [related])
 
     useEffect(() => {
         setRelated(related_video && related_video.length > 0 ? related_video : [])
@@ -284,11 +304,14 @@ const VideosSingle = ({ user }) => {
         return formattedDate
     }
 
-    const TextWithEllipsis = ({ text, limit = 70 }) => {
-        if (text.length > limit) {
-          return <span>{text.slice(0, limit)}...</span>;
-        }
-        return <span>{text}</span>;
+    const loadUploads = () => {
+        setUploadsEndIndex((((uploadsPagination + 1) - 1) * 20) + 20)
+        setUploadsPagination(uploadsPagination + 1)
+    }
+
+    const loadRelated = () => {
+        setRelatedEndIndex((((relatedPagination + 1) - 1) * 8) + 8)
+        setRelatedPagination(relatedPagination + 1)
     }
 
     return (
@@ -394,7 +417,15 @@ const VideosSingle = ({ user }) => {
                                             }
                                         </div> */}
                                         <div className='relative'>
-                                            {
+                                                {/* <video 
+                                                    src={`https://www.googleapis.com/drive/v2/files/1OGTyu0B6p8lMOWJYYgt5kCVITEg4Ka3Q?key=AIzaSyDTEUpMW1URFxWNK6OJnLyd1J2qaukbWy8&alt=media&source=downloadUrl`}
+                                                    // src={"https://drive.google.com/u/3/uc?id=1fGNqeCMLV6oz4Kzk6KaFOygjXrYO-J_R&export=download"}
+                                                    controls 
+                                                    controlsList="nodownload" 
+                                                    className='w-full lg:h-[450px] md:h-[400px] sm:h-[450px] xs:h-[400px] h-[225px] bg-black'
+                                                    onPlay={addViews}
+                                                /> */}
+                                            {/* {
                                                 checkVideoFileSize(data?.video?.file_size) ?
                                                 <video 
                                                     src={`https://drive.google.com/u/3/uc?id=${getVideoId(data?.video?.link)}&export=download"`}
@@ -415,30 +446,28 @@ const VideosSingle = ({ user }) => {
                                                     allowFullScreen
                                                 >
                                                 </iframe>
+                                            } */}
+                                            {
+                                                data?.video?.downloadUrl ? 
+                                                <video 
+                                                    src={data.video.downloadUrl}
+                                                    controls 
+                                                    controlsList="nodownload" 
+                                                    className='w-full lg:h-[450px] md:h-[400px] sm:h-[450px] xs:h-[400px] h-[225px] bg-black'
+                                                    onPlay={addViews}
+                                                />
+                                                :
+                                                <iframe 
+                                                    ref={iframeRef} 
+                                                    src={data?.video?.link}
+                                                    className='w-full lg:h-[450px] md:h-[400px] sm:h-[450px] xs:h-[400px] h-[225px] rounded-md'
+                                                    allow="autoplay"
+                                                    onLoad={addViews}
+                                                    sandbox="allow-scripts allow-same-origin"
+                                                    allowFullScreen
+                                                >
+                                                </iframe>
                                             }
-                                            {/* <iframe 
-                                                ref={iframeRef} 
-                                                src={data && data.video && data.video.link}
-                                                className='w-full lg:h-[450px] md:h-[400px] sm:h-[450px] xs:h-[400px] h-[225px]'
-                                                allow="autoplay"
-                                                onLoad={addViews}
-                                                sandbox="allow-scripts allow-same-origin"
-                                                allowFullScreen
-                                            >
-                                            </iframe>
-                                            <img
-                                                className='absolute xs:top-1 xs:right-1 top-2 right-2 rounded-full xs:w-14 xs:h-14 w-12 h-12 border border-solid border-gray-500 opacity-0'
-                                                src={ data ? data.avatar : avatar }
-                                                alt="user profile"
-                                            />
-                                            <video 
-                                                src={"https://drive.google.com/u/3/uc?id=1fGNqeCMLV6oz4Kzk6KaFOygjXrYO-J_R&export=download"}
-                                                // src="https://rr5---sn-hoa7rn7z.c.drive.google.com/videoplayback?expire=1682878776&ei=-HhOZLjiH4_quwLxpZuwDA&ip=120.29.78.136&cp=QVRNVElfV1dVR1hPOkYxcVNWRFFpYnFBNldmWUFNY2NVYUk3QjhnX0VKS3F0WmhtNXE0U3FEdEg&id=0f78930136d2f5d2&itag=18&source=webdrive&requiressl=yes&mh=2B&mm=32&mn=sn-hoa7rn7z&ms=su&mv=m&mvi=5&pl=22&ttl=transient&susc=dr&driveid=12MAcfN7IJJnw808QyuahZ8jowCo1D8hD&app=explorer&mime=video/mp4&vprv=1&prv=1&dur=585.746&lmt=1682842237185129&mt=1682863990&subapp=DRIVE_WEB_FILE_VIEWER&txp=0011224&sparams=expire,ei,ip,cp,id,itag,source,requiressl,ttl,susc,driveid,app,mime,vprv,prv,dur,lmt&sig=AOq0QJ8wRgIhAMSOdLtwcPgUEq9TcZdrz8r2SnV0KtykIgN4n9J8_YgZAiEAhLbF2X_NfR0wW1OtS8xKSXLFhPVVYJ19D738wLYYJDk=&lsparams=mh,mm,mn,ms,mv,mvi,pl&lsig=AG3C_xAwRQIhANUndZYlVXlRwaceYMop7KuczODrzzSX0YxqeGa7el7jAiAvJ-fN-pQmIpTl1jzkcuJwVbKe4RLoZXwGpVg0ugOlCw==&cpn=TUNNpAe6t9-IMI3Q&c=WEB_EMBEDDED_PLAYER&cver=1.20230425.01.00"
-                                                controls 
-                                                controlsList="nodownload" 
-                                                className='w-full lg:h-[450px] md:h-[400px] sm:h-[450px] xs:h-[400px] h-[225px]'
-                                                onPlay={addViews}
-                                            /> */}
                                         </div>
                                         <p className='my-2 font-semibold text-2xl break-all text-[#0DBFDC]'>{ data && data.video ? data.video.title : '' }</p>
                                         <div className='grid sm:grid-cols-2 grid-cols-1 mt-2'>
@@ -533,6 +562,103 @@ const VideosSingle = ({ user }) => {
                                             <p className='mr-2 text-[#0DBFDC] font-semibold'>Artist:</p>
                                             <Link to={`/videos/artist/${data && data.video && data.video.owner ? data.video.owner : "Anonymous"}`}><p className='hover:text-[#0DBFDC] transition-all'>{data && data.video && data.video.owner ? data.video.owner : "Anonymous"}</p></Link>
                                         </div>
+
+                                        <div className='md:hidden block mt-8'>
+                                        <div className='transition-all p-4 py-3 text-sm rounded-t-lg bg-[#131C31] border border-solid border-[#222F43] font-poppins'>
+                                            <p className='text-[#0DBFDC] font-semibold mb-1'>{ data ? data.username : "Anonymous" } Uploads</p>
+                                            <p className='text-xs'>{uploads?.length > 0 ? uploads.length : 0} videos</p>
+                                        </div>
+                                        <div className='transition-all py-3 text-sm rounded-b-lg bg-[#131C31] border border-solid border-[#222F43] max-h-[500px] overflow-y-auto'>
+                                            {
+                                                uploads && uploads.length > 0 ?
+                                                    uploads.slice(0, uploadsEndIndex).map((item, index) => {
+                                                        return (
+                                                            <VideoThumbnail 
+                                                                key={index} 
+                                                                id={item._id} 
+                                                                index={index} 
+                                                                title={item.title} 
+                                                                views={item.views} 
+                                                                timestamp={item.createdAt} 
+                                                                setActive={setActive} 
+                                                                active={active} 
+                                                                embedLink={getVideoId(item.link)}
+                                                                currentId={getVideoId(data?.video?.link)}
+                                                                user={user}
+                                                                setAlertSubActive={setAlertSubActive}
+                                                                fixed={false}
+                                                                file_size={item.file_size}
+                                                                archiveList={archiveList ? archiveList : {}}
+                                                                likes={item.likes}
+                                                                username={data ? data.username : "Anonymous" }
+                                                                uploader={true}
+                                                                downloadUrl={item.downloadUrl}
+                                                                duration={item.duration}
+                                                            />
+                                                        )
+                                                    })
+                                                :
+                                                <div className='flex items-center justify-center py-2'>
+                                                    <div className='flex items-center justify-center'>
+                                                        <img className="w-8" src={loading} />
+                                                        <p className='text-white font-semibold text-base ml-2'>Loading Videos</p>
+                                                    </div>
+                                                </div>
+                                            }
+
+                                            {       
+                                                (uploads?.length > 20 && uploads?.length > uploadsEndIndex) &&
+                                                <div className='flex items-center py-2'>
+                                                    <button onClick={() => loadUploads()} className='text-center text-xs mx-auto hover:underline hover:text-[#0DBFDC]'>Load more videos</button>
+                                                </div>
+                                            }
+                                        </div>
+                                        </div>
+
+                                        {
+                                            related && related.length > 0 &&
+                                            <div>
+                                                <h2 className='text-2xl font-semibold my-4 mt-8 text-[#B9E0F2]'>Related Videos</h2>
+                                                <div className='grid md:grid-cols-4 xs:grid-cols-3 gap-5 grid-cols-2'>
+                                                    {
+                                                        related && related.length > 0 &&
+                                                            related.slice(0, relatedEndIndex).map((item, index) => {
+                                                                return (
+                                                                    <VideoThumbnail 
+                                                                        key={index} 
+                                                                        id={item._id} 
+                                                                        index={index} 
+                                                                        title={item.title} 
+                                                                        views={item.views} 
+                                                                        timestamp={item.createdAt} 
+                                                                        setActive={setActive} 
+                                                                        active={active} 
+                                                                        embedLink={getVideoId(item.link)}
+                                                                        currentId={getVideoId(data?.video?.link)}
+                                                                        user={user}
+                                                                        setAlertSubActive={setAlertSubActive}
+                                                                        fixed={false}
+                                                                        file_size={item.file_size}
+                                                                        archiveList={archiveList ? archiveList : {}}
+                                                                        likes={item.likes}
+                                                                        related={true}
+                                                                        duration={item.duration}
+                                                                        downloadUrl={item.downloadUrl}
+                                                                        username={data ? data.username : "Anonymous" }
+                                                                    />
+                                                                )
+                                                            })
+                                                    }
+                                                </div>
+                                                {
+                                                    (related?.length > 8 && related?.length > relatedEndIndex) &&
+                                                    <div className='flex items-center py-4'>
+                                                        <button onClick={() => loadRelated()} className='text-center text-sm mx-auto hover:underline hover:text-[#0DBFDC]'>Load more videos</button>
+                                                    </div>
+                                                }
+                                            </div>
+                                        }
+                                        
                                         <div className='md:block hidden'>
                                             {
                                                 user ? (
@@ -629,45 +755,56 @@ const VideosSingle = ({ user }) => {
                                         </div>
                                     </div>
                                     <div className='md:px-2'>
-                                        <div className='transition-all p-4 py-3 text-sm rounded-t-lg bg-[#131C31] border border-solid border-[#222F43] font-poppins'>
-                                            <p className='text-[#0DBFDC] font-semibold mb-1'>{ data ? data.username : "Anonymous" } Uploads</p>
-                                            <p className='text-xs'>{uploads?.length > 0 ? uploads.length : 0} videos</p>
-                                        </div>
-                                        <div className='transition-all py-3 text-sm rounded-b-lg bg-[#131C31] border border-solid border-[#222F43] max-h-[500px] overflow-y-auto'>
-                                            {
-                                                uploads && uploads.length > 0 ?
-                                                    uploads.map((item, index) => {
-                                                        return (
-                                                            <VideoThumbnail 
-                                                                key={index} 
-                                                                id={item._id} 
-                                                                index={index} 
-                                                                title={item.title} 
-                                                                views={item.views} 
-                                                                timestamp={item.createdAt} 
-                                                                setActive={setActive} 
-                                                                active={active} 
-                                                                embedLink={getVideoId(item.link)}
-                                                                currentId={getVideoId(data?.video?.link)}
-                                                                user={user}
-                                                                setAlertSubActive={setAlertSubActive}
-                                                                fixed={false}
-                                                                file_size={item.file_size}
-                                                                archiveList={archiveList ? archiveList : {}}
-                                                                likes={item.likes}
-                                                                username={data ? data.username : "Anonymous" }
-                                                                uploader={true}
-                                                            />
-                                                        )
-                                                    })
-                                                :
-                                                <div className='flex items-center justify-center py-2'>
-                                                    <div className='flex items-center justify-center'>
-                                                        <img className="w-8" src={loading} />
-                                                        <p className='text-white font-semibold text-base ml-2'>Loading Videos</p>
+                                        <div className='md:block hidden'>
+                                            <div className='transition-all p-4 py-3 text-sm rounded-t-lg bg-[#131C31] border border-solid border-[#222F43] font-poppins'>
+                                                <p className='text-[#0DBFDC] font-semibold mb-1'>{ data ? data.username : "Anonymous" } Uploads</p>
+                                                <p className='text-xs'>{uploads?.length > 0 ? uploads.length : 0} videos</p>
+                                            </div>
+                                            <div className='transition-all py-3 text-sm rounded-b-lg bg-[#131C31] border border-solid border-[#222F43] max-h-[500px] overflow-y-auto'>
+                                                {
+                                                    uploads && uploads.length > 0 ?
+                                                        uploads.slice(0, uploadsEndIndex).map((item, index) => {
+                                                            return (
+                                                                <VideoThumbnail 
+                                                                    key={index} 
+                                                                    id={item._id} 
+                                                                    index={index} 
+                                                                    title={item.title} 
+                                                                    views={item.views} 
+                                                                    timestamp={item.createdAt} 
+                                                                    setActive={setActive} 
+                                                                    active={active} 
+                                                                    embedLink={getVideoId(item.link)}
+                                                                    currentId={getVideoId(data?.video?.link)}
+                                                                    user={user}
+                                                                    setAlertSubActive={setAlertSubActive}
+                                                                    fixed={false}
+                                                                    file_size={item.file_size}
+                                                                    archiveList={archiveList ? archiveList : {}}
+                                                                    likes={item.likes}
+                                                                    username={data ? data.username : "Anonymous" }
+                                                                    uploader={true}
+                                                                    downloadUrl={item.downloadUrl}
+                                                                    duration={item.duration}
+                                                                />
+                                                            )
+                                                        })
+                                                    :
+                                                    <div className='flex items-center justify-center py-2'>
+                                                        <div className='flex items-center justify-center'>
+                                                            <img className="w-8" src={loading} />
+                                                            <p className='text-white font-semibold text-base ml-2'>Loading Videos</p>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            }
+                                                }
+
+                                                {
+                                                    (uploads?.length > 20 && uploads?.length > uploadsEndIndex) &&
+                                                    <div className='flex items-center py-2'>
+                                                        <button onClick={() => loadUploads()} className='text-center text-xs mx-auto hover:underline hover:text-[#0DBFDC]'>Load more videos</button>
+                                                    </div>
+                                                }
+                                            </div>
                                         </div>
                                         {/* <div className='mb-8 sm:pt-4 text-white md:bg-transparent xs:bg-gray-800 bg-transparent  md:rounded-none rounded-md md:p-4 xs:p-8 py-8 mx-auto'>
                                             <h2 className='text-2xl font-semibold mb-6'>Related Videos</h2>
