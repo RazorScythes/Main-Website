@@ -176,7 +176,7 @@ const FormModal = ({ openModal, setOpenModal, data, user }) => {
             privacy: 'public',
             updated: moment().tz('UTC').format('YYYY-MM-DDTHH:mm:ss.SSSZ')
         })
-        console.log(newList)
+       
         if(!submitted) {
             dispatch(newArchiveList({
                 id: user,

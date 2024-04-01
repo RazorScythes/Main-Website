@@ -17,6 +17,7 @@ import Cookies from 'universal-cookie';
 import SideAlert from '../SideAlert'
 import ReactPlayer from 'react-player/youtube'
 import Iframe from 'react-iframe'
+import ReportModal from './../ReportModal'
 
 const cookies = new Cookies();
 
@@ -71,6 +72,8 @@ const VideosSingle = ({ user }) => {
     const [isAnimatingTU, setIsAnimatingTU] = useState(false)
     const [isAnimatingTD, setIsAnimatingTD] = useState(false)
     const [openDirectory, setOpenDirectory] = useState(false)
+    const [volume, setVolume] = useState(parseFloat(localStorage.getItem('volume')));
+    const [reportModal, setReportModal] = useState(true)
 
     const [uploadsPagination, setUploadsPagination] = useState(1)
     const [uploadsEndIndex, setUploadsEndIndex] = useState(0)
@@ -314,6 +317,24 @@ const VideosSingle = ({ user }) => {
         setRelatedPagination(relatedPagination + 1)
     }
 
+    const handleVolumeChange = (event) => {
+        const newVolume = parseFloat(event.target.volume);
+
+        localStorage.setItem('volume', newVolume);
+        setVolume(newVolume)
+        const video = document.getElementById('videoPlayer');
+        if (video) {
+            video.volume = newVolume;
+        }
+    };
+
+    const handleVolume = () => {
+        const video = document.getElementById('videoPlayer');
+        if (video) {
+            video.volume = volume;
+        }
+    }
+
     return (
         <div
             className="relative bg-cover bg-center py-8"
@@ -328,6 +349,10 @@ const VideosSingle = ({ user }) => {
                             paragraph={alertInfo.paragraph}
                             active={alertActive}
                             setActive={setAlertActive}
+                        />
+                        <ReportModal
+                            openModal={reportModal}
+                            setOpenModal={setReportModal}
                         />
                         {
                             isLoading ?
@@ -450,11 +475,14 @@ const VideosSingle = ({ user }) => {
                                             {
                                                 data?.video?.downloadUrl ? 
                                                 <video 
+                                                    id="videoPlayer"
                                                     src={data.video.downloadUrl}
                                                     controls 
                                                     controlsList="nodownload" 
                                                     className='w-full lg:h-[450px] md:h-[400px] sm:h-[450px] xs:h-[400px] h-[225px] bg-black'
                                                     onPlay={addViews}
+                                                    onVolumeChange={handleVolumeChange}
+                                                    onLoadedData={handleVolume}
                                                 />
                                                 :
                                                 <iframe 
@@ -488,12 +516,12 @@ const VideosSingle = ({ user }) => {
                                                         <FontAwesomeIcon icon={faEye} className="text-white mr-2"/>
                                                         <p>{ data && data.video ? data.video.views.length : 0 } <span className='xs:hidden inline-block'>view{data && data.video && data.video.views.length > 0 && 's'}</span></p>
                                                     </div>
-                                                    <div className='rounded-r-lg h-8 px-4 rounded-full flex items-center xs:ml-4 ml-1 bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm' title="Likes">
-                                                        <FontAwesomeIcon onClick={addLikes} style={{color: isAnimatingTU ? '#0DBFDC' : '#FFF'}} icon={faThumbsUp} className="mr-2 cursor-pointer"/>
+                                                    <div onClick={addLikes} className='cursor-pointer rounded-r-lg h-8 px-4 rounded-full flex items-center xs:ml-4 ml-1 bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm' title="Likes">
+                                                        <FontAwesomeIcon style={{color: isAnimatingTU ? '#0DBFDC' : '#FFF'}} icon={faThumbsUp} className="mr-2 cursor-pointer"/>
                                                         <p>{ likes && likes.length }</p>
                                                     </div>
-                                                    <div className='rounded-l-lg h-8 px-4 rounded-full flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm' title="Dislikes">
-                                                        <FontAwesomeIcon onClick={addDislikes} style={{color: isAnimatingTD ? '#0DBFDC' : '#FFF'}} icon={faThumbsDown} className="text-white mr-2 hover:text-[#CD3242] cursor-pointer"/>
+                                                    <div onClick={addDislikes} className='cursor-pointer rounded-l-lg h-8 px-4 rounded-full flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm' title="Dislikes">
+                                                        <FontAwesomeIcon style={{color: isAnimatingTD ? '#0DBFDC' : '#FFF'}} icon={faThumbsDown} className="text-white mr-2 hover:text-[#CD3242] cursor-pointer"/>
                                                         <p>{ dislikes && dislikes.length }</p>
                                                     </div>
                                                 </div>
@@ -523,16 +551,16 @@ const VideosSingle = ({ user }) => {
                                                     }
                                                 </div>
                                                 {
-                                                    data && data.video && data.video.downloadable ? 
-                                                        <button className='rounded-full h-8 px-4 flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm cursor-pointer hover:text-[#0DBFDC] transition-all'>
+                                                    (data?.video?.downloadable || data?.video?.downloadUrl) ? 
+                                                        <a href={data.video.downloadUrl} className='rounded-full h-8 px-4 flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm cursor-pointer hover:text-[#0DBFDC] transition-all'>
                                                             <FontAwesomeIcon icon={faDownload} className="mr-2"/> Download
-                                                        </button>
+                                                        </a>
                                                         :
                                                         <button disabled={true} className='rounded-full h-8 px-4 flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm cursor-pointer hover:text-[#0DBFDC] transition-all'>
                                                             <FontAwesomeIcon icon={faLinkSlash} className="mr-2"/> Download
                                                         </button>
                                                 }
-                                                <button disabled={true} onClick={() => watchLater()} className='rounded-full h-8 px-4 flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm cursor-pointer hover:text-[#0DBFDC] transition-all'>
+                                                <button onClick={() => setReportModal(true)} className='rounded-full h-8 px-4 flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm cursor-pointer hover:text-[#0DBFDC] transition-all'>
                                                     <FontAwesomeIcon icon={faFlag} className="mr-2"/> Report
                                                 </button>
                                             </div>
@@ -644,7 +672,7 @@ const VideosSingle = ({ user }) => {
                                                                         related={true}
                                                                         duration={item.duration}
                                                                         downloadUrl={item.downloadUrl}
-                                                                        username={data ? data.username : "Anonymous" }
+                                                                        username={item.username}
                                                                     />
                                                                 )
                                                             })

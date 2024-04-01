@@ -206,7 +206,7 @@ const Videos = ({ user }) => {
       setCurrentPage(pageIndex)
     }, [pageIndex])
 
-    const itemsPerPage = 52; // Number of items per page
+    const itemsPerPage = 55; // Number of items per page
     const totalPages = Math.ceil(videos?.length / itemsPerPage); // Total number of pages
     const [currentPage, setCurrentPage] = useState(pageIndex);
     // Calculate the start and end indices for the current page
@@ -394,7 +394,7 @@ const Videos = ({ user }) => {
                 <div>
                   {
                     videos && videos.length > 0 ?
-                        <div className='grid lg:grid-cols-4 md:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-5 place-content-start mt-4'>
+                        <div className='grid md:grid-cols-5 sm:grid-cols-4 xs:grid-cols-3 grid-cols-2 gap-5 place-content-start mt-4'>
                             {
                               videos.slice(startIndex, endIndex).map((item, index) => {
                                 return (
@@ -412,6 +412,11 @@ const Videos = ({ user }) => {
                                       setAlertSubActive={setAlertSubActive}
                                       file_size={item.file_size}
                                       archiveList={archiveList ? archiveList : {}}
+                                      likes={item.likes}
+                                      related={true}
+                                      duration={item.duration}
+                                      downloadUrl={item.downloadUrl}
+                                      username={item.user ? item.user.username : "Anonymous" }
                                     />
                                   </MotionAnimate>
                                 )
