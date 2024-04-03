@@ -73,7 +73,7 @@ const VideosSingle = ({ user }) => {
     const [isAnimatingTD, setIsAnimatingTD] = useState(false)
     const [openDirectory, setOpenDirectory] = useState(false)
     const [volume, setVolume] = useState(parseFloat(localStorage.getItem('volume')));
-    const [reportModal, setReportModal] = useState(true)
+    const [reportModal, setReportModal] = useState(false)
 
     const [uploadsPagination, setUploadsPagination] = useState(1)
     const [uploadsEndIndex, setUploadsEndIndex] = useState(0)
@@ -83,6 +83,8 @@ const VideosSingle = ({ user }) => {
 
     const [searchParams, setSearchParams] = useSearchParams();
     const access_key = searchParams.get('access_key')
+
+    const [reportId, setReportId] = useState('')
 
     useEffect(() => {
         dispatch(getVideoByID({ id: user ? user.result?._id : '', videoId: id, access_key: access_key, }))
@@ -100,6 +102,12 @@ const VideosSingle = ({ user }) => {
         setRelatedPagination(1)
         window.scrollTo(0, 0)
     }, [id])
+
+    useEffect(() => {
+        if((related_video.length > 0 || Object.keys(video).length !== 0) && reportId) {
+            setReportModal(true)
+        }
+    }, [reportId])
 
     const [alertActive, setAlertActive] = useState(false)
     const [alertSubActive, setAlertSubActive] = useState('')
@@ -131,6 +139,11 @@ const VideosSingle = ({ user }) => {
             setAlertActive(true)
 
             dispatch(clearAlert())
+
+            if(reportModal) {
+                setReportId('')
+                setReportModal(false)
+            }
         }
     }, [sideAlert])
 
@@ -353,6 +366,9 @@ const VideosSingle = ({ user }) => {
                         <ReportModal
                             openModal={reportModal}
                             setOpenModal={setReportModal}
+                            data={reportId}
+                            sideAlert={sideAlert}
+                            setReportId={setReportId}
                         />
                         {
                             isLoading ?
@@ -560,7 +576,10 @@ const VideosSingle = ({ user }) => {
                                                             <FontAwesomeIcon icon={faLinkSlash} className="mr-2"/> Download
                                                         </button>
                                                 }
-                                                <button onClick={() => setReportModal(true)} className='rounded-full h-8 px-4 flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm cursor-pointer hover:text-[#0DBFDC] transition-all'>
+                                                <button onClick={() => {
+                                                    setReportModal(true)
+                                                    setReportId(data.video._id)
+                                                    }} className='rounded-full h-8 px-4 flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-sm cursor-pointer hover:text-[#0DBFDC] transition-all'>
                                                     <FontAwesomeIcon icon={faFlag} className="mr-2"/> Report
                                                 </button>
                                             </div>
@@ -673,6 +692,7 @@ const VideosSingle = ({ user }) => {
                                                                         duration={item.duration}
                                                                         downloadUrl={item.downloadUrl}
                                                                         username={item.username}
+                                                                        setReportId={setReportId}
                                                                     />
                                                                 )
                                                             })

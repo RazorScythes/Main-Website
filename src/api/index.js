@@ -128,6 +128,7 @@ export const removeComment                              = (formData) => User_API
 export const addToWatchLater                            = (formData) => User_API.post('/video/addToWatchLater', formData)
 export const countVideoTags                             = (formData) => User_API.post('/video/countVideoTags', formData)
 export const uploadLists                                = (formData) => User_API.post('/video/uploadLists', formData)
+export const uploadReport                               = (formData) => User_API.post('/video/uploadReport', formData)
 
 /*
     Game

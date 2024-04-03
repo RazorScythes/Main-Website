@@ -14,6 +14,7 @@ import VideoThumbnail from '../VideoThumbnail';
 import SideAlert from '../SideAlert'
 import Cookies from 'universal-cookie';
 import { useQuery } from 'react-query';
+import ReportModal from './../ReportModal'
 
 const cookies = new Cookies();
 
@@ -75,9 +76,36 @@ const Videos = ({ user }) => {
         paragraph: ''
     })
 
+    const [reportModal, setReportModal] = useState(false)
+    const [reportId, setReportId] = useState('')
+
     useEffect(() => {
       
     }, [message])
+
+    useEffect(() => {
+      if(video.length > 0 && reportId) {
+          setReportModal(true)
+      }
+    }, [reportId])
+
+    useEffect(() => {
+      if(Object.keys(sideAlert).length !== 0){
+          setAlertInfo({
+              variant: sideAlert.variant,
+              heading: sideAlert.heading,
+              paragraph: sideAlert.paragraph
+          })
+          setAlertActive(true)
+
+          dispatch(clearAlert())
+
+          if(reportModal) {
+              setReportId('')
+              setReportModal(false)
+          }
+      }
+    }, [sideAlert])
 
     const checkVideoFileSize = (size = "") => {
       if(!size) return false
@@ -320,7 +348,13 @@ const Videos = ({ user }) => {
          active={alertActive}
          setActive={setAlertActive}
          />
-      
+      <ReportModal
+          openModal={reportModal}
+          setOpenModal={setReportModal}
+          data={reportId}
+          sideAlert={sideAlert}
+          setReportId={setReportId}
+      />
       {/* <div className='lg:px-16 sm:px-4 mx-auto'>
          <hr/>
       </div> */}
@@ -417,6 +451,7 @@ const Videos = ({ user }) => {
                                       duration={item.duration}
                                       downloadUrl={item.downloadUrl}
                                       username={item.user ? item.user.username : "Anonymous" }
+                                      setReportId={setReportId}
                                     />
                                   </MotionAnimate>
                                 )

@@ -229,6 +229,22 @@ export const addToWatchLater = createAsyncThunk('video/addToWatchLater', async (
     }
 })
 
+export const uploadReport = createAsyncThunk('video/uploadReport', async (form, thunkAPI) => {
+    try {
+        const response = await api.uploadReport(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const countVideoTags = createAsyncThunk('video/countVideoTags', async (form, thunkAPI) => {
     try {
         const response = await api.countVideoTags(form)
@@ -404,6 +420,12 @@ export const videoSlice = createSlice({
         builder.addCase(uploadLists.rejected, (state, action) => {
             state.alert = action.payload.message
             state.variant = action.payload.variant
+        }),
+        builder.addCase(uploadReport.fulfilled, (state, action) => {
+            state.sideAlert = action.payload.data.sideAlert
+        }),
+        builder.addCase(uploadReport.rejected, (state, action) => {
+            state.sideAlert = action.payload.sideAlert
         })
     },
     reducers: {

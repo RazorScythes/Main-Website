@@ -44,7 +44,8 @@ const VideoThumbnail = ({
   username = '', 
   downloadUrl = '',
   duration = '',
-  related = false
+  related = false,
+  setReportId
 }) => {
 
   const dispatch = useDispatch()
@@ -235,7 +236,7 @@ const VideoThumbnail = ({
                           Watch Later
                         </button>
                       }
-                      <button className='px-4 py-2 hover:bg-gray-900 text-left'><FontAwesomeIcon icon={faFlag} className="mr-1"/> Report</button>
+                      <button onClick={() => setReportId(id)} className='px-4 py-2 hover:bg-gray-900 text-left'><FontAwesomeIcon icon={faFlag} className="mr-1"/> Report</button>
                     </div>
                   </MotionAnimate>
                 }
