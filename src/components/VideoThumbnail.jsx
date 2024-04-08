@@ -171,14 +171,14 @@ const VideoThumbnail = ({
       :
       related ? 
         <div className='flex flex-col items-center text-gray-100 text-sm mb-2 hover:bg-[#111827] cursor-pointer transition-all relative'>
-            <Link to={`/videos/${id}`} className='bg-black rounded-lg overflow-hidden w-full md:h-32 xs:h-28 h-24 mr-2 relative border border-gray-900'>
+            <Link to={`/videos/${id}`} className='bg-black rounded-lg overflow-hidden w-full md:h-32 xs:h-28 h-24 relative border border-gray-900'>
                 {
                     embedLink === currentId &&
                         <p style={{backgroundColor: 'rgb(0, 0, 0, 0.8'}} className='w-full text-center absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 text-xs py-1'>Watching</p>
                 }
                 <img 
                     src={`https://drive.google.com/thumbnail?id=${embedLink}`} alt="Video Thumbnail" 
-                    className='mx-auto object-cover md:h-32 xs:h-28 h-24'
+                    className='mx-auto object-cover w-full md:h-32 xs:h-28 h-24'
                 />
                 <div className='absolute top-1 right-1 rounded-sm bg-[#131C31] border border-solid border-[#222F43] text-gray-100' title={checkVideoFileSize(file_size) ? 'Video' : 'Embed'}>
                   {/* <p className='font-semibold p-1 px-1 py-0 text-xs'><FontAwesomeIcon icon={checkVideoFileSize(file_size) ? faFilm : faCode} /></p> */}
@@ -191,15 +191,7 @@ const VideoThumbnail = ({
             <div className='flex flex-col w-full overflow-x-hidden'>
                 <p className='truncate'><TextWithEllipsis text={title} limit={70} /></p>
                 <div className='flex relative mt-1'>
-                    <div className='text-xs h-6 px-2 rounded-sm flex items-center bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100' title="Views">
-                        <FontAwesomeIcon icon={faEye} className="text-white mr-2"/>
-                        <p>{ views ? views.length : 0 } <span className='xs:hidden inline-block'></span></p>
-                    </div>
-                    <div className='rounded-sm h-6 px-2 flex items-center ml-1 bg-[#131C31] text-center border border-solid border-[#222F43] text-gray-100 text-xs' title="Likes">
-                        <FontAwesomeIcon icon={faThumbsUp} className="mr-2"/>
-                        <p>{ likes && likes.length }</p>
-                    </div>
-
+                    <p className='text-xs text-[#94a9c9] truncate'>{username}</p>
                     <button onClick={() => {
                         setActive(index)
                         setIsOpen(!isOpen)
@@ -240,10 +232,10 @@ const VideoThumbnail = ({
                     </div>
                   </MotionAnimate>
                 }
-                <hr className='border-gray-700 my-2 border-dashed'/>
+                <hr className='border-gray-700 my-1 border-dashed'/>
                 <div className='flex justify-between'>
                   <p className='text-gray-100 text-xs truncate'>{moment(timestamp).fromNow()}</p>
-                  <p className='truncate text-xs'><TextWithEllipsis text={username} limit={70} /></p>
+                  <p className='truncate text-xs'><FontAwesomeIcon icon={faEye} className="mr-1"/> { views ? views.length : 0 }</p>
                 </div>
             </div>
         </div>

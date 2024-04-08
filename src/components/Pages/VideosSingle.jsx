@@ -597,7 +597,7 @@ const VideosSingle = ({ user }) => {
                                                         {
                                                                 data.video.tags.map((item, i) => {
                                                                     return (
-                                                                        <Link key={i} to={`/videos/tags/${item}`}><p className='flex justify-between items-center cursor-pointer transition-all p-3 py-2 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>{item}</p></Link>
+                                                                        <Link key={i} to={`/videos/tags/${item}`}><p className='flex justify-between items-center cursor-pointer transition-all p-3 py-2 text-sm rounded-lg border border-solid border-[#222F43] text-gray-100 hover:text-[#0DBFDC]'>#{item}</p></Link>
                                                                     )
                                                                 })
                                                         }
