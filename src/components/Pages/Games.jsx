@@ -243,16 +243,20 @@ const Games = ({ user }) => {
 
     useEffect(() => {
         if(tags.length > 0) {
-          var dataTags = filterDataByTags()
-          setGames(dataTags)
+            var dataTags = filterDataByTags()
+            setGames(dataTags)
         }
         else {
-          initData()
+            initData()
         }
     }, [tags])
 
     useEffect(() => {
         initData()
+        if(tags.length > 0) {
+            var dataTags = filterDataByTags()
+            setGames(dataTags)
+        }
     },[game, searchParams.get('type'), filteredType])
 
     useEffect(() => {

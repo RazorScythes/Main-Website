@@ -297,6 +297,7 @@ export const videoSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(getVideoByTag.fulfilled, (state, action) => {
+            state.tagsCount = action.payload.data.tags
             state.videos = action.payload.data.result
             state.archiveList = action.payload.data.archiveList
             state.error = ''
@@ -312,6 +313,7 @@ export const videoSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(getVideoByArtist.fulfilled, (state, action) => {
+            state.tagsCount = action.payload.data.tags
             state.videos = action.payload.data.result
             state.archiveList = action.payload.data.archiveList
             state.error = ''
@@ -327,6 +329,7 @@ export const videoSlice = createSlice({
             state.isLoading = false
         }),
         builder.addCase(getVideoBySearchKey.fulfilled, (state, action) => {
+            state.tagsCount = action.payload.data.tags
             state.videos = action.payload.data.result
             state.archiveList = action.payload.data.archiveList
             state.error = ''

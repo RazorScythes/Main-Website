@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { getVideos, countVideoTags } from "../../actions/video";
+import { getVideos, countVideoTags, getVideoBySearchKey } from "../../actions/video";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faCheckSquare, faSquare, faSearch, faClose, faArrowLeft, faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { faChevronLeft, faChevronRight, faChevronUp, faChevronDown, faCheckSquare, faSquare, faSearch, faClose, faArrowLeft, faArrowRight, faHomeLg } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from 'react-router-dom';
-import { useSearchParams } from "react-router-dom";
+import { useSearchParams, useParams } from "react-router-dom";
 import { clearAlert } from "../../actions/video";
 import { MotionAnimate } from 'react-motion-animate'
 import loading from '../../assets/loading.gif'
@@ -40,6 +40,8 @@ const getVideoId = (url) => {
 };
 
 const Videos = ({ user }) => {
+    const { key, developer } = useParams();
+
     const navigate  = useNavigate()
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -284,15 +286,27 @@ const Videos = ({ user }) => {
 
     useEffect(() => {
       initData()
+      if(tags.length > 0) {
+        var dataTags = filterDataByTags()
+        setVideos(dataTags)
+      }
     },[video, searchParams.get('type'), filteredType])
 
     useEffect(() => {
-      dispatch(getVideos({
-        id: user ? user.result?._id : ''
-      }))
-      dispatch(countVideoTags({
-        id: user ? user.result?._id : ''
-      }))
+      if(key){
+        dispatch(getVideoBySearchKey({
+          id: user ? user.result?._id : '',
+          searchKey: key
+        }))
+      }
+      else {
+        dispatch(getVideos({
+          id: user ? user.result?._id : ''
+        }))
+        dispatch(countVideoTags({
+          id: user ? user.result?._id : ''
+        }))
+      }
     }, [])
 
     useEffect(() => {
@@ -486,7 +500,23 @@ const Videos = ({ user }) => {
       </div> */}
       <div className={`${styles.marginX} ${styles.flexCenter}`}>
       <div className={`${styles.boxWidthEx}`}>
-         <div className="container mx-auto file:lg:px-8 relative px-0 my-10 font-poppins">
+         <div className="container mx-auto file:lg:px-8 relative px-0 my-10 font-poppins text-[#94a9c9]">
+            {
+              key &&
+              <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-8'>
+                <div>
+                    <div className='flex sm:flex-row flex-col items-start text-sm pb-2'>
+                        <h1 className='sm:text-5xl text-4xl font-bold text-[#0DBFDC] drop-shadow-md'> Videos Search </h1>
+                    </div>
+                    <div className='flex flex-row flex-wrap items-center text-sm'>
+                        <div className='mr-2'><FontAwesomeIcon icon={faHomeLg} className='mr-1'/> <a href='/' className='hover:underline transition-all hover:text-[#0CBCDC]'> Home </a></div>
+                        <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> <a href='/videos' className='hover:underline transition-all hover:text-[#0CBCDC]'> Videos </a></div>
+                        <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> <span className='hover:underline transition-all hover:text-[#0CBCDC]'> Search </span></div>
+                        <div className='mr-2'><FontAwesomeIcon icon={faChevronRight} className='mr-1'/> <span className='hover:underline transition-all hover:text-[#0CBCDC]'> {key} </span></div>
+                    </div>
+                </div>
+            </div>
+            }
             <div className='flex sm:flex-row flex-col-reverse sm:justify-between mb-4 font-poppins'>
               <div className='flex justify-between gap-2 items-center'>
                   <div className="relative lg:mt-0 sm:w-80 w-1/2 ">
