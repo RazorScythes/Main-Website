@@ -405,6 +405,7 @@ const AdminUploads = ({ user, path }) => {
 
             var num_video_count = 1;
             var file_count = 1
+            var count = 0
             var User_API
             
             if(import.meta.env.VITE_DEVELOPMENT == "true"){
@@ -440,11 +441,12 @@ const AdminUploads = ({ user, path }) => {
                     fileExtension: file.fileExtension,
                     webContentLink: file.webContentLink,
                     thumbnailLink: file.thumbnailLink,
-                    duration: file.duration
+                    duration: file.duration,
+                    isbulk: true
                 }
 
                 if(longTitle) num_video_count = num_video_count + 1
-
+                count ++;
                 try {
                     if(APIProperties) {
                         await User_API.post('/uploads/updateVideoProperties', { 
@@ -494,6 +496,31 @@ const AdminUploads = ({ user, path }) => {
                 if(files.length === file_count) setBulkUpload(true)
                 file_count = file_count + 1
             })
+
+            //Logs
+            if(APIProperties) {
+                await User_API.post('/uploads/logsActivity', { 
+                    data: {
+                        user: user.result?._id, 
+                        id: 'bulk', 
+                        type: 'video',
+                        method: 'PATCH', 
+                        message: `Updated ${count} videos`
+                    }
+                })
+            }
+            else {
+                await User_API.post('/uploads/logsActivity', { 
+                    data: {
+                        user: user.result?._id, 
+                        id: 'bulk', 
+                        type: 'video',
+                        method: 'POST', 
+                        message: `Uploaded ${count} videos`
+                    }
+                })
+            }
+
             if(bulkError.length > 0) {
                 console.log(bulkError)
                 setBulkError([])

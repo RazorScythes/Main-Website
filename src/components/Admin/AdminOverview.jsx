@@ -18,15 +18,20 @@ const AdminOverview = ({ user, path }) => {
     const dispatch = useDispatch()
 
     const overview = useSelector((state) => state.admin.data)
+    const itemsPerPage = 10; // Number of items per page
 
+    const [currentPage, setCurrentPage] = useState(1);
     const [open, setOpen] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [data, setData] = useState({})
 
+    // Calculate the start and end indices for the current page
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+
     useEffect(() => {
         if(!user) navigate(`/`)
         dispatch(getOverviewData())
-    console.log("OK")
     }, [])
 
     useEffect(() => {
@@ -35,6 +40,13 @@ const AdminOverview = ({ user, path }) => {
             console.log(overview)
         }
     }, [overview])
+
+    const dateFormat = (dateString) => {
+        const date = new Date(dateString);
+        const formattedDate = date.toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'});
+        return formattedDate
+    }
+
     return (
         <div className="flex h-screen bg-gray-50 dark:bg-gray-900 relative">
             <AdminSidebar isOpen={isOpen} setIsOpen={setIsOpen} open={open} setOpen={setOpen} path={path}/>
@@ -113,23 +125,68 @@ const AdminOverview = ({ user, path }) => {
                                                             <th class="px-4 py-3">Timestamp</th>
                                                         </tr>
                                                     </thead>
-                                                        <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
-                                                            <td class="px-4 py-3 text-xs">
-                                                                Sample
-                                                            </td>
-                                                            <td class="px-4 py-3 text-xs">
-                                                                Sample
-                                                            </td>
-                                                            <td class="px-4 py-3 text-xs">
-                                                                Sample
-                                                            </td>
-                                                            <td class="px-4 py-3 text-xs">
-                                                                Sample
-                                                            </td>
-                                                            <td class="px-4 py-3 text-xs">
-                                                                Sample
-                                                            </td>
-                                                        </tbody>
+                                                    <tbody class="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
+                                                        {
+                                                            data?.activity_logs?.length > 0 &&
+                                                            data.activity_logs.slice(startIndex, endIndex).map((item, index) => {
+                                                                return (
+                                                                    <tr>
+                                                                        <td class="px-4 py-3 text-xs">
+                                                                            <div class="flex items-center text-sm">
+                                                                                <div
+                                                                                    className="relative w-8 h-8 mr-3 rounded-full="
+                                                                                >
+                                                                                    <img
+                                                                                        className="object-cover w-full h-full rounded-full"
+                                                                                        src={item.user.avatar ? convertDriveImageLink(item.user.avatar) : Avatar}
+                                                                                        alt=""
+                                                                                        loading="lazy"
+                                                                                    />
+                                                                                    <div
+                                                                                        className="absolute inset-0 rounded-full shadow-inner"
+                                                                                        aria-hidden="true"
+                                                                                    ></div>
+                                                                                </div>
+                                                                                <div>
+                                                                                    <p className="font-semibold">{item.user.username}</p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                        <td class="px-4 py-3 text-xs">
+                                                                            {
+                                                                                item.type === 'video' ?
+                                                                                <div className='w-14 px-2 py-1 rounded-lg bg-[#15CA20] text-[#FFF] font-bold text-center [text-shadow:_0_2px_0_rgb(0_0_0_/_30%)]'>video</div>
+                                                                                : item.type === 'game' ?
+                                                                                <div className='w-14 px-2 py-1 rounded-lg bg-[#0DCAF0] text-[#FFF] font-bold text-center [text-shadow:_0_2px_0_rgb(0_0_0_/_30%)]'>game</div>
+                                                                                : item.type === 'blog' ?
+                                                                                <div className='w-14 px-2 py-1 rounded-lg bg-[#FFC20D] text-[#FFF] font-bold text-center [text-shadow:_0_2px_0_rgb(0_0_0_/_30%)]'>blog</div>
+                                                                                : item.type === 'user' &&
+                                                                                <div className='w-14 px-2 py-1 rounded-lg bg-[#CD3242] text-[#FFF] font-bold text-center [text-shadow:_0_2px_0_rgb(0_0_0_/_30%)]'>user</div>
+                                                                            }
+                                                                        </td>
+                                                                        <td class="px-4 py-3 text-sm">
+                                                                            {item.message}
+                                                                        </td>
+                                                                        <td class="px-4 py-3 text-xs">
+                                                                            {
+                                                                                item.method === 'GET' ?
+                                                                                <div className='w-12 px-2 py-1 rounded-lg bg-[#15CA20] text-[#FFF] font-semibold text-center [text-shadow:_0_2px_0_rgb(0_0_0_/_50%)]'>GET</div>
+                                                                                : item.method === 'POST' ?
+                                                                                <div className='w-12 px-2 py-1 rounded-lg bg-[#0DCAF0] text-[#FFF] font-semibold text-center [text-shadow:_0_2px_0_rgb(0_0_0_/_50%)]'>POST</div>
+                                                                                : item.method === 'PATCH' ?
+                                                                                <div className='w-14 px-2 py-1 rounded-lg bg-[#FFC20D] text-[#FFF] font-semibold text-center [text-shadow:_0_2px_0_rgb(0_0_0_/_50%)]'>PATCH</div>
+                                                                                : item.method === 'DELETE' &&
+                                                                                <div className='w-14 px-2 py-1 rounded-lg bg-[#CD3242] text-[#FFF] font-semibold text-center [text-shadow:_0_2px_0_rgb(0_0_0_/_30%)]'>DELETE</div>
+                                                                            }
+                                                                        </td>
+                                                                        <td class="px-4 py-3 text-sm">
+                                                                            {dateFormat(item.createdAt)}
+                                                                        </td>
+                                                                    </tr>
+                                                                )
+                                                            })
+                                                        }
+                                                    </tbody>
                                                 </table>
                                             </div>
                                             <div

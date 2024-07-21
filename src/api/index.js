@@ -108,6 +108,7 @@ export const changeBlogPrivacyById                      = (formData) => User_API
 export const changeBlogStrictById                       = (formData) => User_API.post('/uploads/changeBlogStrictById', formData)
 export const removeBlog                                 = (formData) => User_API.post('/uploads/removeBlog', formData)
 export const bulkRemoveBlog                             = (formData) => User_API.post('/uploads/bulkRemoveBlog', formData)
+export const logsActivity                               = (formData) => User_API.post('/uploads/logsActivity', formData)
 
 /*
     Logs
