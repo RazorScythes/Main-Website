@@ -38,6 +38,10 @@ const options = {
     withCredentials: true,
 };
 
+/*
+    Admin
+*/
+export const getOverviewData                            = (formData) => User_API.post('/admin/getOverviewData', formData)
 
 /*
     Sign in

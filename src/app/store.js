@@ -9,6 +9,7 @@ import gameSlice from '../actions/game'
 import blogsSlice from '../actions/blogs'
 import archiveSlice from '../actions/archive'
 import projectSlice from '../actions/project'
+import adminSlice from '../actions/admin'
 
 export const store = configureStore({
     reducer: {
@@ -21,7 +22,8 @@ export const store = configureStore({
         game: gameSlice,
         blogs: blogsSlice,
         archive: archiveSlice,
-        project: projectSlice
+        project: projectSlice,
+        admin: adminSlice
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({
