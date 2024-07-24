@@ -13,6 +13,7 @@ import AdminSidebar from './AdminSidebar';
 
 import moment from 'moment-timezone';
 import Avatar from '../../assets/avatar.png'
+import { faArrowLeft, faArrowRight } from '@fortawesome/free-solid-svg-icons';
 const AdminOverview = ({ user, path }) => {
 
     const dispatch = useDispatch()
@@ -20,14 +21,17 @@ const AdminOverview = ({ user, path }) => {
     const overview = useSelector((state) => state.admin.data)
     const itemsPerPage = 10; // Number of items per page
 
-    const [currentPage, setCurrentPage] = useState(1);
+    const [pageIndex, setPageIndex] = useState(1)
+    const [currentPage, setCurrentPage] = useState(pageIndex);
     const [open, setOpen] = useState(false)
     const [isOpen, setIsOpen] = useState(false)
     const [data, setData] = useState({})
+    const [displayedPages, setDisplayedPages] = useState([]);
 
     // Calculate the start and end indices for the current page
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
+    const totalPages = Math.ceil(data?.activity_logs?.length / itemsPerPage); // Total number of pages
 
     useEffect(() => {
         if(!user) navigate(`/`)
@@ -37,15 +41,63 @@ const AdminOverview = ({ user, path }) => {
     useEffect(() => {
         if (Object.keys(overview).length > 0) {
             setData(overview)
-            console.log(overview)
         }
     }, [overview])
+
+    useEffect(() => {
+        window.scrollTo(0, 0)
+        const calculateDisplayedPages = () => {
+            const pagesToShow = [];
+            const maxDisplayedPages = 5; // Maximum number of page buttons to display
+        
+            if (totalPages <= maxDisplayedPages) {
+                // If total pages are less than or equal to the maximum, display all pages
+                for (let i = 1; i <= totalPages; i++) {
+                    pagesToShow.push(i);
+                }
+            } else {
+                let startPage;
+                let endPage;
+        
+                if (currentPage <= Math.floor(maxDisplayedPages / 2)) {
+                // If current page is close to the beginning
+                    startPage = 1;
+                    endPage = maxDisplayedPages;
+                } else if (currentPage >= totalPages - Math.floor(maxDisplayedPages / 2)) {
+                    // If current page is close to the end
+                    startPage = totalPages - maxDisplayedPages + 1;
+                    endPage = totalPages;
+                } else {
+                    // If current page is in the middle
+                    startPage = currentPage - Math.floor(maxDisplayedPages / 2);
+                    endPage = currentPage + Math.floor(maxDisplayedPages / 2);
+                }
+        
+                for (let i = startPage; i <= endPage; i++) {
+                    pagesToShow.push(i);
+                }
+            }
+        
+            setDisplayedPages(pagesToShow);
+        };
+    
+        calculateDisplayedPages();
+    }, [currentPage, totalPages, pageIndex]);
+    
+    useEffect(() => {
+        setCurrentPage(pageIndex)
+    }, [pageIndex])
 
     const dateFormat = (dateString) => {
         const date = new Date(dateString);
         const formattedDate = date.toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'});
         return formattedDate
     }
+
+    const handlePageChange = (pageNumber) => {
+        setCurrentPage(pageNumber);
+        setPageIndex(pageNumber)
+    };
 
     return (
         <div className="flex h-screen bg-gray-50 dark:bg-gray-900 relative">
@@ -60,7 +112,7 @@ const AdminOverview = ({ user, path }) => {
                             button_text="Explore Now!"
                             button_link={`#`}
                         /> */}
-                        <div className="relative bg-[#F0F4F7] mt-8">   
+                        <div className="relative bg-[#F0F4F7] pt-8">   
                             <div className={`${styles.marginX} ${styles.flexCenter}`}>
                                 <div className={`${styles.boxWidthEx}`}>
                                     <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2  grid-cols-1 gap-4">
@@ -192,78 +244,37 @@ const AdminOverview = ({ user, path }) => {
                                             <div
                                                 class="md:block hidden px-4 py-3 text-xs font-semibold tracking-wide text-gray-500 uppercase border-t dark:border-gray-700 bg-gray-50 sm:grid-cols-9 dark:text-gray-400 dark:bg-gray-800"
                                                 >
-                                                <span class="flex items-center col-span-3">
-                                                    Showing 0 of 0
-                                                </span>
-                                                <span class="col-span-2"></span>
-                                                <span class="flex col-span-4 mt-2 sm:mt-auto sm:justify-end">
-                                                    <nav aria-label="Table navigation">
-                                                        <ul class="inline-flex items-center">
-                                                            <li>
-                                                                <button
-                                                                    // disabled={gameCurrentPage === 1} onClick={() => goToGamePage(1)}
-                                                                    class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
-                                                                    aria-label="Previous"
-                                                                    >
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-left" viewBox="0 0 16 16">
-                                                                        <path fill-rule="evenodd" d="M8.354 1.646a.5.5 0 0 1 0 .708L2.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
-                                                                        <path fill-rule="evenodd" d="M12.354 1.646a.5.5 0 0 1 0 .708L6.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z"/>
-                                                                    </svg>
-                                                                </button>
-                                                            </li>
-                                                            <li>
-                                                                <button
-                                                                    // disabled={gameCurrentPage === 1} onClick={() => goToGamePage(gameCurrentPage - 1)}
-                                                                    class="px-3 py-1 rounded-md rounded-l-lg focus:outline-none focus:shadow-outline-purple"
-                                                                    aria-label="Previous"
-                                                                    >
-                                                                    <svg
-                                                                        class="w-4 h-4 fill-current"
-                                                                        aria-hidden="true"
-                                                                        viewBox="0 0 20 20"
-                                                                        >
-                                                                        <path
-                                                                        d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                                                                        clip-rule="evenodd"
-                                                                        fill-rule="evenodd"
-                                                                        ></path>
-                                                                    </svg>
-                                                                </button>
-                                                            </li>
-                                                            <li>
-                                                                <button
-                                                                    // disabled={gameEndIndex >= gameData?.length} onClick={() => goToGamePage(gameCurrentPage + 1)}
-                                                                    class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
-                                                                    aria-label="Next"
-                                                                    >
-                                                                    <svg
-                                                                        class="w-4 h-4 fill-current"
-                                                                        aria-hidden="true"
-                                                                        viewBox="0 0 20 20"
-                                                                        >
-                                                                        <path
-                                                                        d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                                                                        clip-rule="evenodd"
-                                                                        fill-rule="evenodd"
-                                                                        ></path>
-                                                                    </svg>
-                                                                </button>
-                                                            </li>
-                                                            <li>
-                                                                <button
-                                                                    // disabled={gameEndIndex >= gameData?.length} onClick={() => goToGamePage(gameData?.length / itemsPerPage)} 
-                                                                    class="px-3 py-1 rounded-md rounded-r-lg focus:outline-none focus:shadow-outline-purple"
-                                                                    aria-label="Next"
-                                                                    >
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-chevron-double-right" viewBox="0 0 16 16">
-                                                                        <path fill-rule="evenodd" d="M3.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L9.293 8 3.646 2.354a.5.5 0 0 1 0-.708z"/>
-                                                                        <path fill-rule="evenodd" d="M7.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L13.293 8 7.646 2.354a.5.5 0 0 1 0-.708z"/>
-                                                                    </svg>
-                                                                </button>
-                                                            </li>
-                                                        </ul>
-                                                    </nav>
-                                                </span>
+                                                <div className='flex items-center justify-between'>
+                                                    <span class="flex items-center col-span-3">
+                                                        Showing {(endIndex >= data?.activity_logs?.length) ? data?.activity_logs.length : endIndex } of {data?.activity_logs?.length}
+                                                    </span>
+
+                                                    <div className='flex flex-wrap items-center justify-center'>
+                                                        <button
+                                                            disabled={currentPage === 1}
+                                                            onClick={() => handlePageChange(currentPage - 1)}
+                                                            className='h-8 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-1 px-3 mx-[2px] border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out'
+                                                        >
+                                                            <FontAwesomeIcon icon={faArrowLeft}/>
+                                                        </button>
+                                                        {displayedPages.map((pageNumber) => (
+                                                            <button 
+                                                                key={pageNumber}
+                                                                onClick={() => handlePageChange(pageNumber)}
+                                                                style={{backgroundColor: pageIndex === pageNumber && "#d1d5db"}} className='h-8 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-1 px-3 mx-[2px] border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out'
+                                                            >
+                                                            {pageNumber}
+                                                            </button>
+                                                        ))}
+                                                        <button
+                                                            disabled={currentPage === totalPages}
+                                                            onClick={() => handlePageChange(currentPage + 1)}
+                                                            className='h-8 bg-[#EAF0F7] hover:bg-gray-100  hover:text-gray-700 text-[#5A6C7F] font-semibold py-1 px-3 mx-[2px] border border-[#CAD5DF] rounded transition-colors duration-300 ease-in-out'
+                                                        >
+                                                            <FontAwesomeIcon icon={faArrowRight}/>
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="xs:w-full overflow-hidden rounded-sm shadow-xs">
