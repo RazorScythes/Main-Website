@@ -1,13 +1,16 @@
 import React, { useState } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faUser, faGear, faRightFromBracket, faFolder , faEnvelope} from "@fortawesome/free-solid-svg-icons";
+import { faUser, faGear, faRightFromBracket, faFolder , faEnvelope, faChevronUp} from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import { convertDriveImageLink } from '../Tools'
 import { logout } from "../../actions/auth";
 import { useDispatch, useSelector } from 'react-redux'
 import Avatar from '../../assets/avatar.png'
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons/faChevronDown';
 
 const AdminNavbar = ({ isOpen, setIsOpen, path }) => {
+    const dispatch = useDispatch()
+    
     const navigate  = useNavigate()
     
     const tokenResult = useSelector((state) => state.settings.tokenResult)
@@ -51,10 +54,42 @@ const AdminNavbar = ({ isOpen, setIsOpen, path }) => {
                     {
                         user?.result? 
                         <>
-                            <img className="h-8 w-8 rounded-full cursor-pointer object-cover border border-gray-400" src={avatar ? convertDriveImageLink(avatar) : Avatar} alt="Profile" onClick={() => {
+                            {/* <img className="h-8 w-8 rounded-full cursor-pointer object-cover border border-gray-400" src={avatar ? convertDriveImageLink(avatar) : Avatar} alt="Profile" onClick={() => {
                             setToggle(!toggle)
                             setIsActive(false)
-                            }} />
+                            }} /> */}
+
+                                <div class="flex items-center text-sm font-poppins">
+                                    <div className='flex flex-col items-end mr-3'>
+                                        <p className="font-semibold text-gray-900 leading-none">{user?.result.username}</p>
+                                        {
+                                            user?.result.role === 'Admin' ? <p className="text-xs font-semibold text-[#DC2626]">Admin</p> :
+                                            user?.result.role === 'Moderator' ? <p className="text-xs font-semibold text-[#FFAA33]">Moderator</p> 
+                                            : <p class="text-xs font-semibold text-[#2563EB]">User</p>
+                                        }
+                                    </div>
+                                    <div
+                                        className="relative w-8 h-8 mr-3 rounded-full cursor-pointer"
+                                        onClick={() => {
+                                            setToggle(!toggle)
+                                            setIsActive(false)
+                                        }}
+                                    >
+                                        <img
+                                            className="object-cover w-full h-full rounded-full border border-solid border-gray-800"
+                                            src={avatar ? convertDriveImageLink(avatar) : Avatar}
+                                            alt="Profile"
+                                            loading="lazy"
+                                        />
+                                        <div
+                                            className="absolute inset-0 rounded-full shadow-inner"
+                                            aria-hidden="true"
+                                        ></div>
+                                    </div>
+
+                                    <FontAwesomeIcon icon={!toggle ? faChevronDown : faChevronUp} className='text-[#5A6C7F] w-3 h-3 transition-all' />
+                                    <FontAwesomeIcon onClick={() => sign_out()} icon={faRightFromBracket} className='border-l border-solid pl-2 border-gray-300 text-[#5A6C7F] hover:text-[#2563EB] transition-all cursor-pointer text-base ml-3' />
+                                </div>               
                             <div
                             className={`${
                                 !toggle ? "hidden" : "flex"

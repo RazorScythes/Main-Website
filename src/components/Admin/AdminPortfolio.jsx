@@ -72,8 +72,8 @@ const AdminPortfolio = ({ user, path }) => {
                         <Header 
                             heading='Portfolio'
                             description="Build your portfolio like a professional!"
-                            button_text={portfolio && portfolio.published ? "Unpublish" : "Publish Now"}
-                            button_secondary_text={portfolio && portfolio.published ? "Unpublishing" : "Publishing"}
+                            button_text={portfolio && portfolio.published ? "Published" : "Private"}
+                            button_secondary_text={portfolio && portfolio.published ? "Updating" : "Updating"}
                             api_call={portfolio && portfolio.published ? unpublishPortfolio({id: user.result?._id}) : publishPortfolio({id: user.result?._id})}
                             setSubmitted={setSubmitted}
                             submitted={submitted}

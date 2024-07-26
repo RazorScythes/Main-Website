@@ -3,6 +3,10 @@ import { useDispatch, useSelector } from 'react-redux'
 import { Link } from 'react-router-dom'
 import CountUp from 'react-countup';
 import styles from '../../style'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faPen } from '@fortawesome/free-solid-svg-icons/faPen';
+import { faCogs, faLock } from '@fortawesome/free-solid-svg-icons';
+import { faCog } from '@fortawesome/free-solid-svg-icons/faCog';
 const Header = ({ heading, description, button_text, show_button = true, button_secondary_text, button_link, api_call, setSubmitted, submitted, data = [], grid_type = 'half' }) => {
 
 
@@ -19,7 +23,7 @@ const Header = ({ heading, description, button_text, show_button = true, button_
 
     const GridCards = () => {
         return (
-            <div class={grid_type === 'half' ? `grid gap-6 mb-8 sm:grid-cols-2 grid-cols-1 mt-4` : `grid gap-6 mb-8 md:grid-cols-4 sm:grid-cols-2 grid-cols-1 mt-4`}>
+            <div class={grid_type === 'half' ? `grid gap-6 mb-4 sm:grid-cols-2 grid-cols-1 mt-4` : `grid gap-6 mb-4 md:grid-cols-4 sm:grid-cols-2 grid-cols-1 mt-4`}>
                 {
                     data.length > 0 &&
                     data.map((item, index) => {
@@ -106,17 +110,20 @@ const Header = ({ heading, description, button_text, show_button = true, button_
             <div className={`${styles.marginX} ${styles.flexCenter}`}>
                 <div className={`${styles.boxWidthEx}`}>
                     <div className="container mx-auto relative px-0 pt-12 pb-8 ">
-                        <div className="lg:flex md:flex ">
-                            <div className="lg:w-1/2 md:w-1/2 w-full sm:px-4">
-                                <h2 className='text-4xl font-bold text-gray-800 mb-2 capitalize'>{ heading || 'Welcome' }</h2>
+                        <div className="lg:flex md:flex">
+                            <div className="lg:w-1/2 md:w-1/2 w-full">
+                                <h2 className='text-4xl font-semibold text-gray-800 mb-1 capitalize font-poppins leading-none tracking-wide'>{ heading || 'Welcome' }</h2>
                                 <p className='text-base text-gray-600 font-semibold'>{ description || 'Select a website to manage, or create a new one from scratch.' }</p>
-                               
-                                {
-                                    grid_type === 'half' &&
-                                        <GridCards type={grid_type} />
-                                }
                             </div>
-                            <div className="lg:w-1/2 md:w-1/2 w-full sm:px-4 flex items-start md:justify-end justify-start">
+                            <div className="lg:w-1/2 md:w-1/2 w-full flex items-center md:justify-end justify-start">
+                                {
+                                    heading === 'Portfolio' &&
+                                        <button className="flex items-center justify-between px-8 py-2 mr-2 text-sm font-medium leading-5 hover:text-white text-blue-600 transition-colors duration-150 bg-transparent  border border-blue-600 rounded-md hover:bg-blue-600 focus:outline-none focus:shadow-outline-purple">
+                                            Manage Layout
+                                            <FontAwesomeIcon icon={faCogs} className='w-4 h-4 ml-3'/>
+                                        </button>
+                                }
+                                
                                 {
                                     show_button && (
                                         button_link ? 
@@ -126,10 +133,22 @@ const Header = ({ heading, description, button_text, show_button = true, button_
                                             </button>
                                         </Link>
                                         :
-                                        <button onClick={handleClick} className="sm:my-8 py-2 px-8 border-[#CAD5DF] leading-5 text-white font-semibold transition-colors duration-150 bg-blue-600 border border-transparent rounded-md active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-purple">
+                                        <button onClick={handleClick} className="flex items-center justify-between px-8 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-blue-600 border border-transparent rounded-md active:bg-blue-600 hover:bg-blue-700 focus:outline-none focus:shadow-outline-purple">
                                             {
                                                 !submitted ?
-                                                    button_text || 'Explore Now!' 
+                                                    <>
+                                                    {
+                                                        button_text || 'Explore Now!' 
+                                                    }
+                                                    {
+                                                        heading === 'Portfolio' && (
+                                                            button_text === 'Published' ?
+                                                            <FontAwesomeIcon icon={faPen} className='w-3 h-3 ml-3'/>
+                                                            :
+                                                            <FontAwesomeIcon icon={faLock} className='w-3 h-3 ml-3'/>
+                                                        )
+                                                    }
+                                                    </>
                                                     :
                                                     <div className='flex flex-row justify-center items-center'>
                                                         { button_secondary_text || 'Explore Now!' }
@@ -142,10 +161,17 @@ const Header = ({ heading, description, button_text, show_button = true, button_
                                                         </div>
                                                     </div>
                                             }
+                                            
                                         </button>
                                     )
                                 }
                             </div>
+                        </div>
+                        <div className="lg:w-1/2 md:w-1/2 w-full">
+                            {
+                                grid_type === 'half' &&
+                                    <GridCards type={grid_type} />
+                            }
                         </div>
                         {
                             grid_type === 'full' &&
