@@ -115,7 +115,7 @@ const Header = ({ heading, description, button_text, show_button = true, button_
                                 <h2 className='text-4xl font-semibold text-gray-800 mb-1 capitalize font-poppins leading-none tracking-wide'>{ heading || 'Welcome' }</h2>
                                 <p className='text-base text-gray-600 font-semibold'>{ description || 'Select a website to manage, or create a new one from scratch.' }</p>
                             </div>
-                            <div className="lg:w-1/2 md:w-1/2 w-full flex items-center md:justify-end justify-start">
+                            <div className="lg:w-1/2 md:w-1/2 w-full flex items-center md:justify-end justify-start mt-4">
                                 {
                                     heading === 'Portfolio' &&
                                         <button className="flex items-center justify-between px-8 py-2 mr-2 text-sm font-medium leading-5 hover:text-white text-blue-600 transition-colors duration-150 bg-transparent  border border-blue-600 rounded-md hover:bg-blue-600 focus:outline-none focus:shadow-outline-purple">

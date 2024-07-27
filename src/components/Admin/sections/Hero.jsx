@@ -1,12 +1,14 @@
 import React,{ useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faChevronRight, faChevronDown, faEye, faChevronUp, faClose } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faPlus, faChevronRight, faChevronDown, faEye, faChevronUp, faClose } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { uploadHero, getPortfolio } from "../../../actions/portfolio";
 import { clearAlert } from '../../../actions/portfolio';
 import { portfolio_selector } from '../../../constants';
 import ImageModal from '../../ImageModal';
 import Alert from '../../Alert';
+import { image_unavailable } from '../../../assets';
+
 import { Link } from 'react-router-dom';
 const Hero = ({ user, portfolio, index, setIndex }) => {
 
@@ -238,13 +240,13 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
             <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                 <div className='relative'>
                     <div className='flex flex-row items-center relative'>
-                        <h2 className='text-3xl font-bold text-gray-800 mb-12'>{ portfolio_selector[index] }</h2>
-                        <FontAwesomeIcon onClick={() => setToggle(!toggle)} icon={faChevronDown} className="absolute mt-1 right-0 top-0 bg-gray-800 text-white border border-solid border-gray-800 p-[7px] hover:bg-transparent hover:text-gray-800 transition-all cursor-pointer rounded-sm ml-4 w-4 h-4"/>
+                        <h2 className='text-3xl font-semibold text-gray-800 mb-12'>{ portfolio_selector[index] }</h2>
+                        <button><FontAwesomeIcon onClick={() => setToggle(!toggle)} icon={faChevronDown} className="absolute mt-1 right-0 top-0 bg-blue-600 text-white border border-solid border-blue-600 p-[7px] hover:bg-blue-700  transition-all cursor-pointer rounded-sm ml-4 w-4 h-4"/></button>
                     </div>
                     <div
                         className={`${
                         !toggle ? "hidden" : "flex"
-                        } p-6 bg-gray-800 absolute top-8 right-0  mx-0 my-2 min-w-[140px] rounded-xl sidebar text-sm font-poppins`}
+                        } p-6 pl-3 bg-white shadow-lg absolute top-8 right-0  mx-0 my-2 min-w-[140px] rounded-md border border-solid border-gray-300 sidebar text-sm font-poppins`}
                     >
                         <ul className="list-none flex justify-end items-start flex-1 flex-col">
                             {
@@ -256,9 +258,13 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                                                     setActive(i)
                                                     setIndex(i)
                                                 }}
-                                                className={`cursor-pointer ${index === i ? 'text-[#FFFF00]' : 'text-white'} hover:text-blue-200 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-4'}`}
-                                            >
-                                                <FontAwesomeIcon icon={faChevronRight} className="mr-2" />
+                                                className={`flex items-center font-semibold cursor-pointer ${index === i ? 'text-blue-700' : 'text-gray-800'} hover:text-blue-700 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-2'}`}
+                                            >   
+                                                {
+                                                    index === i ?
+                                                        <FontAwesomeIcon icon={faChevronRight} className="w-3 h-3 mr-2" />
+                                                    : <div className='mr-5'></div>
+                                                }
                                                 <a href={`#`}>{selector}</a>
                                             </li>
                                         </Link>
@@ -271,7 +277,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
             </div>
             <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                 <div className='flex flex-col'>
-                    <label className="block mb-2 font-semibold" htmlFor="file_input">Upload file</label>
+                    <label className="block mb-2 font-semibold" htmlFor="file_input">Upload Photo</label>
                     <div className='flex flex-row'>
                         <input 
                             className="block w-full text-gray-800 border border-gray-300 cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
@@ -289,7 +295,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                                             setPreview(true)
                                             setOpenModal(true)
                                         }} 
-                                        className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-1'><FontAwesomeIcon icon={faEye} className="mx-4"/>
+                                        className='float-left font-semibold border border-solid border-blue-600 bg-blue-600 hover:bg-transparent hover:text-blue-600 rounded-sm transition-all text-white p-1'><FontAwesomeIcon icon={faEye} className="mx-4"/>
                                     </button>
                                 </div>
                             )
@@ -298,12 +304,13 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <p className="mt-1 text-xs text-gray-500 dark:text-gray-300" id="file_input_help">Valid: PNG, JPG</p>
                 </div>
             </div>
+
             <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start mb-4'>
                 <div className='flex flex-col'>
                     <label className='font-semibold mb-2'> Full Name </label>
                     <input 
                         type="text" 
-                        className='p-2 px-4 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0] outline-none'
                         onChange={(e) => setHero({...hero, full_name: e.target.value})}
                         value={hero.full_name}
                     />
@@ -315,12 +322,19 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <div className='flex flex-row'>
                         <input 
                             type="text" 
-                            className='w-full p-2 px-4 border border-solid border-[#c0c0c0]'
+                            className='w-full p-2 px-4 border border-solid border-[#c0c0c0] outline-none'
                             value={input.hero.profession}
                             onChange={(e) => setInput({...input, hero:{ ...input.hero, profession: e.target.value }})}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') {
+                                    addProfession();
+                                }
+                            }}
                         />
                         <div className='flex flex-row items-end'>
-                            <button onClick={addProfession} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                            <button onClick={addProfession} className='float-left font-semibold border border-solid border-blue-600 bg-blue-600 hover:bg-transparent hover:text-blue-600 rounded-sm transition-all text-white p-2'>
+                                <FontAwesomeIcon icon={faPlus} className='mx-2'/>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -354,7 +368,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                             cols="30"
                             rows="8"
                             placeholder="Message"
-                            className="w-full leading-6 p-2 px-4 border border-solid border-[#c0c0c0]"
+                            className="w-full leading-6 p-2 px-4 border border-solid border-[#c0c0c0] outline-none"
                             onChange={(e) => setHero({...hero, description: e.target.value})}
                             value={ hero.description }
                         >
@@ -369,7 +383,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                         type="checkbox" 
                         checked={hero.animation}
                         onChange={() => setHero({...hero, animation: !hero.animation})}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        className="outline-none w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
                     <label htmlFor="default-checkbox" className="ml-2 font-semibold text-gray-900 dark:text-gray-300">Typing Animation</label>
                 </div>
@@ -379,7 +393,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <label className='font-semibold mb-2'> Resume Link </label>
                     <input 
                         type="text" 
-                        className='p-2 px-4 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0] outline-none'
                         onChange={(e) => setHero({...hero, resume_link: e.target.value})}
                         value={hero.resume_link}
                     />
@@ -387,7 +401,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
             </div>
 
             <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start '>
-                <h2 className='text-2xl font-bold text-gray-800 my-4'>Social Links</h2>        
+                <h2 className='text-2xl font-bold text-gray-800 my-4 mt-8'>Social Links</h2>        
             </div>
 
             <div className='grid md:grid-cols-3 grid-cols-3  gap-5 place-content-start mb-3'>
@@ -395,7 +409,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <label className='font-semibold mb-2'> Facebook </label>
                     <input 
                         type="text" 
-                        className='p-2 px-4 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0] outline-none'
                         onChange={(e) => setInput({...input, facebook: { ...input.facebook, link: e.target.value }})}
                         value={input.facebook.link}
                     />
@@ -406,7 +420,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                         type="checkbox" 
                         checked={input.facebook.show}
                         onChange={(e) => setInput({...input, facebook: { ...input.facebook, show: !input.facebook.show }})}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        className="outline-none w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
                     <label htmlFor="default-checkbox1" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Show</label>
                 </div>
@@ -416,7 +430,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <label className='font-semibold mb-2'> Twitter </label>
                     <input 
                         type="text" 
-                        className='p-2 px-4 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0] outline-none'
                         onChange={(e) => setInput({...input, twitter: { ...input.twitter, link: e.target.value }})}
                         value={input.twitter.link}
                     />
@@ -427,7 +441,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                         type="checkbox" 
                         checked={input.twitter.show}
                         onChange={(e) => setInput({...input, twitter: { ...input.twitter, show: !input.twitter.show }})}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        className="outline-none w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
                     <label htmlFor="default-checkbox2" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Show</label>
                 </div>
@@ -437,7 +451,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <label className='font-semibold mb-2'> Instagram </label>
                     <input 
                         type="text" 
-                        className='p-2 px-4 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0] outline-none'
                         onChange={(e) => setInput({...input, instagram: { ...input.instagram, link: e.target.value }})}
                         value={input.instagram.link}
                     />
@@ -448,7 +462,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                         type="checkbox" 
                         checked={input.instagram.show}
                         onChange={(e) => setInput({...input, instagram: { ...input.instagram, show: !input.instagram.show }})}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        className="outline-none w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
                     <label htmlFor="default-checkbox3" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Show</label>
                 </div>
@@ -458,7 +472,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <label className='font-semibold mb-2'> Github </label>
                     <input 
                         type="text" 
-                        className='p-2 px-4 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0] outline-none'
                         onChange={(e) => setInput({...input, github: { ...input.github, link: e.target.value }})}
                         value={input.github.link}
                     />
@@ -469,7 +483,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                         type="checkbox" 
                         checked={input.github.show}
                         onChange={(e) => setInput({...input, github: { ...input.github, show: !input.github.show }})}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        className="outline-none w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
                     <label htmlFor="default-checkbox4" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Show</label>
                 </div>
@@ -479,7 +493,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <label className='font-semibold mb-2'> LinkedIn </label>
                     <input 
                         type="text" 
-                        className='p-2 px-4 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0] outline-none'
                         onChange={(e) => setInput({...input, linkedin: { ...input.linkedin, link: e.target.value }})}
                         value={input.linkedin.link}
                     />
@@ -490,13 +504,13 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                         type="checkbox" 
                         checked={input.linkedin.show}
                         onChange={(e) => setInput({...input, linkedin: { ...input.linkedin, show: !input.linkedin.show }})}
-                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                        className="outline-none w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
                     <label htmlFor="default-checkbox5" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Show</label>
                 </div>
             </div>
             <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
-                <button onClick={handleSubmit} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
+                <button onClick={handleSubmit} className='tracking-wider float-left font-semibold border border-solid border-blue-600 bg-blue-600 hover:bg-blue-700 rounded-sm transition-all text-white p-2'>
                     {
                         !submitted ?
                         "Save"

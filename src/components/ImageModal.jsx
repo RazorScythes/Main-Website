@@ -49,7 +49,7 @@ const ImageModal = ({ openModal, setOpenModal, image, setImage, preview, setPrev
                     >
                         <div className="relative my-6 mx-auto">
                             {/*content*/}
-                            <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
+                            <div className="border-0 shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                                 {/*header*/}
 
                                 {
@@ -77,7 +77,7 @@ const ImageModal = ({ openModal, setOpenModal, image, setImage, preview, setPrev
                                         <img 
                                             src={image.includes("https://drive") ? convertDriveImageLink(image) : image}
                                             alt={'avatar'}
-                                            className="object-cover w-full sm:h-[400px] h-[250px]"
+                                            className="object-cover w-full xs:h-[400px] h-full border border-solid border-gray-300"
                                         />
                                         :
                                         <div className='sm:w-[500px] w-[320px] sm:h-[350px] h-[200px]'>
@@ -98,7 +98,7 @@ const ImageModal = ({ openModal, setOpenModal, image, setImage, preview, setPrev
                                     {
                                         preview ?
                                             <button
-                                                className="w-full bg-gray-800 text-white hover:text-gray-800 hover:bg-transparent border border-solid border-gray-800 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                                                className="tracking-wider w-full bg-blue-600 text-white hover:bg-blue-700 border border-solid border-blue-600 font-semibold text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                                                 type="button"
                                                 onClick={() => closeModal()}
                                             >
@@ -106,7 +106,7 @@ const ImageModal = ({ openModal, setOpenModal, image, setImage, preview, setPrev
                                             </button>
                                         :
                                             <button
-                                                className="w-full bg-gray-800 text-white hover:text-gray-800 hover:bg-transparent border border-solid border-gray-800 font-bold uppercase text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
+                                                className="tracking-wider w-full bg-blue-600 text-white hover:bg-blue-700 border border-solid border-blue-600 font-semibold text-sm px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150"
                                                 type="button"
                                                 onClick={() => showCroppedImage()}
                                             >

@@ -1,6 +1,6 @@
 import React,{ useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faChevronRight, faChevronDown, faClose, faEye } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faChevronRight, faChevronDown, faClose, faEye, faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { uploadSkills, getPortfolio } from "../../../actions/portfolio";
 import { convertDriveImageLink } from '../../Tools'
@@ -341,7 +341,7 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
     }
 
     return (
-        <div className="container mx-auto relative px-0 sm:px-4 py-16">
+        <div className="container mx-auto relative px-0 sm:px-4 py-16 font-poppins text-sm">
             {
                 alertInfo.alert && alertInfo.variant && showAlert &&
                     <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
@@ -356,13 +356,13 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
             <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                 <div className='relative'>
                     <div className='flex flex-row items-center relative'>
-                        <h2 className='text-3xl font-bold text-gray-800 mb-12'>{ portfolio_selector[index] }</h2>
-                        <FontAwesomeIcon onClick={() => setToggle(!toggle)} icon={faChevronDown} className="absolute mt-1 right-0 top-0 bg-gray-800 text-white border border-solid border-gray-800 p-[7px] hover:bg-transparent hover:text-gray-800 transition-all cursor-pointer rounded-sm ml-4 w-4 h-4"/>
+                        <h2 className='text-3xl font-semibold text-gray-800 mb-12'>{ portfolio_selector[index] }</h2>
+                        <button><FontAwesomeIcon onClick={() => setToggle(!toggle)} icon={faChevronDown} className="absolute mt-1 right-0 top-0 bg-blue-600 text-white border border-solid border-blue-600 p-[7px] hover:bg-blue-700  transition-all cursor-pointer rounded-sm ml-4 w-4 h-4"/></button>
                     </div>
                     <div
                         className={`${
                         !toggle ? "hidden" : "flex"
-                        } p-6 bg-gray-800 absolute top-8 right-0  mx-0 my-2 min-w-[140px] rounded-xl sidebar text-sm font-poppins`}
+                        } p-6 pl-3 bg-white shadow-lg absolute top-8 right-0  mx-0 my-2 min-w-[140px] rounded-md border border-solid border-gray-300 sidebar text-sm font-poppins`}
                     >
                         <ul className="list-none flex justify-end items-start flex-1 flex-col">
                             {
@@ -374,9 +374,13 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
                                                     setActive(i)
                                                     setIndex(i)
                                                 }}
-                                                className={`cursor-pointer ${index === i ? 'text-[#FFFF00]' : 'text-white'} hover:text-blue-200 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-4'}`}
-                                            >
-                                                <FontAwesomeIcon icon={faChevronRight} className="mr-2" />
+                                                className={`flex items-center font-semibold cursor-pointer ${index === i ? 'text-blue-700' : 'text-gray-800'} hover:text-blue-700 ${portfolio_selector.length - 1 === i ? 'mb-0' : 'mb-2'}`}
+                                            >   
+                                                {
+                                                    index === i ?
+                                                        <FontAwesomeIcon icon={faChevronRight} className="w-3 h-3 mr-2" />
+                                                    : <div className='mr-5'></div>
+                                                }
                                                 <a href={`#`}>{selector}</a>
                                             </li>
                                         </Link>
@@ -389,7 +393,7 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
             </div>
             <div className='grid md:grid-cols-2 sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                 <div className='flex flex-col'>
-                    <label className="block mb-2 font-medium" htmlFor="file_input">Upload picture</label>
+                    <label className="block mb-2 font-semibold" htmlFor="file_input">Upload Photo</label>
                     <div className='flex flex-row'>
                         <input 
                             className="block w-full text-gray-800 border border-gray-300 cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
@@ -407,21 +411,21 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
                                             setPreview(true)
                                             setOpenModal(true)
                                         }} 
-                                        className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-1'><FontAwesomeIcon icon={faEye} className="mx-4"/>
+                                        className='float-left font-semibold border border-solid border-blue-600 bg-blue-600 hover:bg-transparent hover:text-blue-600 rounded-sm transition-all text-white p-1'><FontAwesomeIcon icon={faEye} className="mx-4"/>
                                     </button>
                                 </div>
                             )
                         }
                     </div>
-                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">PNG, JPG</p>
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-300" id="file_input_help">Valid: PNG, JPG</p>
                 </div>
             </div>
             <div className='grid md:grid-cols-2 sm:grid-cols-2 grid-cols-1  gap-5 place-content-start mb-4'>
                 <div className='flex flex-col'>
-                    <label className='font-semibold'> Heading:  </label>
+                    <label className='font-semibold mb-2'> Heading  </label>
                     <input 
                         type="text" 
-                        className='p-2 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0] outline-none'
                         onChange={(e) => setSkills({...skills, heading: e.target.value})}
                         value={skills.heading}
                     />
@@ -429,10 +433,10 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
             </div>
             <div className='grid md:grid-cols-2 sm:grid-cols-2 grid-cols-1  gap-5 place-content-start mb-4'>
                 <div className='flex flex-col'>
-                    <label className='font-semibold'> Project Completed:  </label>
+                    <label className='font-semibold mb-2'> Project Completed  </label>
                     <input 
                         type="number" 
-                        className='p-2 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0] outline-none'
                         onChange={(e) => setSkills({...skills, project_completed: e.target.value})}
                         value={skills.project_completed}
                     />
@@ -440,15 +444,15 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
             </div>
             <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
                 <div className='flex flex-col'>
-                    <label className='font-semibold'> Description: </label>
+                    <label className='font-semibold mb-2'> Description </label>
                     <div className='flex flex-row'>
                         <textarea
                             name="message"
                             id="message"
                             cols="30"
-                            rows="8"
+                            rows="6"
                             placeholder="Message"
-                            className="w-full p-2 border border-solid border-[#c0c0c0]"
+                            className="w-full p-2 px-4 leading-6 border border-solid border-[#c0c0c0] outline-none"
                             onChange={(e) => setSkills({...skills, description: e.target.value})}
                             value={ skills.description }
                         >
@@ -460,25 +464,37 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
                 <div className='flex flex-col'>
                     <div className='grid grid-cols-2 gap-5 place-content-start mb-2'>
                         <div className='flex flex-col w-full '>
-                            <label className='font-semibold'> App/Skills: </label>
+                            <label className='font-semibold mb-2'> App/Skills </label>
                             <input 
                                 type="text" 
-                                className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                className='w-full p-2 px-4 border border-solid border-[#c0c0c0] outline-none'
                                 value={input.skill.skill_name}
                                 onChange={(e) => setInput({...input, skill:{ ...input.skill, skill_name: e.target.value }})}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        addSkillSet();
+                                    }
+                                }}
                             />
                         </div>
                         <div className='flex flex-col w-full'>
-                            <label className='font-semibold'> Percentage: </label>
+                            <label className='font-semibold mb-2'> Percentage </label>
                             <div className='flex flex-row'>
                                 <input 
                                     type="number" 
-                                    className='w-full p-2 border border-solid border-[#c0c0c0]'
+                                    className='w-full p-2 px-4 border border-solid border-[#c0c0c0] outline-none'
                                     value={input.skill.percentage}
                                     onChange={(e) => setInput({...input, skill:{ ...input.skill, percentage: e.target.value }})}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            addSkillSet();
+                                        }
+                                    }}
                                 />
                                 <div className='flex flex-row items-end'>
-                                    <button onClick={addSkillSet} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>Add</button>
+                                    <button onClick={addSkillSet} className='float-left font-semibold border border-solid border-blue-600 bg-blue-600 hover:bg-transparent hover:text-blue-600 rounded-sm transition-all text-white p-2'>
+                                        <FontAwesomeIcon icon={faPlus} className='mx-2'/>
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -491,12 +507,12 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
                         skills.skill.length > 0 &&
                             skills.skill.map((item, i) => {
                                 return (
-                                    <div key={i} className='w-full flex flex-row p-2 py-3 bg-gray-800 mb-1'>
+                                    <div key={i} className='w-full flex flex-row p-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 mb-1 rounded-sm transition-all'>
                                         <div className='w-1/2 flex flex-row items-center'>
-                                            <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold'>{item.skill_name} ({item.percentage}%)</p>
+                                            <p className='text-white text-sm tracking-wide'>{item.skill_name} ({item.percentage}%)</p>
                                         </div>
                                         <div className='w-1/2 text-right'>
-                                            <FontAwesomeIcon id={i} onClick={deleteSkillSet} icon={faTrash} className="mr-2 hover:cursor-pointer" />
+                                            <FontAwesomeIcon id={i} onClick={deleteSkillSet} icon={faClose} className="mr-2 hover:cursor-pointer" />
                                         </div>
                                     </div>
                                 )
@@ -506,23 +522,23 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
             </div>
             <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                 <div className="flex flex-row items-center justify-center w-full">
-                    <label {...getRootProps()} for="dropzone-file" className="flex flex-row items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                    <label {...getRootProps()} for="dropzone-file" className="flex flex-row items-center justify-center w-full h-64 border-2 border-gray-400 border-dashed rounded-lg cursor-pointer bg-gray-50 ">
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
                             <svg aria-hidden="true" className="w-10 h-10 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path></svg>
                             {
                                 isDragActive ? 
-                                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Drop icons here</span></p>
+                                    <p className="mb-2 text-sm text-gray-800 dark:text-gray-800 text-center"><span className="font-semibold">Drop icons here</span></p>
                                 :
-                                    <p className="mb-2 text-sm text-gray-500 dark:text-gray-400"><span className="font-semibold">Click to upload app icon</span> or drag and drop</p>
+                                    <p className="mb-2 text-sm text-gray-800 dark:text-gray-800 text-center"><span className="font-semibold">Click to upload app icon</span> or drag and drop</p>
                             }
-                            <p className="text-xs text-gray-500 dark:text-gray-400">SVG, PNG, JPG or GIF (MAX. 3 icons 200x200px)</p>
+                            <p className="text-xs text-gray-800 dark:text-gray-400 text-center">SVG, PNG, JPG or GIF (MAX. 3 icons 200x200px)</p>
                         </div>
                         <input accept="image/*" {...getInputProps()}/>
                     </label>
                 </div> 
             </div>
             <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
-                <div className='grid grid-cols-3 gap-5 place-content-start mb-4'>
+                <div className='grid xs:grid-cols-3 grid-cols-2 gap-5 place-content-start mb-4'>
                     {
                         skills.icons.length > 0 ?
                             skills.icons.slice(0,3).map((item, i) => {
@@ -530,13 +546,13 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
                                     <div key={i}>
                                         { 
                                             item ?
-                                                <div className='flex items-center justify-center p-6 w-32 h-32 border-2 border-dashed border-gray-400 mx-auto relative'>
+                                                <div className='flex items-center justify-center p-6 xs:w-32 w-full xs:h-32 h-full border-2 border-dashed border-gray-400 mx-auto relative'>
                                                     <img className="w-full h-full object-cover" src={convertDriveImageLink(item)} alt="app icons"/>
-                                                    <FontAwesomeIcon id={i} icon={faClose} onClick={(e) => deleteIcon(e, item)} className="absolute p-1 text-gray-400 cursor-pointer top-0 right-0 w-5 h-5"/>
+                                                    <button><FontAwesomeIcon id={i} icon={faClose} onClick={(e) => deleteIcon(e, item)} className="absolute p-1 text-gray-500 hover:text-blue-600 cursor-pointer top-0 right-0 w-5 h-5"/></button>
                                                 </div>
                                             :
-                                                <div className='flex items-center justify-center p-6 w-32 h-32 border-2 border-dashed border-gray-400 mx-auto'>
-                                                    <p className='text-center font-poppins text-sm uppercase font-semibold text-gray-400'>App Icon #{i+1}</p>
+                                                <div className='flex items-center justify-center p-6 xs:w-32 w-full h-32 border-2 border-dashed border-gray-500 mx-auto'>
+                                                    <button className='text-center font-poppins text-sm uppercase font-semibold text-gray-500'>App Icon #{i+1}</button>
                                                 </div>
                                         }
                                     </div>
@@ -544,21 +560,21 @@ const Skills = ({ user, portfolio, index, setIndex }) => {
                             })
                         :
                         <>
-                            <div className='flex items-center justify-center p-6 w-32 h-32 border-2 border-dashed border-gray-400 mx-auto'>
-                                <p className='text-center font-poppins text-sm uppercase font-semibold text-gray-400'>App Icon #1</p>
+                            <div className='flex items-center justify-center p-6 xs:w-32 w-full h-32 border-2 border-dashed border-gray-500 mx-auto'>
+                                <button className='text-center font-poppins text-sm font-semibold text-gray-500'>App Icon #1</button>
                             </div>
-                            <div className='flex items-center justify-center p-6 w-32 h-32 border-2 border-dashed border-gray-400 mx-auto'>
-                                <p className='text-center font-poppins text-sm uppercase font-semibold text-gray-400'>App Icon #2</p>
+                            <div className='flex items-center justify-center p-6 xs:w-32 w-full h-32 border-2 border-dashed border-gray-500 mx-auto'>
+                                <button className='text-center font-poppins text-sm font-semibold text-gray-500'>App Icon #2</button>
                             </div>
-                            <div className='flex items-center justify-center p-6 w-32 h-32 border-2 border-dashed border-gray-400 mx-auto'>
-                                <p className='text-center font-poppins text-sm uppercase font-semibold text-gray-400'>App Icon #3.</p>
+                            <div className='flex items-center justify-center p-6 xs:w-32 w-full h-32 border-2 border-dashed border-gray-500 mx-auto'>
+                                <button className='text-center font-poppins text-sm font-semibold text-gray-500'>App Icon #3</button>
                             </div>
                         </>
                     }
                 </div>
             </div>
             <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
-                <button onClick={handleSubmit} className='float-left font-semibold border border-solid border-gray-800 bg-gray-800 hover:bg-transparent hover:text-gray-800 rounded-sm transition-all text-white p-2'>
+                <button onClick={handleSubmit} className='tracking-wider float-left font-semibold border border-solid border-blue-600 bg-blue-600 hover:bg-blue-700 rounded-sm transition-all text-white p-2'>
                     {
                         !submitted ?
                         "Save"

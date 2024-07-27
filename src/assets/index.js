@@ -18,7 +18,9 @@ import application from './application.png'
 import game from './game.png'
 import seaplant from './seabedplants.png'
 import video from './video.png'
+import image_unavailable from './image-unavailable.jpg'
 export {
+    image_unavailable,
     toram_online,
     genshin_impact,
     aqw,
