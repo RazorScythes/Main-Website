@@ -1,6 +1,6 @@
 import React,{ useState, useEffect } from 'react'
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faTrash, faChevronRight, faChevronDown, faEye, faChevronUp } from "@fortawesome/free-solid-svg-icons";
+import { faTrash, faChevronRight, faChevronDown, faEye, faChevronUp, faClose } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch, useSelector } from 'react-redux'
 import { uploadHero, getPortfolio } from "../../../actions/portfolio";
 import { clearAlert } from '../../../actions/portfolio';
@@ -271,7 +271,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
             </div>
             <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-4'>
                 <div className='flex flex-col'>
-                    <label className="block mb-2 font-medium" htmlFor="file_input">Upload file</label>
+                    <label className="block mb-2 font-semibold" htmlFor="file_input">Upload file</label>
                     <div className='flex flex-row'>
                         <input 
                             className="block w-full text-gray-800 border border-gray-300 cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400" 
@@ -295,7 +295,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                             )
                         }
                     </div>
-                    <p className="mt-1 text-sm text-gray-500 dark:text-gray-300" id="file_input_help">PNG, JPG</p>
+                    <p className="mt-1 text-xs text-gray-500 dark:text-gray-300" id="file_input_help">Valid: PNG, JPG</p>
                 </div>
             </div>
             <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start mb-4'>
@@ -303,7 +303,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <label className='font-semibold mb-2'> Full Name </label>
                     <input 
                         type="text" 
-                        className='p-2 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0]'
                         onChange={(e) => setHero({...hero, full_name: e.target.value})}
                         value={hero.full_name}
                     />
@@ -315,7 +315,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <div className='flex flex-row'>
                         <input 
                             type="text" 
-                            className='w-full p-2 border border-solid border-[#c0c0c0]'
+                            className='w-full p-2 px-4 border border-solid border-[#c0c0c0]'
                             value={input.hero.profession}
                             onChange={(e) => setInput({...input, hero:{ ...input.hero, profession: e.target.value }})}
                         />
@@ -331,12 +331,12 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                         hero.profession.length > 0 &&
                             hero.profession.map((item, i) => {
                                 return (
-                                    <div key={i} className='w-full flex flex-row p-2 py-3 bg-gray-800 mb-1'>
+                                    <div key={i} className='w-full flex flex-row p-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 mb-1 rounded-sm transition-all'>
                                         <div className='w-1/2 flex flex-row items-center'>
-                                            <FontAwesomeIcon icon={faChevronRight} className="mr-2 w-3 h-3"/> <p className='font-semibold'>{item}</p>
+                                            <p className='text-white text-sm tracking-wide'>{item}</p>
                                         </div>
                                         <div className='w-1/2 text-right'>
-                                            <FontAwesomeIcon id={i} onClick={deleteProfession} icon={faTrash} className="mr-2 hover:cursor-pointer" />
+                                            <FontAwesomeIcon id={i} onClick={deleteProfession} icon={faClose} className="mr-2 hover:cursor-pointer font-bold" />
                                         </div>
                                     </div>
                                 )
@@ -354,7 +354,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                             cols="30"
                             rows="8"
                             placeholder="Message"
-                            className="w-full p-2 border border-solid border-[#c0c0c0]"
+                            className="w-full leading-6 p-2 px-4 border border-solid border-[#c0c0c0]"
                             onChange={(e) => setHero({...hero, description: e.target.value})}
                             value={ hero.description }
                         >
@@ -371,7 +371,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                         onChange={() => setHero({...hero, animation: !hero.animation})}
                         className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
                     />
-                    <label htmlFor="default-checkbox" className="ml-2 font-medium text-gray-900 dark:text-gray-300">Typing Animation</label>
+                    <label htmlFor="default-checkbox" className="ml-2 font-semibold text-gray-900 dark:text-gray-300">Typing Animation</label>
                 </div>
             </div>
             <div className='grid md:grid-cols-2 grid-cols-1  gap-5 place-content-start'>
@@ -379,7 +379,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <label className='font-semibold mb-2'> Resume Link </label>
                     <input 
                         type="text" 
-                        className='p-2 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0]'
                         onChange={(e) => setHero({...hero, resume_link: e.target.value})}
                         value={hero.resume_link}
                     />
@@ -395,7 +395,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <label className='font-semibold mb-2'> Facebook </label>
                     <input 
                         type="text" 
-                        className='p-2 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0]'
                         onChange={(e) => setInput({...input, facebook: { ...input.facebook, link: e.target.value }})}
                         value={input.facebook.link}
                     />
@@ -416,7 +416,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <label className='font-semibold mb-2'> Twitter </label>
                     <input 
                         type="text" 
-                        className='p-2 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0]'
                         onChange={(e) => setInput({...input, twitter: { ...input.twitter, link: e.target.value }})}
                         value={input.twitter.link}
                     />
@@ -437,7 +437,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <label className='font-semibold mb-2'> Instagram </label>
                     <input 
                         type="text" 
-                        className='p-2 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0]'
                         onChange={(e) => setInput({...input, instagram: { ...input.instagram, link: e.target.value }})}
                         value={input.instagram.link}
                     />
@@ -458,7 +458,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <label className='font-semibold mb-2'> Github </label>
                     <input 
                         type="text" 
-                        className='p-2 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0]'
                         onChange={(e) => setInput({...input, github: { ...input.github, link: e.target.value }})}
                         value={input.github.link}
                     />
@@ -479,7 +479,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
                     <label className='font-semibold mb-2'> LinkedIn </label>
                     <input 
                         type="text" 
-                        className='p-2 border border-solid border-[#c0c0c0]'
+                        className='p-2 px-4 border border-solid border-[#c0c0c0]'
                         onChange={(e) => setInput({...input, linkedin: { ...input.linkedin, link: e.target.value }})}
                         value={input.linkedin.link}
                     />
