@@ -223,7 +223,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
     }
 
     return (
-        <div className="container mx-auto relative px-0 sm:px-4 py-16">
+        <div className="container mx-auto relative px-0 sm:px-4 py-16 font-poppins text-sm">
             {
                 alertInfo.alert && alertInfo.variant && showAlert &&
                     <Alert variants={alertInfo.variant} text={alertInfo.alert} show={showAlert} setShow={setShowAlert} />
@@ -300,7 +300,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
             </div>
             <div className='grid sm:grid-cols-2 grid-cols-1  gap-5 place-content-start mb-4'>
                 <div className='flex flex-col'>
-                    <label className='font-semibold'> Full Name: </label>
+                    <label className='font-semibold mb-2'> Full Name </label>
                     <input 
                         type="text" 
                         className='p-2 border border-solid border-[#c0c0c0]'
@@ -311,7 +311,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
             </div>
             <div className='grid sm:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
                 <div className='flex flex-col'>
-                    <label className='font-semibold'> Professions: </label>
+                    <label className='font-semibold mb-2'> Professions </label>
                     <div className='flex flex-row'>
                         <input 
                             type="text" 
@@ -346,7 +346,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
             </div>
             <div className='grid md:grid-cols-2 grid-cols-1 gap-5 place-content-start mb-2'>
                 <div className='flex flex-col'>
-                    <label className='font-semibold'> Portfolio description: </label>
+                    <label className='font-semibold mb-2'> Portfolio description </label>
                     <div className='flex flex-row'>
                         <textarea
                             name="message"
@@ -376,7 +376,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
             </div>
             <div className='grid md:grid-cols-2 grid-cols-1  gap-5 place-content-start'>
                 <div className='flex flex-col'>
-                    <label className='font-semibold'> Resume Link: </label>
+                    <label className='font-semibold mb-2'> Resume Link </label>
                     <input 
                         type="text" 
                         className='p-2 border border-solid border-[#c0c0c0]'
@@ -392,7 +392,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
 
             <div className='grid md:grid-cols-3 grid-cols-3  gap-5 place-content-start mb-3'>
                 <div className='flex flex-col justify-center md:col-span-1 col-span-2'>
-                    <label className='font-semibold'> Facebook: </label>
+                    <label className='font-semibold mb-2'> Facebook </label>
                     <input 
                         type="text" 
                         className='p-2 border border-solid border-[#c0c0c0]'
@@ -413,7 +413,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
             </div>
             <div className='grid md:grid-cols-3 grid-cols-3  gap-5 place-content-start mb-3'>
                 <div className='flex flex-col justify-center md:col-span-1 col-span-2'>
-                    <label className='font-semibold'> Twitter: </label>
+                    <label className='font-semibold mb-2'> Twitter </label>
                     <input 
                         type="text" 
                         className='p-2 border border-solid border-[#c0c0c0]'
@@ -434,7 +434,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
             </div>
             <div className='grid md:grid-cols-3 grid-cols-3  gap-5 place-content-start mb-3'>
                 <div className='flex flex-col justify-center md:col-span-1 col-span-2'>
-                    <label className='font-semibold'> Instagram: </label>
+                    <label className='font-semibold mb-2'> Instagram </label>
                     <input 
                         type="text" 
                         className='p-2 border border-solid border-[#c0c0c0]'
@@ -455,7 +455,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
             </div>
             <div className='grid md:grid-cols-3 grid-cols-3  gap-5 place-content-start mb-3'>
                 <div className='flex flex-col justify-center md:col-span-1 col-span-2'>
-                    <label className='font-semibold'> Github: </label>
+                    <label className='font-semibold mb-2'> Github </label>
                     <input 
                         type="text" 
                         className='p-2 border border-solid border-[#c0c0c0]'
@@ -476,7 +476,7 @@ const Hero = ({ user, portfolio, index, setIndex }) => {
             </div>
             <div className='grid md:grid-cols-3 grid-cols-3  gap-5 place-content-start mb-10'>
                 <div className='flex flex-col justify-center md:col-span-1 col-span-2'>
-                    <label className='font-semibold'> LinkedIn: </label>
+                    <label className='font-semibold mb-2'> LinkedIn </label>
                     <input 
                         type="text" 
                         className='p-2 border border-solid border-[#c0c0c0]'

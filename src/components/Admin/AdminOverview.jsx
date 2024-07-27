@@ -162,7 +162,7 @@ const AdminOverview = ({ user, path }) => {
                                     </div>
 
                                     <div className="grid sm:grid-cols-3 grid-cols-1 gap-4 mt-8 font-poppins">
-                                        <div class="xs:w-full overflow-hidden rounded-sm shadow-xs col-span-2">
+                                        <div class="xs:w-full overflow-hidden rounded-sm shadow-xs sm:col-span-2">
                                             <p className='text-gray-800 font-semibold text-lg mb-2'>Recent Activity</p>
                                             <div class="xs:w-full overflow-hidden rounded-lg shadow-xs">
                                                 <div class="w-full overflow-x-auto">
