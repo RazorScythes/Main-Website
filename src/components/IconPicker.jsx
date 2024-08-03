@@ -49,7 +49,7 @@ const IconPicker = ({ setIcon }) => {
                 >
                     {fasIconList}
                 </select>
-                <FontAwesomeIcon icon={['fas', selectedIcon]} className="ml-3 px-4 py-3 bg-gray-900 text-white rounded-md" />
+                <FontAwesomeIcon icon={['fas', selectedIcon]} className="ml-3 px-4 py-3 bg-blue-600 text-white rounded-md" />
             </div>
         </div>
     );
