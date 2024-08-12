@@ -55,6 +55,11 @@
   scrollbar-width: none;  /* Firefox */
 }
 
+.no-scroll {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
 .no-scroll::-webkit-scrollbar {
   width: 0 !important;
   display: none;
@@ -130,6 +135,21 @@
   overflow: hidden;
 }
 
+
+.mobile_scroll:hover::-webkit-scrollbar-track {
+  background: transparent; /* Track background */
+}
+
+.mobile_scroll:hover {
+  scrollbar-width: thin; /* Firefox - makes scrollbar thinner */
+  scrollbar-color: rgba(0,0,0,0.1) transparent; /* Firefox - color of the scrollbar */
+}
+
+/* For WebKit browsers (Chrome, Safari) */
+.mobile_scroll:hover::-webkit-scrollbar {
+  width: 8px ; /* Adjust width for touch-friendliness */
+  height: 8px; /* Adjust height for horizontal scrolling */
+}
 
 /* BUBBLE ANIMATION */
 

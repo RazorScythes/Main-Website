@@ -25,3 +25,23 @@ export const convertDriveImageLink = (url) => {
     else
         return url
 }
+
+export const millisToTimeString = (millis) => {
+    // Convert milliseconds to seconds
+    var seconds = Math.floor(millis / 1000);
+    // Calculate hours, minutes, and seconds
+    var hours = Math.floor(seconds / 3600);
+    seconds %= 3600;
+    var minutes = Math.floor(seconds / 60);
+    seconds %= 60;
+
+    // Format the time string
+    var timeString = "";
+    if (hours > 0) {
+        timeString += hours.toString().padStart(2, '0') + ":";
+    }
+    timeString += minutes.toString().padStart(2, '0') + ":" +
+                  seconds.toString().padStart(2, '0');
+    
+    return timeString;
+  }
