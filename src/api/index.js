@@ -134,6 +134,10 @@ export const addToWatchLater                            = (formData) => User_API
 export const countVideoTags                             = (formData) => User_API.post('/video/countVideoTags', formData)
 export const uploadLists                                = (formData) => User_API.post('/video/uploadLists', formData)
 export const uploadReport                               = (formData) => User_API.post('/video/uploadReport', formData)
+export const newGroupList                               = (formData) => User_API.post('/video/newGroupList', formData)
+export const editGroupList                              = (formData) => User_API.post('/video/editGroupList', formData)
+export const removeGroup                                = (formData) => User_API.post('/video/removeGroup', formData)
+export const getGroupList                               = (formData) => User_API.post('/video/getGroupList', formData)
 
 /*
     Game

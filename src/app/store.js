@@ -10,6 +10,7 @@ import blogsSlice from '../actions/blogs'
 import archiveSlice from '../actions/archive'
 import projectSlice from '../actions/project'
 import adminSlice from '../actions/admin'
+import groupSlice from '../actions/groups'
 
 export const store = configureStore({
     reducer: {
@@ -23,7 +24,8 @@ export const store = configureStore({
         blogs: blogsSlice,
         archive: archiveSlice,
         project: projectSlice,
-        admin: adminSlice
+        admin: adminSlice,
+        groups: groupSlice
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({

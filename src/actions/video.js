@@ -18,7 +18,8 @@ const initialState = {
     tagsCount: [],
     archiveList: {},
     videoList: [],
-    archiveSaveLists: []
+    archiveSaveLists: [],
+    groups: {}
 }
 
 export const getVideoByID = createAsyncThunk('video/getVideoByID', async (form, thunkAPI) => {
@@ -245,6 +246,54 @@ export const uploadReport = createAsyncThunk('video/uploadReport', async (form, 
     }
 })
 
+export const newGroupList = createAsyncThunk('video/newGroupList', async (form, thunkAPI) => {
+    try {
+        const response = await api.newGroupList(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const removeGroup = createAsyncThunk('video/removeGroup', async (form, thunkAPI) => {
+    try {
+        const response = await api.removeGroup(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const editGroupList = createAsyncThunk('video/editGroupList', async (form, thunkAPI) => {
+    try {
+        const response = await api.editGroupList(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
 export const countVideoTags = createAsyncThunk('video/countVideoTags', async (form, thunkAPI) => {
     try {
         const response = await api.countVideoTags(form)
@@ -264,6 +313,22 @@ export const countVideoTags = createAsyncThunk('video/countVideoTags', async (fo
 export const uploadLists = createAsyncThunk('video/uploadLists', async (form, thunkAPI) => {
     try {
         const response = await api.uploadLists(form)
+        return response
+    }
+    catch (err) {
+        if(err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+        return({ 
+            variant: 'danger',
+            message: "409: there was a problem with the server."
+        })
+    }
+})
+
+export const getGroupList = createAsyncThunk('video/getGroupList', async (form, thunkAPI) => {
+    try {
+        const response = await api.getGroupList(form)
         return response
     }
     catch (err) {
@@ -429,6 +494,36 @@ export const videoSlice = createSlice({
         }),
         builder.addCase(uploadReport.rejected, (state, action) => {
             state.sideAlert = action.payload.sideAlert
+        }),
+        builder.addCase(newGroupList.fulfilled, (state, action) => {
+            state.groups = action.payload.data.result
+            state.sideAlert = action.payload.data.sideAlert
+        }),
+        builder.addCase(newGroupList.rejected, (state, action) => {
+            state.sideAlert = action.payload.sideAlert
+        }),
+        builder.addCase(editGroupList.fulfilled, (state, action) => {
+            state.groups = action.payload.data.result
+            state.sideAlert = action.payload.data.sideAlert
+        }),
+        builder.addCase(editGroupList.rejected, (state, action) => {
+            state.sideAlert = action.payload.sideAlert
+        }),
+        builder.addCase(removeGroup.fulfilled, (state, action) => {
+            state.groups = action.payload.data.result
+            state.sideAlert = action.payload.data.sideAlert
+        }),
+        builder.addCase(removeGroup.rejected, (state, action) => {
+            state.sideAlert = action.payload.sideAlert
+        }),
+        builder.addCase(getGroupList.fulfilled, (state, action) => {
+            state.groups = action.payload.data.result
+            state.error = ''
+            state.isLoading = false
+        }),
+        builder.addCase(getGroupList.rejected, (state, action) => {
+            state.alert = action.payload.message
+            state.variant = action.payload.variant
         })
     },
     reducers: {
