@@ -1,5 +1,6 @@
 import * as api from '../api'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { requestAPI } from '../api/function'
 
 const initialState = {
     error: '',
@@ -7,15 +8,7 @@ const initialState = {
     data: {}
 }
 
-export const getOverviewData = createAsyncThunk('admin/getOverviewData', async (form, thunkAPI) => {
-    try {
-        const response = await api.getOverviewData(form)
-        return response
-    }
-    catch (err) {
-        return thunkAPI.rejectWithValue(err.response.data.message);
-    }
-})
+export const getOverviewData = await requestAPI('admin/getOverviewData', api.getOverviewData)
 
 export const adminSlice = createSlice({
     name: 'admin',

@@ -2,22 +2,22 @@ import * as api from '../api'
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 const initialState = {
-    error: '',
-    isLoading: false,
-    notFound: false,
-    alert: '',
-    variant: '',
-    data: {},
-    games: [],
-    comments: [],
-    relatedGames: [],
-    avatar: '',
-    message: '',
-    forbiden: '',
-    sideAlert: {},
-    tagsCount: [],
-    categoriesCount: [],
-    recentGameBlog: []
+    error               : '',
+    isLoading           : false,
+    notFound            : false,
+    alert               : '',
+    variant             : '',
+    data                : {},
+    games               : [],
+    comments            : [],
+    relatedGames        : [],
+    avatar              : '',
+    message             : '',
+    forbiden            : '',
+    sideAlert           : {},
+    tagsCount           : [],
+    categoriesCount     : [],
+    recentGameBlog      : []
 }
 
 export const getGameByID = createAsyncThunk('game/getGameByID', async (form, thunkAPI) => {
