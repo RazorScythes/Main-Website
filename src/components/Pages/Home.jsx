@@ -29,7 +29,7 @@ const Home = ({ path, user }) => {
     }, [])
 
     return (
-        <div className='relative'>
+        <div className='relative overflow-hidden'>
             <Alert />
             <Hero />
             <div style={{background: 'linear-gradient(180deg, #083C73, 5%, #030423)'}}>

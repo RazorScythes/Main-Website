@@ -38,11 +38,6 @@ export const portfolio_selector = [
 
 export const nav_links = [
   {
-    path: "",
-    name: "Home",
-    icon: faHome
-  },
-  {
     path: "blogs",
     name: "Blogs",
     icon: faMessage

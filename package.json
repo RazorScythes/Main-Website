@@ -26,6 +26,7 @@
     "dotenv": "^16.0.3",
     "install": "^0.13.0",
     "jwt-decode": "^3.1.2",
+    "lucide-react": "^0.441.0",
     "moment": "^2.29.4",
     "moment-timezone": "^0.5.43",
     "npm": "^10.8.2",

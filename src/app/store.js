@@ -14,21 +14,21 @@ import groupSlice from '../actions/groups'
 
 export const store = configureStore({
     reducer: {
-        auth: authReducer,
-        portfolio: portfolioReducer,
-        settings: settingsSlice,
-        logs: logsSlice,
-        video: videoSlice,
-        uploads: uploadsSlice,
-        game: gameSlice,
-        blogs: blogsSlice,
-        archive: archiveSlice,
-        project: projectSlice,
-        admin: adminSlice,
-        groups: groupSlice
+        auth        : authReducer,
+        portfolio   : portfolioReducer,
+        settings    : settingsSlice,
+        logs        : logsSlice,
+        video       : videoSlice,
+        uploads     : uploadsSlice,
+        game        : gameSlice,
+        blogs       : blogsSlice,
+        archive     : archiveSlice,
+        project     : projectSlice,
+        admin       : adminSlice,
+        groups      : groupSlice
     },
     middleware: getDefaultMiddleware =>
         getDefaultMiddleware({
-        serializableCheck: false,
-    }),
+            serializableCheck: false,
+        }),
 })

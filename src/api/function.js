@@ -1,4 +1,3 @@
-import * as api from '../api'
 import { createAsyncThunk } from '@reduxjs/toolkit'
 
 export async function requestAPI(thunkName, apiMethod) {
