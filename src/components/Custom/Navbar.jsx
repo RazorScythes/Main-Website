@@ -24,6 +24,10 @@ const Navbar = ({ path }) => {
 
     const [isActive, setIsActive] = useState(false);
     const [toggle, setToggle] = useState(false)
+    const [open, setOpen] = useState({
+        search: false,
+        notification: false
+    })
 
     const [user, setUser] = useState(JSON.parse(localStorage.getItem('profile')))
     const [avatar, setAvatar] = useState(settings.avatar ? settings.avatar : localStorage.getItem('avatar') ? localStorage.getItem('avatar')?.replaceAll('"', "") : '') //localStorage.getItem('avatar')?.replaceAll('"', "")
@@ -82,10 +86,10 @@ const Navbar = ({ path }) => {
                     </div>
                 </Link>
                 <div className="flex lg:hidden items-center">
-                    <div className="flex gap-2 mr-4">
+                    {/* <div className="flex gap-2 mr-4">
                         <button className="p-[0.35rem] px-3 hover:bg-blue-700 hover:text-white rounded-md transition-all"><FontAwesomeIcon icon={faSearch} /></button>
-                        { user?.result &&<button className="p-[0.35rem] px-3 hover:bg-blue-700 hover:text-white rounded-md transition-all"><FontAwesomeIcon icon={faBell} /></button> }
-                    </div>
+                        { user?.result && <button className="p-[0.35rem] px-3 hover:bg-blue-700 hover:text-white rounded-md transition-all"><FontAwesomeIcon icon={faBell} /></button> }
+                    </div> */}
 
                     <button className="flex items-center px-3 py-2 border rounded text-white border-blue-600 hover:bg-blue-700 bg-blue-600 transition-all" onClick={() => {
                         setIsActive(!isActive)
@@ -99,11 +103,15 @@ const Navbar = ({ path }) => {
                             <img className="h-8 w-8 rounded-full ml-4 cursor-pointer object-cover border border-blue-700" src={avatar ? convertDriveImageLink(avatar) : Avatar} alt="Profile" onClick={() => {
                                 setToggle(!toggle)
                                 setIsActive(false)
+                                setOpen({
+                                    search: false,
+                                    notification: false
+                                })
                             }} />
                             <div
                                 className={`${
                                 !toggle ? "hidden" : "flex"
-                                } p-6 bg-white absolute z-60 top-14 right-0 mx-4 my-2 min-w-[140px] rounded-xl sidebar text-sm border border-solid border-gray-300 shadow-md`}
+                                } p-6 bg-white absolute z-60 top-14 right-0 mx-4 my-2 min-w-[140px] rounded-md sidebar text-sm border border-solid border-gray-300 shadow-md`}
                             >
                                 <ul className="list-none flex justify-end items-start flex-1 flex-col">
                                     <li className={`cursor-pointer hover:text-blue-700 mb-4`}>
@@ -160,21 +168,54 @@ const Navbar = ({ path }) => {
                     user?.result? 
                     <div className="flex">  
                         <div className="flex gap-2 mr-4">
-                            <button className="p-2 px-3 hover:bg-blue-700 hover:text-white rounded-md transition-all"><FontAwesomeIcon icon={faSearch} /></button>
-                            <button className="p-2 px-3 hover:bg-blue-700 hover:text-white rounded-md transition-all"><FontAwesomeIcon icon={faBell} /></button>
+                            <div>
+                                <button onClick={() => {
+                                    setOpen({...open, search: !open.search, notification: false})
+                                    setIsActive(false)
+                                    setToggle(false)
+                                }} className="p-2 px-3 hover:bg-blue-700 hover:text-white rounded-md transition-all"><FontAwesomeIcon icon={faSearch} /></button>
+                                <div
+                                    className={`${
+                                    !open.search ? "hidden" : "flex"
+                                    } flex-col p-6 bg-white absolute z-60 top-14 right-0 mx-4 my-2 min-w-[140px] rounded-md sidebar text-sm border border-solid border-gray-300 shadow-md font-normal`}
+                                >
+                                    <form onSubmit={handleSearch}>
+                                        <div className="relative lg:mt-0 mt-4">
+                                            <input value={searchKey} onChange={(e) => setSearchKey(e.target.value)} className="block w-full px-4 py-2 outline-none border border-solid border-gray-300" type="text" placeholder="Search" />
+                                            <button type="submit" className="mt-1 w-full py-2 bg-blue-600 hover:bg-blue-700 text-white transition-all">Search</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                            {/* { user?.result && <button onClick={() => {
+                                    setOpen({...open, notification: !open.notification, search: false})
+                                    setIsActive(false)
+                                    setToggle(false)
+                                }} className="p-[0.35rem] px-3 hover:bg-blue-700 hover:text-white rounded-md transition-all"><FontAwesomeIcon icon={faBell} /></button> }
+                            <div
+                                className={`${
+                                !open.notification ? "hidden" : "flex"
+                                } flex-col p-4 bg-white absolute z-60 top-14 right-0 mx-2 my-2 min-w-[140px] rounded-md sidebar text-sm border border-solid border-gray-300 shadow-md font-normal`}
+                            >
+                                <h2 className="text-blue-700 font-bold text-base tracking-wider">Notifications</h2>
+                            </div> */}
                         </div>
                         <button className="flex items-center" onClick={() => {
                                 setToggle(!toggle)
                                 setIsActive(false)
+                                setOpen({
+                                    search: false,
+                                    notification: false
+                                })
                         }} >
                             <img className="h-9 w-9 rounded-full mr-2 cursor-pointer object-cover border border-blue-700" src={avatar ? convertDriveImageLink(avatar) : Avatar} alt="Profile"/>
-                            <p>{user?.result.username}</p>
                         </button>
                         <div
                             className={`${
                             !toggle ? "hidden" : "flex"
-                            } p-6 bg-white absolute z-60 top-14 right-0 mx-4 my-2 min-w-[140px] rounded-xl sidebar text-sm border border-solid border-gray-300 shadow-md`}
+                            } flex-col p-6 bg-white absolute z-60 top-14 right-0 mx-4 my-2 min-w-[140px] rounded-md sidebar text-sm border border-solid border-gray-300 shadow-md`}
                         >
+                            {/* <p>{user?.result.username}</p> */}
                             <ul className="list-none flex justify-end items-start flex-1 flex-col">
                                 <li className={`cursor-pointer hover:text-blue-700 mb-4`}>
                                     <FontAwesomeIcon icon={faUser} className="mr-2" />
