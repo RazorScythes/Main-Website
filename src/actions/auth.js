@@ -1,5 +1,5 @@
 import * as api from '../api'
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import { requestAPI } from '../api/function'
 
 const initialState = {
@@ -8,7 +8,21 @@ const initialState = {
     data        : {}
 }
 
-export const signin                  = await requestAPI('user/getUser', api.SignIn)
+export const signin = createAsyncThunk('user/getUser', async (form, thunkAPI) => {
+  try {
+      const response = await api.SignIn(form);
+      return response;
+  } catch (err) {
+      if (err.response && err.response.data)
+          return thunkAPI.rejectWithValue(err.response.data);
+
+      return { 
+          variant: 'danger',
+          message: "409: there was a problem with the server."
+      };
+  }
+});
+
 
 export const authSlice = createSlice({
     name: 'auth',
